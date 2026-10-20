@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><linearGradient id="bank" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6b9466"/><stop offset=".55" stop-color="#456e54"/><stop offset="1" stop-color="#2b584e"/></linearGradient><linearGradient id="water" x1="0" y1="0" x2="1" y2=".8"><stop stop-color="#6bb4aa"/><stop offset=".45" stop-color="#387f8b"/><stop offset="1" stop-color="#285c76"/></linearGradient><linearGradient id="edge" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#c1cfa1"/><stop offset=".65" stop-color="#8fae8e"/><stop offset="1" stop-color="#537b74"/></linearGradient></defs>
+<path fill="url(#bank)" d="M0 0H256V256H0Z"/>
+<path d="M122 0Q103 28 118 57T119 110Q98 137 116 161T106 216Q108 239 100 256H256V0Z" fill="#344f47" opacity=".55"/>
+<path d="M136 0Q115 29 130 58T129 111Q112 137 130 160T120 215Q122 241 113 256H256V0Z" fill="#a3a57b"/>
+<path d="M148 0Q126 28 141 59T140 111Q123 137 142 159T132 215Q134 239 125 256H256V0Z" fill="url(#edge)"/>
+<path d="M158 0Q136 30 152 59T151 110Q136 137 154 160T143 216Q145 239 138 256H256V0Z" fill="url(#water)"/>
+<g fill="none" stroke="#b7e4d4" stroke-linecap="round" opacity=".58"><path d="M170 16q22-6 41 0M191 40q18-5 35-2M166 88q15-3 32 0M190 133q19-5 43 1M169 176q21-6 40-1M193 218q20-4 37 0M161 246q15-3 26 0" stroke-width="2.6"/><path d="M183 65q28-4 51 1M181 154q17-4 36-1M168 202q25-4 48 1" stroke-width="1.3"/></g>
+<g fill="#728d72" stroke="#425e52" stroke-width="1.4"><path d="M103 43l8-4 12 5 1 8-14 4-10-6Z"/><path d="M91 185l11-6 17 7 2 10-16 6-14-8Z"/><path d="M119 232l7-4 9 5-2 8-12 1-5-6Z"/></g>
+<g fill="#294f3e"><path d="M85 80l4-18 3 20 11-14-6 23ZM88 140l-4-24 10 16 6-22 1 27ZM76 245l6-26 4 21 10-14-4 23Z"/></g>
+<g fill="#c8d2a2" opacity=".75"><circle cx="93" cy="29" r="2"/><circle cx="78" cy="159" r="2"/><circle cx="109" cy="210" r="2"/></g></svg>
