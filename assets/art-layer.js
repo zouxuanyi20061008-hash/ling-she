@@ -15,3 +15,7 @@ function paintBody(t,i){if(!snakeBodyArt.complete||!snakeBodyArt.naturalWidth)re
 // Bridge and cliff artwork loaded independently of gameplay state.
 var bridgeArt=document.createElement('img');bridgeArt.src='assets/stone-bridge.svg';
 var cliffArt=document.createElement('img');cliffArt.src='assets/mossy-cliff.svg';
+
+function paintBridge(x,y){if(!bridgeArt.complete||!bridgeArt.naturalWidth)return false;ctx.drawImage(bridgeArt,x-88,y-59,176,118);return true}
+function paintCliff(x,y,w,h){if(!cliffArt.complete||!cliffArt.naturalWidth)return false;ctx.drawImage(cliffArt,x,y,w,h);return true}
+function paintTreeCanopy(o,sz){if(!treeArt.complete||!treeArt.naturalWidth)return false;ctx.save();ctx.globalAlpha=.8;ctx.drawImage(treeArt,0,0,180,142,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*142/220);ctx.restore();return true}
