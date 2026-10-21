@@ -45,6 +45,7 @@ function paintStreamBanks(){
   var sy=Math.max(1200,Math.floor((camY-112)/96)*96),ey=Math.min(3500,camY+H+112);
   for(var y=sy;y<ey;y+=96){
     var x=streamCenter(y+48);
+    if(x<camX-110||x>camX+W+110)continue;
     ctx.save();ctx.globalAlpha=.78;
     // Western bank: land on the west, water on the east.
     ctx.drawImage(bankArt,x-68,y,72,98);
