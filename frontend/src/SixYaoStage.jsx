@@ -107,6 +107,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       <div className="academy-stage-grid">
         <section className="academy-casting-table">
           <div className="academy-panel-head"><span>第一式 · 摇钱成爻</span><b>{Math.min(6,lines.length+1)} / 六</b></div>
+          <label className="academy-quick-question">你想问什么？
+            <textarea value={question} onChange={e=>setQuestion(e.target.value)}
+              placeholder="认真求测，请先写下问题。只为学习摇卦，也可以暂时留空。"/>
+          </label>
           <div className="academy-coin-altar">
             <div className="academy-coins">{coins.map((value,i)=><div className={'academy-coin '+(isSpinning?'spinning':'')} key={i} style={{animationDelay:(i*.085)+'s'}}>
               <div className="academy-coin-inside"><span>{value===3?'背':'字'}</span><b>{value===3?'乾元':'通宝'}</b></div>

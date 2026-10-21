@@ -177,3 +177,8 @@
 .academy-meihua-back{padding:6px 8px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:#8b775d}
 .academy-meihua-back button{color:#326950;text-decoration:underline;text-underline-offset:4px}
 @media(max-width:620px){.academy-meihua-back{font-size:10px;padding:6px 6px 10px}}
+
+.academy-quick-question{display:block;font-size:12px;color:#365f4b;margin:18px 0 5px}
+.academy-quick-question textarea{display:block;min-height:65px;width:100%;resize:vertical;margin-top:8px;padding:11px 12px;
+ border:1px solid #c5b69b;background:#fffbf2;color:#294e3e;font-size:12px;line-height:1.8;outline:none}
+.academy-quick-question textarea:focus{border-color:#528270}
