@@ -88,3 +88,13 @@ function paintCreature(e){
   ctx.save();if(e.elite){ctx.shadowColor='#ffd57e';ctx.shadowBlur=12}
   var sz=e.r*3.5;ctx.drawImage(foxArt,e.x-sz*.5,e.y-sz*.8,sz,sz);ctx.restore();return true;
 }
+
+/* Bamboo clusters reuse an authored image rather than drawing vector ellipses
+   on every frame. World positions stay fixed across saves. */
+var bambooArt=new Image();bambooArt.src='assets/jade-bamboo.svg';
+function paintBambooStand(x,y,scale){
+  if(!isArtReady(bambooArt))return false;
+  var width=76*scale,height=94*scale;
+  ctx.save();ctx.fillStyle='#193d3140';ctx.beginPath();ctx.ellipse(x+6,y+2,width*.48,width*.13,0,0,Math.PI*2);ctx.fill();
+  ctx.drawImage(bambooArt,x-width*.5,y-height,width,height);ctx.restore();return true;
+}
