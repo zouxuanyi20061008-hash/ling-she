@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="232" viewBox="0 0 288 232" shape-rendering="crispEdges">
+<!-- Qinglan mountain shrine: transparent, layered pixel art -->
+<path d="M15 207h259v17H15z" fill="#304b45" opacity=".5"/>
+<path d="M28 196h233v18H28z" fill="#556f66"/>
+<path d="M35 191h219v11H35z" fill="#a5b29b"/>
+<path d="M47 185h195v10H47z" fill="#d5caa7"/>
+<path d="M52 177h185v11H52z" fill="#687d70"/>
+<path d="M53 92h182v90H53z" fill="#263f40"/>
+<path d="M62 98h164v77H62z" fill="#94704e"/>
+<path d="M68 102h152v69H68z" fill="#4d4840"/>
+<path d="M75 106h138v63H75z" fill="#324b45"/>
+<path d="M82 110h123v55H82z" fill="#547465"/>
+<path d="M95 110h14v55H95zm83 0h14v55h-14z" fill="#ae8556"/>
+<path d="M99 111h4v53h-4zm83 0h4v53h-4z" fill="#ebc991"/>
+<path d="M110 122h68v43h-68z" fill="#293d3c"/>
+<path d="M118 128h52v31h-52z" fill="#b59a65"/>
+<path d="M125 132h38v22h-38z" fill="#3a5f56"/>
+<path d="M138 134h12v17h-12z" fill="#e0d2a4"/>
+<path d="M141 138h6v10h-6z" fill="#7b9d7a"/>
+<path d="M39 94h209v14H39z" fill="#322f32"/>
+<path d="M46 97h196v7H46z" fill="#bb955f"/>
+<path d="M10 81l29-13 21-20 30 5 28-21h52l28 21 30-5 21 20 29 13-14 17-32-8-31 10H87L56 90l-32 8z" fill="#1b383e"/>
+<path d="M18 78l24-14 23-12 25 6 29-21h50l29 21 25-6 23 12 24 14-31-2-27-11-31 12H88L57 65 30 76z" fill="#56877e"/>
+<path d="M33 70l30-11 25 7 33-23h46l33 23 25-7 30 11-28-1-29-4-31 12H91L60 65l-29 4z" fill="#86aa8e"/>
+<path d="M35 79l26-7 27 13h112l27-13 26 7-15 12-35-6-30 10H85L55 85l-35 6z" fill="#355b58"/>
+<path d="M24 90l30-4 31 11h118l31-11 30 4-9 8-28-4-24 11H85L61 94l-28 4z" fill="#d5b57c"/>
+<path d="M70 63h17v5H70zm32-16h18v5h-18zm37-8h16v5h-16zm29 8h18v5h-18zm32 16h17v5h-17z" fill="#c3d4ab"/>
+<path d="M47 175h26v8H47zm169 0h26v8h-26z" fill="#b08e5e"/>
+<path d="M55 182h18v4H55zm160 0h18v4h-18z" fill="#e2c895"/>
+<path d="M17 200l13-19 5 19 8-14-2 19zm230 0l11-22 6 22 9-15-3 20z" fill="#477755"/>
+<path d="M36 205h23v4H36zm196 0h23v4h-23z" fill="#d2c7a4"/>
+</svg>
