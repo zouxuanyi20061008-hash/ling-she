@@ -38,6 +38,7 @@ function paintStoneRoad(){
   scenePathGeometry();ctx.strokeStyle='#324c3a88';ctx.lineWidth=96;ctx.stroke();
   scenePathGeometry();ctx.strokeStyle='#c0ad80';ctx.lineWidth=82;ctx.stroke();
   scenePathGeometry();ctx.strokeStyle=isArtReady(pathArt)?ctx.createPattern(pathArt,'repeat'):'#aa9675';ctx.lineWidth=71;ctx.stroke();
+  paintQinglanCourtyard();
   ctx.restore();
 }
 function paintStreamBanks(){
@@ -148,14 +149,92 @@ function landmarkClearing(x,y,pad){
     ||(Math.abs(x-streamCenter(1800))<135+pad&&Math.abs(y-1800)<142+pad);
 }
 function placeStable(arr,n,fn,salt,pad){
-  for(var i=0;i<n;i++){
+  // A bounded deterministic sampler; skipped water/roads do not lower the target count.
+  var spawned=0;
+  for(var i=0;i<n*12&&spawned<n;i++){
     var x=70+terrainHash(i,salt,7)*(SIZE-140);
     var y=70+terrainHash(i,salt,11)*(SIZE-140);
     if(terrainBlocked(x,y)||landmarkClearing(x,y,pad)||onQinglanRoad(x,y))continue;
-    arr.push(fn(x,y,i));
+    if(arr===obstacles&&arr.some(function(o){return Math.hypot(o.x-x,o.y-y)<o.r+33}))continue;
+    arr.push(fn(x,y,i));spawned++;
   }
 }
 function isLandmarkBlocked(x,y){
+  // Solid shrine plinth and two gate columns; the gate's central arch stays open.
   if(x>1985&&x<2175&&y>1568&&y<1643)return true;
-  return y>1555&&y<1660&&(Math.abs(x-1689)<15||Math.abs(x-1811)<15);
+  if(y>1555&&y<1660&&(Math.abs(x-1689)<15||Math.abs(x-1811)<15))return true;
+  for(var i=0;i<QINGLAN_LANTERNS.length;i++){
+    var p=QINGLAN_LANTERNS[i];
+    if(Math.hypot(x-p.x,y-p.y)<12)return true;
+  }
+  return false;
+}
+
+
+/* V5.5: authored landmark walkways and spiritual lanterns.
+   All placement uses world-space anchors, shared with collision and clearing.
+   This does not require changing existing save data. */
+var lanternArt=new Image();lanternArt.src='assets/spirit-lantern.svg';
+var QINGLAN_LANTERNS=[
+ {x:1673,y:1730,scale:.91},{x:1827,y:1730,scale:.91},
+ {x:1925,y:1701,scale:1.03},{x:2233,y:1701,scale:1.03}
+];
+function paintQinglanCourtyard(){
+  // Fork from the original east-west highway into the mountain gate
+  // and then around the shrine. No waterways are crossed by this spur.
+  if(camX>2430||camX+W<1540||camY>1950||camY+H<1400)return;
+  var pattern=isArtReady(pathArt)?ctx.createPattern(pathArt,'repeat'):'#a39b7d';
+  ctx.save();
+  ctx.fillStyle='#314a3b82';
+  ctx.beginPath();ctx.ellipse(2080,1684,171,107,-.06,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#b5ad8a';
+  ctx.beginPath();ctx.ellipse(2080,1684,156,91,-.06,0,Math.PI*2);ctx.fill();
+  ctx.save();ctx.beginPath();ctx.ellipse(2080,1684,147,83,-.06,0,Math.PI*2);ctx.clip();
+  ctx.fillStyle=pattern;ctx.fillRect(1910,1585,340,215);ctx.restore();
+
+  ctx.beginPath();ctx.moveTo(1750,1822);
+  ctx.bezierCurveTo(1750,1780,1750,1745,1750,1697);
+  ctx.bezierCurveTo(1760,1687,1809,1690,1856,1690);
+  ctx.bezierCurveTo(1930,1690,1970,1733,2078,1740);
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.strokeStyle='#365343aa';ctx.lineWidth=60;ctx.stroke();
+  ctx.strokeStyle='#b4a98c';ctx.lineWidth=52;ctx.stroke();
+  ctx.strokeStyle=pattern;ctx.lineWidth=43;ctx.stroke();
+
+  // Wear and repeated paving lines; intentionally deterministic.
+  ctx.globalAlpha=.45;ctx.strokeStyle='#e2d1a5';ctx.lineWidth=2;
+  for(var i=0;i<19;i++){
+    var x=1940+i*15,y=1640+Math.sin(i*.82)*11;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+11,y-2);ctx.stroke();
+  }
+  ctx.restore();
+}
+function paintShrineLanterns(now){
+  if(!isArtReady(lanternArt))return;
+  for(var i=0;i<QINGLAN_LANTERNS.length;i++){
+    var p=QINGLAN_LANTERNS[i];
+    if(p.x<camX-90||p.x>camX+W+90||p.y<camY-120||p.y>camY+H+25)continue;
+    var w=48*p.scale,h=84*p.scale,flame=p.y-h*.69;
+    ctx.save();
+    ctx.globalAlpha=.75;
+    ctx.globalCompositeOperation='screen';
+    var r=52+(Math.sin(now*.0023+i*2.71)*5);
+    var glow=ctx.createRadialGradient(p.x,flame,4,p.x,flame,r);
+    glow.addColorStop(0,'#fff3bd70');glow.addColorStop(.38,'#dbeca336');glow.addColorStop(1,'#81c4a000');
+    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(p.x,flame,r,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    ctx.drawImage(lanternArt,p.x-w*.5,p.y-h,w,h);
+  }
+}
+function paintLandmarkTitles(){
+  ctx.save();ctx.textAlign='center';
+  if(QINGLAN_GATE.x>camX-160&&QINGLAN_GATE.x<camX+W+160&&QINGLAN_GATE.y>camY-140&&QINGLAN_GATE.y<camY+H+160){
+    ctx.font='bold 14px serif';ctx.fillStyle='#f2e2b5';ctx.shadowColor='#172f2a';ctx.shadowBlur=4;
+    ctx.fillText('青岚山门',QINGLAN_GATE.x,QINGLAN_GATE.y-QINGLAN_GATE.h-11);
+  }
+  if(QINGLAN_SHRINE.x>camX-170&&QINGLAN_SHRINE.x<camX+W+170&&QINGLAN_SHRINE.y>camY-160&&QINGLAN_SHRINE.y<camY+H+160){
+    ctx.font='bold 15px serif';ctx.fillStyle='#f2e2b5';ctx.shadowColor='#172f2a';ctx.shadowBlur=4;
+    ctx.fillText('青岚祠',QINGLAN_SHRINE.x,QINGLAN_SHRINE.y-QINGLAN_SHRINE.h-12);
+  }
+  ctx.restore();
 }
