@@ -35,6 +35,7 @@ class CastRequest(BaseModel):
     question: str = Field(min_length=1,max_length=1000)
     background: str | None = Field(default=None,max_length=1200)
     background_confirmed: bool = False
+    ai_model: Literal["deepseek-chat","deepseek-reasoner"] = "deepseek-chat"
     value: str = Field(min_length=1,max_length=500)
     observation_first: int | None = Field(default=None,gt=0,le=99999999)
     observation_second: int | None = Field(default=None,gt=0,le=99999999)
@@ -100,17 +101,28 @@ def interpret_api(req: CastRequest, request: Request):
             "question": followup_question(req.question),
             "message": "请先根据求测问题补充一次现实背景，然后才可进入AI断事。"
         })
-    key = os.getenv("LLM_API_KEY","").strip()
-    if not key:
-        raise HTTPException(503,"AI 解读暂未启用，请使用「仅排盘」。站长需配置 LLM_API_KEY。")
-    code = os.getenv("AI_ACCESS_CODE","")
-    if code and not secrets.compare_digest(request.headers.get("x-ai-access-code",""),code):
-        raise HTTPException(401,"AI 访问码错误")
+    # 优先使用访问者本人临时提供的密钥；不存储、不记录、不回传到前端。
+    # 对 BYOK 固定使用 DeepSeek 官方 HTTPS 终端，避免自定义 URL 带来的密钥外泄。
+    personal_key = request.headers.get("x-user-api-key","").strip()
+    if personal_key and (not personal_key.startswith("sk-") or not 12 <= len(personal_key) <= 300
+                         or any(ord(c) < 33 or ord(c) > 126 for c in personal_key)):
+        raise HTTPException(422,"个人 API Key 格式不正确；请在藏经阁检查 DeepSeek 密钥。")
+    if personal_key:
+        key = personal_key
+        endpoint = "https://api.deepseek.com/chat/completions"
+        model = req.ai_model
+    else:
+        key = os.getenv("LLM_API_KEY","").strip()
+        if not key:
+            raise HTTPException(503,"尚未配置 AI：请在藏经阁填写个人 DeepSeek API Key，或让站长配置服务器密钥。")
+        code = os.getenv("AI_ACCESS_CODE","")
+        if code and not secrets.compare_digest(request.headers.get("x-ai-access-code",""),code):
+            raise HTTPException(401,"站长设置的 AI 访问码错误")
+        endpoint = os.getenv("LLM_API_URL","https://api.deepseek.com/chat/completions")
+        model = os.getenv("LLM_MODEL","deepseek-chat")
+        if not endpoint.startswith("https://"):
+            raise HTTPException(500,"模型 API 地址必须使用 HTTPS")
     rate_limit(request.client.host if request.client else "unknown")
-    endpoint = os.getenv("LLM_API_URL","https://api.deepseek.com/chat/completions")
-    model = os.getenv("LLM_MODEL","deepseek-chat")
-    if not endpoint.startswith("https://"):
-        raise HTTPException(500,"模型 API 地址必须使用 HTTPS")
     payload = json.dumps({"model":model,"messages":build_messages(req.question,chart,req.background.strip(),moving_line_text(chart)),
                           "temperature":0.5,"stream":False},ensure_ascii=False).encode("utf-8")
     outbound = UrlRequest(endpoint,data=payload,headers={"Content-Type":"application/json",

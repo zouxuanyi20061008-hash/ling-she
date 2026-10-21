@@ -162,3 +162,48 @@ def test_offline_cast_keeps_new_dual_layer_without_ai():
     assert chart["dual_layer"]["xiantian"]["relation"]=="用克体"
     assert "后天方位" in chart["dual_layer"]["houtian"]["title"]
     assert chart["reading_guide"]["relationship"]
+
+
+def test_personal_deepseek_key_is_transient_and_preferred(monkeypatch):
+    import importlib
+    import io, json
+    server=importlib.import_module("app.main")
+    monkeypatch.setenv("LLM_API_KEY","sk-site-owner-key-not-used")
+    monkeypatch.setenv("AI_ACCESS_CODE","server-only-access-code")
+    captured={}
+    def fake_call(outbound,timeout):
+        captured["url"]=outbound.full_url
+        captured["auth"]=outbound.get_header("Authorization")
+        captured["body"]=json.loads(outbound.data.decode("utf-8"))
+        return io.BytesIO(b'{"choices":[{"message":{"content":"sample answer"}}]}')
+    monkeypatch.setattr(server,"urlopen",fake_call)
+    client=TestClient(server.app)
+    payload={
+        "question":"朋友之间这件事该怎么看",
+        "value":"5,2",
+        "time_iso":"2026-10-22T02:15:00+09:00",
+        "background":"目前朋友正在沟通合作条款",
+        "background_confirmed":True,
+        "ai_model":"deepseek-reasoner"
+    }
+    result=client.post("/api/interpret",json=payload,headers={"X-User-API-Key":"sk-personaltest123456"})
+    assert result.status_code==200
+    assert result.json()["interpretation"]=="sample answer"
+    assert "sk-personaltest123456" not in result.text
+    assert "sk-site-owner-key-not-used" not in result.text
+    assert captured["url"]=="https://api.deepseek.com/chat/completions"
+    assert captured["auth"]=="Bearer sk-personaltest123456"
+    assert captured["body"]["model"]=="deepseek-reasoner"
+    assert all("sk-personaltest123456" not in msg["content"] for msg in captured["body"]["messages"])
+
+def test_reject_malformed_personal_deepseek_key(monkeypatch):
+    monkeypatch.delenv("LLM_API_KEY",raising=False)
+    payload={
+        "question":"此事如何处理","value":"5,2",
+        "time_iso":"2026-10-22T02:15:00+09:00",
+        "background":"正在犹豫是否与朋友合作","background_confirmed":True
+    }
+    client=TestClient(app)
+    r=client.post("/api/interpret",json=payload,headers={"X-User-API-Key":"secret-not-deepseek"})
+    assert r.status_code==422
+    assert "secret-not-deepseek" not in r.text

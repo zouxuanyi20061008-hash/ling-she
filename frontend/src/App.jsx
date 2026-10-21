@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import './book.css'
+import StudyHall from './StudyHall.jsx'
 
 const pad = n => String(n).padStart(2, '0')
 const localInput = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
@@ -295,6 +296,9 @@ export default function App() {
   const [manualError, setManualError] = useState('')
   const [pendingAi, setPendingAi] = useState(false)
   const [aiAccessCode, setAiAccessCode] = useState('')
+  const [personalApiKey, setPersonalApiKey] = useState('')
+  const [aiModel, setAiModel] = useState('deepseek-chat')
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [background, setBackground] = useState('')
   const [backgroundAsked, setBackgroundAsked] = useState(false)
   const [backgroundOpen, setBackgroundOpen] = useState(false)
@@ -374,7 +378,8 @@ export default function App() {
     const req = {
       question, value, time_iso: localIsoWithOffset(datetime), independent_yin: independentYin,
       background: requestInterpretation ? background.trim() : null,
-      background_confirmed: requestInterpretation
+      background_confirmed: requestInterpretation,
+      ai_model: aiModel
     }
     if (numbers) {
       req.observation_first = numbers.first
@@ -390,7 +395,11 @@ export default function App() {
     }
     try {
       const response = await fetch(`${ApiUrl}${requestInterpretation ? '/api/interpret' : '/api/cast'}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', ...(requestInterpretation && aiAccessCode ? { 'X-AI-Access-Code': aiAccessCode } : {}) }, body: JSON.stringify(req)
+        method: 'POST', headers: {
+          'Content-Type': 'application/json',
+          ...(requestInterpretation && personalApiKey.trim() ? { 'X-User-API-Key': personalApiKey.trim() } : {}),
+          ...(requestInterpretation && !personalApiKey.trim() && aiAccessCode ? { 'X-AI-Access-Code': aiAccessCode } : {})
+        }, body: JSON.stringify(req)
       })
       const data = await response.json()
       if (!response.ok) {
@@ -469,7 +478,17 @@ export default function App() {
             <div className="book-edition">以象观心 · 观境察势</div>
           </div>
         </div>
-        <div className="book-serial">心易手卷 · 卷一</div>
+        <div className="book-head-actions">
+          <span className="book-serial">心易手卷 · 卷一</span>
+          <button type="button" className="book-settings" onClick={()=>setSettingsOpen(true)} aria-label="打开藏经阁与设置" title="藏经阁 · 学习与设置">
+            <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 3h13a1 1 0 0 1 1 1v16H6a3 3 0 0 0 0-6h13M6 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3"/>
+              <path d="M9 7h7M9 11h5"/>
+            </svg>
+            <span>藏经阁</span>
+            <small>设置</small>
+          </button>
+        </div>
       </header>
       <nav className="book-steps" aria-label="排卦步骤">
         {['问事','观卦','明理'].map((label,i)=>
@@ -507,7 +526,10 @@ export default function App() {
             </select>
           </label>
         </div>
-        <details className="mt-4 text-sm text-moss"><summary className="cursor-pointer select-none">AI 解卦访问码（站长设置后才需要）</summary><input type="password" autoComplete="off" className="field mt-2 md:max-w-lg" placeholder="可选，不保存在网站中" value={aiAccessCode} onChange={e => setAiAccessCode(e.target.value)}/></details>
+        <div className="book-settings-hint">
+          <span>初学梅花？可到藏经阁读原典、上入门课。</span>
+          <button type="button" onClick={()=>setSettingsOpen(true)}>古籍 · 教程 · API 设置 ↗</button>
+        </div>
         <div className="book-aux mt-6">
           <button className="book-main-action" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
           <button className="book-second-action" onClick={() => submit(true)} disabled={busy || !question.trim() || !value.trim()}>排盘 + AI 解读</button>
@@ -568,11 +590,10 @@ export default function App() {
         <section className="book-ai">
           <h3>以卦问事 · 深入解读</h3>
           <p>免费易理解读已在上方呈现。要结合你当下的真实处境分析，可再补充一次背景后调用 AI；若尚未配置模型密钥，仍可阅读完整基础卦解。</p>
-          <details className="my-3 text-sm text-moss">
-            <summary>AI 访问码（站长设置后才需要）</summary>
-            <input type="password" autoComplete="off" className="field mt-2" value={aiAccessCode}
-              onChange={e=>setAiAccessCode(e.target.value)} placeholder="如未设置访问码，可留空"/>
-          </details>
+          <div className="book-settings-hint" style={{margin:'12px 0'}}>
+            <span>{personalApiKey ? '个人 DeepSeek 密钥已临时填写' : '如需 AI，请先在「藏经阁 · 设定」配置密钥。'}</span>
+            <button type="button" onClick={()=>setSettingsOpen(true)}>API 设置 ↗</button>
+          </div>
           <button className="book-main-action" disabled={busy} onClick={()=>{
             if(!backgroundAsked || !background.trim()) {setBackgroundOpen(true);return}
             submit(true,manualOverride,true,observationOverride)
@@ -591,6 +612,8 @@ export default function App() {
       </div>
       <footer className="book-epilogue">梅花心易 · 心念起卦，观境察势　｜　传统卦象仅作文化研究与反思参考，不作确定性预测</footer>
     </div>
+    {settingsOpen && <StudyHall onClose={()=>setSettingsOpen(false)} apiKey={personalApiKey} setApiKey={setPersonalApiKey}
+      aiModel={aiModel} setAiModel={setAiModel} accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>}
     {manualOpen && <ManualDialog problem={manualProblem} draft={manualDraft} setDraft={setManualDraft}
       error={manualError} onClose={() => setManualOpen(false)} onConfirm={confirmManual} busy={busy}/>}
     {observationOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">

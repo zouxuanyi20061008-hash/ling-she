@@ -160,3 +160,27 @@ body { background:#ded6c3; }
   .book-leaf.next,.book-leaf.prev{animation:none!important}
   .book-main-action,.book-second-action{transition:none}
 }
+
+
+/* 藏经阁入口：朱砂金线的书房手卷签 */
+.book-head-actions{display:flex;align-items:center;gap:13px}
+.book-settings{display:inline-flex;align-items:center;gap:7px;min-height:42px;
+  border:1px solid #a69472;background:#ede4d2;padding:8px 13px;color:#2b5a4a;
+  font-size:13px;letter-spacing:.05em;position:relative;box-shadow:2px 3px 0 rgba(65,60,40,.1);
+  transition:transform .18s,background .18s,border-color .18s;
+}
+.book-settings:before{content:"";position:absolute;width:3px;left:0;top:4px;bottom:4px;background:#b76749}
+.book-settings:hover{background:#f6ecda;border-color:#547968;transform:translateY(-1px)}
+.book-settings small{font-size:9px;color:#a2765d;border-left:1px solid #c4b392;padding-left:8px}
+.book-settings-hint{border:1px solid #d2c3a3;background:#f6f0e3;padding:12px 15px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;
+  font-size:11px;color:#6c715f;line-height:1.7;margin-top:16px
+}
+.book-settings-hint button{color:#205c49;text-decoration:underline;text-underline-offset:3px;font-size:11px}
+@media(max-width:620px){
+  .book-head-actions{gap:5px}
+  .book-settings{padding:8px;gap:5px;font-size:11px;min-height:38px}
+  .book-settings svg{width:16px;height:16px}
+  .book-settings small{display:none}
+  .book-serial{display:none}
+}
