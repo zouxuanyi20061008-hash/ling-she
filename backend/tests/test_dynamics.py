@@ -73,7 +73,7 @@ def test_month_only_never_fakes_day_clash():
 
 def test_classic_tianshan_dun_second_yao_returns_to_control():
     # 《增删卜易》日辰章：天山遁二爻官鬼午火变子孙亥水。
-    chart=cast_six_yao([8,9,7,7,7,7],day_ganzhi="戊午",month_branch="申")
+    chart=cast_six_yao([8,6,7,7,7,7],day_ganzhi="戊午",month_branch="申")
     assert chart["ben_gua"]["full_name"]=="天山遁"
     assert chart["bian_gua"]["full_name"]=="天风姤"
     assert chart["dong_yao"]==[2]
@@ -127,7 +127,7 @@ def test_all_64_hexagrams_with_six_possible_single_movers_have_sound_edges():
 
 
 def test_rest_api_returns_same_deterministic_dynamics_to_llm(monkeypatch):
-    request={"numbers":[8,9,7,7,7,7],"day_ganzhi":"戊午","month_branch":"申"}
+    request={"numbers":[8,6,7,7,7,7],"day_ganzhi":"戊午","month_branch":"申"}
     result=TestClient(app).post("/api/liuyao/cast",json=request)
     assert result.status_code==200
     dynamics=result.json()["line_dynamics"]
