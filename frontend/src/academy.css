@@ -500,3 +500,42 @@
   .atlas-choose-page,.atlas-choice-book{animation:none!important}
   .atlas-logo-button .atlas-seal{transition:none}
 }
+
+
+/* 六爻功能 · 原忌仇神的实盘定位。不做额外花哨动画。 */
+.spirit-panel{margin:18px 0 16px;padding:17px 15px;border:1px solid #b6b79b;
+  background:#f4f1e4;color:#325541}
+.spirit-panel-top{display:flex;justify-content:space-between;gap:10px;align-items:center;
+  border-bottom:1px solid #d0c6aa;padding-bottom:10px;font-size:11px;color:#977451}
+.spirit-panel-top strong{font-size:11px;color:#365d48}
+.spirit-panel>h3{font-size:19px;color:#285540;margin:15px 0 5px}
+.spirit-panel>p,.spirit-intro,.spirit-selected p,.spirit-boundary,
+.spirit-transform p{font-size:11px;line-height:2;color:#687864}
+.spirit-role-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;margin:15px 0}
+.spirit-role-grid button{padding:10px 5px;min-height:99px;border:1px solid #c1b699;
+  background:#eee7d7;display:flex;align-items:center;flex-direction:column;
+  justify-content:center;gap:3px;color:#465f4a}
+.spirit-role-grid button:hover:enabled{border-color:#7f9b83;background:#e3eadc}
+.spirit-role-grid button.selected{background:#315b45;border-color:#315b45;color:#fff2d7}
+.spirit-role-grid strong{font-size:15px}
+.spirit-role-grid span{font-size:13px}
+.spirit-role-grid small{font-size:10px}
+.spirit-role-grid em{font-size:10px;font-style:normal;opacity:.83}
+.spirit-role-grid button:disabled{opacity:.6}
+.spirit-selected{background:#fff9ec;border-left:3px solid #b18b53;padding:12px 14px}
+.spirit-selected>span{font-size:12px;color:#a36c4c;font-weight:600}
+.spirit-selected>strong{display:block;margin-top:6px;font-size:11px;line-height:2;color:#295b44}
+.spirit-transform{padding:10px;margin-top:12px;border:1px solid #d8ccb2;background:#f9f4e7;
+  font-size:11px;color:#437255}
+.spirit-transform summary{cursor:pointer}
+.spirit-boundary{border-top:1px solid #d8ccb2;margin:13px 0 9px;padding-top:11px}
+.spirit-panel>a{font-size:11px;color:#387253;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:650px){
+  .spirit-panel{padding:12px 9px}
+  .spirit-role-grid{gap:5px}
+  .spirit-role-grid button{padding:9px 2px;min-height:86px}
+  .spirit-role-grid strong{font-size:13px}
+  .spirit-role-grid small,.spirit-role-grid em{font-size:9px}
+  .spirit-role-grid span{font-size:11px}
+}

@@ -119,7 +119,55 @@ function YongshenGuide({chart,chosen,onChoose,busy}) {
   </section>
 }
 
-function NajiaBoard({chart}) {
+
+const RELATION_ROLES=[
+  {name:'用神',desc:'所问之象'},
+  {name:'原神',desc:'五行生用神'},
+  {name:'忌神',desc:'五行克用神'},
+  {name:'仇神',desc:'克原神 · 生忌神'}
+]
+function SpiritRelationsPanel({chart,activeRole,onChange,busy}) {
+  const study=chart.spirit_relations
+  if(!study)return <section className="spirit-panel">
+    <div className="spirit-panel-top"><span>第六式 · 推原忌仇</span><strong>选定关注对象后解锁</strong></div>
+    <p>先在上方「因事取用」中选择父母、官鬼、兄弟、妻财、子孙或世应，再查看这一卦的五行支持与制约关系。</p>
+  </section>
+  if(study.status==='not_visible')return <section className="spirit-panel" aria-live="polite">
+    <div className="spirit-panel-top"><span>第六式 · 推原忌仇</span><strong>本卦不现</strong></div>
+    <p>{study.note}</p>
+    <a href={study.reference} target="_blank" rel="noopener noreferrer">阅读《增删卜易》原典 ↗</a>
+  </section>
+  const selected=study.roles[activeRole]||study.roles['用神']
+  return <section className="spirit-panel" aria-label="原神忌神仇神关系分析">
+    <div className="spirit-panel-top"><span>第六式 · 推原忌仇</span><strong>以{study.focus_element}为关注五行</strong></div>
+    <h3>五行之间，如何相生相克？</h3>
+    <p className="spirit-intro">已按你选定的「{study.basis}」定位。选择下列任一关系，盘中实际出现的本卦爻位会相应标注。</p>
+    <div className="spirit-role-grid">
+      {RELATION_ROLES.map(r=>{
+        const data=study.roles[r.name]
+        return <button type="button" className={activeRole===r.name?'selected':''}
+          aria-pressed={activeRole===r.name} disabled={busy} onClick={()=>onChange(r.name)} key={r.name}>
+          <strong>{r.name}</strong><span>{data.element}行</span><small>{r.desc}</small>
+          <em>{data.visible?data.positions.length+' 爻可见':'本卦未见'}</em>
+        </button>
+      })}
+    </div>
+    <div className="spirit-selected" aria-live="polite">
+      <span>当前查看 · {activeRole} · {selected.element}行</span>
+      <p>{selected.description}</p>
+      <strong>{selected.visible?'本卦：'+selected.lines.map(l=>POS[l.position-1]+'爻 '+l.ganzhi+(l.moving?'（动）':'')).join('、'):'当前本卦没有符合此关系的可见爻'}</strong>
+      {selected.moving_positions.length>0&&<p>发动爻：{selected.moving_positions.map(i=>POS[i-1]+'爻').join('、')}。发动不等于必然能生克，还要结合实际日月、动变等条件。</p>}
+    </div>
+    {study.moving_transforms.length>0&&<details className="spirit-transform">
+      <summary>查看动爻变出干支（{study.moving_transforms.length} 爻）</summary>
+      <p>{study.moving_transforms.map(l=>POS[l.position-1]+'爻 → '+l.ganzhi+'（'+l.element+'）').join('、')}。这里只列变化，不自动判断回头生克。</p>
+    </details>}
+    <p className="spirit-boundary">{study.note}</p>
+    <a href={study.reference} target="_blank" rel="noopener noreferrer">《增删卜易》· 用神元神忌神仇神章 ↗</a>
+  </section>
+}
+
+function NajiaBoard({chart,roleView='用神'}) {
   const [selected,setSelected]=useState(0)
   const [changed,setChanged]=useState(false)
   const pal=chart.eight_palaces?.ben
@@ -127,7 +175,11 @@ function NajiaBoard({chart}) {
   const all=changed?chart.bian_najia_lines:chart.najia_lines
   const detail=all?.[selected]
   const focus=chart.focus
-  const highlighted=changed?focus?.transformed_positions:focus?.primary_positions
+  const selectedRelation=chart.spirit_relations?.roles?.[roleView]
+  const highlighted=changed?[]:(selectedRelation?.positions??focus?.primary_positions)
+  useEffect(()=>{
+    if(!changed&&selectedRelation?.positions?.length)setSelected(selectedRelation.positions[0]-1)
+  },[roleView,changed,chart.spirit_relations])
   useEffect(()=>{
     if(focus?.primary_positions?.length)setSelected(focus.primary_positions[0]-1)
   },[focus?.category])
@@ -161,7 +213,10 @@ function NajiaBoard({chart}) {
         </button>
       })}
     </div>
-    {focus&&<div className="yongshen-najia-hint">金线标记 · {focus.category} {changed?'（变卦同类仅供对照）':'（本卦候选位置）'}</div>}
+    {focus&&<div className="yongshen-najia-hint">
+      {changed?'变卦仅作对照，不把本卦原忌仇神的位置直接套用到变卦':
+        '金线标记 · '+(selectedRelation?'本卦'+roleView+'（'+selectedRelation.element+'）':'本卦'+focus.category+'候选位置')}
+    </div>}
     {detail&&<article className="najia-focused">
       <span className="najia-learning">逐爻研习 · 点选上方任意一爻</span>
       <h4>{POS[selected]}爻 · {detail.ganzhi} · {detail.liuqin}{detail.moving?' · 动':''}</h4>
@@ -224,6 +279,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [monthBranch,setMonthBranch]=useState('')
   const [calendarBusy,setCalendarBusy]=useState(false)
   const [focusLiugin,setFocusLiugin]=useState('')
+  const [roleView,setRoleView]=useState('用神')
   const requestNumber=useRef(0)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
@@ -243,7 +299,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
     if(lines.length===6)process(lines,day,month)
   }
   function chooseFocus(next){
-    setFocusLiugin(next);setAnswer('');setError('')
+    setFocusLiugin(next);setRoleView('用神');setAnswer('');setError('')
     if(lines.length===6)process(lines,dayGanzhi,monthBranch,next)
   }
   function addLine(value,faces){
@@ -261,7 +317,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
     },800)
   }
-  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('')}
+  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setRoleView('用神')}
   async function interpret(){
     if(!chart||busy||calendarBusy)return
     if(!question.trim()||background.trim().length<2){setError('请填写所问之事，并补充一次现实背景。');return}
@@ -323,14 +379,15 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
             <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
-            <NajiaBoard chart={chart}/>
+            <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
+            <NajiaBoard chart={chart} roleView={roleView}/>
             <div className="academy-scope">{chart.note}</div>
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
         </section>
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位，真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>

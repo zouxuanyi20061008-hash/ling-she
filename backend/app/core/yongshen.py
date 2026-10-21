@@ -87,7 +87,7 @@ def focus_six_yao(chart: dict, focus: str | None = None) -> dict:
             "本卦同类六亲多现，暂列出全部候选；需继续结合动静、日月与事情本身研究，不能擅自挑一爻当唯一用神。"
             if len(positions)>1 and focus not in ("世爻","应爻") else
             "此为角色位置参考，并非自动确定吉凶。" if focus in ("世爻","应爻") else
-            "标出本卦对应六亲，不代表已完成用神旺衰、原神忌神或应期判断。"
+            "标出本卦对应六亲，原神忌神仇神可进一步按五行关系定位；但用神旺衰与应期仍未完成。"
         ),
     }
     return chart
