@@ -281,3 +281,64 @@
   .calendar-findings span{font-size:10px}
   .najia-row>b{font-size:10px}
 }
+
+/* 取用工坊 / V4：可点击的雕版标签、朱砂批注、六爻金线定位 */
+.yongshen-volume{margin:22px 0 18px;padding:17px 16px 17px;position:relative;overflow:hidden;
+  border:1px solid #bdab86;background:
+  radial-gradient(circle at 105% -15%,rgba(230,212,170,.7),transparent 37%),
+  repeating-linear-gradient(110deg,transparent 0 13px,rgba(88,64,41,.012) 14px),
+  #f9f1df;box-shadow:2px 4px 0 rgba(105,85,51,.1)}
+.yongshen-volume::before{content:"";position:absolute;inset:7px;border:1px solid rgba(169,133,81,.2);pointer-events:none}
+.yongshen-header{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative}
+.yongshen-header>div>span{font-size:10px;color:#a16e4a;letter-spacing:.2em}
+.yongshen-header h3{font-size:20px;color:#244e3a;margin:7px 0;letter-spacing:.08em;font-weight:650}
+.yongshen-sign{flex-shrink:0;font-size:21px;color:#b25f49;display:grid;place-items:center;
+ width:44px;height:48px;border:2px double #b56c4d;transform:rotate(4deg);background:#fff4df}
+.yongshen-overview{font-size:11px;line-height:2;color:#777561;margin:13px 0 16px;position:relative}
+.yongshen-overview strong{color:#325d49}
+.yongshen-choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;position:relative}
+.yongshen-choices button{display:flex;align-items:center;flex-direction:column;gap:3px;justify-content:center;
+ min-height:82px;padding:10px 4px 9px;background:#eee4ce;color:#586e58;
+ border:1px solid #ccba94;transition:transform .18s,background .18s;position:relative}
+.yongshen-choices button:hover:enabled{background:#e0e8da;transform:translateY(-2px);border-color:#8caa90}
+.yongshen-choices button.active{background:#294f40;color:#f8f0dd;border-color:#295541;
+ box-shadow:inset 0 0 0 3px rgba(236,219,179,.15)}
+.yongshen-choices button:disabled{opacity:.62;cursor:wait}
+.yongshen-choice-mark{font-size:21px;font-weight:650;line-height:1.2}
+.yongshen-choices b{font-size:12px;white-space:nowrap}
+.yongshen-choices small{font-size:9px;opacity:.77;white-space:nowrap}
+.yongshen-unselected{padding:14px;margin-top:15px;font-size:11px;line-height:1.9;
+ border:1px dashed #bbaa88;background:#f7f0e2;color:#857a65;position:relative}
+.yongshen-selection{margin-top:15px;background:#fdf8eb;border:1px solid #d4c2a2;
+ padding:15px 16px;position:relative}
+.yongshen-selection-kicker{font-size:11px;color:#a4624d;letter-spacing:.1em}
+.yongshen-selection-kicker span{font-size:10px;color:#a49a86}
+.yongshen-selection h4{font-size:16px;margin:7px 0;color:#2d5c47}
+.yongshen-selection>p:not(.yongshen-selection-kicker){font-size:11px;color:#677666;line-height:2;margin:4px 0}
+.yongshen-example-list{display:flex;gap:6px;flex-wrap:wrap;margin:13px 0}
+.yongshen-example-list span{font-size:10px;padding:5px 8px;background:#e9edde;
+ border:1px solid #c8d1bb;color:#42644c}
+.yongshen-diagnosis{padding:12px 14px;background:#e4e9d9;border-left:3px solid #4d7759}
+.yongshen-diagnosis strong{font-size:12px;color:#27543d}
+.yongshen-diagnosis p{font-size:11px;line-height:1.85;margin:5px 0;color:#677462}
+.yongshen-classics{border-top:1px solid #d5c3a1;margin-top:15px;padding-top:10px;
+ display:flex;align-items:center;flex-wrap:wrap;gap:9px 15px;position:relative}
+.yongshen-classics span{font-size:10px;color:#a8825e;letter-spacing:.1em}
+.yongshen-classics a{color:#2d654c;font-size:10px;text-decoration:underline;text-underline-offset:3px}
+.najia-row.yongshen-highlight{background:#fff0ca;border-left:4px solid #bb8e43;
+ box-shadow:inset 0 0 0 1px rgba(163,129,68,.25)}
+.najia-row.yongshen-highlight.selected{background:#e4edcf;border-left-color:#aa7053}
+.yongshen-najia-hint{font-size:11px;color:#8c754c;background:#f6edcf;
+ padding:10px 13px;border:1px dashed #c7ae73;margin:5px 16px 0}
+@media(max-width:650px){
+  .yongshen-volume{margin:15px 0;padding:13px 9px}
+  .yongshen-header h3{font-size:18px}
+  .yongshen-choices{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+  .yongshen-choices button{padding:9px 1px;min-height:73px}
+  .yongshen-choices b{font-size:11px}
+  .yongshen-choices small{font-size:8px}
+  .yongshen-choice-mark{font-size:19px}
+  .yongshen-selection{padding:12px 9px}
+  .yongshen-najia-hint{margin:5px 9px 0;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.yongshen-choices button{transition:none!important}}

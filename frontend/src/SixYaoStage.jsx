@@ -68,6 +68,57 @@ function CalendarControls({chart,day,month,onChange,busy}) {
   </section>
 }
 
+
+const FOCUS_OPTIONS=[
+  {id:'父母',subtitle:'长辈 · 契约',icon:'文'},
+  {id:'官鬼',subtitle:'功名 · 约束',icon:'官'},
+  {id:'兄弟',subtitle:'同辈 · 朋友',icon:'友'},
+  {id:'妻财',subtitle:'财产 · 收益',icon:'财'},
+  {id:'子孙',subtitle:'子女 · 动物',icon:'子'},
+  {id:'世爻',subtitle:'自身 · 自方',icon:'世'},
+  {id:'应爻',subtitle:'对方 · 他方',icon:'应'}
+]
+function YongshenGuide({chart,chosen,onChoose,busy}) {
+  const focus=chart.focus
+  return <section className="yongshen-volume" aria-label="六爻用神取象教学">
+    <header className="yongshen-header">
+      <div><span>第五式 · 因事取用</span><h3>先明所问，再寻其神。</h3></div>
+      <span className="yongshen-sign">神</span>
+    </header>
+    <p className="yongshen-overview">《增删卜易》按所问对象分类用神。这里<strong>由你选择关注的对象</strong>，系统只标出本卦对应的六亲或世应，不会由 AI 自动替你确定。</p>
+    <div className="yongshen-choices" role="group" aria-label="选择本次学习的用神类别">
+      {FOCUS_OPTIONS.map(x=><button key={x.id} type="button"
+        disabled={busy}
+        className={chosen===x.id?'active':''} aria-pressed={chosen===x.id}
+        onClick={()=>onChoose(chosen===x.id?'':x.id)}>
+        <span className="yongshen-choice-mark">{x.icon}</span>
+        <b>{x.id}</b><small>{x.subtitle}</small>
+      </button>)}
+    </div>
+    {!focus?<div className="yongshen-unselected">请先明确想观察的是谁、什么事。也可以不选，先学习完整卦盘。</div>:
+      <div className="yongshen-selection" aria-live="polite">
+        <p className="yongshen-selection-kicker">已选择 · {focus.category} <span>（由求测者确认）</span></p>
+        <h4>{focus.themes}</h4>
+        <p>{focus.why}</p>
+        <div className="yongshen-example-list">{focus.examples?.map(t=><span key={t}>{t}</span>)}</div>
+        <div className="yongshen-diagnosis">
+          <strong>{focus.found_in_ben?
+            '本卦相关位置：'+focus.primary_positions.map(i=>['初','二','三','四','五','上'][i-1]+'爻').join('、'):
+            '本卦不现所选六亲'}</strong>
+          <p>{focus.moving_positions.length?
+             '其中发动：'+focus.moving_positions.map(i=>['初','二','三','四','五','上'][i-1]+'爻').join('、'):
+             '本卦没有该类别的发动之爻。'}</p>
+          <p>{focus.note}</p>
+        </div>
+      </div>}
+    <div className="yongshen-classics">
+      <span>校读原典</span>
+      <a href="https://zh.wikisource.org/zh-hans/增删卜易/8" target="_blank" rel="noopener noreferrer">《增删卜易》· 用神章第八 ↗</a>
+      <a href="https://zh.wikisource.org/zh-hans/增删卜易/9" target="_blank" rel="noopener noreferrer">用神、元神、忌神、仇神章 ↗</a>
+    </div>
+  </section>
+}
+
 function NajiaBoard({chart}) {
   const [selected,setSelected]=useState(0)
   const [changed,setChanged]=useState(false)
@@ -75,6 +126,11 @@ function NajiaBoard({chart}) {
   const changedPal=chart.eight_palaces?.bian
   const all=changed?chart.bian_najia_lines:chart.najia_lines
   const detail=all?.[selected]
+  const focus=chart.focus
+  const highlighted=changed?focus?.transformed_positions:focus?.primary_positions
+  useEffect(()=>{
+    if(focus?.primary_positions?.length)setSelected(focus.primary_positions[0]-1)
+  },[focus?.category])
   if(!pal||!all)return null
   return <section className="najia-board" aria-label="六爻纳甲与世应教学盘">
     <header className="najia-header">
@@ -97,7 +153,7 @@ function NajiaBoard({chart}) {
         const lines=changed?chart.bian_gua.lines_bottom_to_top:chart.ben_gua.lines_bottom_to_top
         const role=row+1===pal.shi_position?'世':row+1===pal.ying_position?'应':''
         return <button key={line.position} type="button" role="listitem" aria-current={selected===row?'true':undefined}
-          className={'najia-row '+(selected===row?'selected ':'')+(line.moving?'moving':'')}
+          className={'najia-row '+(selected===row?'selected ':'')+(line.moving?'moving ':'')+(highlighted?.includes(row+1)?'yongshen-highlight':'')}
           onClick={()=>setSelected(row)}>
           <span>{POS[row]}<small>{line.moving?'动':''}</small></span>
           <span className="najia-strokes">{lines[row]===1?<i/>:<><i/><i/></>}</span>
@@ -105,6 +161,7 @@ function NajiaBoard({chart}) {
         </button>
       })}
     </div>
+    {focus&&<div className="yongshen-najia-hint">金线标记 · {focus.category} {changed?'（变卦同类仅供对照）':'（本卦候选位置）'}</div>}
     {detail&&<article className="najia-focused">
       <span className="najia-learning">逐爻研习 · 点选上方任意一爻</span>
       <h4>{POS[selected]}爻 · {detail.ganzhi} · {detail.liuqin}{detail.moving?' · 动':''}</h4>
@@ -166,14 +223,15 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [dayGanzhi,setDayGanzhi]=useState('')
   const [monthBranch,setMonthBranch]=useState('')
   const [calendarBusy,setCalendarBusy]=useState(false)
+  const [focusLiugin,setFocusLiugin]=useState('')
   const requestNumber=useRef(0)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
-  async function process(seq,day=dayGanzhi,month=monthBranch){
+  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin){
     const token=++requestNumber.current
     setCalendarBusy(true)
     try{
-      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null})})
+      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null})})
       const data=await response.json()
       if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'排盘失败')
       if(token===requestNumber.current)setChart(data)
@@ -183,6 +241,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   function updateCalendar(day,month) {
     setDayGanzhi(day);setMonthBranch(month);setAnswer('')
     if(lines.length===6)process(lines,day,month)
+  }
+  function chooseFocus(next){
+    setFocusLiugin(next);setAnswer('');setError('')
+    if(lines.length===6)process(lines,dayGanzhi,monthBranch,next)
   }
   function addLine(value,faces){
     if(lines.length>=6||busy)return
@@ -199,7 +261,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
     },800)
   }
-  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('')}
+  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('')}
   async function interpret(){
     if(!chart||busy||calendarBusy)return
     if(!question.trim()||background.trim().length<2){setError('请填写所问之事，并补充一次现实背景。');return}
@@ -210,6 +272,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       else if(apiConfig.aiAccessCode)headers['X-AI-Access-Code']=apiConfig.aiAccessCode
       const res=await fetch(api+'/api/liuyao/interpret',{method:'POST',headers,body:JSON.stringify({
         numbers:lines,day_ganzhi:dayGanzhi||null,month_branch:monthBranch||null,
+        focus_liuqin:focusLiugin||null,
         question,background,background_confirmed:true,ai_model:apiConfig.aiModel
       })})
       const data=await res.json()
@@ -259,6 +322,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
+            <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
             <NajiaBoard chart={chart}/>
             <div className="academy-scope">{chart.note}</div>
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
@@ -266,7 +330,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。真正的历法换算、用神取用及综合旺衰尚未实现。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
