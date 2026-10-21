@@ -54,14 +54,18 @@ function NumberExplanation({ chart }) {
   const upper = chart.method_numbers.upper
   const lower = chart.method_numbers.lower
   const isCharacter = origin.method?.startsWith('hanzi')
-  const upLabel = isCharacter ? '阳部 · 上卦' : '第一数 · 上卦'
-  const downLabel = isCharacter ? '阴部 · 下卦' : '第二数 / 时辰 · 下卦'
+  const isPair = origin.method === 'hanzi-pair'
+  const isObservation = origin.method === 'observation-confirmed'
+  const upLabel = isPair ? '前字 · 上卦' : isObservation ? '自定第一数 · 上卦' : isCharacter ? '阳部 · 上卦' : '第一数 · 上卦'
+  const downLabel = isPair ? '后字 · 下卦' : isObservation ? '自定第二数 · 下卦' : isCharacter ? '阴部 · 下卦' : '第二数 / 时辰 · 下卦'
   return <div className="mt-5 rounded-2xl border border-[#cad4c8] bg-white/80 p-5 md:p-7">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h3 className="font-serif text-2xl">阴阳取数 · 可核对的计算过程</h3>
       <span className="rounded-full bg-pale px-3 py-1 text-xs text-moss">{origin.structure || '数字起卦'}</span>
     </div>
     <p className="mt-2 text-sm leading-6 text-moss">{origin.yin_yang_rule || '阳数作上卦，阴数作下卦'}。{origin.ids && `原始 IDS：${origin.ids}`}</p>
+    {origin.observation && <p className="mt-2 text-sm text-moss">起卦契机：{origin.observation}</p>}
+    {origin.observation_reason && <p className="mt-2 text-sm text-moss">取数依据：{origin.observation_reason}</p>}
     <div className="mt-5 grid gap-3 md:grid-cols-2">
       <div className="rounded-xl bg-[#f0f1e8] px-5 py-5">
         <p className="text-xs tracking-widest text-moss">☀ {upLabel}</p>
@@ -139,8 +143,8 @@ function ManualDialog({ problem, draft, setDraft, error, onClose, onConfirm, bus
 }
 
 export default function App() {
-  const [question, setQuestion] = useState('最近是否适合开始一个新项目？')
-  const [value, setValue] = useState('明')
+  const [question, setQuestion] = useState('')
+  const [value, setValue] = useState('')
   const [dateValue, setDateValue] = useState(() => localInput(new Date()))
   const [independentYin, setIndependentYin] = useState('one')
   const [chart, setChart] = useState(null)
@@ -158,6 +162,11 @@ export default function App() {
   const [backgroundAsked, setBackgroundAsked] = useState(false)
   const [backgroundOpen, setBackgroundOpen] = useState(false)
   const [backgroundError, setBackgroundError] = useState('')
+  const [observationOpen, setObservationOpen] = useState(false)
+  const [observationProblem, setObservationProblem] = useState(null)
+  const [observationDraft, setObservationDraft] = useState({ first: '', second: '', reason: '' })
+  const [observationOverride, setObservationOverride] = useState(null)
+  const [observationError, setObservationError] = useState('')
 
   function clearResult() {
     setChart(null)
@@ -173,7 +182,18 @@ export default function App() {
     setPendingAi(withAi)
     setManualOpen(true)
   }
-  async function submit(withAi, override = manualOverride, confirmedContext = false) {
+  function openObservation(problem = null, withAi = false) {
+    setObservationProblem(problem)
+    setObservationDraft(observationOverride ? {
+      first: String(observationOverride.first),
+      second: String(observationOverride.second),
+      reason: observationOverride.reason
+    } : { first: '', second: '', reason: '' })
+    setObservationError('')
+    setPendingAi(withAi)
+    setObservationOpen(true)
+  }
+  async function submit(withAi, override = manualOverride, confirmedContext = false, numbers = observationOverride) {
     setBusy(true)
     setError('')
     setInterpretation('')
@@ -189,6 +209,11 @@ export default function App() {
       background: requestInterpretation ? background.trim() : null,
       background_confirmed: requestInterpretation
     }
+    if (numbers) {
+      req.observation_first = numbers.first
+      req.observation_second = numbers.second
+      req.observation_reason = numbers.reason
+    }
     if (override) {
       req.manual_first = override.yang
       req.manual_second = override.yin
@@ -203,6 +228,10 @@ export default function App() {
       const data = await response.json()
       if (!response.ok) {
         const detail = data.detail
+        if (detail?.code === 'NUMBERS_REQUIRED') {
+          openObservation(detail, withAi)
+          return
+        }
         if (detail?.code === 'MANUAL_REQUIRED') {
           openManual(detail, withAi)
           return
@@ -220,6 +249,26 @@ export default function App() {
     } finally { setBusy(false) }
   }
 
+  function confirmObservation() {
+    const first = Number(observationDraft.first)
+    const second = Number(observationDraft.second)
+    if (!/^\d+$/.test(observationDraft.first.trim()) || !/^\d+$/.test(observationDraft.second.trim()) ||
+        !Number.isSafeInteger(first) || !Number.isSafeInteger(second) ||
+        first < 1 || second < 1 || first > 99999999 || second > 99999999) {
+      setObservationError('请填写两个正整数（每个在 1～99999999 范围内）。')
+      return
+    }
+    if (observationDraft.reason.trim().length < 4) {
+      setObservationError('请简单说明这两个数是从什么现象或文字得来的。')
+      return
+    }
+    const next = { first, second, reason: observationDraft.reason.trim() }
+    setObservationOverride(next)
+    setManualOverride(null)
+    setObservationOpen(false)
+    submit(pendingAi, null, false, next)
+  }
+
   function confirmManual() {
     const yang = Number(manualDraft.yang)
     const yin = Number(manualDraft.yin)
@@ -235,8 +284,9 @@ export default function App() {
     }
     const override = { ...manualDraft, yang, yin }
     setManualOverride(override)
+    setObservationOverride(null)
     setManualOpen(false)
-    submit(pendingAi, override)
+    submit(pendingAi, override, false, null)
   }
 
   return <main className="min-h-screen bg-rice text-ink">
@@ -253,17 +303,18 @@ export default function App() {
       <section className="mt-8 rounded-3xl border border-[#d4dbd0] bg-white/70 p-5 md:p-8 shadow-sm">
         <div className="grid gap-5 md:grid-cols-2">
           <label className="md:col-span-2">
-            <span className="block mb-2 text-sm text-moss">你想探讨的问题</span>
-            <textarea className="field h-24 resize-y" maxLength={1000} value={question} onChange={e => { setQuestion(e.target.value); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
+            <span className="block mb-2 text-sm text-moss">你想问什么</span>
+            <textarea className="field h-24 resize-y" maxLength={1000} placeholder="把你现在真正想问的事情写在这里…" value={question} onChange={e => { setQuestion(e.target.value); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
           </label>
-          <label><span className="block mb-2 text-sm text-moss">起卦输入（单字 / 一个数字 / 两个数字）</span>
-            <input className="field" value={value} onChange={e => { setValue(e.target.value); setManualOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} placeholder="明 / 迷 / 王 / 3 / 3,6" />
+          <label><span className="block mb-2 text-sm text-moss">你想用什么起卦？</span>
+            <textarea rows={2} maxLength={500} className="field resize-y" value={value} onChange={e => { setValue(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} placeholder="明、迷茫、3、3,6，或写下看到听到的事情…" />
+            <span className="mt-2 block text-xs leading-5 text-moss/80">字、数字、声音、事物、偶然见闻，都可以作为起卦契机。</span>
           </label>
           <label><span className="block mb-2 text-sm text-moss">起卦时间（可以手动修改）</span>
-            <input className="field" type="datetime-local" value={dateValue} onChange={e => { setDateValue(e.target.value); setManualOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
+            <input className="field" type="datetime-local" value={dateValue} onChange={e => { setDateValue(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
           </label>
           <label className="md:col-span-2 text-sm text-moss">独体字阴数方案
-            <select value={independentYin} onChange={e => { setIndependentYin(e.target.value); setManualOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} className="field mt-2 md:max-w-lg">
+            <select value={independentYin} onChange={e => { setIndependentYin(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} className="field mt-2 md:max-w-lg">
               <option value="one">默认取 1（推荐）</option>
               <option value="hour">取所选时辰数（子=1，亥=12）</option>
             </select>
@@ -273,14 +324,18 @@ export default function App() {
         <div className="flex flex-wrap gap-3 mt-6 items-center">
           <button className="rounded-xl bg-moss text-white py-3 px-7 disabled:opacity-40" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
           <button className="rounded-xl border border-moss text-moss py-3 px-7 disabled:opacity-40" onClick={() => submit(true)} disabled={busy || !question.trim() || !value.trim()}>排盘 + AI 解读</button>
-          <button className="text-sm text-moss px-2 py-2 underline underline-offset-4" type="button" onClick={() => openManual(null, false)} disabled={busy}>手动确认拆字</button>
+          {[...value.trim()].length === 1 && /[\u3400-\u9fff]/u.test(value.trim()) &&
+            <button className="text-sm text-moss px-2 py-2 underline underline-offset-4" type="button" onClick={() => openManual(null, false)} disabled={busy}>手动确认拆字</button>}
+          <button className="text-sm text-moss px-2 py-2 underline underline-offset-4" type="button" onClick={() => openObservation(null, false)} disabled={busy || !value.trim()}>自定取数</button>
           <button className="text-sm text-moss px-2 py-2" type="button" onClick={() => { setDateValue(localInput(new Date())); setManualOverride(null); clearResult() }}>刷新为当前时间</button>
         </div>
         {manualOverride && <p className="mt-3 text-sm text-amber-800">当前使用人工确认：阳 {manualOverride.yang} 画，阴 {manualOverride.yin} 画。
           <button className="ml-2 underline" type="button" onClick={() => { setManualOverride(null); clearResult() }}>恢复自动拆字</button></p>}
+        {observationOverride && <p className="mt-3 text-sm text-amber-800">当前按自定取数：上卦 {observationOverride.first}，下卦 {observationOverride.second}；依据：{observationOverride.reason}。
+          <button className="ml-2 underline" type="button" onClick={() => { setObservationOverride(null); clearResult() }}>取消自定取数</button></p>}
         <p className="text-xs leading-6 text-moss/80 mt-5">
-          左右：左阳右阴；上下：上阳下阴；包围：外阳内阴；独体：整字为阳、1 或时辰为阴。结构与笔画不能可靠确认时，自动弹窗要求人工输入。
-          本工具采用简体常用笔画口径，辶与艹均按 3 画。
+          起卦不限制触发形式，取数却必须有依据。单字按我们制定的阴阳拆字规则；两字按前字、后字整字笔画；纯数字按数字法。
+          其他见闻和较长文字可「自定取数」，系统保留原始描述及取数依据，不让 AI 猜数字。
         </p>
         {busy && <p className="mt-4 text-moss">正在请求服务器…</p>}
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 text-red-700 p-4">{error}</p>}
@@ -305,6 +360,31 @@ export default function App() {
     </div>
     {manualOpen && <ManualDialog problem={manualProblem} draft={manualDraft} setDraft={setManualDraft}
       error={manualError} onClose={() => setManualOpen(false)} onConfirm={confirmManual} busy={busy}/>}
+    {observationOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">
+      <section role="dialog" aria-modal="true" aria-labelledby="observation-title" className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl bg-rice p-6 shadow-2xl md:p-8">
+        <p className="text-xs tracking-widest text-moss">心易 · 万物皆可起卦</p>
+        <h2 id="observation-title" className="mt-2 font-serif text-2xl">确认这次怎样取数</h2>
+        <p className="mt-3 text-sm leading-7 text-moss">{observationProblem?.message || '用什么起卦由你决定，但要留下取数依据。自定数只是一种明确约定，不冒充所有情境都有唯一古法。'}</p>
+        <p className="mt-3 text-sm text-ink">起卦契机：<b>{value}</b></p>
+        <div className="grid grid-cols-2 gap-3 mt-5">
+          <label className="text-sm text-moss">上卦取数
+            <input className="field mt-2" inputMode="numeric" type="number" min="1" max="99999999" value={observationDraft.first} onChange={e => setObservationDraft(d => ({...d, first:e.target.value}))} placeholder="例如 3"/>
+          </label>
+          <label className="text-sm text-moss">下卦取数
+            <input className="field mt-2" inputMode="numeric" type="number" min="1" max="99999999" value={observationDraft.second} onChange={e => setObservationDraft(d => ({...d, second:e.target.value}))} placeholder="例如 5"/>
+          </label>
+        </div>
+        <label className="block mt-4 text-sm text-moss">这两个数从何而来？
+          <textarea className="field mt-2 h-24 resize-y" maxLength={300} value={observationDraft.reason} onChange={e => setObservationDraft(d => ({...d, reason:e.target.value}))} placeholder="例如：窗外传来三声鸟叫，随后看见五个窗格，所以取3和5"/>
+        </label>
+        <p className="text-xs leading-6 mt-3 text-moss">这两个数按先天八卦序数分别取上、下卦，动爻按两数之和取余六。其他取数法可以以后扩展，不会自动乱套。</p>
+        {observationError && <p className="mt-3 text-sm text-red-700" role="alert">{observationError}</p>}
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button type="button" className="rounded-xl bg-moss text-white px-6 py-3" onClick={confirmObservation}>确认取数并排盘</button>
+          <button type="button" className="rounded-xl border border-moss/50 text-moss px-5 py-3" onClick={() => setObservationOpen(false)}>取消</button>
+        </div>
+      </section>
+    </div>}
     {backgroundOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">
       <section role="dialog" aria-modal="true" aria-labelledby="bg-title" className="w-full max-w-xl rounded-3xl bg-rice p-6 shadow-2xl md:p-8 max-h-[90vh] overflow-y-auto">
         <p className="text-xs tracking-widest text-moss">观境察势 · 只追问一次</p>

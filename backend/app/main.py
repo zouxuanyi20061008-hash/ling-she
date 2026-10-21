@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from .core.casting import cast
+from .core.casting import cast, ObservationNeedsNumbers
 from .core.strokes import UnsupportedCharacter
 from .prompts import build_messages
 from .clarification import followup_question
@@ -35,7 +35,10 @@ class CastRequest(BaseModel):
     question: str = Field(min_length=1,max_length=1000)
     background: str | None = Field(default=None,max_length=1200)
     background_confirmed: bool = False
-    value: str = Field(min_length=1,max_length=100)
+    value: str = Field(min_length=1,max_length=500)
+    observation_first: int | None = Field(default=None,gt=0,le=99999999)
+    observation_second: int | None = Field(default=None,gt=0,le=99999999)
+    observation_reason: str | None = Field(default=None,max_length=300)
     time_iso: datetime
     independent_yin: Literal["one","hour"] = "one"
     manual_first: int | None = Field(default=None,gt=0,le=100)
@@ -47,10 +50,17 @@ class CastRequest(BaseModel):
 def compute(req: CastRequest) -> dict:
     if (req.manual_first is None) != (req.manual_second is None):
         raise HTTPException(422,"手动模式必须同时提供阳部与阴部笔画")
+    if (req.observation_first is None) != (req.observation_second is None):
+        raise HTTPException(422,"自由取象必须同时提供上、下卦取数")
+    if req.observation_first is not None and req.manual_first is not None:
+        raise HTTPException(422,"手动拆字与自由取象不可同时选择")
     manual = (req.manual_first,req.manual_second) if req.manual_first is not None else None
+    observation = (req.observation_first,req.observation_second) if req.observation_first is not None else None
     parts = (req.manual_yang_part or "",req.manual_yin_part or "")
     try:
-        return cast(req.value,req.time_iso,manual,req.independent_yin,req.manual_structure,parts)
+        return cast(req.value,req.time_iso,manual,req.independent_yin,req.manual_structure,parts,observation,req.observation_reason)
+    except ObservationNeedsNumbers as exc:
+        raise HTTPException(422,{"code":"NUMBERS_REQUIRED","message":str(exc)}) from exc
     except UnsupportedCharacter as exc:
         raise HTTPException(422,{"code":"MANUAL_REQUIRED","message":str(exc),
                                  "structure":exc.structure,"ids":exc.ids,"character":req.value.strip()}) from exc
