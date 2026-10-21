@@ -20,6 +20,8 @@ from pydantic import BaseModel, Field
 from .core.casting import cast
 from .core.strokes import UnsupportedCharacter
 from .prompts import build_messages
+from .clarification import followup_question
+from .yaoci import moving_line_text
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
 LAN_REGEX = (
@@ -31,6 +33,8 @@ app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173","http:/
 
 class CastRequest(BaseModel):
     question: str = Field(min_length=1,max_length=1000)
+    background: str | None = Field(default=None,max_length=1200)
+    background_confirmed: bool = False
     value: str = Field(min_length=1,max_length=100)
     time_iso: datetime
     independent_yin: Literal["one","hour"] = "one"
@@ -78,6 +82,12 @@ def rate_limit(ip: str):
 @app.post("/api/interpret")
 def interpret_api(req: CastRequest, request: Request):
     chart = compute(req)
+    if not req.background_confirmed or not req.background or len(req.background.strip()) < 2:
+        raise HTTPException(428, {
+            "code": "BACKGROUND_REQUIRED",
+            "question": followup_question(req.question),
+            "message": "请先根据求测问题补充一次现实背景，然后才可进入AI断事。"
+        })
     key = os.getenv("LLM_API_KEY","").strip()
     if not key:
         raise HTTPException(503,"AI 解读暂未启用，请使用「仅排盘」。站长需配置 LLM_API_KEY。")
@@ -89,7 +99,7 @@ def interpret_api(req: CastRequest, request: Request):
     model = os.getenv("LLM_MODEL","deepseek-chat")
     if not endpoint.startswith("https://"):
         raise HTTPException(500,"模型 API 地址必须使用 HTTPS")
-    payload = json.dumps({"model":model,"messages":build_messages(req.question,chart),
+    payload = json.dumps({"model":model,"messages":build_messages(req.question,chart,req.background.strip(),moving_line_text(chart)),
                           "temperature":0.5,"stream":False},ensure_ascii=False).encode("utf-8")
     outbound = UrlRequest(endpoint,data=payload,headers={"Content-Type":"application/json",
                          "Authorization":f"Bearer {key}"},method="POST")

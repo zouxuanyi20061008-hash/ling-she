@@ -12,6 +12,17 @@ const ApiUrl = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? '' : `${w
 const STRUCTURES = ['左右', '上下', '半包围', '全包围', '左中右', '上中下', '独体', '其他']
 const initialManual = { structure: '其他', yangPart: '', yinPart: '', yang: '', yin: '' }
 
+function followupQuestion(question) {
+  if (/复合|分手|前任|挽回|和好/.test(question)) return '你们目前是断联、冷战，还是正在沟通中？双方是否有现实中的阻碍？'
+  if (/感情|恋爱|婚姻|结婚|对象|喜欢|桃花|相亲|男友|女友/.test(question)) return '你们目前是什么关系、相处到哪个阶段，有没有已经发生的现实阻碍？'
+  if (/(找|丢|不见|失物|寻找)/.test(question) && /(东西|物品|猫|狗|钥匙|手机|发簪|包|宠物)/.test(question)) return '最后一次确实见到它是在哪里、什么时候？你已经找过哪些地方？'
+  if (/跳槽|工作|职业|事业|求职|面试|创业|升职|公司|老板/.test(question)) return '你现在的工作或机会处于什么阶段，眼前最大的现实阻碍是什么？'
+  if (/考试|高考|学业|志愿|复读|录取|学校/.test(question)) return '目前的学习、成绩或录取情况是什么，眼前最需要解决的问题是什么？'
+  if (/财运|投资|赚钱|生意|收入|买卖|借钱/.test(question)) return '你现在面对的是哪项具体收入或金钱决策？已有的事实和风险是什么？'
+  if (/健康|生病|胸闷|症状|身体|失眠/.test(question)) return '你现在有哪些实际症状、持续多久、是否已接受医学评估？若有急症症状请先就医。'
+  return '请补充这件事现在的真实处境、已经发生的情况，以及眼前最关键的阻碍是什么？'
+}
+
 function SixLines({ lines, moving }) {
   return <div className="flex flex-col gap-2 items-center py-5" aria-label="六爻，自上而下展示">
     {[...lines].map((bit, i) => ({ bit, yao: i + 1 })).reverse().map(({ bit, yao }) =>
@@ -143,6 +154,10 @@ export default function App() {
   const [manualError, setManualError] = useState('')
   const [pendingAi, setPendingAi] = useState(false)
   const [aiAccessCode, setAiAccessCode] = useState('')
+  const [background, setBackground] = useState('')
+  const [backgroundAsked, setBackgroundAsked] = useState(false)
+  const [backgroundOpen, setBackgroundOpen] = useState(false)
+  const [backgroundError, setBackgroundError] = useState('')
 
   function clearResult() {
     setChart(null)
@@ -158,16 +173,22 @@ export default function App() {
     setPendingAi(withAi)
     setManualOpen(true)
   }
-  async function submit(withAi, override = manualOverride) {
+  async function submit(withAi, override = manualOverride, confirmedContext = false) {
     setBusy(true)
     setError('')
     setInterpretation('')
-    setChart(null)
+    if (!confirmedContext) setChart(null)
     const datetime = new Date(dateValue)
     if (Number.isNaN(datetime.getTime())) {
       setError('请输入有效日期和时间'); setBusy(false); return
     }
-    const req = { question, value, time_iso: localIsoWithOffset(datetime), independent_yin: independentYin }
+    const askBackground = withAi && !confirmedContext && !(backgroundAsked && background.trim())
+    const requestInterpretation = withAi && !askBackground
+    const req = {
+      question, value, time_iso: localIsoWithOffset(datetime), independent_yin: independentYin,
+      background: requestInterpretation ? background.trim() : null,
+      background_confirmed: requestInterpretation
+    }
     if (override) {
       req.manual_first = override.yang
       req.manual_second = override.yin
@@ -176,8 +197,8 @@ export default function App() {
       req.manual_yin_part = override.yinPart
     }
     try {
-      const response = await fetch(`${ApiUrl}${withAi ? '/api/interpret' : '/api/cast'}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', ...(withAi && aiAccessCode ? { 'X-AI-Access-Code': aiAccessCode } : {}) }, body: JSON.stringify(req)
+      const response = await fetch(`${ApiUrl}${requestInterpretation ? '/api/interpret' : '/api/cast'}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...(requestInterpretation && aiAccessCode ? { 'X-AI-Access-Code': aiAccessCode } : {}) }, body: JSON.stringify(req)
       })
       const data = await response.json()
       if (!response.ok) {
@@ -188,8 +209,12 @@ export default function App() {
         }
         throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail || '请求失败'))
       }
-      setChart(withAi ? data.chart : data)
-      if (withAi) setInterpretation(data.interpretation)
+      setChart(requestInterpretation ? data.chart : data)
+      if (askBackground) {
+        setBackgroundError('')
+        setBackgroundOpen(true)
+      }
+      if (requestInterpretation) setInterpretation(data.interpretation)
     } catch (e) {
       setError(e.message || '网络错误')
     } finally { setBusy(false) }
@@ -229,16 +254,16 @@ export default function App() {
         <div className="grid gap-5 md:grid-cols-2">
           <label className="md:col-span-2">
             <span className="block mb-2 text-sm text-moss">你想探讨的问题</span>
-            <textarea className="field h-24 resize-y" maxLength={1000} value={question} onChange={e => setQuestion(e.target.value)}/>
+            <textarea className="field h-24 resize-y" maxLength={1000} value={question} onChange={e => { setQuestion(e.target.value); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
           </label>
           <label><span className="block mb-2 text-sm text-moss">起卦输入（单字 / 一个数字 / 两个数字）</span>
-            <input className="field" value={value} onChange={e => { setValue(e.target.value); setManualOverride(null); clearResult() }} placeholder="明 / 迷 / 王 / 3 / 3,6" />
+            <input className="field" value={value} onChange={e => { setValue(e.target.value); setManualOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} placeholder="明 / 迷 / 王 / 3 / 3,6" />
           </label>
           <label><span className="block mb-2 text-sm text-moss">起卦时间（可以手动修改）</span>
-            <input className="field" type="datetime-local" value={dateValue} onChange={e => { setDateValue(e.target.value); setManualOverride(null); clearResult() }}/>
+            <input className="field" type="datetime-local" value={dateValue} onChange={e => { setDateValue(e.target.value); setManualOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
           </label>
           <label className="md:col-span-2 text-sm text-moss">独体字阴数方案
-            <select value={independentYin} onChange={e => { setIndependentYin(e.target.value); setManualOverride(null); clearResult() }} className="field mt-2 md:max-w-lg">
+            <select value={independentYin} onChange={e => { setIndependentYin(e.target.value); setManualOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} className="field mt-2 md:max-w-lg">
               <option value="one">默认取 1（推荐）</option>
               <option value="hour">取所选时辰数（子=1，亥=12）</option>
             </select>
@@ -280,5 +305,27 @@ export default function App() {
     </div>
     {manualOpen && <ManualDialog problem={manualProblem} draft={manualDraft} setDraft={setManualDraft}
       error={manualError} onClose={() => setManualOpen(false)} onConfirm={confirmManual} busy={busy}/>}
+    {backgroundOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">
+      <section role="dialog" aria-modal="true" aria-labelledby="bg-title" className="w-full max-w-xl rounded-3xl bg-rice p-6 shadow-2xl md:p-8 max-h-[90vh] overflow-y-auto">
+        <p className="text-xs tracking-widest text-moss">观境察势 · 只追问一次</p>
+        <h2 id="bg-title" className="mt-2 font-serif text-2xl">卦已排好，请补充现实背景</h2>
+        <p className="mt-3 text-sm text-moss">排盘不受影响。只有补充了背景，AI 才进入具体断事。若有起卦时亲眼见到的外应，可以一并说明；没有则不必填写。</p>
+        <label className="block mt-5 text-moss text-sm">
+          <span className="block mb-3 font-medium text-ink">{followupQuestion(question)}</span>
+          <textarea autoFocus maxLength={1200} className="field h-36 resize-y" placeholder="描述你确定知道的现状；不清楚的可以说明不知道" value={background} onChange={e => setBackground(e.target.value)}/>
+        </label>
+        {backgroundError && <p className="text-red-700 text-sm mt-2" role="alert">{backgroundError}</p>}
+        <div className="flex gap-3 flex-wrap mt-5">
+          <button type="button" disabled={busy} className="rounded-xl bg-moss text-white px-6 py-3 disabled:opacity-50" onClick={() => {
+            if (background.trim().length < 2) { setBackgroundError('请补充当前情况；也可以说明哪些情况暂时不清楚。'); return }
+            setBackgroundOpen(false)
+            setBackgroundAsked(true)
+            submit(true, manualOverride, true)
+          }}>确认背景，开始解读</button>
+          <button type="button" className="rounded-xl border border-moss/50 text-moss px-5 py-3" onClick={() => setBackgroundOpen(false)}>暂不解卦</button>
+        </div>
+        <p className="text-xs text-moss/75 mt-4">背景由求测者提供，未经系统核实。不会因为卦象与陈述不符就认定有人说谎。</p>
+      </section>
+    </div>}
   </main>
 }
