@@ -56,7 +56,7 @@ def decorate_spirit_relations(chart: dict) -> dict:
             "status":"not_visible",
             "basis":focus["category"],
             "roles":{},
-            "note":"本卦不现所选对象的六亲；暂无明确的本卦用神爻位，因此不生成卦内原神、忌神与仇神位置。不得编造伏神。",
+            "note":"本卦不现所选对象的六亲；可参照独立伏神装卦结果。本模块暂不以伏神代替已确认的用神来推定卦内原忌仇神。",
             "reference":"https://zh.wikisource.org/zh-hans/增删卜易/9",
         }
         return chart

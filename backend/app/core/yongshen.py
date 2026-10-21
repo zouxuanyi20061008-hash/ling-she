@@ -82,7 +82,7 @@ def focus_six_yao(chart: dict, focus: str | None = None) -> dict:
             "moving":p["moving"],"branch":p["branch"],"element":BRANCH_ELEMENT[p["branch"]]
         } for p in rows],
         "note":(
-            "本卦未见所选六亲。只可记录‘本卦不现’，后续如需研究伏神须另行按本宫卦及规则装伏神，不可凭空补出。"
+            "本卦未见所选六亲。可另参照八宫本宫纯卦装伏神和飞神；是否先取日月为用，以及伏神能否发挥作用，仍须仔细论证。"
             if not positions and focus not in ("世爻","应爻") else
             "本卦同类六亲多现，暂列出全部候选；需继续结合动静、日月与事情本身研究，不能擅自挑一爻当唯一用神。"
             if len(positions)>1 and focus not in ("世爻","应爻") else

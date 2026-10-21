@@ -539,3 +539,56 @@
   .spirit-role-grid small,.spirit-role-grid em{font-size:9px}
   .spirit-role-grid span{font-size:11px}
 }
+
+/* 伏神功能教学：显示飞神与伏神的真实成对位置 */
+.fushen-study{padding:16px;margin:18px 0;border:1px solid #c5b598;
+ background:#f7f2e5;color:#355a49}
+.fushen-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;
+ padding-bottom:10px;border-bottom:1px solid #d7c9af}
+.fushen-heading span{font-size:12px;color:#966d50}
+.fushen-heading strong{font-size:12px;color:#265541}
+.fushen-study>p{font-size:11px;line-height:1.95;color:#697967;margin:11px 0}
+.fushen-study>p strong{color:#335f4a}
+.fushen-summary{padding:12px;background:#efe8d7;border:1px solid #d9cbb2;margin:13px 0}
+.fushen-summary small{color:#8b765a;font-size:11px;display:block;margin-bottom:9px}
+.fushen-summary>strong{font-size:12px;line-height:1.8}
+.fushen-missing{display:flex;gap:7px;flex-wrap:wrap}
+.fushen-missing button{padding:8px 11px;color:#315b47;background:#fffbf0;
+ border:1px solid #b9b5a0;font-size:11px}
+.fushen-missing button.active{background:#315e49;border-color:#315e49;color:#fff1d4}
+.fushen-missing button:disabled{opacity:.55}
+.fushen-detail{margin:13px 0}
+.fushen-detail h3{font-size:17px;color:#29543f;margin:9px 0}
+.fushen-detail>p,.fushen-selected-note{font-size:11px;color:#6c7869;line-height:2}
+.fushen-pairs{display:grid;gap:9px;margin-top:14px}
+.fushen-pairs article{padding:11px 12px;border:1px solid #d1c0a3;background:#fdf8ec}
+.fushen-pairs article>span{font-size:10px;letter-spacing:.06em;color:#967457}
+.fushen-pairs article>b{display:block;color:#b06445;font-size:12px;margin-top:8px}
+.fushen-pair{display:grid;grid-template-columns:minmax(0,1fr) 41px minmax(0,1fr);
+ gap:6px;align-items:center;margin-top:8px}
+.fushen-pair>div{border:1px solid #d5c8b4;background:#f8f1e0;padding:9px 7px;
+ display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.fushen-pair small{font-size:10px;color:#958469}
+.fushen-pair strong{font-size:20px;color:#315c46}
+.fushen-pair>div>span{font-size:10px;color:#637463}
+.fushen-pair-arrow{font-size:11px;text-align:center;color:#a66347}
+.fushen-day-note{padding:12px;margin-top:11px;background:#e9edde;
+ border-left:3px solid #749477}
+.fushen-day-note b{font-size:12px;color:#395e47}
+.fushen-day-note p{font-size:11px;line-height:1.9;color:#6d7b6b;margin:7px 0}
+.fushen-day-note>span{display:block;font-size:11px;line-height:1.7;color:#556f5b}
+.fushen-study>.fushen-warning{font-size:10px;color:#998268;border-top:1px solid #d5c7aa;
+ margin-top:15px;padding-top:11px}
+.fushen-study>a{font-size:11px;color:#356d51;text-decoration:underline;text-underline-offset:3px}
+.najia-fushen-mini{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:9px;
+ border-top:1px dashed #d2c6ab;padding-top:8px;font-size:11px;line-height:1.8;color:#936a48}
+.najia-fushen-mini b{color:#9f624a}
+@media(max-width:650px){
+ .fushen-study{padding:12px 9px;margin:13px 0}
+ .fushen-heading strong{font-size:10px}
+ .fushen-pair{grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:3px}
+ .fushen-pair>div{padding:9px 4px}
+ .fushen-pair strong{font-size:17px}
+ .fushen-pair small,.fushen-pair>div>span{font-size:9px}
+ .fushen-pair-arrow{font-size:9px}
+}

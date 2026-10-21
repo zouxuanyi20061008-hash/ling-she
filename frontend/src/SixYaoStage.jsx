@@ -167,6 +167,59 @@ function SpiritRelationsPanel({chart,activeRole,onChange,busy}) {
   </section>
 }
 
+
+function FuShenStudy({chart,onChoose,busy}){
+  const data=chart.fushen
+  if(!data)return null
+  const selected=data.selected
+  const entries=selected?.status==='hidden_in_palace'?selected.entries:[]
+  const candidateReview=selected?.day_month_review
+  const missing=data.missing_relatives
+  return <section className="fushen-study" aria-label="六爻飞伏神教学装卦">
+    <div className="fushen-heading"><span>第七式 · 飞伏寻踪</span><strong>{data.palace}宫 · {data.pure_hexagram}</strong></div>
+    <p>先查本卦缺少哪些六亲，再回到本宫首卦取同位伏神。本卦同一爻位为<strong>飞神</strong>；隐藏者不是额外的第七爻。</p>
+    <div className="fushen-summary">
+      <small>本卦缺失的六亲</small>
+      {missing.length?<div className="fushen-missing">
+        {missing.map(relative=><button type="button" key={relative}
+          onClick={()=>onChoose(relative)} disabled={busy}
+          className={selected?.category===relative?'active':''}
+          aria-pressed={selected?.category===relative}>
+          {relative} · {data.by_relative[relative].length} 处伏神 ↗
+        </button>)}
+      </div>:<strong>五种六亲均现于本卦，不必装缺失六亲的伏神。</strong>}
+    </div>
+    {selected?.status==='hidden_in_palace'?<div className="fushen-detail" aria-live="polite">
+      <h3>{selected.category}不现 · 本宫找伏神</h3>
+      <p>{selected.note}</p>
+      <div className="fushen-pairs">{entries.map((entry,i)=><article key={entry.position+'-'+i}>
+        <span>第 {POS[entry.position-1]} 爻 · 飞伏同位</span>
+        <div className="fushen-pair">
+          <div><small>飞神（本卦明爻）</small><strong>{entry.flying.ganzhi}</strong>
+            <span>{entry.flying.liuqin} · {entry.flying.element}{entry.flying.moving?' · 动爻':''}</span></div>
+          <span className="fushen-pair-arrow">↓ 伏</span>
+          <div><small>伏神（本宫首卦）</small><strong>{entry.hidden.ganzhi}</strong>
+            <span>{entry.hidden.liuqin} · {entry.hidden.element}</span></div>
+        </div>
+        <b>{entry.flying_hidden_relation}</b>
+      </article>)}</div>
+      {candidateReview&&<div className="fushen-day-note">
+        <b>日月取用提醒</b>
+        <p>{candidateReview.note}</p>
+        <span>日辰：{candidateReview.day_branch?
+          candidateReview.day_branch+'支 · '+(candidateReview.day_same_element?'五行同类':'五行不同类'):'未确认'}</span>
+        <span>月建：{candidateReview.month_branch?
+          candidateReview.month_branch+'月 · '+(candidateReview.month_same_element?'五行同类':'五行不同类'):'未确认'}</span>
+      </div>}
+    </div>:
+    selected?.status==='visible'||selected?.status==='position_only'?
+      <p className="fushen-selected-note">{selected.note}</p>:
+      <p className="fushen-selected-note">点击上方缺失六亲，即可查看对应的飞伏配对。无缺失时，不会编造伏神。</p>}
+    <p className="fushen-warning">{data.boundary}</p>
+    <a href={data.reference} target="_blank" rel="noopener noreferrer">核读《增删卜易》· 飞伏神章 ↗</a>
+  </section>
+}
+
 function NajiaBoard({chart,roleView='用神'}) {
   const [selected,setSelected]=useState(0)
   const [changed,setChanged]=useState(false)
@@ -176,7 +229,13 @@ function NajiaBoard({chart,roleView='用神'}) {
   const detail=all?.[selected]
   const focus=chart.focus
   const selectedRelation=chart.spirit_relations?.roles?.[roleView]
-  const highlighted=changed?[]:(selectedRelation?.positions??focus?.primary_positions)
+  const hiddenPositions=chart.fushen?.selected?.status==='hidden_in_palace'?
+    chart.fushen.selected.entries.map(item=>item.position):[]
+  const highlighted=changed?[]:(selectedRelation?.positions??(hiddenPositions.length?
+    hiddenPositions:focus?.primary_positions))
+  useEffect(()=>{
+    if(!changed&&hiddenPositions.length)setSelected(hiddenPositions[0]-1)
+  },[changed,chart.fushen])
   useEffect(()=>{
     if(!changed&&selectedRelation?.positions?.length)setSelected(selectedRelation.positions[0]-1)
   },[roleView,changed,chart.spirit_relations])
@@ -207,15 +266,16 @@ function NajiaBoard({chart,roleView='用神'}) {
         return <button key={line.position} type="button" role="listitem" aria-current={selected===row?'true':undefined}
           className={'najia-row '+(selected===row?'selected ':'')+(line.moving?'moving ':'')+(highlighted?.includes(row+1)?'yongshen-highlight':'')}
           onClick={()=>setSelected(row)}>
-          <span>{POS[row]}<small>{line.moving?'动':''}</small></span>
+          <span>{POS[row]}<small>{line.moving?'动':''}{!changed&&line.fushen?.length?' · 伏':''}</small></span>
           <span className="najia-strokes">{lines[row]===1?<i/>:<><i/><i/></>}</span>
           <strong>{line.ganzhi}</strong><span>{line.element}</span><span>{line.liuqin}</span><b>{[role,line.is_xunkong?'空':''].filter(Boolean).join('·')}</b>
         </button>
       })}
     </div>
     {focus&&<div className="yongshen-najia-hint">
-      {changed?'变卦仅作对照，不把本卦原忌仇神的位置直接套用到变卦':
-        '金线标记 · '+(selectedRelation?'本卦'+roleView+'（'+selectedRelation.element+'）':'本卦'+focus.category+'候选位置')}
+      {changed?'变卦仅作对照，不把本卦伏神或原忌仇位置直接套用到变卦':
+        '金线标记 · '+(selectedRelation?'本卦'+roleView+'（'+selectedRelation.element+'）':
+          hiddenPositions.length?'所选伏神位（本宫纯卦同位）':'本卦'+focus.category+'候选位置')}
     </div>}
     {detail&&<article className="najia-focused">
       <span className="najia-learning">逐爻研习 · 点选上方任意一爻</span>
@@ -224,6 +284,9 @@ function NajiaBoard({chart,roleView='用神'}) {
         {!changed&&detail.role?'这是本卦'+detail.role+'爻。':changed?'变卦干支仍以本卦宫五行定六亲，不重新用变卦所属宫计算。':''}
       </p>
       <p>{detail.moving?'此爻发生阴阳变换；对照“本卦”和“变卦”可观察此爻干支的改变。':'此爻没有发生阴阳变换。'}</p>
+      {!changed&&detail.fushen?.length>0&&<div className="najia-fushen-mini">
+        <b>此爻下伏：</b>{detail.fushen.map((f,i)=><span key={i}>{f.liuqin} {f.ganzhi} · {f.relation}</span>)}
+      </div>}
       {detail.liushen&&<p className="calendar-single"><b>六神 · {detail.liushen}</b>　根据已选日干自初爻起依序布列，仅供辅助取象。</p>}
       {detail.is_xunkong!==null&&<p className="calendar-single"><b>旬空 · {detail.is_xunkong?'是':'否'}</b>　日辰属于{chart.calendar.day.xun}旬，空{chart.calendar.day.xunkong.join('、')}。</p>}
       {detail.month_relation&&<p className="calendar-single"><b>月支 · {detail.month_relation}</b>
@@ -380,6 +443,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
             <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
             <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
+            <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
             <NajiaBoard chart={chart} roleView={roleView}/>
             <div className="academy-scope">{chart.note}</div>
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
@@ -387,7 +451,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位，真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配。真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
