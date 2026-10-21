@@ -24,6 +24,8 @@ function paintTreeCanopy(o,sz){if(!treeArt.complete||!treeArt.naturalWidth)retur
 /* V5.3: art-scene renderer. Assets are optional: the existing Canvas
    gameplay is still usable if any SVG fails to load. */
 var pathArt=new Image();pathArt.src='assets/stone-path-tile.svg';
+var cachedStonePattern=null;
+function stonePattern(){if(!isArtReady(pathArt))return '#aa9675';if(!cachedStonePattern)cachedStonePattern=ctx.createPattern(pathArt,'repeat');return cachedStonePattern||'#aa9675'}
 var bankArt=new Image();bankArt.src='assets/riverbank-edge.svg';
 function isArtReady(img){return !!(img&&img.complete&&img.naturalWidth>0)}
 function scenePathGeometry(){
@@ -37,7 +39,7 @@ function paintStoneRoad(){
   ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
   scenePathGeometry();ctx.strokeStyle='#324c3a88';ctx.lineWidth=96;ctx.stroke();
   scenePathGeometry();ctx.strokeStyle='#c0ad80';ctx.lineWidth=82;ctx.stroke();
-  scenePathGeometry();ctx.strokeStyle=isArtReady(pathArt)?ctx.createPattern(pathArt,'repeat'):'#aa9675';ctx.lineWidth=71;ctx.stroke();
+  scenePathGeometry();ctx.strokeStyle=stonePattern();ctx.lineWidth=71;ctx.stroke();
   paintQinglanCourtyard();
   ctx.restore();
 }
@@ -185,7 +187,7 @@ function paintQinglanCourtyard(){
   // Fork from the original east-west highway into the mountain gate
   // and then around the shrine. No waterways are crossed by this spur.
   if(camX>2430||camX+W<1540||camY>1950||camY+H<1400)return;
-  var pattern=isArtReady(pathArt)?ctx.createPattern(pathArt,'repeat'):'#a39b7d';
+  var pattern=stonePattern();
   ctx.save();
   ctx.fillStyle='#314a3b82';
   ctx.beginPath();ctx.ellipse(2080,1684,171,107,-.06,0,Math.PI*2);ctx.fill();
