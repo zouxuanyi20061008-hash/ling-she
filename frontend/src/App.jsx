@@ -42,11 +42,61 @@ function SixLines({ lines, moving }) {
 function HexCard({ name, data, moving }) {
   return <div className="rounded-2xl border border-[#d4dbd0] bg-white/70 px-3 py-5 text-center shadow-sm">
     <div className="text-xs tracking-[0.25em] text-moss/70">{name}</div>
-    <h3 className="mt-2 font-serif text-2xl text-ink">{data.name}</h3>
+    <h3 className="mt-2 font-serif text-2xl leading-snug text-ink">{data.full_name || data.name}</h3>
+    {data.keywords && <p className="mt-2 text-sm font-medium text-moss">{data.keywords}</p>}
     <p className="mt-1 text-sm text-moss">{data.upper.name}上 · {data.lower.name}下</p>
     <SixLines lines={data.lines_bottom_to_top} moving={moving} />
     <p className="text-xs text-moss">{data.upper.element} / {data.lower.element}</p>
+    {data.meaning && <div className="mt-4 border-t border-[#e3e7df] pt-4 text-left">
+      <p className="text-xs tracking-widest text-moss mb-2">卦象大意</p>
+      <p className="text-sm leading-7 text-ink/85">{data.meaning}</p>
+    </div>}
   </div>
+}
+
+function BasicReading({ chart }) {
+  const guide = chart.reading_guide || {}
+  const ben = chart.ben_gua
+  const hu = chart.hu_gua
+  const bian = chart.bian_gua
+  return <section className="mt-5 rounded-3xl bg-white/85 border border-[#cad4c8] p-5 md:p-7">
+    <div className="flex flex-wrap justify-between items-end gap-3">
+      <div>
+        <p className="text-xs tracking-widest text-moss">无需 AI · 免费基础解卦</p>
+        <h3 className="font-serif text-2xl mt-2">从体用、互变读懂卦意</h3>
+      </div>
+      <span className="text-xs text-moss bg-pale rounded-full px-3 py-2">六十四卦基础象义</span>
+    </div>
+    <div className="mt-6 space-y-5 text-sm leading-8 text-ink/90">
+      <div>
+        <h4 className="font-medium text-base">体用定基调 · {chart.sheng_ke}</h4>
+        <p className="mt-1">体为{chart.ti_gua.name}{chart.ti_gua.element}，用为{chart.yong_gua.name}{chart.yong_gua.element}。{guide.relationship}</p>
+      </div>
+      <div>
+        <h4 className="font-medium text-base">本卦 · {ben.full_name || ben.name}</h4>
+        <p className="mt-1">此卦主要可从「{ben.keywords}」观察眼前局面。{ben.meaning}</p>
+      </div>
+      <div>
+        <h4 className="font-medium text-base">互卦 · {hu.full_name || hu.name}</h4>
+        <p className="mt-1">事情内部的关系与牵连，可参考「{hu.keywords}」之象。{hu.meaning}</p>
+      </div>
+      <div>
+        <h4 className="font-medium text-base">变卦 · {bian.full_name || bian.name}</h4>
+        <p className="mt-1">变化方向可参考「{bian.keywords}」。{bian.meaning}</p>
+      </div>
+      <div>
+        <h4 className="font-medium text-base">动爻 · 第 {chart.dong_yao} 爻</h4>
+        <p className="mt-1">{guide.moving_position}</p>
+        {chart.moving_line_text
+          ? <p className="mt-1 text-moss">已核对的爻辞：{chart.moving_line_text}</p>
+          : <p className="mt-1 text-moss">这一动爻的经文尚未校勘收录，暂不凭空引用爻辞。</p>}
+      </div>
+      <div className="rounded-xl bg-pale/60 p-4 text-moss">
+        <p>后天方位参照：体卦{chart.ti_gua.name}对应{chart.ti_gua.direction}，用卦{chart.yong_gua.name}对应{chart.yong_gua.direction}。这些是传统象征方位，不能直接当成现实中的吉方或寻找地点。</p>
+      </div>
+    </div>
+    <p className="mt-5 text-xs leading-6 text-moss/90">这些内容来自固定的六十四卦象义与排盘规则，不依赖 AI，也不是针对你的经历作出的确定预测。具体断事仍需结合你真正所问的事情及现实环境。</p>
+  </section>
 }
 
 function NumberExplanation({ chart }) {
@@ -350,6 +400,7 @@ export default function App() {
           <HexCard name="互卦" data={chart.hu_gua} />
           <HexCard name="变卦" data={chart.bian_gua} />
         </div>
+        <BasicReading chart={chart}/>
         <NumberExplanation chart={chart}/>
         <div className="mt-4 rounded-xl bg-pale p-5 text-moss"><b>体用：</b>{chart.sheng_ke}（体：{chart.ti_gua.name}/{chart.ti_gua.element}，用：{chart.yong_gua.name}/{chart.yong_gua.element}）</div>
       </section>}

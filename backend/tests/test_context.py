@@ -80,3 +80,43 @@ def test_freeform_notes_do_not_trigger_ai_without_context():
           "observation_first":3,"observation_second":7,"observation_reason":"三只鸟为三，旁边七棵树为七"}
     response=client.post("/api/interpret",json=req)
     assert response.status_code==428
+
+
+def test_full_64_hexagram_names_and_meanings():
+    from app.core.hexagrams import TRIGRAMS, HEXAGRAM_NAMES, hexagram_from_lines
+    from app.core.guides import HEXAGRAM_GUIDES
+    expected = [
+        "乾为天 天泽履 天火同人 天雷无妄 天风姤 天水讼 天山遁 天地否",
+        "泽天夬 兑为泽 泽火革 泽雷随 泽风大过 泽水困 泽山咸 泽地萃",
+        "火天大有 火泽睽 离为火 火雷噬嗑 火风鼎 火水未济 火山旅 火地晋",
+        "雷天大壮 雷泽归妹 雷火丰 震为雷 雷风恒 雷水解 雷山小过 雷地豫",
+        "风天小畜 风泽中孚 风火家人 风雷益 巽为风 风水涣 风山渐 风地观",
+        "水天需 水泽节 水火既济 水雷屯 水风井 坎为水 水山蹇 水地比",
+        "山天大畜 山泽损 山火贲 山雷颐 山风蛊 山水蒙 艮为山 山地剥",
+        "地天泰 地泽临 地火明夷 地雷复 地风升 地水师 地山谦 坤为地",
+    ]
+    assert len(HEXAGRAM_GUIDES) == 64
+    for up in range(1,9):
+        for low in range(1,9):
+            obj=hexagram_from_lines(TRIGRAMS[low]["lines"]+TRIGRAMS[up]["lines"])
+            assert obj["name"]==HEXAGRAM_NAMES[up-1][low-1]
+            assert obj["full_name"]==expected[up-1].split()[low-1]
+            assert obj["keywords"]
+            assert len(obj["meaning"]) >= 8
+
+def test_user_screen_shows_full_names_and_free_guide():
+    client=TestClient(app)
+    payload={"question":"我该怎样处理朋友关系？","value":"5,2",
+             "time_iso":"2026-10-22T02:27:00+09:00"}
+    response=client.post("/api/cast",json=payload)
+    assert response.status_code==200
+    chart=response.json()
+    assert chart["ben_gua"]["full_name"]=="风泽中孚"
+    assert chart["hu_gua"]["full_name"]=="山雷颐"
+    assert chart["bian_gua"]["full_name"]=="风水涣"
+    assert chart["sheng_ke"]=="用克体"
+    assert "外在压力" in chart["reading_guide"]["relationship"]
+    assert chart["ben_gua"]["meaning"]
+    assert chart["hu_gua"]["meaning"]
+    assert chart["bian_gua"]["meaning"]
+    assert "moving_position" in chart["reading_guide"]

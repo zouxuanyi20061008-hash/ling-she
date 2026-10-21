@@ -58,7 +58,9 @@ def compute(req: CastRequest) -> dict:
     observation = (req.observation_first,req.observation_second) if req.observation_first is not None else None
     parts = (req.manual_yang_part or "",req.manual_yin_part or "")
     try:
-        return cast(req.value,req.time_iso,manual,req.independent_yin,req.manual_structure,parts,observation,req.observation_reason)
+        chart = cast(req.value,req.time_iso,manual,req.independent_yin,req.manual_structure,parts,observation,req.observation_reason)
+        chart["moving_line_text"] = moving_line_text(chart)
+        return chart
     except ObservationNeedsNumbers as exc:
         raise HTTPException(422,{"code":"NUMBERS_REQUIRED","message":str(exc)}) from exc
     except UnsupportedCharacter as exc:

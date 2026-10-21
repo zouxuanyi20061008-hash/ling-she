@@ -1,7 +1,7 @@
 """梅花易数：确定性六爻位运算。所有爻按自下而上排序。"""
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from .guides import hexagram_name_and_guide, RELATION_GUIDES, POSITION_GUIDES
 
 # 三爻顺序：初爻 -> 三爻（底 -> 顶），1 阳爻，0 阴爻。
 TRIGRAMS = {
@@ -48,8 +48,10 @@ def hexagram_from_lines(lines: tuple[int, ...]) -> dict:
         raise ValueError("六爻数据无效")
     low = trigram_from_lines(tuple(lines[:3]))
     up = trigram_from_lines(tuple(lines[3:]))
+    short = HEXAGRAM_NAMES[up - 1][low - 1]
     return {
-        "name": HEXAGRAM_NAMES[up - 1][low - 1],
+        "name": short,
+        **hexagram_name_and_guide(short, up, low),
         "upper": TRIGRAMS[up],
         "lower": TRIGRAMS[low],
         "lines_bottom_to_top": list(lines),
@@ -95,4 +97,10 @@ def arrange(upper_number: int, lower_number: int, changing_number: int) -> dict:
         "ti_gua": ti,
         "yong_gua": yong,
         "sheng_ke": relation(ti["element"], yong["element"]),
+        "reading_guide": {
+            "relationship": RELATION_GUIDES[relation(ti["element"], yong["element"])],
+            "moving_position": POSITION_GUIDES[moving],
+            "source_note": "卦意为人工整理的传统象义参考；体用与爻位为规则分析，非对现实的确定预测。",
+            "stages": "本卦参考当前整体之象，互卦参考内在牵连，变卦参考变化方向；请结合实际问题判断。"
+        },
     }
