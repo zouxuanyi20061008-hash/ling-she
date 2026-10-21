@@ -241,3 +241,43 @@
  .najia-strokes{gap:4px}.najia-strokes i{height:7px}
  .najia-focused,.najia-footnote{margin-left:10px;margin-right:10px}
 }
+
+/* 六爻校时卷：节令与干支的人工确认，不填则不推。 */
+.calendar-volume{
+  margin-top:24px;padding:16px 16px 15px;background:#e9eee1;
+  border:1px solid #9cae91;color:#2a5140;
+  box-shadow:inset 0 0 0 5px rgba(247,244,224,.4);
+}
+.calendar-volume-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-bottom:1px solid #bcc9b4;padding-bottom:12px}
+.calendar-volume-heading small{font-size:10px;letter-spacing:.2em;color:#a47a54}
+.calendar-volume-heading h3{font-size:21px;font-weight:600;margin:5px 0;letter-spacing:.09em;color:#275444}
+.calendar-volume-stamp{font-size:23px;color:#a0644c;display:grid;place-items:center;
+ width:44px;height:44px;border:2px double #b07c60;background:#f7efe0}
+.calendar-help{font-size:11px;line-height:2;color:#617567;padding:11px 1px}
+.calendar-help strong{font-weight:700;color:#2a5947}
+.calendar-pickers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:7px}
+.calendar-pickers label{font-size:11px;color:#466656;display:block}
+.calendar-pickers select{appearance:auto;display:block;width:100%;margin-top:7px;
+  border:1px solid #b8c3af;border-radius:3px;padding:11px 9px;
+  background:#fffbf0;color:#2f5848;font-size:12px;min-height:45px}
+.calendar-pickers select:focus-visible{outline:2px solid #739b7a;outline-offset:2px}
+.calendar-findings{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.calendar-findings>div{min-width:0;background:rgba(255,253,239,.75);border:1px solid #c6d0be;padding:11px}
+.calendar-findings small{font-size:10px;color:#91785b;display:block}
+.calendar-findings strong{font-size:13px;color:#285542;display:block;margin:6px 0}
+.calendar-findings span,.calendar-findings>p{font-size:11px;color:#687a66;line-height:1.8}
+.calendar-boundary{font-size:10px;line-height:1.9;color:#7a8272;margin:12px 0 0}
+.calendar-single{padding:6px 9px;background:#ebf0e4;border-left:2px solid #9caf89}
+.calendar-single b{color:#985b44;font-weight:650}
+.najia-row> b{white-space:nowrap;letter-spacing:-.04em}
+@media(max-width:650px) {
+  .calendar-volume{padding:13px 9px}
+  .calendar-volume-heading h3{font-size:18px}
+  .calendar-pickers{grid-template-columns:1fr;gap:10px}
+  .calendar-findings{gap:5px}
+  .calendar-findings>div{padding:9px 7px}
+  .calendar-findings strong{font-size:11px}
+  .calendar-findings span{font-size:10px}
+  .najia-row>b{font-size:10px}
+}

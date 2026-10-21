@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from .hexagrams import hexagram_from_lines
 from .najia import decorate_six_yao
+from .calendar import decorate_calendar
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -11,7 +12,8 @@ LINE_KIND = {
     9: {"name":"老阳", "symbol":"⚊ ○", "yin_yang":"阳", "changing":True},
 }
 
-def cast_six_yao(lines: list[int]) -> dict:
+def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
+                 month_branch: str | None = None) -> dict:
     """lines 从初爻至上爻，数为6/7/8/9。铜钱记分约定：字2、背3。"""
     if len(lines)!=6 or any(type(x) is not int or x not in LINE_KIND for x in lines):
         raise ValueError("请按初爻至上爻顺序，填写六次摇得的 6、7、8、9")
@@ -26,7 +28,7 @@ def cast_six_yao(lines: list[int]) -> dict:
         "ben_gua":hexagram_from_lines(main_bits),
         "bian_gua":hexagram_from_lines(changed_bits),
         "dong_yao":changing,
-        "note":"本卦与变卦、六次爻态、八宫归属、世应、纳甲干支与六亲已按固定规则计算。日月建、六神、旬空、用神、旺衰仍未计算，暂不作完整纳甲断事。",
+        "note":"已计算本变卦、八宫世应、纳甲与六亲；输入有效日辰可装六神、旬空，输入节令月支可标记月支关系。日月历法换算、完整旺衰及用神取用尚未实现。",
         "rules":"以三枚铜钱分别记字为2、背为3；三字6为老阴、两字一背7为少阳、两背一字8为少阴、三背9为老阳。第一次为初爻，从下往上记录六次。",
     }
-    return decorate_six_yao(result)
+    return decorate_calendar(decorate_six_yao(result), day_ganzhi, month_branch)

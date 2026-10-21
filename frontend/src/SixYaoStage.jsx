@@ -18,6 +18,56 @@ function Diagram({label,hex,moving=[]}) {
   </article>
 }
 
+
+const DAILY_STEMS=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']
+const DAILY_BRANCHES=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
+const SEXAGENARY_DAYS=Array.from({length:60},(_,i)=>DAILY_STEMS[i%10]+DAILY_BRANCHES[i%12])
+const MONTH_WINDOWS=[
+ ['寅','立春至惊蛰'],['卯','惊蛰至清明'],['辰','清明至立夏'],
+ ['巳','立夏至芒种'],['午','芒种至小暑'],['未','小暑至立秋'],
+ ['申','立秋至白露'],['酉','白露至寒露'],['戌','寒露至立冬'],
+ ['亥','立冬至大雪'],['子','大雪至小寒'],['丑','小寒至立春']
+]
+function CalendarControls({chart,day,month,onChange,busy}) {
+  const dayInfo=chart.calendar?.day
+  const monthInfo=chart.calendar?.month
+  return <section className="calendar-volume" aria-label="核对六爻日辰月建">
+    <header className="calendar-volume-heading">
+      <div><small>第四式 · 日月校时</small><h3>择日辰，布六神。</h3></div>
+      <span className="calendar-volume-stamp">时</span>
+    </header>
+    <p className="calendar-help">请从万年历核对<strong>真实的六十甲子日</strong>和以节气为界的月支。此处不按手机日期自动推算；只计算你确认的值，留空就不编六神、旬空。</p>
+    <div className="calendar-pickers">
+      <label>日辰 · 六十甲子
+        <select value={day} onChange={e=>onChange(e.target.value,month)}>
+          <option value="">暂不填写</option>
+          {SEXAGENARY_DAYS.map((item,i)=><option key={item} value={item}>{String(i+1).padStart(2,'0')} · {item}日</option>)}
+        </select>
+      </label>
+      <label>月建 · 节令地支
+        <select value={month} onChange={e=>onChange(day,e.target.value)}>
+          <option value="">暂不填写</option>
+          {MONTH_WINDOWS.map(([b,desc])=><option key={b} value={b}>{b}月 · {desc}</option>)}
+        </select>
+      </label>
+    </div>
+    <div className="calendar-findings" aria-live="polite">
+      {busy?<p>正在依你确认的日月重新装卦…</p>:
+       <>
+        <div><small>日辰与旬空</small>
+          <strong>{dayInfo?dayInfo.ganzhi+'日 · '+dayInfo.xun+'旬':'未确认日辰'}</strong>
+          <span>{dayInfo?'旬空：'+dayInfo.xunkong.join('、'):'六神、旬空均未推定'}</span>
+        </div>
+        <div><small>节令月支</small>
+          <strong>{monthInfo?monthInfo.branch+'月 · '+monthInfo.element:'尚未确认月建'}</strong>
+          <span>{monthInfo?monthInfo.term_window:'不按公历月份猜测'}</span>
+        </div>
+       </>}
+    </div>
+    <p className="calendar-boundary">此处属于「已确认日月参数后的规则演算」，不是自动历法换算或完整旺衰判断；交节前后请优先核对权威历书。</p>
+  </section>
+}
+
 function NajiaBoard({chart}) {
   const [selected,setSelected]=useState(0)
   const [changed,setChanged]=useState(false)
@@ -51,7 +101,7 @@ function NajiaBoard({chart}) {
           onClick={()=>setSelected(row)}>
           <span>{POS[row]}<small>{line.moving?'动':''}</small></span>
           <span className="najia-strokes">{lines[row]===1?<i/>:<><i/><i/></>}</span>
-          <strong>{line.ganzhi}</strong><span>{line.element}</span><span>{line.liuqin}</span><b>{role}</b>
+          <strong>{line.ganzhi}</strong><span>{line.element}</span><span>{line.liuqin}</span><b>{[role,line.is_xunkong?'空':''].filter(Boolean).join('·')}</b>
         </button>
       })}
     </div>
@@ -62,10 +112,14 @@ function NajiaBoard({chart}) {
         {!changed&&detail.role?'这是本卦'+detail.role+'爻。':changed?'变卦干支仍以本卦宫五行定六亲，不重新用变卦所属宫计算。':''}
       </p>
       <p>{detail.moving?'此爻发生阴阳变换；对照“本卦”和“变卦”可观察此爻干支的改变。':'此爻没有发生阴阳变换。'}</p>
+      {detail.liushen&&<p className="calendar-single"><b>六神 · {detail.liushen}</b>　根据已选日干自初爻起依序布列，仅供辅助取象。</p>}
+      {detail.is_xunkong!==null&&<p className="calendar-single"><b>旬空 · {detail.is_xunkong?'是':'否'}</b>　日辰属于{chart.calendar.day.xun}旬，空{chart.calendar.day.xunkong.join('、')}。</p>}
+      {detail.month_relation&&<p className="calendar-single"><b>月支 · {detail.month_relation}</b>
+       {detail.is_yuejian?' · 临月建':''}{detail.is_yuechong?' · 与月建相冲':''}；只给关系提示，不直接断旺衰。</p>}
     </article>}
     <div className="najia-footnote">
       <p>{chart.najia_note}</p>
-      <p>此处的世应与六亲由算法逐项装配，并非 AI 自行推测。日期和日月干支尚未核对时，不能据此判断旺衰、旬空、应期。</p>
+      <p>六亲与世应由固定算法计算。六神、旬空需要提供有效日辰；月支标记需要提供节令月支。即便填写完整，也不可仅凭一项标记判断吉凶或应期。</p>
       <a href="https://www.guyujian.cn/learn/liuyao/05" rel="noopener noreferrer" target="_blank">八宫与世应讲解 ↗</a>
       <a href="https://shunshi.ai/zh-cn/wiki/liuyao/zhuangua/najia" rel="noopener noreferrer" target="_blank">纳甲口诀与全表 ↗</a>
     </div>
@@ -109,15 +163,26 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [answer,setAnswer]=useState('')
   const [error,setError]=useState('')
   const [busy,setBusy]=useState(false)
+  const [dayGanzhi,setDayGanzhi]=useState('')
+  const [monthBranch,setMonthBranch]=useState('')
+  const [calendarBusy,setCalendarBusy]=useState(false)
+  const requestNumber=useRef(0)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
-  async function process(seq){
+  async function process(seq,day=dayGanzhi,month=monthBranch){
+    const token=++requestNumber.current
+    setCalendarBusy(true)
     try{
-      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq})})
+      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null})})
       const data=await response.json()
       if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'排盘失败')
-      setChart(data)
-    }catch(e){setError(e.message)}
+      if(token===requestNumber.current)setChart(data)
+    }catch(e){if(token===requestNumber.current)setError(e.message)}
+    finally{if(token===requestNumber.current)setCalendarBusy(false)}
+  }
+  function updateCalendar(day,month) {
+    setDayGanzhi(day);setMonthBranch(month);setAnswer('')
+    if(lines.length===6)process(lines,day,month)
   }
   function addLine(value,faces){
     if(lines.length>=6||busy)return
@@ -134,9 +199,9 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
     },800)
   }
-  function restart(){clearTimeout(timer.current);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('')}
+  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('')}
   async function interpret(){
-    if(!chart||busy)return
+    if(!chart||busy||calendarBusy)return
     if(!question.trim()||background.trim().length<2){setError('请填写所问之事，并补充一次现实背景。');return}
     setBusy(true);setError('');setAnswer('')
     try{
@@ -144,7 +209,8 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       if(apiConfig.personalApiKey.trim())headers['X-User-API-Key']=apiConfig.personalApiKey.trim()
       else if(apiConfig.aiAccessCode)headers['X-AI-Access-Code']=apiConfig.aiAccessCode
       const res=await fetch(api+'/api/liuyao/interpret',{method:'POST',headers,body:JSON.stringify({
-        numbers:lines,question,background,background_confirmed:true,ai_model:apiConfig.aiModel
+        numbers:lines,day_ganzhi:dayGanzhi||null,month_branch:monthBranch||null,
+        question,background,background_confirmed:true,ai_model:apiConfig.aiModel
       })})
       const data=await res.json()
       if(!res.ok)throw Error(typeof data.detail==='string'?data.detail:data.detail?.message||'AI 暂不可用')
@@ -192,6 +258,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           {chart?<div className="academy-computed">
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
+            <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
             <NajiaBoard chart={chart}/>
             <div className="academy-scope">{chart.note}</div>
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
@@ -199,12 +266,12 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合你所说的现实处境讨论已计算的八宫、世应、纳甲、六亲和动爻；尚未计算日月建、六神、旬空、用神和旺衰，不会冒称完整六爻断事。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。真正的历法换算、用神取用及综合旺衰尚未实现。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
         </div>
-        <div className="academy-ai-actions"><button className="academy-primary" onClick={interpret} disabled={busy}>{busy?'正在解读…':'AI 辅助理解这一卦 ↗'}</button>
+        <div className="academy-ai-actions"><button className="academy-primary" onClick={interpret} disabled={busy||calendarBusy}>{busy?'正在解读…':'AI 辅助理解这一卦 ↗'}</button>
           <button onClick={onStudy}>设置 DeepSeek API</button></div>
         {error&&<p className="academy-error" role="alert">{error}</p>}
         {answer&&<div className="academy-answer"><h3>卦象研究笔记</h3><p>{answer}</p></div>}

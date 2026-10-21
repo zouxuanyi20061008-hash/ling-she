@@ -146,6 +146,8 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
 
 class SixYaoCastRequest(BaseModel):
     numbers: list[int] = Field(min_length=6,max_length=6)
+    day_ganzhi: str | None = Field(default=None,min_length=2,max_length=2)
+    month_branch: str | None = Field(default=None,min_length=1,max_length=1)
 
 class SixYaoReadRequest(SixYaoCastRequest):
     question: str = Field(min_length=1,max_length=1000)
@@ -156,20 +158,21 @@ class SixYaoReadRequest(SixYaoCastRequest):
 @app.post("/api/liuyao/cast")
 def six_yao_cast(req: SixYaoCastRequest):
     try:
-        return cast_six_yao(req.numbers)
+        return cast_six_yao(req.numbers, req.day_ganzhi, req.month_branch)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 
 SIX_YAO_PROMPT = """你是谨慎的传统术数学习陪练。当前六爻卦盘已通过确定性代码计算：六次铜钱爻态、本卦、变卦、动爻、京房八宫归属与世应、浑天纳甲干支、每爻五行与六亲。
 严格仅引用输入 chart_deterministic 的已计算字段；本卦世应以本卦八宫确定，变卦的八宫仅作对照；变爻六亲仍以本卦宫五行为我。
-尚未计算日月建、六神、旬空、月破、用神、飞伏、动变旺衰、神煞或应期：绝对禁止补造这些信息，也不能宣称这是完整六爻预测。
+当 chart_deterministic.calendar.day 非空时，六神与旬空已按所填六十甲子日计算；month 非空时，月支与爻支五行关系、月建同支、月冲标记也已计算，但日辰与月支只是用户手动选择，尚未校验公历日期与交节时刻。不可伪称已自动核定真实日历。
+若 calendar.day 或 month 为空，严格禁止推断其六神、旬空、月支关系。无论是否填写，仍未实现用神取用、伏神、六合六冲进一步裁量、动变完整旺衰和应期：绝对禁止补造。六神和月支标记不能单独决定吉凶，也不能宣称这是完整六爻预测。
 区分【传统排盘规则】、【象义解释】和【用户未核实的背景】；有多动爻须全部呈现，不自动套梅花体用、单爻规则。
 不要据卦猜断确定未来、他人真实心理、健康疾病；不得恐吓或贬低怀疑者。按盘面→关键象义→背景匹配与反证→现实建议自然解读。"""
 
 @app.post("/api/liuyao/interpret")
 def six_yao_interpret(req: SixYaoReadRequest, request: Request):
     try:
-        chart = cast_six_yao(req.numbers)
+        chart = cast_six_yao(req.numbers, req.day_ganzhi, req.month_branch)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
     if not req.background_confirmed or not req.background or len(req.background.strip()) < 2:

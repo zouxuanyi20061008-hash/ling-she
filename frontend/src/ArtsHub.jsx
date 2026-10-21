@@ -5,7 +5,7 @@ export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
    brief:'一字一象，万物皆可起卦。',detail:'体用生克 · 先后天八卦 · 本互变卦',status:'完整排盘',group:'象数易'},
   {id:'liuyao',name:'六爻纳甲',title:'六爻铜钱',symbol:'☰',en:'LIUYAO',tone:'copper',
-   brief:'三钱在掌，六掷自下而上。',detail:'铜钱六掷 · 京房八宫 · 世应六亲',status:'纳甲装卦',group:'卜筮'},
+   brief:'三钱在掌，六掷自下而上。',detail:'三钱六掷 · 京房八宫 · 世应六亲 · 六神旬空',status:'纳甲装卦',group:'卜筮'},
   {id:'qimen',name:'奇门遁甲',title:'九宫遁甲',symbol:'九',en:'QIMEN DUNJIA',tone:'night',
    brief:'九宫为盘，观察时空的结构。',detail:'洛书九宫 · 方位 · 八门认识',status:'互动课堂',group:'三式'},
   {id:'bazi',name:'四柱八字',title:'干支四柱',symbol:'干',en:'FOUR PILLARS',tone:'amber',

@@ -4,7 +4,8 @@
 京房八宫及世应：各宫本宫、一至五世、游魂、归魂，定世应。
 浑天纳甲：内三爻取下卦内纳甲，外三爻取上卦外纳甲。
 六亲以本卦的卦宫五行为「我」，不取上卦五行、也不借用梅花体用。
-目前不自动计算六神、月建、日辰、旬空、伏神与旺衰。
+目前六神、旬空及月支辅助标记由独立日辰模块在用户确认后生成；
+尚未自动核对真实历法、伏神与完整旺衰。
 """
 from __future__ import annotations
 
@@ -106,7 +107,7 @@ def decorate_six_yao(base: dict) -> dict:
     }
     base["najia_lines"]=ben_najia
     base["bian_najia_lines"]=bian_najia
-    base["najia_note"]="已据浑天纳甲配本卦和变卦干支；本卦及变爻六亲均以本卦卦宫五行为参照。此处尚未推定日月、六神、旬空、用神与旺衰。"
+    base["najia_note"]="已据浑天纳甲配本卦和变卦干支；本卦及变爻六亲均以本卦卦宫五行为参照。六神、旬空与月支辅助标记需由求测者确认日辰或节令月支后另行推导；用神与旺衰仍未实现。"
     base["documentation"]=[
         {"title":"八宫与世应","url":"https://www.guyujian.cn/learn/liuyao/05"},
         {"title":"传统纳甲表","url":"https://shunshi.ai/zh-cn/wiki/liuyao/zhuangua/najia"},
