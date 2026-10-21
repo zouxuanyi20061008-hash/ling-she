@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import './academy.css'
 
 export const ARTS = [
@@ -20,82 +20,182 @@ export const ARTS = [
    brief:'察山水形势，读空间的传统观念。',detail:'形势 · 理气 · 方位基础',status:'典籍导览',group:'空间'},
 ]
 
-function BookSeal({word}){return <span className="atlas-seal">{word}</span>}
+const GROUPS=['全部','象数易','卜筮','三式','命理','空间']
+const CARD_LIMIT=4
 
-export default function ArtsHub({onSelect,onStudy}) {
-  const [activeGroup,setActiveGroup]=useState('全部')
-  const [featured,setFeatured]=useState('meihua')
-  const groups=['全部','象数易','卜筮','三式','命理','空间']
-  const visible=useMemo(()=>activeGroup==='全部'?ARTS:ARTS.filter(a=>a.group===activeGroup),[activeGroup])
-  const current=ARTS.find(x=>x.id===featured)||ARTS[0]
-  return <main className="atlas">
+function BookSeal({word}) {
+  return <span className="atlas-seal" aria-hidden="true">{word}</span>
+}
+
+function InkLandscape() {
+  return <svg className="academy-cover-landscape" viewBox="0 0 840 255" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="land-fog" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stopColor="#67836c" stopOpacity=".29"/>
+        <stop offset="1" stopColor="#67836c" stopOpacity="0"/>
+      </linearGradient>
+      <linearGradient id="land-foreground" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stopColor="#3e6653" stopOpacity=".24"/>
+        <stop offset="1" stopColor="#3e6653" stopOpacity=".025"/>
+      </linearGradient>
+    </defs>
+    <circle cx="600" cy="57" r="44" fill="#b5a077" opacity=".13"/>
+    <path d="M0 206 L110 121 155 174 245 82 316 165 398 112 494 211 569 160 665 222 754 149 840 216V255H0Z" fill="url(#land-fog)"/>
+    <path d="M0 240 L92 182 146 203 238 124 282 168 358 150 460 241 538 165 594 193 693 146 767 208 840 182V255H0Z" fill="url(#land-foreground)"/>
+    <g stroke="#658272" fill="none" strokeWidth="1.4" strokeOpacity=".25">
+      <path d="M221 153L245 82 290 133M526 187L569 160 618 200M683 169L754 149 820 202"/>
+      <path d="M0 236 Q180 212 328 234 T638 227 T840 236" strokeDasharray="4 9"/>
+    </g>
+    <g transform="translate(515 158)" fill="#466f5c" opacity=".34">
+      <path d="M0 54L37 54 37 17 0 17Z"/>
+      <path d="M-10 19L18-3 47 19 40 20 18 8-4 20Z"/>
+      <path d="M-6 12L18-10 42 12 34 11 18-2 2 11Z"/>
+      <path d="M8 54V31Q18 23 28 31V54" fill="#ebdfc4"/>
+    </g>
+  </svg>
+}
+
+function OrbitArtwork() {
+  return <div className="atlas-orbit" aria-hidden="true">
+    <div className="atlas-orbit-ring outer"/>
+    <div className="atlas-orbit-ring inner"/>
+    {['乾','兑','离','震','巽','坎','艮','坤'].map((x,i)=>
+      <span key={x} className="atlas-orbit-gua" style={{'--i':i}}>{x}</span>)}
+    <div className="atlas-yinyang">
+      <div className="atlas-taiji">
+        <svg viewBox="0 0 100 100" width="100%" aria-hidden="true">
+          <circle cx="50" cy="50" r="49" fill="#d1bf94" stroke="#e6d4aa"/>
+          <path d="M50 1A49 49 0 0 0 50 99 A24.5 24.5 0 0 1 50 50 A24.5 24.5 0 0 0 50 1Z" fill="#173d35"/>
+          <circle cx="50" cy="25.5" r="7" fill="#173d35"/>
+          <circle cx="50" cy="74.5" r="7" fill="#d1bf94"/>
+        </svg>
+      </div>
+      <small>象 · 数 · 理</small>
+    </div>
+  </div>
+}
+
+function MethodCard({method,onSelect}) {
+  const index=ARTS.findIndex(a=>a.id===method.id)
+  return <button type="button" className={'atlas-method '+method.tone}
+    onClick={()=>onSelect(method.id)} aria-label={'进入'+method.name+'，'+method.status}>
+    <span className="atlas-method-top">
+      <span className="atlas-method-no">第 {String(index+1).padStart(2,'0')} 门</span>
+      <span className="atlas-method-status">{method.status}</span>
+    </span>
+    <span className="atlas-method-symbol" aria-hidden="true">{method.symbol}</span>
+    <span className="atlas-method-en">{method.en}</span>
+    <h3>{method.name}</h3>
+    <p>{method.brief}</p>
+    <small>{method.detail}</small>
+    <span className="atlas-method-arrow">入此门 <b>↗</b></span>
+  </button>
+}
+
+export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,
+  activeGroup='全部',setActiveGroup,page=0,setPage}) {
+  const startTouch=useRef(null)
+  const visible=useMemo(
+    ()=>activeGroup==='全部'?ARTS:ARTS.filter(a=>a.group===activeGroup),
+    [activeGroup]
+  )
+  const pageCount=Math.max(1,Math.ceil(visible.length/CARD_LIMIT))
+  const index=Math.min(page,pageCount-1)
+  const methods=visible.slice(index*CARD_LIMIT,(index+1)*CARD_LIMIT)
+  const chooseGroup=g=>{setActiveGroup(g);setPage(0)}
+  const choosePage=p=>setPage(Math.min(Math.max(0,p),pageCount-1))
+  const isWelcome=screen!=='choose'
+
+  return <main className={'atlas atlas-screen '+(isWelcome?'atlas-welcome':'atlas-choose')}>
     <div className="atlas-grain" aria-hidden="true"/>
     <div className="atlas-shell">
       <header className="atlas-top">
-        <div className="atlas-ident"><BookSeal word="易"/><div>
-          <b>万象书院</b><span>中国传统术数 · 互动研习</span>
-        </div></div>
-        <button type="button" className="atlas-library" onClick={onStudy}>◎ 藏经阁 <span>古籍 · 学堂 · 设置</span></button>
+        <button type="button" className="atlas-logo-button" onClick={isWelcome?undefined:onBack}
+          disabled={isWelcome} aria-label={isWelcome?'万象书院':'返回万象书院首页'}>
+          <BookSeal word="易"/>
+          <span className="atlas-ident-text"><b>万象书院</b><small>中国传统术数 · 互动研习</small></span>
+        </button>
+        <button type="button" className="atlas-library" onClick={onStudy}>
+          <span aria-hidden="true">◎</span> 藏经阁 <span>古籍 · 学堂 · 设置</span>
+        </button>
       </header>
-      <section className="atlas-hero">
-        <div className="atlas-hero-copy">
-          <p className="atlas-motto"><span className="atlas-line"/> 读天地之象 · 学古人之思</p>
-          <h1>万象有数，<br/><em>问道于心。</em></h1>
-          <p className="atlas-lead">择一门术，亲手起盘；读一卷书，细究其理。梅花、六爻、奇门、八字与更多古代术数，在这里从亲身体验开始。</p>
-          <div className="atlas-hero-actions">
-            <button className="atlas-primary" onClick={()=>onSelect('meihua')}>从梅花开始研习 <span>↗</span></button>
-            <button className="atlas-ghost" onClick={onStudy}>先入藏经阁 →</button>
-          </div>
-          <p className="atlas-hero-note">每门术数各有算法与文献，不混合公式；未实现完整排盘的项目明确标注为互动课堂。</p>
-        </div>
-        <div className="atlas-orbit" aria-hidden="true">
-          <div className="atlas-orbit-ring outer"/>
-          <div className="atlas-orbit-ring inner"/>
-          {['乾','兑','离','震','巽','坎','艮','坤'].map((x,i)=><span key={x} className="atlas-orbit-gua" style={{'--i':i}}>{x}</span>)}
-          <div className="atlas-yinyang">
-            <div className="atlas-taiji">
-              <svg viewBox="0 0 100 100" width="100%" aria-hidden="true">
-                <circle cx="50" cy="50" r="49" fill="#d1bf94" stroke="#e6d4aa"/>
-                <path d="M50 1A49 49 0 0 0 50 99 A24.5 24.5 0 0 1 50 50 A24.5 24.5 0 0 0 50 1Z" fill="#173d35"/>
-                <circle cx="50" cy="25.5" r="7" fill="#173d35"/>
-                <circle cx="50" cy="74.5" r="7" fill="#d1bf94"/>
-              </svg>
+
+      {isWelcome ?
+        <section className="atlas-hero atlas-cover-page" aria-label="万象书院欢迎页">
+          <InkLandscape/>
+          <div className="atlas-hero-copy">
+            <p className="atlas-motto"><span className="atlas-line"/> 读天地之象 · 学古人之思</p>
+            <h1>万象有数，<br/><em>问道于心。</em></h1>
+            <p className="atlas-lead">一座可以亲手起卦、翻阅原典、循序研习的中国传统术数书院。</p>
+            <div className="atlas-hero-actions">
+              <button type="button" className="atlas-primary atlas-start" onClick={onStart}>
+                开始研习 <span aria-hidden="true">→</span>
+              </button>
+              <button type="button" className="atlas-ghost" onClick={onStudy}>
+                进入藏经阁 ↗
+              </button>
             </div>
-            <small>象 · 数 · 理</small>
+            <div className="atlas-entry-steps" aria-label="学习路径">
+              <span><b>壹</b> 择术</span><i/>
+              <span><b>贰</b> 动手</span><i/>
+              <span><b>叁</b> 读典</span>
+            </div>
           </div>
-        </div>
-      </section>
-      <section className="atlas-selection">
-        <div className="atlas-section-head">
-          <div><span className="atlas-eyebrow">八门初启 · 一卷一世界</span><h2>择术入境</h2></div>
-          <span className="atlas-side-caption">现开放梅花排盘、六爻纳甲基础装卦与两门互动课堂</span>
-        </div>
-        <div className="atlas-filter" role="group" aria-label="术数分类">
-          {groups.map(g=><button key={g} className={g===activeGroup?'active':''} onClick={()=>setActiveGroup(g)}>{g}</button>)}
-        </div>
-        <div className="atlas-method-grid">
-          {visible.map((a,i)=><button key={a.id} type="button"
-            className={'atlas-method '+a.tone+(a.id===featured?' hovered':'')}
-            onMouseEnter={()=>setFeatured(a.id)} onFocus={()=>setFeatured(a.id)}
-            onClick={()=>onSelect(a.id)}>
-            <div className="atlas-method-top"><span className="atlas-method-no">第 {String(ARTS.indexOf(a)+1).padStart(2,'0')} 门</span><span className="atlas-method-status">{a.status}</span></div>
-            <div className="atlas-method-symbol">{a.symbol}</div>
-            <span className="atlas-method-en">{a.en}</span>
-            <h3>{a.name}</h3><p>{a.brief}</p>
-            <small>{a.detail}</small>
-            <span className="atlas-method-arrow">入此门 <b>↗</b></span>
-          </button>)}
-        </div>
-      </section>
-      <div className="atlas-extras">
-        <button onClick={onStudy} className="atlas-extra">
-          <span>藏经阁</span><h3>读原文，而不止听解说。</h3><p>《周易》《梅花易数》《增删卜易》《三命通会》等文献入口与课程导读。</p><b>入阁读书 ↗</b>
-        </button>
-        <button onClick={()=>onSelect('liuyao')} className="atlas-extra rust">
-          <span>铜钱工坊</span><h3>手掷六次，亲自成卦。</h3><p>铜钱翻转，阴阳变化。每一次取数都保留当时的记录。</p><b>进入六爻工坊 ↗</b>
-        </button>
-      </div>
-      <footer className="atlas-footer">万象书院 · 不以吉凶恐吓，不以符号替代现实。术数作为传统文化研习及个人反思工具。</footer>
+          <OrbitArtwork/>
+          <p className="atlas-cover-corner" aria-hidden="true">八 门 初 开 · 各 循 其 法</p>
+        </section>
+      :
+        <section className="atlas-selection atlas-choose-page" aria-label="择术入境">
+          <div className="atlas-choose-heading">
+            <button type="button" className="atlas-return" onClick={onBack}>
+              ← 返回书院
+            </button>
+            <div>
+              <span className="atlas-eyebrow">第二页 · 选一门术，入一重境</span>
+              <h1>择术入境</h1>
+              <p>梅花、六爻、奇门、八字……各有其法。选定一门，便进入独立的起卦或研习空间。</p>
+            </div>
+            <span className="atlas-choose-stamp" aria-hidden="true">择<br/>术</span>
+          </div>
+          <div className="atlas-filter" role="group" aria-label="术数分类">
+            {GROUPS.map(g=><button type="button" key={g}
+              aria-pressed={activeGroup===g} className={g===activeGroup?'active':''}
+              onClick={()=>chooseGroup(g)}>{g}</button>)}
+          </div>
+          <div className="atlas-choice-book" key={activeGroup+'-'+index}
+            onTouchStart={e=>{const t=e.touches[0];startTouch.current={x:t.clientX,y:t.clientY}}}
+            onTouchEnd={e=>{
+              const start=startTouch.current;startTouch.current=null
+              if(!start||!e.changedTouches?.length)return
+              const t=e.changedTouches[0],dx=t.clientX-start.x,dy=t.clientY-start.y
+              if(Math.abs(dx)<80||Math.abs(dx)<Math.abs(dy)*1.5)return
+              choosePage(index+(dx<0?1:-1))
+            }}>
+            <div className="atlas-method-grid">
+              {methods.map(method=><MethodCard key={method.id} method={method} onSelect={onSelect}/>)}
+            </div>
+          </div>
+          <nav className="atlas-page-controls" aria-label="术数列表分页">
+            <button type="button" className="atlas-page-arrow" disabled={index===0}
+              onClick={()=>choosePage(index-1)}>← 上一页</button>
+            <div className="atlas-page-indicators">
+              {Array.from({length:pageCount},(_,i)=><button key={i} type="button"
+                aria-label={'查看第'+(i+1)+'页'} aria-current={index===i?'page':undefined}
+                className={index===i?'active':''} onClick={()=>choosePage(i)}>
+                {String(i+1).padStart(2,'0')}
+              </button>)}
+              <span> / {String(pageCount).padStart(2,'0')}</span>
+            </div>
+            <button type="button" className="atlas-page-arrow" disabled={index===pageCount-1}
+              onClick={()=>choosePage(index+1)}>下一页 →</button>
+          </nav>
+          <div className="atlas-choice-help">
+            <span>梅花与六爻可实际排盘，其余门类逐步开放。尚未完成的算法不冒充已实现。</span>
+            <button type="button" onClick={onStudy}>不知从何学起？先入藏经阁 ↗</button>
+          </div>
+        </section>
+      }
+      <footer className="atlas-footer">万象书院 · 观境察势　｜　先明其理，再辨其事</footer>
     </div>
   </main>
 }
