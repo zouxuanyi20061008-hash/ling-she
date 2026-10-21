@@ -106,7 +106,7 @@ def decorate_six_yao(base: dict) -> dict:
     }
     base["najia_lines"]=ben_najia
     base["bian_najia_lines"]=bian_najia
-    base["najia_note"]="已据浑天纳甲配本卦和变卦干支；本卦及变爻六亲均以本卦卦宫五行为参照。此处尚未推定日月、六神、旬空、用神与旺衰。",
+    base["najia_note"]="已据浑天纳甲配本卦和变卦干支；本卦及变爻六亲均以本卦卦宫五行为参照。此处尚未推定日月、六神、旬空、用神与旺衰。"
     base["documentation"]=[
         {"title":"八宫与世应","url":"https://www.guyujian.cn/learn/liuyao/05"},
         {"title":"传统纳甲表","url":"https://shunshi.ai/zh-cn/wiki/liuyao/zhuangua/najia"},
