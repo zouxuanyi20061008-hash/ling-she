@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { CLASSICS, LESSONS, QUIZZES, SOURCES } from './studyContent.js'
+import { METHODS, REFERENCES, TEXTS, COURSE, COURSE_QUIZ } from './traditionContent.js'
 import './study.css'
 
 const ITEMS = [
+  {key:'schools',title:'百家',sub:'各门术数',number:'零'},
   {key:'classics',title:'典籍',sub:'原文有据',number:'壹'},
   {key:'lessons',title:'修习',sub:'循序学易',number:'贰'},
   {key:'practice',title:'试炼',sub:'自证所学',number:'叁'},
@@ -131,6 +133,69 @@ function Practice({ goCast }) {
   </div>
 }
 
+function Schools({onLearnMeihua}) {
+  const [method,setMethod]=useState('zhouyi')
+  const [textIndex,setTextIndex]=useState(0)
+  const [lessonIndex,setLessonIndex]=useState(0)
+  const [answer,setAnswer]=useState(null)
+  const [quizIndex,setQuizIndex]=useState(0)
+  const [sceneActive,setSceneActive]=useState(false)
+  const info=METHODS.find(m=>m.id===method)||METHODS[0]
+  const books=method==='meihua'?CLASSICS.map(c=>({...c,url:SOURCES[c.source]})):
+    (TEXTS[method]||[]).map(c=>({...c,url:REFERENCES[method]}))
+  const book=books[Math.min(textIndex,Math.max(0,books.length-1))]
+  const lessons=method==='meihua'?LESSONS.map(l=>[l.title,l.paragraphs[0],l.paragraphs.slice(1).join(' ')]):(COURSE[method]||[])
+  const lesson=lessons[Math.min(lessonIndex,Math.max(0,lessons.length-1))]
+  const quiz=method==='meihua'?
+    QUIZZES.map(q=>({q:q.question,a:q.options,correct:q.answer,why:q.why})):
+    COURSE_QUIZ[method]||[]
+  const thisQuiz=quiz[Math.min(quizIndex,Math.max(0,quiz.length-1))]
+  function choose(id){setMethod(id);setTextIndex(0);setLessonIndex(0);setQuizIndex(0);setAnswer(null);setSceneActive(false)}
+  return <div className="study-content">
+    <div className="study-headrow"><div><p className="shrine-overline">万象书院 · 百家藏经</p><h2>一门一法，各有源流。</h2></div><span className="study-count">五系入门 · 原典可查</span></div>
+    <p className="study-deck">先认古籍，再看规则，动手练习。不同门类保留自己的算法，不把梅花体用当作所有术数的统一公式。</p>
+    <div className="schools-chooser" role="group" aria-label="选择学习的术数">{METHODS.map(m=>
+      <button type="button" key={m.id} className={method===m.id?'active':''} onClick={()=>choose(m.id)}>
+        <b>{m.title}</b><small>{m.sub}</small></button>)}</div>
+    <div className="schools-layout">
+      <section className="schools-paper">
+        <p className="shrine-overline">古籍选读 · 原文与理解分开</p>
+        <div className="schools-book-selector">{books.map((b,i)=><button key={b.id} className={i===textIndex?'active':''} onClick={()=>setTextIndex(i)}>{b.heading}</button>)}</div>
+        {book?<div className="schools-book-view">
+          <p>{book.volume} · {book.section}</p><h3>{book.heading}</h3>
+          <blockquote>{book.original}</blockquote><b>白话理解</b><p>{book.explanation}</p>
+          <b>辨其界</b><p>{book.note}</p>
+          <a href={book.url} target="_blank" rel="noopener noreferrer">查阅古籍原文全文 ↗</a>
+        </div>:<p>本类古籍目录正在逐步校勘，暂不编造原文。</p>}
+      </section>
+      <section className="schools-experience">
+        <p className="shrine-overline">动画讲解 · 轻量立体场景</p>
+        <div className={'schools-diorama '+method+(sceneActive?' is-playing':'')}>
+          {method==='liuyao'?<div className="schools-demo-coins">{['乾','元','寶'].map(c=><span key={c}>{c}</span>)}</div>:
+           method==='qimen'?<div className="schools-demo-nine">{[4,9,2,3,5,7,8,1,6].map(n=><span key={n}>{n}</span>)}</div>:
+           method==='bazi'?<div className="schools-demo-pillars">{['年','月','日','时'].map(c=><span key={c}>{c}<b>甲子</b></span>)}</div>:
+           <div className="schools-demo-gua">{['☰','☱','☲','☳','☴','☵','☶','☷'].map(c=><span key={c}>{c}</span>)}</div>}
+        </div>
+        <button className="study-action" onClick={()=>setSceneActive(x=>!x)}>{sceneActive?'停止演示':'播放一段互动演示'} ↗</button>
+        <p className="study-footnote">此处用于直观理解符号与空间结构，不是实时命盘或神奇预测特效。部分图示为教学简化。</p>
+        {lesson&&<div className="schools-lesson">
+          <span>第 {lessonIndex+1} 课 · 共 {lessons.length} 课</span>
+          <h3>{lesson[0]}</h3><p>{lesson[1]}</p><p>{lesson[2]}</p>
+          <div className="schools-lesson-control"><button disabled={lessonIndex===0} onClick={()=>setLessonIndex(i=>i-1)}>← 上一课</button>
+            <button disabled={lessonIndex===lessons.length-1} onClick={()=>setLessonIndex(i=>i+1)}>下一课 →</button></div>
+        </div>}
+      </section>
+    </div>
+    {thisQuiz&&<section className="schools-quiz">
+      <p className="shrine-overline">随堂问答 · 第 {quizIndex+1} 题</p><h3>{thisQuiz.q}</h3>
+      <div className="schools-quiz-choices">{thisQuiz.a.map((a,i)=><button disabled={answer!==null} className={answer!==null?(i===thisQuiz.correct?'correct':answer===i?'wrong':''):''} onClick={()=>setAnswer(i)} key={i}>{a}</button>)}</div>
+      {answer!==null&&<div className="schools-quiz-answer"><p>{answer===thisQuiz.correct?'答对了。':'这一题值得再推敲。'} {thisQuiz.why}</p>
+        <button onClick={()=>{setQuizIndex(i=>(i+1)%quiz.length);setAnswer(null)}}>下一问 →</button></div>}
+    </section>}
+    <p className="study-footnote">课程和小场景是分门入门版。完整的六爻纳甲、奇门排局和八字历法转换需分别建立可验证的算法，不会以“万术皆通”的套话代替实做。</p>
+  </div>
+}
+
 function ApiSettings({ apiKey, setApiKey, aiModel, setAiModel, accessCode, setAccessCode }) {
   const [reveal,setReveal]=useState(false)
   return <div className="study-content">
@@ -173,7 +238,7 @@ function ApiSettings({ apiKey, setApiKey, aiModel, setAiModel, accessCode, setAc
 export default function StudyHall({
   onClose,apiKey,setApiKey,aiModel,setAiModel,accessCode,setAccessCode
 }) {
-  const [tab,setTab]=useState('classics')
+  const [tab,setTab]=useState('schools')
   const [lessonIndex,setLessonIndex]=useState(0)
   useEffect(()=>{
     function esc(e){if(e.key==='Escape')onClose()}
@@ -187,9 +252,9 @@ export default function StudyHall({
       <div className="study-inner">
         <header className="shrine-header">
           <div className="shrine-title-area"><div className="shrine-seal" aria-hidden="true">梅</div><div>
-            <p className="shrine-overline">梅花心易 · 藏经阁</p>
+            <p className="shrine-overline">万象书院 · 百家藏经阁</p>
             <h1 id="shrine-title">一卷古今，见天地心。</h1>
-            <p>读原典 · 学起卦 · 自校心法 · 接入 AI</p>
+            <p>读《周易》 · 梅花 · 六爻 · 奇门 · 八字</p>
           </div></div>
           <button type="button" className="shrine-close" onClick={onClose} aria-label="关闭藏经阁">×</button>
           <ShelfOrnament/>
@@ -201,6 +266,7 @@ export default function StudyHall({
           </button>)}
         </nav>
         <div className="shrine-view" key={tab}>
+          {tab==='schools'&&<Schools onLearnMeihua={()=>setTab('lessons')}/>}
           {tab==='classics'&&<Classics onLearn={()=>setTab('lessons')}/>}
           {tab==='lessons'&&<Lessons setTab={setTab} lessonIndex={lessonIndex} setLessonIndex={setLessonIndex}/>}
           {tab==='practice'&&<Practice goCast={onClose}/>}

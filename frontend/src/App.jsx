@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import './book.css'
-import StudyHall from './StudyHall.jsx'
+import {CaseNotebook} from './SixYaoStage.jsx'
 
 const pad = n => String(n).padStart(2, '0')
 const localInput = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
@@ -280,7 +280,7 @@ function ManualDialog({ problem, draft, setDraft, error, onClose, onConfirm, bus
   </div>
 }
 
-export default function App() {
+export default function App({onBack,onOpenStudy,apiConfig}) {
   const [question, setQuestion] = useState('')
   const [value, setValue] = useState('')
   const [dateValue, setDateValue] = useState(() => localInput(new Date()))
@@ -295,10 +295,7 @@ export default function App() {
   const [manualDraft, setManualDraft] = useState(initialManual)
   const [manualError, setManualError] = useState('')
   const [pendingAi, setPendingAi] = useState(false)
-  const [aiAccessCode, setAiAccessCode] = useState('')
-  const [personalApiKey, setPersonalApiKey] = useState('')
-  const [aiModel, setAiModel] = useState('deepseek-chat')
-  const [settingsOpen, setSettingsOpen] = useState(false)
+  const {aiAccessCode,personalApiKey,aiModel}=apiConfig
   const [background, setBackground] = useState('')
   const [backgroundAsked, setBackgroundAsked] = useState(false)
   const [backgroundOpen, setBackgroundOpen] = useState(false)
@@ -470,6 +467,7 @@ export default function App() {
 
   return <main className="book-app">
     <div className="book-frame">
+      <div className="academy-meihua-back"><button type="button" onClick={onBack}>← 返回万象书院</button><span>象数易 · 梅花易数</span></div>
       <header className="book-top">
         <div className="book-brand">
           <div className="book-brand-icon" aria-hidden="true">梅</div>
@@ -480,7 +478,7 @@ export default function App() {
         </div>
         <div className="book-head-actions">
           <span className="book-serial">心易手卷 · 卷一</span>
-          <button type="button" className="book-settings" onClick={()=>setSettingsOpen(true)} aria-label="打开藏经阁与设置" title="藏经阁 · 学习与设置">
+          <button type="button" className="book-settings" onClick={onOpenStudy} aria-label="打开藏经阁与设置" title="藏经阁 · 学习与设置">
             <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 3h13a1 1 0 0 1 1 1v16H6a3 3 0 0 0 0-6h13M6 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3"/>
               <path d="M9 7h7M9 11h5"/>
@@ -528,7 +526,7 @@ export default function App() {
         </div>
         <div className="book-settings-hint">
           <span>初学梅花？可到藏经阁读原典、上入门课。</span>
-          <button type="button" onClick={()=>setSettingsOpen(true)}>古籍 · 教程 · API 设置 ↗</button>
+          <button type="button" onClick={onOpenStudy}>古籍 · 教程 · API 设置 ↗</button>
         </div>
         <div className="book-aux mt-6">
           <button className="book-main-action" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
@@ -587,6 +585,7 @@ export default function App() {
         </div>
         <LayerReading chart={chart} activeTab={readingTab}/>
         <p className="book-footnote">{chart.dual_layer?.boundary}</p>
+        <CaseNotebook method="梅花易数" chart={chart} question={question}/>
         <section className="book-ai">
           <h3>以卦问事 · 深入解读</h3>
           <p>免费易理解读已在上方呈现。要结合你当下的真实处境分析，可再补充一次背景后调用 AI；若尚未配置模型密钥，仍可阅读完整基础卦解。</p>
@@ -612,8 +611,6 @@ export default function App() {
       </div>
       <footer className="book-epilogue">梅花心易 · 心念起卦，观境察势　｜　传统卦象仅作文化研究与反思参考，不作确定性预测</footer>
     </div>
-    {settingsOpen && <StudyHall onClose={()=>setSettingsOpen(false)} apiKey={personalApiKey} setApiKey={setPersonalApiKey}
-      aiModel={aiModel} setAiModel={setAiModel} accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>}
     {manualOpen && <ManualDialog problem={manualProblem} draft={manualDraft} setDraft={setManualDraft}
       error={manualError} onClose={() => setManualOpen(false)} onConfirm={confirmManual} busy={busy}/>}
     {observationOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">
