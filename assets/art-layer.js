@@ -99,3 +99,37 @@ function paintBambooStand(x,y,scale){
   ctx.save();ctx.fillStyle='#193d3140';ctx.beginPath();ctx.ellipse(x+6,y+2,width*.48,width*.13,0,0,Math.PI*2);ctx.fill();
   ctx.drawImage(bambooArt,x-width*.5,y-height,width,height);ctx.restore();return true;
 }
+
+
+/* V5.4: fixed Qinglan landmarks. All coordinates are world-space and stable
+   across reloads. The gate has an open center; the shrine has a solid base. */
+var gateArt=new Image();gateArt.src='assets/qinglan-gate.svg';
+var shrineArt=new Image();shrineArt.src='assets/qinglan-shrine.svg';
+var QINGLAN_GATE={x:1750,y:1660,w:208,h:169};
+var QINGLAN_SHRINE={x:2080,y:1640,w:235,h:189};
+function paintLandmarks(){
+  var g=QINGLAN_GATE,s=QINGLAN_SHRINE;
+  if(g.x+g.w>camX&&g.x-g.w<camX+W&&g.y>camY-200&&g.y<camY+H+50&&isArtReady(gateArt)){
+    ctx.save();ctx.fillStyle='#172f2a44';ctx.beginPath();
+    ctx.ellipse(g.x,g.y+3,g.w*.47,13,0,0,Math.PI*2);ctx.fill();
+    ctx.drawImage(gateArt,g.x-g.w/2,g.y-g.h,g.w,g.h);ctx.restore();
+  }
+  if(s.x+s.w>camX&&s.x-s.w<camX+W&&s.y>camY-230&&s.y<camY+H+40&&isArtReady(shrineArt)){
+    ctx.save();ctx.fillStyle='#152e2944';ctx.beginPath();
+    ctx.ellipse(s.x,s.y+2,s.w*.51,20,0,0,Math.PI*2);ctx.fill();
+    ctx.drawImage(shrineArt,s.x-s.w/2,s.y-s.h,s.w,s.h);ctx.restore();
+  }
+}
+function paintLandmarkFront(playerRef){
+  var g=QINGLAN_GATE,s=QINGLAN_SHRINE;
+  if(isArtReady(gateArt)&&playerRef.y<g.y&&playerRef.y>g.y-g.h&&Math.abs(playerRef.x-g.x)<g.w*.47){
+    ctx.save();ctx.globalAlpha=.94;
+    ctx.drawImage(gateArt,0,0,256,108,g.x-g.w/2,g.y-g.h,g.w,g.h*108/208);
+    ctx.restore();
+  }
+  if(isArtReady(shrineArt)&&playerRef.y<s.y&&playerRef.y>s.y-s.h&&Math.abs(playerRef.x-s.x)<s.w*.49){
+    ctx.save();ctx.globalAlpha=.9;
+    ctx.drawImage(shrineArt,0,0,288,107,s.x-s.w/2,s.y-s.h,s.w,s.h*107/232);
+    ctx.restore();
+  }
+}
