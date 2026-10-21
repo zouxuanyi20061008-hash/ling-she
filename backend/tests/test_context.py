@@ -115,7 +115,7 @@ def test_user_screen_shows_full_names_and_free_guide():
     assert chart["hu_gua"]["full_name"]=="山雷颐"
     assert chart["bian_gua"]["full_name"]=="风水涣"
     assert chart["sheng_ke"]=="用克体"
-    assert "外在压力" in chart["reading_guide"]["relationship"]
+    assert "外部制约" in chart["reading_guide"]["relationship"]
     assert chart["ben_gua"]["meaning"]
     assert chart["hu_gua"]["meaning"]
     assert chart["bian_gua"]["meaning"]
