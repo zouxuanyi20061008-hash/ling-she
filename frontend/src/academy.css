@@ -592,3 +592,46 @@
  .fushen-pair small,.fushen-pair>div>span{font-size:9px}
  .fushen-pair-arrow{font-size:9px}
 }
+
+/* 日月生克、动变本位关联。只展示确定性关系，不给伪旺衰评分。 */
+.dynamics-study{margin:17px 0;padding:16px 14px;background:#f3f0e3;
+ border:1px solid #adb9a2;color:#345842}
+.dynamics-head{display:flex;justify-content:space-between;gap:9px;align-items:center;
+ border-bottom:1px solid #c7c9ad;padding-bottom:10px}
+.dynamics-head span{font-size:11px;letter-spacing:.13em;color:#a07753}
+.dynamics-head h3{font-size:19px;font-weight:650;color:#285642;margin:6px 0 0}
+.dynamics-head small{font-size:11px;color:#52795b}
+.dynamics-intro{font-size:11px;color:#6d7967;line-height:1.95;margin:13px 0}
+.dynamics-intro strong{color:#37644f}
+.dynamics-positions{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
+.dynamics-positions button{background:#fdf8eb;color:#486b54;padding:9px 2px;
+ border:1px solid #bfc7af;min-height:41px;font-size:11px;white-space:nowrap}
+.dynamics-positions button.active{background:#2b614a;color:#fff0d8;border-color:#2b614a}
+.dynamics-positions button small{font-size:9px;color:#b66a4d;margin-left:3px}
+.dynamics-positions button.active small{color:#e7bc8b}
+.dynamics-detail{margin-top:11px}
+.dynamics-two-column{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dynamics-two-column article{padding:12px 10px;background:#fbf8eb;border:1px solid #d7ccb2;
+ min-width:0}
+.dynamics-two-column small{font-size:10px;color:#987e60;line-height:1.7}
+.dynamics-two-column h4{font-size:15px;margin:5px 0 10px;color:#305d47}
+.dynamics-two-column p{font-size:11px;color:#5e7660;line-height:1.9;margin:6px 0;
+ overflow-wrap:anywhere}
+.dynamics-two-column p b{color:#947254}
+.dynamics-turnback{background:#e3eadd;border-left:3px solid #557b62;
+ padding:11px 13px;margin-top:10px;color:#476753}
+.dynamics-turnback span{display:block;font-size:11px;color:#8d7353}
+.dynamics-turnback strong{display:block;font-size:14px;margin:5px 0;color:#285941}
+.dynamics-turnback p,.dynamics-turnback.quiet{font-size:11px;line-height:1.9}
+.dynamics-turnback.quiet{background:#e9e6da;color:#788071}
+.dynamics-scope{font-size:10px;line-height:1.85;color:#837e6b;
+ border-top:1px solid #cbd0bb;padding-top:10px;margin-top:13px}
+.dynamics-sources{display:flex;flex-wrap:wrap;gap:7px 15px;margin-top:11px}
+.dynamics-sources a{color:#346c53;font-size:11px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){
+ .dynamics-study{padding:12px 9px}
+ .dynamics-head h3{font-size:17px}
+ .dynamics-positions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .dynamics-positions button{min-height:37px}
+ .dynamics-two-column{grid-template-columns:1fr}
+}

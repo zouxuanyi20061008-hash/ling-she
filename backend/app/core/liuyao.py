@@ -1,4 +1,4 @@
-"""传统三钱六掷入门：仅确定性推算本卦、动爻与之卦，不假造纳甲六亲等。"""
+"""传统三钱六掷与纳甲教学：八宫、飞伏、日月、动变均以确定性规则计算，不假造实战断语。"""
 from __future__ import annotations
 
 from .hexagrams import hexagram_from_lines
@@ -7,6 +7,7 @@ from .calendar import decorate_calendar
 from .yongshen import focus_six_yao
 from .spirit_relations import decorate_spirit_relations
 from .fushen import decorate_hidden_spirits
+from .dynamics import decorate_line_dynamics
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -31,7 +32,7 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
         "ben_gua":hexagram_from_lines(main_bits),
         "bian_gua":hexagram_from_lines(changed_bits),
         "dong_yao":changing,
-        "note":"已计算本变卦、八宫世应、纳甲干支与六亲；输入有效日辰可装六神、旬空，输入节令月支可标记月支关系。日月历法换算、完整旺衰及最终用神取舍尚未实现；选定关注对象后可查本卦可见的原神、忌神、仇神五行关系；本卦缺失六亲可按八宫首卦装伏神、辨飞伏。",
+        "note":"已计算本变卦、八宫世应、纳甲干支与六亲；输入有效日辰可装六神、旬空，输入节令月支可标记月支关系。日月历法换算、完整旺衰及最终用神取舍尚未实现；选定关注对象后可查本卦可见的原神、忌神、仇神五行关系；本卦缺失六亲可按八宫首卦装伏神、辨飞伏。已增加日月对各爻的五行、冲合标记，以及动爻本位的回头生克冲合；综合旺衰与应期仍未自动判断。",
         "rules":"以三枚铜钱分别记字为2、背为3；三字6为老阴、两字一背7为少阳、两背一字8为少阴、三背9为老阳。第一次为初爻，从下往上记录六次。",
     }
-    return decorate_hidden_spirits(decorate_spirit_relations(focus_six_yao(decorate_calendar(decorate_six_yao(result), day_ganzhi, month_branch), focus_liuqin)))
+    return decorate_line_dynamics(decorate_hidden_spirits(decorate_spirit_relations(focus_six_yao(decorate_calendar(decorate_six_yao(result), day_ganzhi, month_branch), focus_liuqin))))

@@ -220,6 +220,72 @@ function FuShenStudy({chart,onChoose,busy}){
   </section>
 }
 
+
+function LineDynamicsStudy({chart}) {
+  const dynamics=chart.line_dynamics
+  const [position,setPosition]=useState(1)
+  if(!dynamics)return null
+  const ben=chart.najia_lines[position-1]
+  const bian=chart.bian_najia_lines[position-1]
+  const turnback=ben.turnback
+  function calSummary(action,prefix){
+    if(!action)return '尚未确认'+prefix+'，此项不作推算。'
+    const extra=[
+      action.same_branch?prefix+'同支（临建）':null,
+      action.clash?prefix+'相冲'+(prefix==='月建'?' · 月破条件':' · 不自动判暗动'):null,
+      action.combine?prefix+'六合':null
+    ].filter(Boolean)
+    return action.element_relation+(extra.length?'；'+extra.join('；'):'')
+  }
+  return <section className="dynamics-study" aria-label="日月作用与动变回头关系教学">
+    <header className="dynamics-head">
+      <div><span>第八式 · 日月动变</span><h3>先辨作用，再论力量。</h3></div>
+      <small>{dynamics.moving_positions.length} 个动爻</small>
+    </header>
+    <p className="dynamics-intro">
+      点击任意一爻，查看日辰、月建对本卦爻与变卦爻分别产生的关系；
+      <strong>只有真正发动的爻，才计算本位变爻的回头生克冲合。</strong>
+    </p>
+    <div className="dynamics-positions" role="group" aria-label="选择六爻中的一爻">
+      {[0,1,2,3,4,5].map(i=><button type="button" key={i}
+        aria-pressed={position===i+1}
+        className={position===i+1?'active':''}
+        onClick={()=>setPosition(i+1)}>{POS[i]}爻
+          {chart.dong_yao.includes(i+1)&&<small>动</small>}
+        </button>)}
+    </div>
+    <div className="dynamics-detail">
+      <div className="dynamics-two-column">
+        <article>
+          <small>本卦 · {POS[position-1]}爻</small>
+          <h4>{ben.ganzhi} · {ben.element}</h4>
+          <p><b>日辰：</b>{calSummary(ben.day_action,'日辰')}</p>
+          <p><b>月建：</b>{calSummary(ben.month_action,'月建')}</p>
+        </article>
+        <article>
+          <small>{turnback?'本位变爻':'之卦同位 · 非动爻'}</small>
+          <h4>{bian.ganzhi} · {bian.element}</h4>
+          <p><b>日辰：</b>{calSummary(bian.day_action,'日辰')}</p>
+          <p><b>月建：</b>{calSummary(bian.month_action,'月建')}</p>
+        </article>
+      </div>
+      {turnback?<div className="dynamics-turnback">
+        <span>动爻 {turnback.moving.ganzhi} → 变爻 {turnback.transformed.ganzhi}</span>
+        <strong>{turnback.tags.join(' · ')}</strong>
+        <p>{turnback.limitation}</p>
+      </div>:<div className="dynamics-turnback quiet">
+        此爻没有发动。即使之卦同位干支可列出，也不能将它认作主动回头生克。
+      </div>}
+    </div>
+    <div className="dynamics-scope">{dynamics.calendar_boundary} {dynamics.interpretation_boundary}</div>
+    <div className="dynamics-sources">
+      <a href={dynamics.sources.day_month} rel="noopener noreferrer" target="_blank">日月四处生克 ↗</a>
+      <a href={dynamics.sources.liuhe} rel="noopener noreferrer" target="_blank">六合原文 ↗</a>
+      <a href={dynamics.sources.moving} rel="noopener noreferrer" target="_blank">动变生克原文 ↗</a>
+    </div>
+  </section>
+}
+
 function NajiaBoard({chart,roleView='用神'}) {
   const [selected,setSelected]=useState(0)
   const [changed,setChanged]=useState(false)
@@ -441,6 +507,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
+            <LineDynamicsStudy chart={chart}/>
             <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
             <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
             <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
@@ -451,7 +518,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配。真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
