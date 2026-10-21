@@ -120,3 +120,45 @@ def test_user_screen_shows_full_names_and_free_guide():
     assert chart["hu_gua"]["meaning"]
     assert chart["bian_gua"]["meaning"]
     assert "moving_position" in chart["reading_guide"]
+
+
+def test_xiantian_and_houtian_layers():
+    # 风泽中孚：5巽木上、2兑金下、初爻动。体=巽木，用=兑金。
+    chart=arrange(5,2,7)
+    data=chart["dual_layer"]
+    assert chart["ben_gua"]["full_name"]=="风泽中孚"
+    assert data["xiantian"]["upper_number"]==5
+    assert data["xiantian"]["lower_number"]==2
+    assert data["xiantian"]["relation"]=="用克体"
+    assert data["houtian"]["ti"]["name"]=="巽"
+    assert data["houtian"]["ti"]["direction"]=="东南"
+    assert data["houtian"]["yong"]["name"]=="兑"
+    assert data["houtian"]["yong"]["direction"]=="西"
+    assert "沟通" in data["houtian"]["yong"]["themes"]
+    assert "先天定理" in data["boundary"]
+
+def test_eight_houtian_trigram_directions_are_fixed():
+    from app.core.hexagrams import houtian_reference
+    expected={1:"西北",2:"西",3:"南",4:"东",5:"东南",6:"北",7:"东北",8:"西南"}
+    assert {n:houtian_reference(n)["direction"] for n in range(1,9)}==expected
+    assert all(houtian_reference(n)["themes"] for n in expected)
+
+def test_moving_upper_reverses_ti_yong_correctly():
+    chart=arrange(5,2,10) # 四爻动，上卦为用，下卦为体
+    assert chart["dong_yao"]==4
+    assert chart["ti_gua"]["name"]=="兑"
+    assert chart["yong_gua"]["name"]=="巽"
+    assert chart["dual_layer"]["houtian"]["ti"]["direction"]=="西"
+    assert chart["dual_layer"]["houtian"]["yong"]["direction"]=="东南"
+
+def test_offline_cast_keeps_new_dual_layer_without_ai():
+    client=TestClient(app)
+    r=client.post("/api/cast",json={
+        "question":"朋友关系怎么处理？","value":"5,2",
+        "time_iso":"2026-10-22T02:20:00+09:00"
+    })
+    assert r.status_code==200
+    chart=r.json()
+    assert chart["dual_layer"]["xiantian"]["relation"]=="用克体"
+    assert "后天方位" in chart["dual_layer"]["houtian"]["title"]
+    assert chart["reading_guide"]["relationship"]

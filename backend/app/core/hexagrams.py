@@ -31,6 +31,28 @@ BY_LINES = {info["lines"]: num for num, info in TRIGRAMS.items()}
 GENERATES = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
 CONTROLS = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
 
+# 后天八卦的场景取象，用于现实核查的方向与环境线索；不是必然的吉位。
+HOUTIAN_SCENES = {
+    1: {"image":"天", "themes":"规则、权责、长辈、管理与高处", "question":"是否涉及制度、管理者或需要承担的责任？"},
+    2: {"image":"泽", "themes":"交流、言语、聚会、社交与喜悦", "question":"是否存在沟通方式、人际圈子或表达上的关键问题？"},
+    3: {"image":"火", "themes":"光亮、文字、消息、传播与辨明", "question":"是否需要核对消息、文书或双方对事情的理解？"},
+    4: {"image":"雷", "themes":"发动、变化、道路、行动与新事", "question":"是否有突发变动、实际行动或需要推进的环节？"},
+    5: {"image":"风", "themes":"消息传递、往来、逐渐渗透与协调", "question":"是否需要通过持续沟通、接洽或调整方法来推进？"},
+    6: {"image":"水", "themes":"流动、险阻、隐情、往来与水域", "question":"是否有尚未看清的风险、流动因素或不确定处？"},
+    7: {"image":"山", "themes":"界限、停顿、门户、阻隔与静处", "question":"是否存在具体界限、停滞或需要暂停的事情？"},
+    8: {"image":"地", "themes":"承载、土地、后方、家庭与共同资源", "question":"是否涉及生活基础、共同资源或照应他人的问题？"},
+}
+
+def houtian_reference(trigram_num: int) -> dict:
+    trigram = TRIGRAMS[trigram_num]
+    return {
+        "name":trigram["name"], "direction":trigram["direction"], "element":trigram["element"],
+        "image":HOUTIAN_SCENES[trigram_num]["image"],
+        "themes":HOUTIAN_SCENES[trigram_num]["themes"],
+        "question":HOUTIAN_SCENES[trigram_num]["question"],
+    }
+
+
 
 def rem_1_to_n(value: int, modulus: int) -> int:
     """余 0 改作 modulus。"""
@@ -97,6 +119,24 @@ def arrange(upper_number: int, lower_number: int, changing_number: int) -> dict:
         "ti_gua": ti,
         "yong_gua": yong,
         "sheng_ke": relation(ti["element"], yong["element"]),
+        "dual_layer": {
+            "xiantian": {
+                "title":"先天取数 · 以理观势",
+                "upper_number":up, "lower_number":low,
+                "upper_name":TRIGRAMS[up]["name"], "lower_name":TRIGRAMS[low]["name"],
+                "ti_element":ti["element"], "yong_element":yong["element"],
+                "relation":relation(ti["element"], yong["element"]),
+                "principle":"先天序数用于起卦；结合体用生克、本互变卦观察关系与变化的象征趋势。",
+            },
+            "houtian": {
+                "title":"后天方位 · 以象察境",
+                "ti":houtian_reference(up if moving <= 3 else low),
+                "yong":houtian_reference(low if moving <= 3 else up),
+                "upper":houtian_reference(up), "lower":houtian_reference(low),
+                "principle":"后天方位帮助寻找可核实的空间与生活场景线索，不可仅凭方位断定某地有吉凶。",
+            },
+            "boundary":"「先天定理、后天定事」是本体系的实践表达；古籍《梅花易数》的先后天论还讨论先得数或先得卦等起卦方法，不应混为一谈。",
+        },
         "reading_guide": {
             "relationship": RELATION_GUIDES[relation(ti["element"], yong["element"])],
             "moving_position": POSITION_GUIDES[moving],

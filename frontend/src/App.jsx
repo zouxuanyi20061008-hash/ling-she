@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import './book.css'
 
 const pad = n => String(n).padStart(2, '0')
 const localInput = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
@@ -24,33 +25,119 @@ function followupQuestion(question) {
 }
 
 function SixLines({ lines, moving }) {
-  return <div className="flex flex-col gap-2 items-center py-5" aria-label="六爻，自上而下展示">
-    {[...lines].map((bit, i) => ({ bit, yao: i + 1 })).reverse().map(({ bit, yao }) =>
-      <div key={yao} className={`flex items-center gap-3 ${moving === yao ? 'text-amber-700' : 'text-ink'}`}>
-        <div className="w-6 text-right text-xs">{moving === yao ? '动' : ''}</div>
-        <div className="w-24 flex items-center gap-2 h-3">
-          {bit === 1
-            ? <div className="h-2 bg-current w-full rounded-sm" />
-            : <><div className="h-2 bg-current w-1/2 rounded-sm"/><div className="h-2 bg-current w-1/2 rounded-sm"/></>}
+  return <div className="six-lines" aria-label="六爻自下而上编号">
+    {[...lines].map((bit, i) => ({bit,yao:i+1})).reverse().map(({bit,yao}) =>
+      <div key={yao} className={'six-row' + (moving===yao?' moving':'')}>
+        <span className="yao-num">{moving===yao?'动':yao}</span>
+        <div className="six-strokes">
+          {bit === 1 ? <span/> : <><span/><span/></>}
         </div>
-        <div className="w-6 text-xs">{yao}</div>
       </div>
     )}
   </div>
 }
 
 function HexCard({ name, data, moving }) {
-  return <div className="rounded-2xl border border-[#d4dbd0] bg-white/70 px-3 py-5 text-center shadow-sm">
-    <div className="text-xs tracking-[0.25em] text-moss/70">{name}</div>
-    <h3 className="mt-2 font-serif text-2xl leading-snug text-ink">{data.full_name || data.name}</h3>
-    {data.keywords && <p className="mt-2 text-sm font-medium text-moss">{data.keywords}</p>}
-    <p className="mt-1 text-sm text-moss">{data.upper.name}上 · {data.lower.name}下</p>
-    <SixLines lines={data.lines_bottom_to_top} moving={moving} />
-    <p className="text-xs text-moss">{data.upper.element} / {data.lower.element}</p>
-    {data.meaning && <div className="mt-4 border-t border-[#e3e7df] pt-4 text-left">
-      <p className="text-xs tracking-widest text-moss mb-2">卦象大意</p>
-      <p className="text-sm leading-7 text-ink/85">{data.meaning}</p>
-    </div>}
+  return <article className="book-hex">
+    <p className="kind">{name}</p>
+    <h3>{data.full_name || data.name}</h3>
+    <p className="trigrams">{data.upper.name}上 · {data.lower.name}下</p>
+    <SixLines lines={data.lines_bottom_to_top} moving={moving}/>
+    <p className="hex-keywords">{data.keywords}</p>
+    <p className="hexmeaning">{data.meaning}</p>
+  </article>
+}
+
+function PlumArt() {
+  return <div className="book-cover-art" aria-hidden="true">
+    <svg viewBox="0 0 430 270" preserveAspectRatio="xMidYMid slice">
+      <defs><linearGradient id="mountain" x1="0" x2="1" y1="1" y2="0">
+        <stop offset="0" stopColor="#496a60" stopOpacity=".18"/>
+        <stop offset="1" stopColor="#496a60" stopOpacity=".01"/>
+      </linearGradient></defs>
+      <circle cx="322" cy="82" r="54" fill="#e2d7b8" opacity=".7"/>
+      <path d="M20 252 Q98 180 143 212 L218 120 275 184 319 143 429 242 V270 H0Z" fill="url(#mountain)"/>
+      <path d="M127 268 L250 100 322 203 355 185 430 262" fill="none" stroke="#9ea894" strokeOpacity=".3" strokeWidth="2"/>
+      <path d="M428 -5 Q349 36 308 76 T224 134 M348 33 Q359 69 382 87 M290 88 Q270 57 245 55" fill="none" stroke="#806a51" strokeWidth="3.2" strokeLinecap="round"/>
+      {[[315,74],[349,47],[388,90],[271,90],[254,58],[222,134],[335,22],[290,98],[365,78]].map(([x,y],i)=>
+        <g key={i} transform={'translate('+x+' '+y+')'} opacity={.58+(i%3)*.12}>
+          {[0,72,144,216,288].map(a=><ellipse key={a} cx="0" cy="-6" rx="4.5" ry="7.4" transform={'rotate('+a+')'} fill="#c68171" fillOpacity=".73"/>)}
+          <circle r="3.5" fill="#c4aa66"/>
+        </g>)}
+      <path d="M14 206 Q95 193 164 212" fill="none" stroke="#708477" strokeOpacity=".25" strokeDasharray="3 7"/>
+    </svg>
+  </div>
+}
+
+function HoutianCompass({ ti, yong }) {
+  const marks = [
+    {name:'离',dir:'南',x:112,y:24},{name:'坤',dir:'西南',x:184,y:52},
+    {name:'兑',dir:'西',x:207,y:112},{name:'乾',dir:'西北',x:184,y:176},
+    {name:'坎',dir:'北',x:112,y:202},{name:'艮',dir:'东北',x:40,y:176},
+    {name:'震',dir:'东',x:17,y:112},{name:'巽',dir:'东南',x:40,y:52}
+  ]
+  return <svg className="book-compass" viewBox="0 0 224 224" role="img" aria-label="后天八卦方位：上南下北，左东右西">
+    <circle cx="112" cy="112" r="100" fill="#f0ead9" stroke="#b8a785" strokeWidth="1.2"/>
+    <circle cx="112" cy="112" r="76" fill="none" stroke="#a99f8a" strokeDasharray="2 5"/>
+    <circle cx="112" cy="112" r="44" fill="#e7ebdf" stroke="#a8b9aa" opacity=".92"/>
+    <path d="M112 29V195M29 112H195M51 51L173 173M173 51L51 173" stroke="#bcb59f" strokeWidth=".65"/>
+    <text x="112" y="107" fontSize="16" textAnchor="middle" fill="#254f43">后天</text>
+    <text x="112" y="125" fontSize="10" textAnchor="middle" fill="#6f8270">八卦方位</text>
+    {marks.map(m=>{
+      const active=ti?.name===m.name||yong?.name===m.name
+      return <g key={m.name}>
+        <circle cx={m.x} cy={m.y} r="15" fill={active?'#2b6053':'#e6dcc5'} stroke={active?'#8c7550':'#cfc1a2'}/>
+        <text x={m.x} y={m.y+4} textAnchor="middle" fontSize="15" fill={active?'#fff4de':'#58695a'}>{m.name}</text>
+      </g>
+    })}
+  </svg>
+}
+
+function LayerReading({ chart, activeTab }) {
+  const layer=chart.dual_layer || {}
+  const xt=layer.xiantian || {}
+  const ht=layer.houtian || {}
+  if(activeTab==='xiantian') return <div className="book-philosophy">
+    <div className="book-mini">
+      <p className="mini-kicker">先天之数</p>
+      <h3>{xt.upper_name || chart.ben_gua.upper.name} {xt.upper_number || chart.method_numbers.upper%8 || 8} · {xt.lower_name || chart.ben_gua.lower.name} {xt.lower_number || chart.method_numbers.lower%8 || 8}</h3>
+      <p>乾一兑二离三震四巽五坎六艮七坤八。上、下卦由起卦取数而成，形成本卦的结构。</p>
+    </div>
+    <div className="book-mini">
+      <p className="mini-kicker">体用之理</p>
+      <h3>{chart.sheng_ke}</h3>
+      <p>体为{chart.ti_gua.name}{chart.ti_gua.element}，用为{chart.yong_gua.name}{chart.yong_gua.element}。{chart.reading_guide?.relationship}</p>
+    </div>
+    <div className="book-mini" style={{gridColumn:'1 / -1'}}>
+      <p className="mini-kicker">观其变化</p>
+      <h3>{chart.ben_gua.full_name} → {chart.bian_gua.full_name}</h3>
+      <p>本卦可联系「{chart.ben_gua.keywords}」，互卦「{chart.hu_gua.keywords}」提示内部牵连，变卦「{chart.bian_gua.keywords}」提示可讨论的变化方向。不能不看现实问题就判定结局。</p>
+    </div>
+  </div>
+  if(activeTab==='houtian') return <div>
+    <div className="book-houtian">
+      <HoutianCompass ti={ht.ti} yong={ht.yong}/>
+      <div className="book-context">
+        <p><b>体卦 · {ht.ti?.name} · {ht.ti?.direction}</b></p>
+        <p>{ht.ti?.themes}</p>
+        <p>{ht.ti?.question}</p>
+        <p style={{marginTop:14}}><b>用卦 · {ht.yong?.name} · {ht.yong?.direction}</b></p>
+        <p>{ht.yong?.themes}</p>
+        <p>{ht.yong?.question}</p>
+      </div>
+    </div>
+    <div className="book-mini" style={{marginTop:12}}>
+      <p className="mini-kicker">由方位入情境</p>
+      <p>本卦上卦{ht.upper?.name}主{ht.upper?.themes}；下卦{ht.lower?.name}主{ht.lower?.themes}。结合眼前的真实处境，去核实与之有关的地点、人物或行动，而不是见某方位就断那边有吉凶。</p>
+    </div>
+    <p className="book-footnote">{ht.principle} 上南下北、左东右西，采用传统后天八卦方位图示。</p>
+  </div>
+  return <div>
+    <BasicReading chart={chart}/>
+    <details className="book-details">
+      <summary>展开原始取数与笔画计算</summary>
+      <NumberExplanation chart={chart}/>
+    </details>
   </div>
 }
 
@@ -150,7 +237,7 @@ function ManualDialog({ problem, draft, setDraft, error, onClose, onConfirm, bus
   const update = (key, value) => setDraft(old => ({ ...old, [key]: value }))
   return <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">
     <section role="dialog" aria-modal="true" aria-labelledby="manual-title"
-      className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl bg-rice px-6 py-6 shadow-2xl md:px-8">
+      className="book-modal w-full max-w-xl max-h-[90vh] overflow-y-auto px-6 py-6 md:px-8">
       <div className="flex justify-between gap-4 items-start">
         <div>
           <p className="text-xs tracking-widest text-moss">人工确认 · 阴阳归类</p>
@@ -217,6 +304,36 @@ export default function App() {
   const [observationDraft, setObservationDraft] = useState({ first: '', second: '', reason: '' })
   const [observationOverride, setObservationOverride] = useState(null)
   const [observationError, setObservationError] = useState('')
+  const [page, setPage] = useState(0)
+  const [turnDirection, setTurnDirection] = useState('next')
+  const [turnVersion, setTurnVersion] = useState(0)
+  const [readingTab, setReadingTab] = useState('xiantian')
+  const touchOrigin = useRef(null)
+
+  function goPage(target) {
+    const next = Math.max(0, Math.min(2, target))
+    if (next > 0 && !chart && page !== 0) return
+    if (next === page) return
+    setTurnDirection(next > page ? 'next' : 'prev')
+    setTurnVersion(i => i + 1)
+    setPage(next)
+    if (typeof window !== 'undefined') window.scrollTo({top:0,behavior:'instant'})
+  }
+  function handleTouchStart(e) {
+    if (e.target.closest?.('textarea, input, select, button, a, summary')) return
+    touchOrigin.current={x:e.touches[0].clientX,y:e.touches[0].clientY}
+  }
+  function handleTouchEnd(e) {
+    const origin=touchOrigin.current
+    touchOrigin.current=null
+    if (!origin || page===0 || !e.changedTouches?.length) return
+    const dx=e.changedTouches[0].clientX-origin.x
+    const dy=e.changedTouches[0].clientY-origin.y
+    if(Math.abs(dx)>90 && Math.abs(dx)>Math.abs(dy)*1.65) {
+      if (dx<0 && page===1) goPage(2)
+      if (dx>0 && page===2) goPage(1)
+    }
+  }
 
   function clearResult() {
     setChart(null)
@@ -247,7 +364,7 @@ export default function App() {
     setBusy(true)
     setError('')
     setInterpretation('')
-    if (!confirmedContext) setChart(null)
+    if (!confirmedContext && !withAi) setChart(null)
     const datetime = new Date(dateValue)
     if (Number.isNaN(datetime.getTime())) {
       setError('请输入有效日期和时间'); setBusy(false); return
@@ -289,6 +406,9 @@ export default function App() {
         throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail || '请求失败'))
       }
       setChart(requestInterpretation ? data.chart : data)
+      if (page===0) setReadingTab('xiantian')
+      if (requestInterpretation) goPage(2)
+      else goPage(1)
       if (askBackground) {
         setBackgroundError('')
         setBackgroundOpen(true)
@@ -339,45 +459,62 @@ export default function App() {
     submit(pendingAi, override, false, null)
   }
 
-  return <main className="min-h-screen bg-rice text-ink">
-    <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_80%_10%,rgba(130,153,125,.16),transparent_55%)]" />
-    <div className="relative max-w-5xl mx-auto px-5 py-10 md:py-16">
-      <header className="flex flex-wrap justify-between items-start gap-4 border-b border-[#cad4c8] pb-7">
-        <div>
-          <p className="text-xs tracking-[.4em] text-moss">MEIHUA · YISHU</p>
-          <h1 className="font-serif mt-3 text-4xl md:text-5xl">梅花 · 以象观心</h1>
-          <p className="mt-3 text-sm text-moss">阴阳取数 · 代码排盘 · 借卦照心</p>
+  return <main className="book-app">
+    <div className="book-frame">
+      <header className="book-top">
+        <div className="book-brand">
+          <div className="book-brand-icon" aria-hidden="true">梅</div>
+          <div>
+            <div className="book-name">梅花心易</div>
+            <div className="book-edition">以象观心 · 观境察势</div>
+          </div>
         </div>
-        <div className="rounded-full border border-moss/30 px-4 py-2 text-xs text-moss">外阳内阴 · 不凭空猜数</div>
+        <div className="book-serial">心易手卷 · 卷一</div>
       </header>
-      <section className="mt-8 rounded-3xl border border-[#d4dbd0] bg-white/70 p-5 md:p-8 shadow-sm">
-        <div className="grid gap-5 md:grid-cols-2">
-          <label className="md:col-span-2">
-            <span className="block mb-2 text-sm text-moss">你想问什么</span>
+      <nav className="book-steps" aria-label="排卦步骤">
+        {['问事','观卦','明理'].map((label,i)=>
+          <button key={label} type="button" className={'book-step '+(page===i?'active':page>i?'passed':'')}
+            aria-current={page===i?'step':undefined} disabled={i>0&&!chart}
+            onClick={()=>goPage(i)}><span>0{i+1}</span> {label}</button>
+        )}
+      </nav>
+      <div key={'leaf-'+page+'-'+turnVersion} className={'book-leaf '+turnDirection}
+        onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      {page===0 && <section className="book-page">
+        <div className="book-cover">
+          <PlumArt/>
+          <div className="book-kicker">心念所至 · 万物皆可起卦</div>
+          <h1 className="book-h1">一念起，<br/>万象生。</h1>
+          <p className="book-intro">先天观其理，后天察其境。认真问事，循象而思，不执一卦定人生。</p>
+          <div className="book-seal" aria-hidden="true">心易</div>
+        </div>
+        <div className="book-inputs">
+          <label className="wide">
+            <span className="book-label">你想问什么</span>
             <textarea className="field h-24 resize-y" maxLength={1000} placeholder="把你现在真正想问的事情写在这里…" value={question} onChange={e => { setQuestion(e.target.value); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
           </label>
-          <label><span className="block mb-2 text-sm text-moss">你想用什么起卦？</span>
+          <label><span className="book-label">你想用什么起卦？</span>
             <textarea rows={2} maxLength={500} className="field resize-y" value={value} onChange={e => { setValue(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} placeholder="明、迷茫、3、3,6，或写下看到听到的事情…" />
             <span className="mt-2 block text-xs leading-5 text-moss/80">字、数字、声音、事物、偶然见闻，都可以作为起卦契机。</span>
           </label>
-          <label><span className="block mb-2 text-sm text-moss">起卦时间（可以手动修改）</span>
+          <label><span className="book-label">起卦时间 · 可手动修改</span>
             <input className="field" type="datetime-local" value={dateValue} onChange={e => { setDateValue(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
           </label>
-          <label className="md:col-span-2 text-sm text-moss">独体字阴数方案
+          <label className="wide text-sm text-moss">独体字阴数方案
             <select value={independentYin} onChange={e => { setIndependentYin(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} className="field mt-2 md:max-w-lg">
               <option value="one">默认取 1（推荐）</option>
               <option value="hour">取所选时辰数（子=1，亥=12）</option>
             </select>
           </label>
         </div>
-        <details className="mt-5 text-sm text-moss"><summary className="cursor-pointer select-none">AI 解卦访问码（站长设置后才需要）</summary><input type="password" autoComplete="off" className="field mt-2 md:max-w-lg" placeholder="可选，不保存在网站中" value={aiAccessCode} onChange={e => setAiAccessCode(e.target.value)}/></details>
-        <div className="flex flex-wrap gap-3 mt-6 items-center">
-          <button className="rounded-xl bg-moss text-white py-3 px-7 disabled:opacity-40" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
-          <button className="rounded-xl border border-moss text-moss py-3 px-7 disabled:opacity-40" onClick={() => submit(true)} disabled={busy || !question.trim() || !value.trim()}>排盘 + AI 解读</button>
+        <details className="mt-4 text-sm text-moss"><summary className="cursor-pointer select-none">AI 解卦访问码（站长设置后才需要）</summary><input type="password" autoComplete="off" className="field mt-2 md:max-w-lg" placeholder="可选，不保存在网站中" value={aiAccessCode} onChange={e => setAiAccessCode(e.target.value)}/></details>
+        <div className="book-aux mt-6">
+          <button className="book-main-action" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
+          <button className="book-second-action" onClick={() => submit(true)} disabled={busy || !question.trim() || !value.trim()}>排盘 + AI 解读</button>
           {[...value.trim()].length === 1 && /[\u3400-\u9fff]/u.test(value.trim()) &&
-            <button className="text-sm text-moss px-2 py-2 underline underline-offset-4" type="button" onClick={() => openManual(null, false)} disabled={busy}>手动确认拆字</button>}
-          <button className="text-sm text-moss px-2 py-2 underline underline-offset-4" type="button" onClick={() => openObservation(null, false)} disabled={busy || !value.trim()}>自定取数</button>
-          <button className="text-sm text-moss px-2 py-2" type="button" onClick={() => { setDateValue(localInput(new Date())); setManualOverride(null); clearResult() }}>刷新为当前时间</button>
+            <button className="book-minor" type="button" onClick={() => openManual(null, false)} disabled={busy}>手动确认拆字</button>}
+          <button className="book-minor" type="button" onClick={() => openObservation(null, false)} disabled={busy || !value.trim()}>自定取数</button>
+          <button className="book-minor" type="button" onClick={() => { setDateValue(localInput(new Date())); setManualOverride(null); clearResult() }}>刷新为当前时间</button>
         </div>
         {manualOverride && <p className="mt-3 text-sm text-amber-800">当前使用人工确认：阳 {manualOverride.yang} 画，阴 {manualOverride.yin} 画。
           <button className="ml-2 underline" type="button" onClick={() => { setManualOverride(null); clearResult() }}>恢复自动拆字</button></p>}
@@ -388,31 +525,76 @@ export default function App() {
           其他见闻和较长文字可「自定取数」，系统保留原始描述及取数依据，不让 AI 猜数字。
         </p>
         {busy && <p className="mt-4 text-moss">正在请求服务器…</p>}
-        {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 text-red-700 p-4">{error}</p>}
-      </section>
-      {chart && <section className="mt-8">
-        <div className="flex flex-wrap justify-between gap-4 items-end mb-5">
-          <div><p className="text-xs tracking-widest text-moss">排盘结果</p><h2 className="font-serif text-2xl mt-2">由规则精确推导</h2></div>
-          <div className="text-sm text-moss">动爻：第 {chart.dong_yao} 爻 · 体：{chart.ti_gua.name}{chart.ti_gua.element} · 用：{chart.yong_gua.name}{chart.yong_gua.element}</div>
+        {error && <p role="alert" className="book-alert mt-4">{error}</p>}
+        <div className="book-page-footer">
+          <p className="book-page-mark">第一折 · 起念问事</p>
+          <p className="book-small">排盘成功后自动翻至下一页 →</p>
         </div>
-        <div className="grid sm:grid-cols-3 gap-4">
-          <HexCard name="本卦" data={chart.ben_gua} moving={chart.dong_yao} />
-          <HexCard name="互卦" data={chart.hu_gua} />
-          <HexCard name="变卦" data={chart.bian_gua} />
+      </section>}
+      
+      {page===1 && chart && <section className="book-page" aria-label="观卦">
+        <p className="book-kicker">第二折 · 卦成观象</p>
+        <h2 className="book-h1" style={{fontSize:'clamp(26px,4vw,39px)'}}>三卦相参，察其变化。</h2>
+        <p className="book-intro">六爻自下而上排，赤色为动爻。这里先把卦象摆明白，至下一页再观先天之理、后天之境。</p>
+        <div className="book-charts">
+          <HexCard name="本卦" data={chart.ben_gua} moving={chart.dong_yao}/>
+          <HexCard name="互卦" data={chart.hu_gua}/>
+          <HexCard name="变卦" data={chart.bian_gua}/>
         </div>
-        <BasicReading chart={chart}/>
-        <NumberExplanation chart={chart}/>
-        <div className="mt-4 rounded-xl bg-pale p-5 text-moss"><b>体用：</b>{chart.sheng_ke}（体：{chart.ti_gua.name}/{chart.ti_gua.element}，用：{chart.yong_gua.name}/{chart.yong_gua.element}）</div>
+        <div className="book-summary">
+          <div><p>体 · {chart.ti_gua.name}{chart.ti_gua.element}　用 · {chart.yong_gua.name}{chart.yong_gua.element}</p>
+            <p>第 {chart.dong_yao} 爻动 · {chart.sheng_ke}</p></div>
+          <span className="tag">体用定基调</span>
+        </div>
+        <div className="book-page-footer">
+          <span className="book-page-mark">第二折 · 由象入理</span>
+          <div className="book-pagenav">
+            <button className="book-second-action" onClick={()=>goPage(0)}>← 修改所问</button>
+            <button className="book-main-action" onClick={()=>goPage(2)}>翻页看解读 →</button>
+          </div>
+        </div>
       </section>}
-      {interpretation && <section className="mt-8 bg-white/80 rounded-3xl p-6 md:p-8 border border-[#d4dbd0]">
-        <h2 className="font-serif text-2xl">卦象解读</h2><div className="mt-5 whitespace-pre-wrap leading-8 text-ink/85">{interpretation}</div>
+      {page===2 && chart && <section className="book-page" aria-label="观境明理">
+        <p className="book-kicker">第三折 · 先天与后天</p>
+        <h2 className="book-h1" style={{fontSize:'clamp(27px,4vw,40px)'}}>先天定理，后天定事。</h2>
+        <p className="book-intro">从{chart.ben_gua.full_name}出发，先以体用审关系，再以方位与类象追问具体情境，最终回到现实。</p>
+        <div className="book-tabs" role="tablist" aria-label="选择易理视角">
+          {[['xiantian','先天 · 观理'],['houtian','后天 · 察境'],['detail','完整卦解']].map(([id,label])=>
+            <button key={id} type="button" role="tab" aria-selected={readingTab===id}
+              className={'book-tab '+(readingTab===id?'active':'')} onClick={()=>setReadingTab(id)}>{label}</button>)}
+        </div>
+        <LayerReading chart={chart} activeTab={readingTab}/>
+        <p className="book-footnote">{chart.dual_layer?.boundary}</p>
+        <section className="book-ai">
+          <h3>以卦问事 · 深入解读</h3>
+          <p>免费易理解读已在上方呈现。要结合你当下的真实处境分析，可再补充一次背景后调用 AI；若尚未配置模型密钥，仍可阅读完整基础卦解。</p>
+          <details className="my-3 text-sm text-moss">
+            <summary>AI 访问码（站长设置后才需要）</summary>
+            <input type="password" autoComplete="off" className="field mt-2" value={aiAccessCode}
+              onChange={e=>setAiAccessCode(e.target.value)} placeholder="如未设置访问码，可留空"/>
+          </details>
+          <button className="book-main-action" disabled={busy} onClick={()=>{
+            if(!backgroundAsked || !background.trim()) {setBackgroundOpen(true);return}
+            submit(true,manualOverride,true,observationOverride)
+          }}>{busy?'正在解读…':'结合现实背景 · 深入断事'}</button>
+          {error && <p role="alert" className="book-alert mt-4">{error}</p>}
+          {interpretation && <div className="book-generated">{interpretation}</div>}
+        </section>
+        <div className="book-page-footer">
+          <span className="book-page-mark">第三折 · 自此观境察势</span>
+          <div className="book-pagenav">
+            <button className="book-second-action" onClick={()=>goPage(1)}>← 再看卦象</button>
+            <button className="book-main-action" onClick={()=>goPage(0)}>重新起卦 ↻</button>
+          </div>
+        </div>
       </section>}
-      <footer className="mt-12 text-xs text-moss/80 leading-6 border-t border-[#cad4c8] pt-6">本工具以传统文化为启发提供反思与决策参考，不作确定性预测，不替代专业意见。</footer>
+      </div>
+      <footer className="book-epilogue">梅花心易 · 心念起卦，观境察势　｜　传统卦象仅作文化研究与反思参考，不作确定性预测</footer>
     </div>
     {manualOpen && <ManualDialog problem={manualProblem} draft={manualDraft} setDraft={setManualDraft}
       error={manualError} onClose={() => setManualOpen(false)} onConfirm={confirmManual} busy={busy}/>}
     {observationOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">
-      <section role="dialog" aria-modal="true" aria-labelledby="observation-title" className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl bg-rice p-6 shadow-2xl md:p-8">
+      <section role="dialog" aria-modal="true" aria-labelledby="observation-title" className="book-modal w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8">
         <p className="text-xs tracking-widest text-moss">心易 · 万物皆可起卦</p>
         <h2 id="observation-title" className="mt-2 font-serif text-2xl">确认这次怎样取数</h2>
         <p className="mt-3 text-sm leading-7 text-moss">{observationProblem?.message || '用什么起卦由你决定，但要留下取数依据。自定数只是一种明确约定，不冒充所有情境都有唯一古法。'}</p>
@@ -437,7 +619,7 @@ export default function App() {
       </section>
     </div>}
     {backgroundOpen && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17231e]/65 p-4" role="presentation">
-      <section role="dialog" aria-modal="true" aria-labelledby="bg-title" className="w-full max-w-xl rounded-3xl bg-rice p-6 shadow-2xl md:p-8 max-h-[90vh] overflow-y-auto">
+      <section role="dialog" aria-modal="true" aria-labelledby="bg-title" className="book-modal w-full max-w-xl p-6 md:p-8 max-h-[90vh] overflow-y-auto">
         <p className="text-xs tracking-widest text-moss">观境察势 · 只追问一次</p>
         <h2 id="bg-title" className="mt-2 font-serif text-2xl">卦已排好，请补充现实背景</h2>
         <p className="mt-3 text-sm text-moss">排盘不受影响。只有补充了背景，AI 才进入具体断事。若有起卦时亲眼见到的外应，可以一并说明；没有则不必填写。</p>
