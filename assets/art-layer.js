@@ -146,7 +146,8 @@ function landmarkClearing(x,y,pad){
   pad=pad||0;
   return (Math.abs(x-1750)<126+pad&&y>1480-pad&&y<1810+pad)
     ||(Math.abs(x-2080)<153+pad&&y>1415-pad&&y<1710+pad)
-    ||(Math.abs(x-streamCenter(1800))<135+pad&&Math.abs(y-1800)<142+pad);
+    ||(Math.abs(x-streamCenter(1800))<135+pad&&Math.abs(y-1800)<142+pad)
+    ||(x>1680-pad&&x<2140+pad&&y>1640-pad&&y<1786+pad);
 }
 function placeStable(arr,n,fn,salt,pad){
   // A bounded deterministic sampler; skipped water/roads do not lower the target count.
