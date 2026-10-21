@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 272" width="200" height="272" shape-rendering="crispEdges">
+<defs>
+<linearGradient id="basalt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c5c6a5"/><stop offset=".32" stop-color="#738d81"/><stop offset=".7" stop-color="#405e59"/><stop offset="1" stop-color="#274742"/></linearGradient>
+<linearGradient id="flow" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#e6ffff"/><stop offset=".24" stop-color="#a8e9e1"/><stop offset=".54" stop-color="#5fb9bb"/><stop offset="1" stop-color="#2a8499"/></linearGradient>
+<linearGradient id="flow2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d0f9e7"/><stop offset=".65" stop-color="#73cfcf"/><stop offset="1" stop-color="#41899b"/></linearGradient>
+</defs>
+<!-- Broken limestone terrace, transparent outside the object -->
+<path d="M5 2L47 9L81 4L117 15L160 2L196 6L194 260L168 264L150 241L121 263L72 247L48 269L6 255Z" fill="#263f3f" opacity=".65"/>
+<path d="M2 2L48 6L80 0L125 8L166 2L200 0L195 81L179 95L165 87L157 52L138 46L131 75L108 80L91 65L81 82L49 64L38 82L11 89L0 73Z" fill="url(#basalt)" stroke="#354e48" stroke-width="4"/>
+<path d="M3 33L36 25L49 47L74 19L87 35L110 24L133 39L161 18L180 33L199 28" fill="none" stroke="#cad0b2" stroke-width="6" opacity=".63"/>
+<!-- Waterfall streams are separate, stepped transparent ribbons -->
+<path d="M69 57L88 61L100 81L102 122L113 158L107 220L93 242L66 230L76 175L71 126Z" fill="#2e8395" opacity=".76"/>
+<path d="M83 58L107 65L112 99L116 160L114 208L126 238L99 251L87 206L91 159L83 121Z" fill="url(#flow)" opacity=".95"/>
+<path d="M101 57L130 49L137 74L131 125L139 173L148 222L126 247L116 206L124 170L115 113Z" fill="url(#flow2)" opacity=".96"/>
+<path d="M121 53L135 52L150 85L143 121L146 178L154 223L143 241L133 179L135 115Z" fill="#d9fff1" opacity=".73"/>
+<g fill="none" stroke="#ebfff4" stroke-width="5" opacity=".78">
+<path d="M98 69L103 122L107 153L101 196"/><path d="M125 64L126 114L131 162L127 204"/>
+<path d="M87 102L87 146L84 181"/><path d="M141 95L139 144L146 202"/>
+</g>
+<g fill="#8ddce0" opacity=".75">
+<path d="M73 131l12 8-11 10zM111 112l12 7-9 12zM120 176l11 9-9 12zM93 191l9 7-12 12zM137 224l12 9-14 8z"/>
+</g>
+<!-- Mossy side rocks -->
+<path d="M0 83L27 73L46 90L64 82L60 158L49 180L63 223L44 263L0 249Z" fill="url(#basalt)" stroke="#314e45" stroke-width="4"/>
+<path d="M156 90L176 75L200 88L200 251L165 263L150 226L161 189L149 152Z" fill="url(#basalt)" stroke="#314e45" stroke-width="4"/>
+<path d="M5 94L23 81L47 94L38 123L10 129Z" fill="#477a5c"/>
+<path d="M162 96L182 81L198 96L196 122L174 116Z" fill="#3f805c"/>
+<path d="M9 165l18-9 11 7-17 15zM158 183l19-16 17 14-17 13zM8 234l23-11 11 14-19 14z" fill="#3c755c"/>
+<g fill="#a0bd82"><path d="M2 93l23-12-10 17zM177 86l20 12-20-4zM10 161l16-7-8 13zM171 175l14-6-7 14z"/></g>
+<g stroke="#263e3f" stroke-width="3" fill="none"><path d="M19 130l-8 44 19 31M178 129l-11 45 13 26M48 112l-9 33M160 142l16 23"/></g>
+<!-- Splash foam below the drop -->
+<g fill="#e5fff0" opacity=".88"><path d="M47 240l20-13 18 9 16-14 18 9 12-13 18 15 15-7 10 18-29 8-17-7-17 9-19-6-22 6z"/><path d="M72 257l10-6 13 6 11-10 14 7 17-7 10 9-12 10-25-5-18 6z"/></g>
+<g fill="#e4fff7"><rect x="57" y="229" width="7" height="4"/><rect x="152" y="221" width="9" height="3"/><rect x="117" y="243" width="6" height="4"/><rect x="84" y="263" width="7" height="3"/></g>
+</svg>
