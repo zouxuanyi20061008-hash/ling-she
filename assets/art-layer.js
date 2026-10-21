@@ -147,7 +147,8 @@ function landmarkClearing(x,y,pad){
   return (Math.abs(x-1750)<126+pad&&y>1480-pad&&y<1810+pad)
     ||(Math.abs(x-2080)<153+pad&&y>1415-pad&&y<1710+pad)
     ||(Math.abs(x-streamCenter(1800))<135+pad&&Math.abs(y-1800)<142+pad)
-    ||(x>1680-pad&&x<2140+pad&&y>1640-pad&&y<1786+pad);
+    ||(x>1680-pad&&x<2140+pad&&y>1640-pad&&y<1786+pad)
+    ||(x>1370-pad&&x<1590+pad&&y>1250-pad&&y<1620+pad);
 }
 function placeStable(arr,n,fn,salt,pad){
   // A bounded deterministic sampler; skipped water/roads do not lower the target count.
@@ -237,5 +238,47 @@ function paintLandmarkTitles(){
     ctx.font='bold 15px serif';ctx.fillStyle='#f2e2b5';ctx.shadowColor='#172f2a';ctx.shadowBlur=4;
     ctx.fillText('青岚祠',QINGLAN_SHRINE.x,QINGLAN_SHRINE.y-QINGLAN_SHRINE.h-12);
   }
+  ctx.restore();
+}
+
+
+/* V5.5: the Cloudfall ledge is one coherent landmark: a textured
+   waterfall sprite, a physical basin, shoreline reeds and moving spray. */
+var cloudfallArt=new Image();cloudfallArt.src='assets/cloudfall-waterfall.svg';
+var CLOUDFALL={x:1480,y:1547,rx:64,ry:28};
+function paintCloudfall(now){
+  var w=CLOUDFALL;
+  if(w.x<camX-200||w.x>camX+W+200||w.y<camY-330||w.y>camY+H+80)return;
+  ctx.save();
+  ctx.fillStyle='#2e5149';ctx.beginPath();
+  ctx.ellipse(w.x,w.y+10,76,35,-.04,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#c4c69a';ctx.beginPath();
+  ctx.ellipse(w.x,w.y+6,68,30,0,0,Math.PI*2);ctx.fill();
+  var pool=ctx.createRadialGradient(w.x-18,w.y,5,w.x,w.y+5,74);
+  pool.addColorStop(0,'#b1ebe0');pool.addColorStop(.48,'#67bfc0');pool.addColorStop(1,'#265f77');
+  ctx.fillStyle=pool;ctx.beginPath();
+  ctx.ellipse(w.x,w.y+4,61,25,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=.65;ctx.strokeStyle='#e8f7d9';ctx.lineWidth=2;
+  for(var i=0;i<6;i++){
+    var t=now*.0015+i*1.6,px=w.x+Math.sin(t)*29,py=w.y+3+(i-3)*4;
+    ctx.beginPath();ctx.ellipse(px,py,11+Math.sin(t*.8)*4,2,0,0,Math.PI);ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+  if(isArtReady(cloudfallArt))ctx.drawImage(cloudfallArt,w.x-104,w.y-287,208,287);
+  else{
+    ctx.fillStyle='#6a9c92';ctx.fillRect(w.x-26,w.y-160,52,155);
+    ctx.fillStyle='#a0e5db';ctx.fillRect(w.x-17,w.y-160,34,156);
+  }
+  ctx.fillStyle='#b6cca0';
+  for(var j=0;j<12;j++){
+    var ang=j*1.91;
+    var px=w.x+Math.cos(ang)*71,py=w.y+Math.sin(ang)*31+8;
+    if(Math.abs(px-w.x)<28&&py<w.y+8)continue;
+    ctx.fillRect(px,py-6,2,9);
+    ctx.fillRect(px-4,py-5,3,7);
+  }
+  ctx.textAlign='center';ctx.font='bold 13px serif';
+  ctx.shadowColor='#1d3d3c';ctx.shadowBlur=5;
+  ctx.fillStyle='#edf2cc';ctx.fillText('流云瀑',w.x,w.y-292);
   ctx.restore();
 }
