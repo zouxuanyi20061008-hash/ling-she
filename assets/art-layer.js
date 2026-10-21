@@ -133,3 +133,29 @@ function paintLandmarkFront(playerRef){
     ctx.restore();
   }
 }
+
+
+/* V5.4: stable environmental layout, keeping the route and shrine accessible. */
+function onQinglanRoad(x,y){
+  if(x>=1030&&x<=1870)return Math.abs(y-1800)<66;
+  if(x>1870)return Math.abs(y-(1800+(x-1870)*.255))<67;
+  return Math.abs(y-(1510+x*.29))<68;
+}
+function landmarkClearing(x,y,pad){
+  pad=pad||0;
+  return (Math.abs(x-1750)<126+pad&&y>1480-pad&&y<1810+pad)
+    ||(Math.abs(x-2080)<153+pad&&y>1415-pad&&y<1710+pad)
+    ||(Math.abs(x-streamCenter(1800))<135+pad&&Math.abs(y-1800)<142+pad);
+}
+function placeStable(arr,n,fn,salt,pad){
+  for(var i=0;i<n;i++){
+    var x=70+terrainHash(i,salt,7)*(SIZE-140);
+    var y=70+terrainHash(i,salt,11)*(SIZE-140);
+    if(terrainBlocked(x,y)||landmarkClearing(x,y,pad)||onQinglanRoad(x,y))continue;
+    arr.push(fn(x,y,i));
+  }
+}
+function isLandmarkBlocked(x,y){
+  if(x>1985&&x<2175&&y>1568&&y<1643)return true;
+  return y>1555&&y<1660&&(Math.abs(x-1689)<15||Math.abs(x-1811)<15);
+}
