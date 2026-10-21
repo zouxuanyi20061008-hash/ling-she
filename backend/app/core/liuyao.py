@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from .hexagrams import hexagram_from_lines
+from .najia import decorate_six_yao
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -17,7 +18,7 @@ def cast_six_yao(lines: list[int]) -> dict:
     main_bits = tuple(x % 2 for x in lines)
     changed_bits = tuple(1 - x%2 if x in (6,9) else x%2 for x in lines)
     changing = [i+1 for i,x in enumerate(lines) if x in (6,9)]
-    return {
+    result = {
         "school":"六爻纳甲", "variant":"三钱起卦 · 基础教学",
         "lines": [
             {"position":i+1,"number":v,**LINE_KIND[v]} for i,v in enumerate(lines)
@@ -25,6 +26,7 @@ def cast_six_yao(lines: list[int]) -> dict:
         "ben_gua":hexagram_from_lines(main_bits),
         "bian_gua":hexagram_from_lines(changed_bits),
         "dong_yao":changing,
-        "note":"此处已完成真实的三枚铜钱、六次成卦及动爻翻转；尚未装纳甲、世应、六亲六神、日月建，因此不能冒称完整六爻占断。",
+        "note":"本卦与变卦、六次爻态、八宫归属、世应、纳甲干支与六亲已按固定规则计算。日月建、六神、旬空、用神、旺衰仍未计算，暂不作完整纳甲断事。",
         "rules":"以三枚铜钱分别记字为2、背为3；三字6为老阴、两字一背7为少阳、两背一字8为少阴、三背9为老阳。第一次为初爻，从下往上记录六次。",
     }
+    return decorate_six_yao(result)

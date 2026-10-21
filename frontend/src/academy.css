@@ -182,3 +182,62 @@
 .academy-quick-question textarea{display:block;min-height:65px;width:100%;resize:vertical;margin-top:8px;padding:11px 12px;
  border:1px solid #c5b69b;background:#fffbf2;color:#294e3e;font-size:12px;line-height:1.8;outline:none}
 .academy-quick-question textarea:focus{border-color:#528270}
+
+/* 六爻·京房八宫纳甲卷：逐爻点阅，本卦与变卦独立呈现 */
+.najia-board{margin-top:23px;border:1px solid #b69f74;background:#f1e8d5;padding:0;
+  box-shadow:inset 0 0 0 6px rgba(255,250,232,.5),3px 5px 0 rgba(97,69,37,.08);color:#2b4b3d}
+.najia-header{padding:21px 20px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;
+  background:linear-gradient(130deg,rgba(219,225,206,.9),#ede5cf);border-bottom:1px solid #c6b28f}
+.najia-header span{font-size:11px;color:#9d7453;letter-spacing:.18em}
+.najia-header h3{font-size:22px;margin:8px 0 2px;letter-spacing:.09em;color:#1d4a38}
+.najia-palace-seal{width:54px;height:59px;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  flex-shrink:0;background:#315b46;color:#f9e7ba;border:2px double #bda374;box-shadow:2px 3px rgba(51,48,32,.15);
+  font-size:17px;letter-spacing:.05em}
+.najia-palace-seal span{font-size:10px;color:#dfcfad}
+.najia-palace-summary{display:grid;grid-template-columns:repeat(3,1fr);padding:16px;gap:8px}
+.najia-palace-summary>div{background:rgba(255,252,240,.75);border:1px solid #d9c7a8;padding:12px 10px}
+.najia-palace-summary small{font-size:10px;color:#957c60;display:block}
+.najia-palace-summary strong{font-size:12px;line-height:1.7;display:block;margin-top:6px;color:#25523d}
+.najia-switch{display:grid;grid-template-columns:1fr 1fr;margin:2px 16px 0;border-bottom:1px solid #b7ac91}
+.najia-switch button{font-size:12px;padding:11px;border-bottom:2px solid transparent;color:#807965}
+.najia-switch button.active{border-color:#426750;background:#e0e8d9;color:#204f3e;font-weight:700}
+.najia-table{padding:10px 16px 4px}
+.najia-column-label,.najia-row{display:grid;grid-template-columns:37px minmax(49px,1fr) 61px 31px 42px 27px;align-items:center;gap:5px}
+.najia-column-label{padding:5px 9px 10px;color:#93836c;font-size:10px}
+.najia-row{width:100%;text-align:center;min-height:49px;padding:7px 9px;background:#f8f1e3;border:1px solid #dacbb3;border-bottom:0;transition:background .14s,color .14s}
+.najia-row:last-child{border-bottom:1px solid #dacbb3}
+.najia-row.selected{border-color:#78947c;background:#dce7db;box-shadow:inset 3px 0 0 #47745a}
+.najia-row>span:first-child{font-size:12px;color:#495d49}
+.najia-row small{font-size:9px;color:#aa6b50;display:block}
+.najia-row strong{font-size:13px;color:#225a40}
+.najia-row>span:nth-of-type(3),.najia-row>span:nth-of-type(4){font-size:11px;color:#60715b}
+.najia-row>b{font-size:15px;color:#ab543e}
+.najia-row.moving .najia-strokes i{background:#b56e48}
+.najia-strokes{display:flex;gap:6px;justify-content:center;min-width:0;max-width:95px}
+.najia-strokes i{height:8px;border-radius:1px;flex:1;background:#2e5846}
+.najia-focused{border:1px solid #cfbf9f;background:#fff9ea;margin:13px 16px;padding:15px 17px}
+.najia-learning{font-size:10px;letter-spacing:.12em;color:#9e7b50}
+.najia-focused h4{font-size:17px;font-weight:700;margin:8px 0;color:#2d5b43}
+.najia-focused p{font-size:11px;line-height:1.9;color:#657565;margin:8px 0 0}
+.najia-focused strong{color:#a75c44}
+.najia-footnote{margin:15px 16px 19px;border-top:1px solid #ccbea1;padding-top:12px}
+.najia-footnote p{font-size:10px;line-height:1.9;color:#837763;margin:6px 0}
+.najia-footnote a{display:inline-block;font-size:11px;margin:7px 14px 0 0;color:#276b51;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){
+ .najia-header{padding:15px 13px}
+ .najia-header h3{font-size:18px}
+ .najia-palace-summary{padding:10px;gap:5px}
+ .najia-palace-summary>div{padding:10px 6px}
+ .najia-palace-summary strong{font-size:10px}
+ .najia-switch{margin:2px 10px 0}
+ .najia-table{padding:9px 7px 1px}
+ .najia-column-label,.najia-row{grid-template-columns:29px minmax(45px,1fr) 47px 28px 35px 22px;gap:3px}
+ .najia-column-label{font-size:9px;padding:5px 4px}
+ .najia-row{padding:7px 4px;min-height:46px}
+ .najia-row strong{font-size:11px}
+ .najia-row>span:first-child{font-size:10px}
+ .najia-row>span:nth-of-type(3),.najia-row>span:nth-of-type(4){font-size:10px}
+ .najia-row>b{font-size:12px}
+ .najia-strokes{gap:4px}.najia-strokes i{height:7px}
+ .najia-focused,.najia-footnote{margin-left:10px;margin-right:10px}
+}

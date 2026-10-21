@@ -17,6 +17,61 @@ function Diagram({label,hex,moving=[]}) {
     <b>{hex.keywords}</b><p>{hex.meaning}</p>
   </article>
 }
+
+function NajiaBoard({chart}) {
+  const [selected,setSelected]=useState(0)
+  const [changed,setChanged]=useState(false)
+  const pal=chart.eight_palaces?.ben
+  const changedPal=chart.eight_palaces?.bian
+  const all=changed?chart.bian_najia_lines:chart.najia_lines
+  const detail=all?.[selected]
+  if(!pal||!all)return null
+  return <section className="najia-board" aria-label="六爻纳甲与世应教学盘">
+    <header className="najia-header">
+      <div><span>第三式 · 纳甲装卦</span><h3>京房八宫 · 六亲世应</h3></div>
+      <div className="najia-palace-seal">{pal.palace}宫<span>{pal.palace_element}</span></div>
+    </header>
+    <div className="najia-palace-summary">
+      <div><small>本卦归属</small><strong>{pal.palace}宫 · {pal.stage}</strong></div>
+      <div><small>世爻 / 应爻</small><strong>{POS[pal.shi_position-1]} / {POS[pal.ying_position-1]}</strong></div>
+      <div><small>之卦归属（对照）</small><strong>{changedPal.palace}宫 · {changedPal.stage}</strong></div>
+    </div>
+    <div className="najia-switch" role="tablist" aria-label="选择本卦或变卦纳甲">
+      <button type="button" role="tab" aria-selected={!changed} className={!changed?'active':''} onClick={()=>{setChanged(false);setSelected(0)}}>本卦装卦</button>
+      <button type="button" role="tab" aria-selected={changed} className={changed?'active':''} onClick={()=>{setChanged(true);setSelected(0)}}>变卦纳甲</button>
+    </div>
+    <div className="najia-table" role="list">
+      <div className="najia-column-label"><span>爻位</span><span>卦爻</span><span>纳甲干支</span><span>五行</span><span>六亲</span><span>世应</span></div>
+      {[...all].reverse().map((line,i)=>{
+        const row=5-i
+        const lines=changed?chart.bian_gua.lines_bottom_to_top:chart.ben_gua.lines_bottom_to_top
+        const role=row+1===pal.shi_position?'世':row+1===pal.ying_position?'应':''
+        return <button key={line.position} type="button" role="listitem" aria-current={selected===row?'true':undefined}
+          className={'najia-row '+(selected===row?'selected ':'')+(line.moving?'moving':'')}
+          onClick={()=>setSelected(row)}>
+          <span>{POS[row]}<small>{line.moving?'动':''}</small></span>
+          <span className="najia-strokes">{lines[row]===1?<i/>:<><i/><i/></>}</span>
+          <strong>{line.ganzhi}</strong><span>{line.element}</span><span>{line.liuqin}</span><b>{role}</b>
+        </button>
+      })}
+    </div>
+    {detail&&<article className="najia-focused">
+      <span className="najia-learning">逐爻研习 · 点选上方任意一爻</span>
+      <h4>{POS[selected]}爻 · {detail.ganzhi} · {detail.liuqin}{detail.moving?' · 动':''}</h4>
+      <p>此爻位于{detail.trigram}卦，纳{detail.stem}干、{detail.branch}支，支属{detail.element}。以本卦的{pal.palace}宫{pal.palace_element}为“我”，按五行生克定为<strong>{detail.liuqin}</strong>。
+        {!changed&&detail.role?'这是本卦'+detail.role+'爻。':changed?'变卦干支仍以本卦宫五行定六亲，不重新用变卦所属宫计算。':''}
+      </p>
+      <p>{detail.moving?'此爻发生阴阳变换；对照“本卦”和“变卦”可观察此爻干支的改变。':'此爻没有发生阴阳变换。'}</p>
+    </article>}
+    <div className="najia-footnote">
+      <p>{chart.najia_note}</p>
+      <p>此处的世应与六亲由算法逐项装配，并非 AI 自行推测。日期和日月干支尚未核对时，不能据此判断旺衰、旬空、应期。</p>
+      <a href="https://www.guyujian.cn/learn/liuyao/05" rel="noopener noreferrer" target="_blank">八宫与世应讲解 ↗</a>
+      <a href="https://shunshi.ai/zh-cn/wiki/liuyao/zhuangua/najia" rel="noopener noreferrer" target="_blank">纳甲口诀与全表 ↗</a>
+    </div>
+  </section>
+}
+
 export function CaseNotebook({method,question,chart}) {
   const [open,setOpen]=useState(false)
   const [omen,setOmen]=useState('')
@@ -137,13 +192,14 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           {chart?<div className="academy-computed">
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
+            <NajiaBoard chart={chart}/>
             <div className="academy-scope">{chart.note}</div>
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
         </section>
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合你所说的现实处境讨论卦象，但此版本没有计算纳甲、六亲、六神、世应，绝不会冒称完整六爻断事。</p>
+        <p>AI 可结合你所说的现实处境讨论已计算的八宫、世应、纳甲、六亲和动爻；尚未计算日月建、六神、旬空、用神和旺衰，不会冒称完整六爻断事。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
