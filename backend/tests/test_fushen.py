@@ -44,7 +44,7 @@ def test_flying_hidden_five_element_relations():
     assert flying_hidden_relation("土", "金") == "飞生伏"
     assert flying_hidden_relation("金", "土") == "伏生飞"
     assert flying_hidden_relation("火", "金") == "飞克伏"
-    assert flying_hidden_relation("金", "木") == "伏克飞"
+    assert flying_hidden_relation("土", "木") == "伏克飞"
     assert flying_hidden_relation("木", "木") == "飞伏比和"
 
 
