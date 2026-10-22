@@ -316,3 +316,79 @@ button:disabled{cursor:not-allowed}
   .atlas-method,.atlas-primary,.academy-primary{transition:none!important}
   .atlas-yinyang{animation:none!important}
 }
+
+/* 次要规则用按需展开取代无尽纵向堆叠；键盘与触屏均可操作。 */
+.liuyao-depth-panel{
+  margin:13px 0;
+  border:1px solid #bba084;
+  background:#f2e7d5;
+  color:#4a3b2c;
+}
+.liuyao-depth-panel>summary{
+  list-style-position:inside;
+  cursor:pointer;
+  padding:15px 13px;
+  min-height:48px;
+  box-sizing:border-box;
+  font-size:13px;
+  line-height:1.7;
+  font-weight:700;
+  color:#633c26;
+  background:#f4e9d9;
+}
+.liuyao-depth-panel[open]>summary{
+  background:#75422b;
+  color:#fff6e7;
+  border-bottom:1px solid #bba084;
+}
+.liuyao-depth-panel>summary:hover{background:#e8d7c1}
+.liuyao-depth-panel[open]>summary:hover{background:#663921}
+.liuyao-depth-panel>.solar-assist,
+.liuyao-depth-panel>.academy-calendar,
+.liuyao-depth-panel>.fushen-study,
+.liuyao-depth-panel>.line-dynamics,
+.liuyao-depth-panel>.void-interactions,
+.liuyao-depth-panel>.spirit-panel{margin:12px 9px}
+.liuyao-depth-panel>section{max-width:100%;box-sizing:border-box}
+.liuyao-state-message{background:#fff1d9;border-left:4px solid #8b4e30;
+  color:#573622;padding:14px;margin:14px 0;font-size:13px;line-height:1.8}
+.academy-stage--liuyao .review-flow-nav button:hover:not(:disabled){
+  border-color:#75422b}
+.academy-stage--liuyao .academy-help{font-size:12px;line-height:1.85}
+
+/* 独立气质不靠一层浮浅滤镜；阵图、命简、星垣有细节但不压住文字。 */
+.academy-stage--qimen .academy-stage-banner{
+  background-image:
+    repeating-linear-gradient(0deg,transparent 0 35px,rgba(232,206,151,.07) 35px 36px),
+    repeating-linear-gradient(90deg,transparent 0 35px,rgba(232,206,151,.07) 35px 36px);
+}
+.academy-stage--bazi .academy-stage-banner{
+  background-image:linear-gradient(90deg,rgba(232,182,116,.12) 1px,transparent 1px);
+  background-size:44px 100%;
+}
+.academy-stage--liuren .academy-stage-banner{
+  background-image:radial-gradient(ellipse at 90% 65%,rgba(152,196,214,.25),transparent 46%);
+}
+.academy-stage--taiyi .academy-stage-banner{
+  background-image:radial-gradient(circle at 82% 28%,rgba(204,242,233,.23),transparent 45%);
+}
+.academy-stage--ziwei .academy-stage-banner{
+  background-image:
+    radial-gradient(circle at 88% 25%,rgba(248,220,171,.8) 1px,transparent 2px),
+    radial-gradient(circle at 76% 55%,rgba(248,220,171,.6) 1px,transparent 2px),
+    radial-gradient(circle at 66% 15%,rgba(248,220,171,.55) 1px,transparent 2px);
+}
+.academy-stage--fengshui .academy-stage-banner{
+  background-image:
+    linear-gradient(155deg,transparent 45%,rgba(202,231,186,.12) 46% 54%,transparent 55%),
+    linear-gradient(22deg,transparent 58%,rgba(202,231,186,.12) 59% 68%,transparent 69%);
+}
+.library-stage .library-method-grid .library-method-card{min-height:155px}
+.library-stage .library-method-card small{font-size:12px;line-height:1.7}
+.library-stage .library-page-controls button{min-height:44px}
+@media(max-width:760px){
+  .liuyao-depth-panel>summary{font-size:12px;padding:13px 11px}
+  .academy-stage--liuyao .academy-stage-banner .academy-stage-glyph{font-size:56px;opacity:.4}
+  .academy-stage--liuyao .academy-coin-altar{padding:18px 10px 13px;margin-top:12px}
+  .academy-stage--liuyao .academy-coin{width:72px;height:72px}
+}
