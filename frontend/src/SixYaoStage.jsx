@@ -703,7 +703,7 @@ function SeasonalMovingStudy({chart}) {
 
 
 
-function VoidContextStudy({chart}){
+export function VoidContextStudy({chart}){
   const data=chart.void_context_review
   const [requested,setRequested]=useState(null)
   if(!data)return null
