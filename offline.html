@@ -1124,6 +1124,7 @@ function adventureDropOrbs(t){
 }
 function startAdventureTrial(trial){
  if(!running)return;
+ if(adventureBookOpen){toast('先关闭游历簿再开始试炼');return}
  if(adventureSession){toast('先完成当前试炼，再开启下一处');return}
  if(level<trial.requiredLevel){toast('🔒 '+trial.name+'需要修炼至 '+trial.requiredLevel+' 阶');return}
  if(!adventureTrialReady(trial)){toast('⌛ '+trial.name+'尚在凝聚灵气');return}
@@ -1257,7 +1258,10 @@ function paintAdventureMinimap(){
   let x=t.x/SIZE*112,y=t.y/SIZE*112;
   mc.fillRect(x-2,y-2,4,4);
  }
- const objective=adventureTracked==='story'?null:ADVENTURE_TRIALS.find(x=>x.id===adventureTracked);
+ const chapter=ADVENTURE_CHAPTERS[adventureState.chapter];
+ const objective=adventureTracked==='story'?
+   (chapter?.metric==='trials'?ADVENTURE_TRIALS.find(x=>!adventureState.trialWins.includes(x.id)):null):
+   ADVENTURE_TRIALS.find(x=>x.id===adventureTracked);
  if(objective){
   const x=objective.x/SIZE*112,y=objective.y/SIZE*112;
   mc.strokeStyle='#ffe29e';mc.lineWidth=1.2;mc.strokeRect(x-4,y-4,8,8);
@@ -1313,7 +1317,10 @@ function refreshAdventurePanel(){
  lastAdventureRender=performance.now();
 }
 function toggleAdventureBook(force){
- adventureBookOpen=typeof force==='boolean'?force:!adventureBookOpen;
+ const intended=typeof force==='boolean'?force:!adventureBookOpen;
+ // Timed events use real elapsed time: do not let a modal secretly consume the deadline.
+ if(intended&&adventureSession){toast('试炼进行中，先完成当前挑战再查看游历簿');return}
+ adventureBookOpen=intended;
  const panel=document.getElementById('adventureJournal');if(panel)panel.style.display=adventureBookOpen?'flex':'none';
  refreshAdventurePanel();
 }
