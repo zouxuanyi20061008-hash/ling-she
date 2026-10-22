@@ -3,7 +3,7 @@ WORKDIR /website/frontend
 COPY frontend/package*.json ./
 RUN npm install --no-audit --no-fund
 COPY frontend/ ./
-RUN npm run build
+RUN npm run test:ui && npm run build
 
 FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
