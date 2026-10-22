@@ -221,6 +221,54 @@ function FuShenStudy({chart,onChoose,busy}){
 }
 
 
+
+function SeasonalMovingStudy({chart}) {
+  const influences=chart.moving_influences
+  const seasonal=chart.seasonal_outline
+  const [requestedSource,setRequestedSource]=useState(null)
+  if(!influences||!seasonal)return null
+  const positions=influences.moving_positions
+  const source=positions.includes(requestedSource)?requestedSource:positions[0]
+  const edges=influences.edges.filter(x=>x.source_position===source)
+  return <section className="moving-season-study" aria-label="动爻作用与节令旺相研习">
+    <header className="moving-season-head">
+      <div><span>第九式 · 逐动观势</span><h3>动爻生克 · 四时旺相</h3></div>
+      <span>{positions.length} 个动爻</span>
+    </header>
+    <div className="moving-season-block">
+      <h4>一、看动爻对本卦其他爻的关系</h4>
+      <p>{influences.rule}</p>
+      {positions.length?<><div className="moving-source-list" role="group" aria-label="选择发动的爻">
+        {positions.map(position=><button type="button" key={position}
+          aria-pressed={source===position} className={source===position?'active':''}
+          onClick={()=>setRequestedSource(position)}>
+          {POS[position-1]}爻 · {chart.najia_lines[position-1].ganzhi}
+        </button>)}
+      </div><div className="moving-influence-lines">
+        {edges.map(edge=><div className="moving-influence-row" key={edge.target_position}>
+          <div><strong>{POS[edge.target_position-1]}爻 · {edge.target_ganzhi}</strong>
+            <small>{edge.target_moving?'此爻亦发动':'本卦静爻'}</small></div>
+          <span>{edge.element_relation}{edge.clash?' · 相冲':''}{edge.combine?' · 六合':''}</span>
+        </div>)}
+      </div></>:<p className="moving-empty">本卦无动爻，因此没有动爻对其他爻的作用列表。</p>}
+      <p className="moving-boundary">{influences.limit}</p>
+    </div>
+    <div className="moving-season-block">
+      <h4>二、节令月支的四时概览</h4>
+      {seasonal.visible?<><p>你选择了<strong>{seasonal.month_branch}月</strong>。按《增删卜易》四时旺相章，可查看以下教学分类：</p>
+        <div className="season-element-grid">
+          {seasonal.grades.map(x=><div key={x.element}><strong>{x.element}</strong><span>{x.grade}</span></div>)}
+        </div>
+      </>:<p>尚未选择节令月支。请在上面的「日月校时」中确认后再查看，不自动按公历月份猜测。</p>}
+      <p className="moving-boundary">{seasonal.limit}</p>
+    </div>
+    <div className="moving-season-sources">
+      <a href={influences.source} target="_blank" rel="noopener noreferrer">古籍 · 动变生克冲合 ↗</a>
+      <a href={seasonal.source} target="_blank" rel="noopener noreferrer">古籍 · 四时旺相 ↗</a>
+    </div>
+  </section>
+}
+
 function LineDynamicsStudy({chart}) {
   const dynamics=chart.line_dynamics
   const [position,setPosition]=useState(1)
@@ -508,6 +556,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
             <LineDynamicsStudy chart={chart}/>
+            <SeasonalMovingStudy chart={chart}/>
             <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
             <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
             <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
@@ -518,7 +567,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
