@@ -87,10 +87,12 @@ function rewardEncounter(site){
   particles.push({x:player.x,y:player.y,vx:Math.cos(a)*75,vy:Math.sin(a)*65,life:.8,color:colors[site.id]});
  }
  flash(first?'✨ 机缘发现 · '+site.short:'✨ 再获灵息');
+ adventureOnSite(site.id);
  if(first){saveGame(true)}
  updateHud();updateEncounterUI(now,true);
 }
 function activateNearbyEncounter(){
+ if(nearbyAdventureTrial()){activateAdventureTrial();return}
  const site=nearEncounterSite();
  if(site)rewardEncounter(site);
  else toast('靠近地图上的灵泉、灵木或青岚祠，可感悟机缘');
@@ -216,7 +218,7 @@ function defeatAzureKing(){
   let a=i*Math.PI*2/22;
   particles.push({x:azureKing.x,y:azureKing.y,vx:Math.cos(a)*160,vy:Math.sin(a)*155,life:1.25,color:i%2?'#ffdf9b':'#bcf4d6'});
  }
- saveGame(true);updateEncounterUI(performance.now(),true);
+ adventureOnWolf();saveGame(true);updateEncounterUI(performance.now(),true);
 }
 function paintAzureKing(now){
  const b=azureKing;if(!b||b.defeated||!inView(b.x,b.y,145))return;
