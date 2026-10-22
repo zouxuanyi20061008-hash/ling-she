@@ -711,3 +711,43 @@
   .academy-review-grid,.academy-review-signals{grid-template-columns:1fr}
   .academy-review-grid article{padding:11px}
 }
+
+/* 第十一式：旬空、冲空、明动化空与飞伏分别复核 */
+.void-study{margin:18px 0;padding:16px 14px;border:1px solid #afbba6;background:#f5f2e7;color:#325b48}
+.void-study-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #cbd0b7;padding-bottom:12px}
+.void-study-head small{display:block;font-size:11px;color:#987956;letter-spacing:.12em}
+.void-study-head h3{font-size:19px;color:#2e5c45;margin:5px 0 0}
+.void-study-head>b{font-size:12px;white-space:nowrap;color:#a0684b}
+.void-study-intro{font-size:11px;line-height:1.95;color:#70806f;margin:12px 0}
+.void-day-missing,.void-summary{padding:14px;background:#ebe8d9;border:1px solid #d5c8ad;margin:12px 0}
+.void-day-missing{font-size:11px;color:#8c795f;line-height:1.85}
+.void-summary{display:flex;align-items:center;justify-content:space-between;gap:11px;flex-wrap:wrap}
+.void-summary>span{font-size:11px;color:#8c785c}
+.void-summary strong{font-size:20px;color:#2d654b}
+.void-summary small{font-size:10px;color:#6c816a}
+.void-position-list{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin:12px 0}
+.void-position-list button{min-height:44px;background:#fff9ed;border:1px solid #bfc6af;color:#3d6b53;font-size:11px;padding:8px 3px}
+.void-position-list button.active{background:#2d5d48;border-color:#2d5d48;color:#fff2d4}
+.void-position-list button span{font-size:10px;color:#bd7651;margin-left:3px}
+.void-position-list button.active span{color:#f3c59b}
+.void-review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.void-review-grid article{background:#fcf8ed;border:1px solid #d6cdb4;padding:13px 12px;min-width:0}
+.void-review-grid small{font-size:10px;color:#9b7c5e;display:block;margin-bottom:8px}
+.void-review-grid strong{display:block;font-size:13px;color:#315c46;margin-bottom:8px}
+.void-review-grid p,.void-focus-lesson p{font-size:11px;color:#697969;line-height:1.9;margin:4px 0}
+.void-review-grid .void-condition-note{border-top:1px dashed #d4c7ad;padding-top:8px;margin-top:10px}
+.void-focus-lesson{margin-top:14px;background:#e8ede1;padding:12px 14px;border-left:3px solid #7e9b82}
+.void-focus-lesson h4{color:#315f49;font-size:13px;margin:0 0 10px}
+.void-focus-lesson>div{display:flex;align-items:center;justify-content:space-between;gap:11px;border-top:1px solid #c8d6c4;padding:9px 0}
+.void-focus-lesson b{font-size:11px;color:#3f6550}
+.void-focus-lesson span{font-size:10px;color:#906e55;text-align:right}
+.void-study-boundary{font-size:10px;color:#898375;line-height:1.9;margin:14px 0;border-top:1px solid #d7cdb6;padding-top:9px}
+.void-study-links{display:flex;gap:10px 17px;flex-wrap:wrap}
+.void-study-links a{color:#3a7855;font-size:11px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){
+ .void-study{padding:12px 9px}
+ .void-study-head h3{font-size:17px}
+ .void-position-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .void-review-grid{grid-template-columns:1fr}
+ .void-summary strong{font-size:17px}
+}

@@ -46,6 +46,8 @@ def _day_clash_state(row:dict,month:dict|None)->dict:
             status,label="not_clashed","日辰未冲此爻"
         elif row["moving"]:
             status,label="already_moving","此爻本已明动，不按静爻暗动或日破分类"
+        elif row.get("is_xunkong"):
+            status,label="void_clash_review","旬空静爻逢日冲：冲空条件成立，暗动或日破暂不归类"
         elif month is None or season is None:
             status,label="season_unverified","静爻逢日冲，尚缺节令月支，无法分辨暗动与日破"
         elif season["grade"] in ("旺","相"):

@@ -270,6 +270,74 @@ function SeasonalMovingStudy({chart}) {
 }
 
 
+
+function VoidInteractionsStudy({chart}){
+  const voidData=chart.void_interactions
+  const [selected,setSelected]=useState(1)
+  if(!voidData)return null
+  const row=chart.najia_lines[selected-1]
+  const changed=chart.bian_najia_lines[selected-1]
+  const current=row.void_review
+  const transformed=changed.void_review
+  const focus=chart.focus
+  return <section className="void-study" aria-label="六爻旬空冲空化空交互研习">
+    <header className="void-study-head">
+      <div><small>第十一式 · 旬空合参</small><h3>空有其名，须辨其用。</h3></div>
+      <b>{voidData.day_ganzhi||'日辰待定'}</b>
+    </header>
+    <p className="void-study-intro">旬空是按日旬缺失的两支核定的。先分别看本卦爻、动爻变出的支和伏神，再结合日月、动静、月破等条件，不可见“空”字便断无用。</p>
+    {voidData.status==='day_unconfirmed'?
+      <p className="void-day-missing">尚未确认日辰。请先在「日月校时」选择真实的六十甲子日；本页不会推测旬空。</p>:
+      <div className="void-summary"><span>当日旬空地支</span>
+        <strong>{voidData.empty_branches.join(' · ')}</strong>
+        <small>本卦 {voidData.original_void_positions.length} 爻逢空 · {voidData.moving_into_void_positions.length} 处明动化空条件</small>
+      </div>}
+    <div className="void-position-list" role="group" aria-label="选取旬空复核爻位">
+      {[1,2,3,4,5,6].map(pos=><button type="button" key={pos}
+        className={selected===pos?'active':''}
+        aria-pressed={selected===pos} onClick={()=>setSelected(pos)}>
+        {POS[pos-1]}爻
+        {chart.najia_lines[pos-1].void_review.is_void===true&&<span>空</span>}
+      </button>)}
+    </div>
+    <div className="void-review-grid" aria-live="polite">
+      <article>
+        <small>本卦 · {row.ganzhi}</small>
+        <strong>{current.status==='day_unconfirmed'?'未核对日旬':
+          current.is_void?'本卦爻逢旬空':'本卦爻不旬空'}</strong>
+        {current.conditions?.length?
+          <div>{current.conditions.map((condition,i)=><p key={i}>· {condition}</p>)}</div>:
+          <p>{current.note}</p>}
+        {current.is_void&&<p className="void-condition-note">{current.note}</p>}
+      </article>
+      <article>
+        <small>{row.moving?'本位动爻之变 · '+changed.ganzhi:'变卦同位 · '+changed.ganzhi}</small>
+        <strong>{transformed.status==='day_unconfirmed'?'日旬待核':
+          transformed.is_huakong?'动爻化空条件':
+          transformed.is_void?'之卦同位支旬空（不是化空）':'变卦同位支不空'}</strong>
+        <p>{transformed.note}</p>
+      </article>
+    </div>
+    {focus&&<div className="void-focus-lesson">
+      <h4>所问「{focus.category}」的空亡复核</h4>
+      {voidData.focus_status==='visible_candidates'?
+        voidData.focus_candidates.map(row=><div key={row.position}>
+          <b>{POS[row.position-1]}爻 · {row.ganzhi}</b>
+          <span>{row.is_void===null?'日辰未核':row.is_void?'本卦逢空':'本卦不空'}
+            {row.moving_into_void?' · 本位明动化空':''}</span>
+        </div>):
+        voidData.focus_status==='focus_not_visible'?
+          <p>本卦不现所选六亲；参看飞伏神页。本宫伏神与飞神会分别核对旬空，不能把飞神的空亡当作伏神的空亡。</p>:
+          <p>先明确六亲或世应关注对象，系统才会列出候选爻的空亡条件。</p>}
+    </div>}
+    <p className="void-study-boundary">{voidData.boundary}</p>
+    <div className="void-study-links">
+      <a href={voidData.sources.xunkong} target="_blank" rel="noopener noreferrer">《增删卜易》旬空章 ↗</a>
+      <a href={voidData.sources.day} target="_blank" rel="noopener noreferrer">日辰冲空原文 ↗</a>
+    </div>
+  </section>
+}
+
 function DayMonthReview({chart}) {
   const review=chart.day_month_review
   const [selected,setSelected]=useState(1)
@@ -622,6 +690,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <SeasonalMovingStudy chart={chart}/>
             <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
             <DayMonthReview chart={chart}/>
+            <VoidInteractionsStudy chart={chart}/>
             <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
             <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
             <NajiaBoard chart={chart} roleView={roleView}/>
@@ -631,7 +700,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及完整旺衰尚未实现；本轮新增日冲暗动／日破候选和用神多条件复核。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
