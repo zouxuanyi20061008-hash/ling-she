@@ -357,6 +357,76 @@ function FuShenStudy({chart,onChoose,busy}){
 
 
 
+
+function MovingEffectReview({chart}) {
+  const data=chart.moving_effect_review
+  const [inspected,setInspected]=useState(null)
+  if(!data)return null
+  const positions=data.moving_positions
+  const selected=positions.includes(inspected)?inspected:
+    positions.includes(data.selected_focus_position)?data.selected_focus_position:positions[0]
+  const item=data.movements.find(x=>x.position===selected)
+  function EvidenceSide({side,label}){
+    const actions=[side.day,side.month]
+    return <article className="moving-effect-side">
+      <small>{label} · {side.ganzhi}</small>
+      <h4>{side.element} · {side.season||'月令未核'}</h4>
+      {actions.map(a=><p key={a.source}>
+        <b>{a.source}：</b>
+        {a.status==='computed'?a.relation+
+          (a.clash?' · 相冲':'')+
+          (a.combine?' · 六合':'')+
+          (a.same_branch?' · 临建':''):'尚未确认'}
+      </p>)}
+      <div className="moving-effect-badges">
+        <span>{side.void===null?'旬空待核':side.void?'旬空':'不空'}</span>
+        <span>{side.month_clash===null?'月冲待核':side.month_clash?'月破条件':'未月冲'}</span>
+        <span>{side.day_clash===null?'日冲待核':side.day_clash?'逢日冲':'未日冲'}</span>
+      </div>
+    </article>
+  }
+  return <section className="moving-effect-review" aria-label="六爻本位动变与日月效力辨析">
+    <header className="moving-effect-head">
+      <div><small>第十四式 · 动变合参</small><h3>动爻与变爻，各受日月。</h3></div>
+      <span>{positions.length} 爻发动</span>
+    </header>
+    <p className="moving-effect-intro">
+      《增删卜易》动变生克冲合章明确：本位变爻可以回头作用动爻，日月能够作用变爻，
+      其他本卦爻不能跨位生克变爻。<strong>此处先核对规则关系，不直接判定生克成败。</strong>
+    </p>
+    {!item?<p className="moving-effect-empty">本卦没有真正发动的爻，因此不产生本位变爻效力审议；静态之卦同位支不当作动爻。</p>:
+      <>
+        <div className="moving-effect-selector" role="group" aria-label="选择发动爻">
+          {positions.map(pos=><button type="button" key={pos}
+            aria-pressed={selected===pos} className={selected===pos?'active':''}
+            onClick={()=>setInspected(pos)}>
+            {POS[pos-1]}爻 · {chart.najia_lines[pos-1].ganzhi}
+          </button>)}
+        </div>
+        <div className="moving-effect-grid">
+          <EvidenceSide side={item.moving} label="本卦 · 明动爻"/>
+          <EvidenceSide side={item.transformed} label="本位 · 变爻"/>
+        </div>
+        <div className="moving-effect-return">
+          <small>回头关系 · 本位专属</small>
+          <h4>{item.moving.ganzhi} → {item.transformed.ganzhi} · {item.returning_tags.join(' · ')}</h4>
+          <p>{item.returning_element_relation}</p>
+          <p>已确认关系，<strong>实际效力尚未判断。</strong>不会让该变爻跨位作用其他爻。</p>
+        </div>
+        <div className="moving-effect-reviewlist">
+          <h4>需要合参的条件</h4>
+          {item.conditions_to_review.length?
+            item.conditions_to_review.map((x,i)=><p key={i}>· {x}</p>):
+            <p>暂未发现额外空破或日月冲突；这仍不等于已经判断了真实效力。</p>}
+        </div>
+      </>}
+    <p className="moving-effect-scope">{data.boundary}</p>
+    <a href={data.sources.moving} target="_blank" rel="noopener noreferrer" className="moving-effect-source">
+      《增删卜易》动变生克冲合章原文 ↗
+    </a>
+  </section>
+}
+
 function StrengthEvidenceStudy({chart}){
   const data=chart.strength_evidence
   const [inspected,setInspected]=useState(null)
@@ -857,6 +927,9 @@ function ReviewReport({chart,question}) {
     '综合证据摘记（条数并非旺衰分数）：',
     ...(data.evidence_digest||[]),
     '',
+    '本位动变与日月空破核对（效力尚未判断）：',
+    ...(data.moving_effect_digest||[]),
+    '',
     '待核实与未完成事项：',
     ...data.outstanding_questions.map((x,i)=>(i+1)+'. '+x),
     '',
@@ -891,6 +964,11 @@ function ReviewReport({chart,question}) {
       <h4>综合证据摘记</h4>
       {data.evidence_digest.map((text,i)=><p key={i}>{text}</p>)}
       <small>这里只记录两类条件，不作净额评分，也不视为最终旺衰结论。</small>
+    </div>}
+    {data.moving_effect_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>动变与日月合参摘记</h4>
+      {data.moving_effect_digest.map((entry,i)=><p key={i}>{entry}</p>)}
+      <small>本位回头关系不等于作用已生效。</small>
     </div>}
     <div className="review-report-outstanding">
       <h4>尚待核实</h4>
@@ -1054,11 +1132,15 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 <button type="button" className={relationsView==='summary'?'active':''}
                   aria-pressed={relationsView==='summary'}
                   onClick={()=>setRelationsView('summary')}>综合证据</button>
+                <button type="button" className={relationsView==='motion'?'active':''}
+                  aria-pressed={relationsView==='motion'}
+                  onClick={()=>setRelationsView('motion')}>动爻效力</button>
                 <button type="button" className={relationsView==='details'?'active':''}
                   aria-pressed={relationsView==='details'}
                   onClick={()=>setRelationsView('details')}>纳甲与动变明细</button>
               </div>
               {relationsView==='summary'?<StrengthEvidenceStudy chart={chart}/>:
+                relationsView==='motion'?<MovingEffectReview chart={chart}/>:
                 <>
                   <NajiaBoard chart={chart} roleView={roleView}/>
                   <LineDynamicsStudy chart={chart}/>
