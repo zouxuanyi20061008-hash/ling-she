@@ -56,7 +56,7 @@ def test_both_yuan_and_ji_moving_is_not_cancelled():
 
 
 def test_chou_spirit_is_indirect_even_if_moving():
-    chart=cast_six_yao([9,6,7,9,7,7],"甲子","辰","父母",3)
+    chart=cast_six_yao([9]*6,"甲子","辰","父母",3)
     focus=chart["yongshen_pathways"]["focus_candidates"][0]
     chou=focus["pathways"]["仇神"][0]
     assert chou["moving"] is True
