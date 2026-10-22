@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="224" height="228" viewBox="0 0 224 228"><defs>
+<linearGradient id="fur" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#e4eac9"/><stop offset=".2" stop-color="#a3c5ad"/><stop offset=".52" stop-color="#4c847e"/><stop offset=".83" stop-color="#30566a"/><stop offset="1" stop-color="#172e4c"/></linearGradient>
+<linearGradient id="mane" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="#f2e8bb"/><stop offset=".44" stop-color="#84afa1"/><stop offset="1" stop-color="#235367"/></linearGradient>
+<radialGradient id="eye"><stop stop-color="#fffdd1"/><stop offset=".55" stop-color="#dbcf75"/><stop offset="1" stop-color="#997a54"/></radialGradient></defs>
+<ellipse cx="112" cy="210" rx="85" ry="14" fill="#101d2b" opacity=".4"/>
+<path d="M29 104L23 11L83 56L113 30L144 56L201 11L197 104L209 151L185 204L142 217L112 204L83 217L38 204L15 151Z" fill="url(#fur)" stroke="#23495b" stroke-width="7" stroke-linejoin="round"/>
+<path d="M33 32L66 71L44 99ZM189 32L157 71L179 99Z" fill="#c9a78c" stroke="#4a6570" stroke-width="3"/>
+<path d="M19 103L2 78L9 134L25 139L13 169L43 161L39 198L68 181L87 220L112 197L139 220L157 181L186 198L182 161L212 169L199 139L215 134L222 78L205 103L181 86L151 80L112 105L74 80L43 86Z" fill="url(#mane)" stroke="#255666" stroke-width="4"/>
+<path d="M29 107L71 90L104 122L97 142L59 146L37 127ZM195 107L153 90L120 122L127 142L165 146L187 127Z" fill="#264a62" stroke="#638f8b" stroke-width="3"/>
+<path d="M41 117L78 113L85 135L53 138Z" fill="#ffe5a5" stroke="#baab71" stroke-width="2"/>
+<path d="M183 117L146 113L139 135L171 138Z" fill="#ffe5a5" stroke="#baab71" stroke-width="2"/>
+<path d="M62 122L80 120L76 135L67 135ZM162 122L144 120L148 135L157 135Z" fill="#203d52"/>
+<path d="M78 144L112 129L146 144L157 172L137 190L112 203L87 190L67 172Z" fill="#3b6471" stroke="#294858" stroke-width="4"/>
+<path d="M90 150L112 143L134 150L112 166Z" fill="#adc5a9"/>
+<path d="M91 166L133 166L112 181Z" fill="#1d3347"/>
+<path d="M75 174L87 203L101 180L110 201M149 174L137 203L123 180L114 201" fill="#ffeed4" stroke="#61858b" stroke-width="3"/>
+<path d="M50 151L72 145M174 151L152 145" stroke="#c4e5cb" stroke-width="4" fill="none"/>
+<path d="M96 44L110 15L126 45L113 62Z" fill="#f1e6b0" stroke="#568b85" stroke-width="3"/>
+<path d="M84 70L110 54L140 70L128 92L112 80L97 92Z" fill="#b1d7c1" stroke="#2c6271" stroke-width="4"/>
+<path d="M111 59L102 73L113 83L124 72Z" fill="#f0e9b6"/>
+<g fill="#d8d7ae" opacity=".9"><path d="M49 100l14-7 10 10-14 7ZM163 94l15 6-10 11-12-7ZM62 182l12-8 7 12-13 9ZM150 175l13 7-8 12-12-10Z"/></g>
+<path d="M32 200L50 186L66 205M192 200L174 186L158 205" fill="none" stroke="#accac1" stroke-width="5"/>
+</svg>
