@@ -36,7 +36,7 @@ def test_parent_multi_candidates_both_have_same_original_role_sources():
 
 
 def test_both_yuan_and_ji_moving_is_not_cancelled():
-    chart=cast_six_yao([7,6,7,9,7,7],"甲子","辰","父母",3)
+    chart=cast_six_yao([9]*6,"甲子","辰","父母",3)
     data=chart["yongshen_pathways"]
     assert data["moving_yuan_ji_together"]
     assert len(data["focus_candidates"])==2
@@ -134,7 +134,7 @@ def test_64_hexagrams_single_mover_and_role_conditions_do_not_overreach():
 
 
 def test_cast_endpoint_and_ai_interpret_share_pathways(monkeypatch):
-    payload={"numbers":[7,6,7,9,7,7],"day_ganzhi":"甲子","month_branch":"辰",
+    payload={"numbers":[9]*6,"day_ganzhi":"甲子","month_branch":"辰",
              "focus_liuqin":"父母","focus_position":3}
     response=TestClient(app).post("/api/liuyao/cast",json=payload)
     assert response.status_code==200
