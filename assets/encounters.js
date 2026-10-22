@@ -73,7 +73,7 @@ function rewardEncounter(site){
   if(first)gain(65);
   toast('💧 碧泉灵汐：气血 +'+Math.round(hp-before)+'，90秒减伤'+(first?'，首次修为 +65':''));
  }else if(site.id==='wood'){
-  if(first){gain(85);evoPoints+=2}
+  if(first){gain(85);evoPoints+=2;triggerEvolutionIfReady()}
   toast('🌳 千年灵木：90秒灵息伤害提升'+(first?'，首次修为 +85、进化点 +2':''));
  }else{
   if(first){gain(90);essence+=3}
@@ -199,7 +199,7 @@ function hitAzureKingProjectile(p,now){
  const b=azureKing;
  if(!b||b.defeated||p.hostile)return false;
  if(Math.hypot(p.x-b.x,p.y-b.y)>b.r+12)return false;
- const applied=p.damage*encounterDamageBonus(now);
+ const applied=p.damage;
  b.hp-=applied;b.hitFlash=now+170;
  damageTexts.push({x:b.x,y:b.y-b.r-6,text:'-'+Math.round(applied),life:.9,color:'#fff0c4'});
  if(b.hp<=0)defeatAzureKing();
@@ -208,7 +208,7 @@ function hitAzureKingProjectile(p,now){
 function defeatAzureKing(){
  if(azureKing.defeated)return;
  azureKing.defeated=true;azureKing.hp=0;encounterState.bossDefeated=true;
- gain(380);evoPoints+=8;essence+=5;
+ gain(380);evoPoints+=8;essence+=5;triggerEvolutionIfReady();
  flash('🏆 青岚霸主已伏诛');
  toast('🏆 苍牙狼王：+380修为，+8进化点，+5灵蕴');
  for(let i=0;i<22;i++){
@@ -229,7 +229,7 @@ function paintAzureKing(now){
   ctx.globalAlpha=1;
  }
  if(azureKingArt.complete&&azureKingArt.naturalWidth){
-  ctx.globalAlpha=now<b.hitFlash?.58:1;
+  ctx.globalAlpha=now<b.hitFlash? .58:1;
   ctx.drawImage(azureKingArt,b.x-69,b.y-110,138,144);
   ctx.globalAlpha=1;
  }else{
