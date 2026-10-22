@@ -77,13 +77,14 @@ function OrbitArtwork() {
 
 function MethodCard({method,onSelect}) {
   const index=ARTS.findIndex(a=>a.id===method.id)
-  return <button type="button" className={'atlas-method '+method.tone}
+  return <button type="button" className={'atlas-method '+method.tone+' atlas-method--'+method.id}
     onClick={()=>onSelect(method.id)} aria-label={'进入'+method.name+'，'+method.status}>
     <span className="atlas-method-top">
       <span className="atlas-method-no">第 {String(index+1).padStart(2,'0')} 门</span>
       <span className="atlas-method-status">{method.status}</span>
     </span>
     <span className="atlas-method-symbol" aria-hidden="true">{method.symbol}</span>
+    <span className="atlas-method-identity" aria-hidden="true">{({meihua:"梅影 · 水墨",liuyao:"青铜 · 龟甲",qimen:"玄夜 · 九宫",bazi:"赤金 · 四柱",liuren:"沧海 · 天盘",taiyi:"云穹 · 太乙",ziwei:"星垣 · 紫微",fengshui:"山川 · 堪舆"})[method.id]}</span>
     <span className="atlas-method-en">{method.en}</span>
     <h3>{method.name}</h3>
     <p>{method.brief}</p>
@@ -195,7 +196,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,
           </div>
         </section>
       }
-      <footer className="atlas-footer">万象书院 · 观境察势　｜　先明其理，再辨其事</footer>
+      <footer className="atlas-footer">万象书院 · 一门一境，各循其法　｜　先明其理，再辨其事</footer>
     </div>
   </main>
 }
