@@ -23,7 +23,7 @@ from .prompts import build_messages
 from .clarification import followup_question
 from .yaoci import moving_line_text
 from .core.liuyao import cast_six_yao
-from .core.solar_calendar import preview_solar_calendar
+from .core.solar_calendar import preview_solar_calendar, preview_lunar_calendar
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
 LAN_REGEX = (
@@ -146,16 +146,32 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
 
 
 class SolarCalendarPreviewRequest(BaseModel):
-    model_config = ConfigDict(extra='forbid')
-    date: date
+    model_config = ConfigDict(extra="forbid")
+    calendar_type: Literal["solar","lunar"] = "solar"
+    date: date | None = None
+    lunar_year: int | None = Field(default=None,ge=1901,le=2099)
+    lunar_month: int | None = Field(default=None,ge=1,le=12)
+    lunar_day: int | None = Field(default=None,ge=1,le=30)
+    is_leap_month: bool = False
     clock: time_value
-    timezone: Literal["Asia/Shanghai","Asia/Tokyo"] = "Asia/Shanghai"
     day_boundary: Literal["midnight","zi_hour"] = "midnight"
 
 @app.post("/api/liuyao/calendar-preview")
 def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
     try:
-        return preview_solar_calendar(req.date, req.clock,req.timezone,req.day_boundary)
+        if req.calendar_type=="solar":
+            if any(x is not None for x in (req.lunar_year,req.lunar_month,req.lunar_day)) or req.is_leap_month:
+                raise ValueError("公历模式不能同时提交农历月份或闰月。")
+            if req.date is None:
+                raise ValueError("公历模式必须填写阳历年月日。")
+            return preview_solar_calendar(req.date,req.clock,day_boundary=req.day_boundary)
+        if req.date is not None:
+            raise ValueError("农历模式请只填写农历年月日，不要同时填公历日期。")
+        if req.lunar_year is None or req.lunar_month is None or req.lunar_day is None:
+            raise ValueError("农历模式必须填写农历年、月、日，并确认是否为闰月。")
+        return preview_lunar_calendar(
+            req.lunar_year,req.lunar_month,req.lunar_day,
+            req.is_leap_month,req.clock,req.day_boundary)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 
