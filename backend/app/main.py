@@ -15,7 +15,7 @@ from urllib.error import HTTPError, URLError
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from .core.casting import cast, ObservationNeedsNumbers
 from .core.strokes import UnsupportedCharacter
@@ -146,6 +146,7 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
 
 
 class SolarCalendarPreviewRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     date: date
     clock: time_value
     timezone: Literal["Asia/Shanghai","Asia/Tokyo"] = "Asia/Shanghai"
