@@ -29,7 +29,7 @@ it('没有公历来源时只显示相对天数，不捏造具体年月日',()=>{
   expect(screen.getByText('第 10 日')).toBeTruthy()
   expect(screen.getByText('原旬空后的换旬参照')).toBeTruthy()
   expect(screen.queryByText(/2026-02-/)).toBeNull()
-  expect(screen.getByText('日期条件不是实际应期')).toBeTruthy()
+  expect(screen.getByText(/日期条件不是实际应期/)).toBeTruthy()
 })
 
 it('只在具有服务端重算日期时显示对应日期和子初换日',()=>{
