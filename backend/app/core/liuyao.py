@@ -49,4 +49,4 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
                     decorate_spirit_relations(
                         focus_six_yao(
                             decorate_calendar(decorate_six_yao(result), day_ganzhi, month_branch),
-                            focus_liuqin)))))))), focus_position)
+                            focus_liuqin))))))), focus_position)
