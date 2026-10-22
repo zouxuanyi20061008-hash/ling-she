@@ -987,3 +987,43 @@
  .moving-effect-grid{grid-template-columns:1fr}
  .relations-view-tabs button{font-size:10px;padding:6px 2px}
 }
+
+/* V17 合绊、三墓与绝地：依爻查看，明确标记条件而非实效。 */
+.relations-view-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.special-conditions{background:#f7f2e7;border:1px solid #c4b69b;padding:15px 13px;margin:12px 0;color:#345b47}
+.special-conditions-head{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #dbccb3;padding-bottom:12px}
+.special-conditions-head small{font-size:11px;color:#a17c52;letter-spacing:.13em}
+.special-conditions-head h3{font-size:17px;margin:6px 0 0;color:#315e45}
+.special-conditions-head>span{font-size:10px;color:#947b5e}
+.special-conditions-intro{font-size:11px;line-height:1.95;color:#657565;margin:12px 0}
+.special-conditions-intro strong{color:#2d6248}
+.special-conditions-positions{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin:12px 0}
+.special-conditions-positions button{background:#fffcf0;border:1px solid #b8c6af;padding:10px 3px;min-height:44px;font-size:11px;color:#3b6c51}
+.special-conditions-positions button.active{background:#305f49;border-color:#305f49;color:#fff5de}
+.special-conditions-positions small{display:block;font-size:9px;color:#a1704c;margin-top:3px}
+.special-conditions-positions button.active small{color:#e8cea7}
+.special-conditions-selected{display:flex;justify-content:space-between;gap:11px;flex-wrap:wrap;padding:11px;background:#ebecdc;border:1px solid #d9d0b7}
+.special-conditions-selected strong{color:#2f6249;font-size:14px}
+.special-conditions-selected span{font-size:11px;color:#866e54}
+.special-conditions-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.special-conditions-list article{background:#fffbef;border:1px solid #d8ccb6;padding:12px 9px;min-width:0}
+.special-conditions-list h4{font-size:12px;color:#35664b;margin:0 0 10px;padding-bottom:7px;border-bottom:1px solid #dcd0b8}
+.special-conditions-entry{border-bottom:1px solid #e6d9c6;padding:7px 0}
+.special-conditions-entry:last-child{border-bottom:0}
+.special-conditions-entry b{display:block;font-size:11px;color:#956b4f}
+.special-conditions-entry small{font-size:10px;color:#8d826e}
+.special-conditions-entry p,.special-conditions-empty{font-size:11px;line-height:1.9;color:#697b67;margin:6px 0}
+.special-conditions-caution{background:#eee8da;border-left:3px solid #ad875b;padding:11px 13px;margin-top:9px;font-size:11px;color:#836d56}
+.special-conditions-caution b{color:#99694d}
+.special-conditions-caution p{line-height:1.9;margin:5px 0}
+.special-conditions-limits{font-size:10px;line-height:2;color:#92856d;border-top:1px solid #d6c9b1;padding-top:11px;margin:12px 0}
+.special-conditions-sources{display:flex;gap:9px 17px;flex-wrap:wrap}
+.special-conditions-sources a{font-size:11px;color:#326d50;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){
+ .relations-view-tabs button{font-size:9px;padding:7px 2px}
+ .special-conditions{padding:11px 9px}
+ .special-conditions-head h3{font-size:15px}
+ .special-conditions-positions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .special-conditions-list{grid-template-columns:1fr}
+ .special-conditions-selected span{font-size:10px}
+}
