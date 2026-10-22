@@ -158,7 +158,7 @@ function placeStable(arr,n,fn,salt,pad){
   for(var i=0;i<n*12&&spawned<n;i++){
     var x=70+terrainHash(i,salt,7)*(SIZE-140);
     var y=70+terrainHash(i,salt,11)*(SIZE-140);
-    if(terrainBlocked(x,y)||landmarkClearing(x,y,pad)||onQinglanRoad(x,y))continue;
+    if(terrainBlocked(x,y)||landmarkClearing(x,y,pad)||onQinglanRoad(x,y)||isEncounterClearing(x,y,pad))continue;
     if(arr===obstacles&&arr.some(function(o){return Math.hypot(o.x-x,o.y-y)<o.r+33}))continue;
     arr.push(fn(x,y,i));spawned++;
   }
