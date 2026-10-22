@@ -751,3 +751,48 @@
  .void-review-grid{grid-template-columns:1fr}
  .void-summary strong{font-size:17px}
 }
+
+/* 第十二式：手动选择研习主爻，候选证据并列，不冒充自动断卦 */
+.focus-decision{margin:18px 0;padding:15px 14px;background:#f6f0e2;border:1px solid #b8b49a;color:#365842}
+.focus-decision-head{display:flex;justify-content:space-between;align-items:center;gap:9px;border-bottom:1px solid #d5c6ae;padding-bottom:11px}
+.focus-decision-head>div>span{font-size:11px;color:#a17d56;letter-spacing:.15em}
+.focus-decision-head h3{font-size:19px;color:#2e5942;margin:5px 0 0}
+.focus-decision-head small{font-size:10px;color:#8b7a60}
+.focus-decision-lead,.focus-decision-empty,.focus-decision-limit,.focus-decision-missing>p{font-size:11px;line-height:2;color:#6b7968;margin:12px 0}
+.focus-decision-lead strong{color:#376a4d}
+.focus-decision-status{background:#e5eadd;padding:10px 12px;font-size:11px;line-height:1.9;color:#396149;margin:12px 0}
+.focus-decision-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:13px 0}
+.focus-decision-cards article{border:1px solid #d5c9b3;background:#fffbf0;min-width:0;padding:13px 11px;display:flex;flex-direction:column}
+.focus-decision-cards article.active{border:2px solid #5d8b65;background:#f3f6e8}
+.focus-decision-card-head{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.focus-decision-card-head b{font-size:14px;color:#2e6247}
+.focus-decision-card-head small{font-size:10px;color:#9f795a}
+.focus-decision-cards dl{margin:0 0 12px}
+.focus-decision-cards dl>div{display:flex;gap:10px;justify-content:space-between;padding:6px 1px;border-top:1px solid #ebe0ca;font-size:11px}
+.focus-decision-cards dt{color:#8d866f}
+.focus-decision-cards dd{color:#3d624c;text-align:right;margin:0}
+.focus-decision-select{margin-top:auto;min-height:43px;background:#2d634a;border:1px solid #2d634a;padding:10px 6px;color:#fff5dc;font-size:11px}
+.focus-decision-select[aria-pressed=true]{background:#f8f5e8;color:#2d634a}
+.focus-decision-select:disabled{opacity:.6}
+.focus-decision-compare{border:1px solid #d3c7ad;background:#f0eddf;padding:12px;margin:12px 0}
+.focus-decision-compare h4,.focus-decision-missing h4{font-size:15px;color:#365f48;margin:0 0 9px}
+.focus-decision-compare article{background:#fdf8ea;border:1px solid #dfd3b7;padding:11px;margin-top:8px}
+.focus-decision-compare article>b{font-size:12px;color:#2b5b43}
+.focus-decision-compare article>p{font-size:11px;color:#62755f;margin:6px 0}
+.focus-decision-compare article>small{display:block;font-size:10px;line-height:1.9;color:#97725a;margin-top:8px}
+.focus-decision-caution{border-left:3px solid #a57b53;padding:12px;background:#efe8d7;font-size:11px;color:#79725f;line-height:1.9}
+.focus-decision-caution>b{color:#9d684b}
+.focus-decision-caution>p{margin:6px 0}
+.focus-decision-missing article{background:#fffaed;border:1px solid #d9c9aa;padding:11px;margin:8px 0}
+.focus-decision-missing article>b{font-size:12px;color:#346047}
+.focus-decision-missing article>p{font-size:11px;line-height:1.85;color:#6f7966;margin:6px 0}
+.focus-decision-limit{padding-top:10px;border-top:1px solid #d6cab2;margin:13px 0 8px}
+.focus-decision-links{display:flex;flex-wrap:wrap;gap:8px 15px}
+.focus-decision-links>a{font-size:11px;color:#367357;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){
+ .focus-decision{padding:13px 9px}
+ .focus-decision-head h3{font-size:17px}
+ .focus-decision-head small{font-size:9px}
+ .focus-decision-cards{grid-template-columns:1fr;gap:8px}
+ .focus-decision-cards article{padding:12px}
+}
