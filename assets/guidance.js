@@ -172,6 +172,15 @@ function guidePathSearch(startX,startY,endX,endY){
    if(!guideCellValid(ni,nj))continue;
    // Prevent squeezing diagonally through banks or solid structures.
    if(dx&&dy&&(!guideCellValid(ci+dx,cj)||!guideCellValid(ci,cj+dy)))continue;
+   // A narrow 60px river may fit between two 80px grid centers.
+   // Check the whole transition, not just walkable cell centers.
+   let segmentClear=true;
+   const ax=(ci+.5)*GUIDE_GRID,ay=(cj+.5)*GUIDE_GRID;
+   for(const fraction of [.25,.5,.75]){
+    const x=ax+dx*GUIDE_GRID*fraction,y=ay+dy*GUIDE_GRID*fraction;
+    if(terrainBlocked(x,y)){segmentClear=false;break}
+   }
+   if(!segmentClear)continue;
    const next=idx(ni,nj);
    if(closed[next])continue;
    const cost=g[current]+(dx&&dy?Math.SQRT2:1);
