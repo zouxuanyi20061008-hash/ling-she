@@ -951,3 +951,39 @@
  .strength-evidence-col.context{grid-column:auto}
  .strength-evidence-target{padding:10px}
 }
+
+/* V16 本位动变与日月效力：专用标签页，避免叠加超长明细 */
+.relations-view-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.moving-effect-review{padding:16px 14px;margin:12px 0;background:#f5f1e4;border:1px solid #b8ba9e;color:#315a45}
+.moving-effect-head{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #d4c8b2;padding-bottom:10px}
+.moving-effect-head small{font-size:10px;color:#987454;letter-spacing:.12em}
+.moving-effect-head h3{font-size:18px;margin:5px 0 0;color:#315e49}
+.moving-effect-head>span{font-size:11px;color:#8c775d}
+.moving-effect-intro,.moving-effect-empty,.moving-effect-scope{font-size:11px;line-height:1.95;color:#73806b;margin:13px 0}
+.moving-effect-intro strong{color:#3b6a4d}
+.moving-effect-selector{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.moving-effect-selector button{font-size:11px;border:1px solid #b5c0a9;background:#fffaec;padding:10px 12px;color:#386c4e}
+.moving-effect-selector button.active{background:#2f6248;border-color:#2f6248;color:#fff1d7}
+.moving-effect-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.moving-effect-side{background:#fffbef;border:1px solid #d5cab0;padding:13px 11px;min-width:0}
+.moving-effect-side>small{font-size:10px;color:#91765b}
+.moving-effect-side h4{font-size:16px;color:#315f47;margin:6px 0 11px}
+.moving-effect-side p{font-size:11px;line-height:1.95;color:#59715c;margin:6px 0;overflow-wrap:anywhere}
+.moving-effect-side p b{color:#956f4e}
+.moving-effect-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.moving-effect-badges span{background:#eceddf;color:#806e54;border:1px solid #dfd5b9;font-size:10px;padding:5px 7px}
+.moving-effect-return{margin:11px 0;background:#e9eee1;border-left:3px solid #6d9774;padding:13px}
+.moving-effect-return>small{font-size:10px;color:#827252}
+.moving-effect-return h4{font-size:14px;color:#2c6348;margin:8px 0}
+.moving-effect-return p{font-size:11px;line-height:1.9;color:#57705e;margin:5px 0}
+.moving-effect-reviewlist{background:#f1e8d9;border:1px solid #decbb2;padding:12px}
+.moving-effect-reviewlist h4{font-size:13px;color:#92694f;margin:0 0 9px}
+.moving-effect-reviewlist p{font-size:11px;line-height:1.9;color:#7f705d;margin:6px 0}
+.moving-effect-scope{border-top:1px solid #d8cbb6;padding-top:10px}
+.moving-effect-source{font-size:11px;text-decoration:underline;text-underline-offset:3px;color:#396c53}
+@media(max-width:650px){
+ .moving-effect-review{padding:12px 9px}
+ .moving-effect-head h3{font-size:16px}
+ .moving-effect-grid{grid-template-columns:1fr}
+ .relations-view-tabs button{font-size:10px;padding:6px 2px}
+}
