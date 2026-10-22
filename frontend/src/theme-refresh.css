@@ -585,3 +585,121 @@ button:disabled{cursor:not-allowed}
     padding:8px 6px;
   }
 }
+
+
+/* V20 | 浏览舒适度与无障碍精修。低频明细按需看，主页面字号不得过小。 */
+:where(.academy-stage--liuyao,.book-app--meihua,.library-stage){
+  text-rendering:optimizeLegibility;
+}
+.academy-stage--liuyao .academy-container{padding-bottom:14px}
+.academy-stage--liuyao .review-flow-nav{
+  scroll-margin-top:87px;
+}
+.academy-stage--liuyao .liuyao-cast-status{
+  font-size:13px;line-height:1.8;color:#4b382b;
+  background:#f6e8ce;border-left:4px solid #90562f;padding:11px 13px;margin:13px 0;
+}
+.academy-stage--liuyao .liuyao-cast-error{
+  background:#fff1e9;color:#7c3025;border:1px solid #a9664c;
+  padding:11px 13px;margin:13px 0;font-size:13px;line-height:1.8;
+}
+.academy-stage--liuyao .liuyao-cast-error button{
+  min-height:44px;padding:9px 12px;color:#fff5ed;background:#773a2c;
+  border:1px solid #773a2c;font-weight:700;
+}
+.academy-stage--liuyao .relations-view-hint{
+  color:#644833;font-size:12px;line-height:1.7;margin:12px 0 7px
+}
+.academy-stage--liuyao .relations-view-tabs{scrollbar-width:thin;scrollbar-color:#936449 #e9d9c1}
+.academy-stage--liuyao .relations-view-tabs button{white-space:normal;line-height:1.4;min-height:48px}
+.academy-stage--liuyao .academy-computed >p,
+.academy-stage--liuyao .review-report>p{color:#3d493d}
+.academy-stage--liuyao .academy-empty-result{color:#4b5c4c}
+.academy-stage--liuyao .academy-casting-table,
+.academy-stage--liuyao .academy-casting-result{box-shadow:0 4px 17px rgba(78,46,28,.08)}
+.book-top-flip{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin:0 4px 12px;padding:10px 12px;
+  border-left:4px solid #2c6249;background:#eff1e5;
+  color:#294c39;font-size:13px;font-weight:650;
+}
+.book-top-flip>div{display:flex;gap:8px;flex-wrap:wrap}
+.book-top-flip button{
+  padding:9px 12px;min-height:44px;
+  border:1px solid #76947e;
+  background:#fff9ee;color:#254d3a;font-size:12px;font-weight:700;
+}
+.book-top-flip .book-top-next{background:#24563f;border-color:#24563f;color:#fff8e8}
+.book-app--meihua .book-intro,.book-app--meihua .book-hex .hexmeaning,
+.book-app--meihua .book-hex .trigrams{color:#304f3d}
+.book-app--meihua .book-pagenav button{min-height:48px;font-size:13px;font-weight:700}
+.book-app--meihua .book-step{min-height:44px}
+.library-reader-quick{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:9px;padding:10px 12px;margin-bottom:12px;
+  background:#e9efdf;border:1px solid #bbc9ab;
+  color:#325743;
+}
+.library-reader-quick button{
+  border:1px solid #89a58b;background:#fff9ea;
+  min-height:44px;padding:8px 12px;
+  color:#28533b;font-size:12px;font-weight:700
+}
+.library-reader-quick button.library-reader-quick-next{
+  background:#285c42;border-color:#285c42;color:#fff8e7
+}
+.library-reader-quick button:disabled{opacity:.43;cursor:not-allowed}
+.library-reader-quick>span{font-size:12px;font-weight:650;color:#3b5d45}
+.library-stage .library-original{color:#244c38;background:#efe4d0}
+.library-stage .library-reading-grid p,.library-stage .library-learning-grid p{
+  color:#334b3d;line-height:1.95
+}
+.library-stage .library-reading-grid section{background:#f6f0e2;border-color:#bfc1a9}
+.library-stage .library-page-count{color:#435a46}
+.library-stage .library-page-count strong{color:#244f39}
+.library-stage .library-book-head .library-eyebrow{color:#69523c}
+@media(max-width:760px){
+  /* 手机上的 5 个研判步骤和 5 个专题分别横向滑动，
+     每个目标至少有足够宽度，不再硬塞为微型字号。 */
+  .academy-stage--liuyao .review-flow-nav{
+    display:flex;flex-wrap:nowrap;overflow-x:auto;
+    grid-template-columns:none;gap:7px;
+    scroll-snap-type:x proximity;scroll-padding-inline:8px;
+    overscroll-behavior-inline:contain;
+    padding:7px;margin:13px 0;
+  }
+  .academy-stage--liuyao .review-flow-nav button{
+    flex:0 0 101px;min-width:101px;min-height:54px;
+    scroll-snap-align:start;padding:8px;
+  }
+  .academy-stage--liuyao .review-flow-nav button span{
+    font-size:12px;font-weight:700;
+  }
+  .academy-stage--liuyao .review-flow-nav button small{font-size:10px}
+  .academy-stage--liuyao .relations-view-tabs{
+    display:flex;flex-wrap:nowrap;overflow-x:auto;
+    grid-template-columns:none;gap:8px;
+    scroll-snap-type:x proximity;
+    overscroll-behavior-inline:contain;padding:5px 0 10px;
+  }
+  .academy-stage--liuyao .relations-view-tabs button{
+    flex:0 0 auto;min-width:112px;max-width:147px;
+    padding:9px 12px;font-size:12px;scroll-snap-align:start;
+  }
+  .academy-stage--liuyao .academy-panel-head{font-size:12px}
+  .academy-stage--liuyao .liuyao-workbench-lead{font-size:12px;line-height:1.8}
+  .book-top-flip{margin:0 0 10px;padding:9px}
+  .book-top-flip>span{font-size:12px}
+  .book-top-flip>div{gap:5px}
+  .book-top-flip button{padding:9px}
+  .library-reader-quick{margin:5px 0 12px;padding:8px 6px}
+  .library-reader-quick button{padding:8px 7px;white-space:nowrap}
+  .library-reader-quick>span{font-size:11px;text-align:center}
+  .library-stage .library-original{font-size:clamp(17px,4.7vw,22px);line-height:2.05;letter-spacing:.045em}
+  .library-stage .library-page-paper{padding:17px 15px 21px}
+}
+@media(max-width:380px){
+  .book-top-flip{flex-wrap:wrap}
+  .book-top-flip>div{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .library-reader-quick button{font-size:11px;padding:8px 5px}
+}
