@@ -27,6 +27,7 @@ def decorate_review_flow(chart: dict) -> dict:
     void_context=chart["void_context_review"]
     focus_effect=chart["focus_effect_review"]
     sheet=chart["review_sheet"]
+    comparison=chart["focus_comparison"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -233,8 +234,16 @@ def decorate_review_flow(chart: dict) -> dict:
         str(len(item["pending"]))+"项（数量不是旺衰评分）"
         for item in sheet["candidates"]
     ]
+    focus_comparison_digest=[
+        str(pair["first_position"])+"爻与"+str(pair["second_position"])+"爻："+
+        ("、".join(x["title"] for x in pair["axes"] if x["state"]=="different") or "现有可比规则未见差异")+
+        ("；另有"+str(len(pair["missing_keys"]))+"项日月资料待补" if pair["missing_keys"] else "")+
+        "；不判断哪一爻较优"
+        for pair in comparison["pairs"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "focus_comparison_digest":focus_comparison_digest,
         "review_sheet_digest":sheet_digest,
         "focus_effect_digest":focus_effect_digest,
         "void_context_digest":void_context_digest,
