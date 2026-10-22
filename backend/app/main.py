@@ -6,7 +6,7 @@ import secrets
 import threading
 import time
 from collections import defaultdict, deque
-from datetime import datetime, date, time as time_value
+from datetime import datetime, date as date_value, time as time_value
 from pathlib import Path
 from typing import Literal
 from urllib.request import Request as UrlRequest, urlopen
@@ -148,7 +148,7 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
 class SolarCalendarPreviewRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     calendar_type: Literal["solar","lunar"] = "solar"
-    date: date | None = None
+    date: date_value | None = None
     lunar_year: int | None = Field(default=None,ge=1901,le=2099)
     lunar_month: int | None = Field(default=None,ge=1,le=12)
     lunar_day: int | None = Field(default=None,ge=1,le=30)
