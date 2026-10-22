@@ -495,6 +495,13 @@ export default function App({onBack,onOpenStudy,apiConfig}) {
             onClick={()=>goPage(i)}><span>0{i+1}</span> {label}</button>
         )}
       </nav>
+      {page>0&&chart&&<nav className="book-top-flip" aria-label="梅花易数快速翻页">
+        <span>第 {['一','二','三'][page]} 折 · {['问事','观卦','明理'][page]}</span>
+        <div>
+          <button type="button" onClick={()=>goPage(page-1)}>← 上一折</button>
+          {page<2&&<button type="button" className="book-top-next" onClick={()=>goPage(page+1)}>下一折 →</button>}
+        </div>
+      </nav>}
       <div key={'leaf-'+page+'-'+turnVersion} className={'book-leaf '+turnDirection}
         onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {page===0 && <section className="book-page">
