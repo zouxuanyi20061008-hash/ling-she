@@ -11,6 +11,15 @@ const SECTIONS=[
 ]
 const NAMES=Object.fromEntries(METHODS.map(m=>[m.id,m.title]))
 const QUAD=['甲','乙','丙','丁']
+const READING_PROGRESS_KEY='wanxiang-library-progress-v1'
+function loadReadingProgress(){
+  try{
+    const stored=JSON.parse(window.localStorage.getItem(READING_PROGRESS_KEY)||'{}')
+    if(!stored||typeof stored!=='object'||Array.isArray(stored))return {}
+    return Object.fromEntries(Object.entries(stored).filter(([key,page])=>
+      /^(reader|lesson):(zhouyi|meihua|liuyao|qimen|bazi)$/.test(key)&&Number.isInteger(page)&&page>=0))
+  }catch{return {}}
+}
 function booksFor(id){
   return id==='meihua'
     ? CLASSICS.map(c=>({...c,sourceUrl:SOURCES[c.source]}))
@@ -105,27 +114,42 @@ export default function StudyHall({onClose,apiKey,setApiKey,aiModel,setAiModel,a
   const [quizComplete,setQuizComplete]=useState(false)
   const [reveal,setReveal]=useState(false)
   const [notice,setNotice]=useState('')
+  const [readingProgress,setReadingProgress]=useState(loadReadingProgress)
   const swipe=useRef(null)
+  useEffect(()=>{
+    try{window.localStorage.setItem(READING_PROGRESS_KEY,JSON.stringify(readingProgress))}catch{}
+  },[readingProgress])
 
   const sectionId=view==='reader'?'bookshelf':view==='lesson'?'courses':view==='quiz'?'quizmenu':view
   const section=SECTIONS.find(s=>s.id===sectionId)
   const items=view==='reader'?booksFor(method):view==='lesson'?lessonsFor(method):view==='quiz'?questionsFor(method):[]
   const item=items[index]
   const viewingPages=['reader','lesson','quiz'].includes(view)
+  const resumeKind=view==='bookshelf'?'reader':view==='courses'?'lesson':null
+  const resumeEntries=resumeKind?METHODS.map(m=>({method:m,page:readingProgress[resumeKind+':'+m.id]}))
+    .filter(({method,page})=>Number.isInteger(page)&&page>0&&page<(resumeKind==='reader'?booksFor(method.id):lessonsFor(method.id)).length):[]
+  function rememberPage(page){
+    if(view==='reader'||view==='lesson')
+      setReadingProgress(previous=>({...previous,[view+':'+method]:page}))
+  }
   const navigate=(next)=>{
     setView(next);setIndex(0);setChoice(null);setCorrect(0);setQuizComplete(false);setPlaying(false);setNotice('')
     window.scrollTo({top:0,behavior:'instant'})
   }
-  function enter(methodId){
-    setMethod(methodId);setIndex(0);setChoice(null);setCorrect(0);setQuizComplete(false);setPlaying(false)
-    setView(view==='bookshelf'?'reader':view==='courses'?'lesson':'quiz')
+  function enter(methodId,resume=false){
+    const nextView=view==='bookshelf'?'reader':view==='courses'?'lesson':'quiz'
+    const saved=readingProgress[nextView+':'+methodId]
+    const length=nextView==='reader'?booksFor(methodId).length:nextView==='lesson'?lessonsFor(methodId).length:0
+    const start=resume&&Number.isInteger(saved)&&saved>=0&&saved<length?saved:0
+    setMethod(methodId);setIndex(start);setChoice(null);setCorrect(0);setQuizComplete(false);setPlaying(false)
+    setView(nextView)
     setNotice('')
     window.scrollTo({top:0,behavior:'instant'})
   }
-  function prev(){if(index>0){setIndex(i=>i-1);setPlaying(false);setNotice('');window.scrollTo({top:0,behavior:'instant'})}}
+  function prev(){if(index>0){rememberPage(index-1);setIndex(i=>i-1);setPlaying(false);setNotice('');window.scrollTo({top:0,behavior:'instant'})}}
   function next(){
     if(index+1<items.length){
-      setIndex(i=>i+1);setPlaying(false);setChoice(null);setNotice('')
+      rememberPage(index+1);setIndex(i=>i+1);setPlaying(false);setChoice(null);setNotice('')
       window.scrollTo({top:0,behavior:'instant'})
     }
   }
@@ -200,6 +224,13 @@ export default function StudyHall({onClose,apiKey,setApiKey,aiModel,setAiModel,a
               desc={view==='bookshelf'?'五系古籍选读与原文链接。每页一章，原文、释义和辨析分别标明。':
                 view==='courses'?'选择一门术数，逐课翻阅；配有互动概念演示。':
                 '选择一种术数进行练习；每答完一题，立刻呈现解析。'}/>
+            {resumeEntries.length>0&&<aside className="library-resume" aria-label="藏经阁断点续读">
+              <div className="library-resume-title"><strong>续读 · 接着上次的位置</strong><small>进度仅存于当前浏览器</small></div>
+              <div className="library-resume-links">{resumeEntries.map(({method:entry,page})=>
+                <button type="button" key={entry.id} onClick={()=>enter(entry.id,true)}>
+                  {entry.title} · 第 {page+1} {resumeKind==='reader'?'篇':'课'} <span aria-hidden="true">→</span>
+                </button>)}</div>
+            </aside>}
             <MethodSelection section={view} onSelect={enter}/>
             <p className="library-directory-note">目前是精选入门篇目，并非已完整收录所有古籍。原文出处可在具体篇章中打开核对。</p>
           </section>}
@@ -209,7 +240,7 @@ export default function StudyHall({onClose,apiKey,setApiKey,aiModel,setAiModel,a
               <span className="library-eyebrow">典籍 · {NAMES[method]} · 第 {index+1} 则</span>
               <div className="library-chapter-menu">
                 <label htmlFor="library-chapter">选择篇章</label>
-                <select id="library-chapter" value={index} onChange={e=>{setIndex(Number(e.target.value));window.scrollTo({top:0,behavior:'instant'})}}>
+                <select id="library-chapter" value={index} onChange={e=>{const chosen=Number(e.target.value);setIndex(chosen);rememberPage(chosen);window.scrollTo({top:0,behavior:'instant'})}}>
                   {items.map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading}</option>)}
                 </select>
               </div>
