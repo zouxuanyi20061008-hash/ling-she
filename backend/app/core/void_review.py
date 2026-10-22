@@ -178,7 +178,11 @@ def decorate_void_interactions(chart:dict)->dict:
                                        if row["void_review"]["moving_into_void"]],
         "hidden_candidates_reviewed":sum(len(entries) for entries in chart["fushen"]["by_relative"].values()),
         "principle":"旬空依六十甲子日旬定二空支；本卦爻支、明动所变支与本宫伏神分别核对，日冲空支记冲空条件。",
-        "boundary":"日辰为手动填写，未经历法验证。冲空、动空、化空、月破、旺相均是待合参条件；不自动判出空、填实、真假空、用神强弱、实际吉凶或应期。",
+        "boundary":(
+            "日辰已由服务端按北京时间复算，但交节与换日临界仍需人工核对。"
+            if chart.get("calendar_provenance") else
+            "日辰来自手动输入，未经实际日期复核。"
+        )+"冲空、动空、化空、月破、旺相均是待合参条件；不自动判出空、填实、真假空、用神强弱、实际吉凶或应期。",
         "sources":REFERENCES,
     }
     return chart

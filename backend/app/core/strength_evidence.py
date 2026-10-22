@@ -143,7 +143,9 @@ def decorate_strength_evidence(chart:dict)->dict:
     candidate_rows=[row for row in rows if row["position"] in positions]
     unresolved=[
         "传统五行证据需要分辨实际旺衰与各条件效力，不能按支持/制约条数评分。",
-        "当前日辰与节令月支为采纳或手动输入值，尚未随本卦保存历法来源与交节核验记录。",
+        ("日月已由服务器使用中国历法库复算并随盘保存来源；交节边界和换日规则仍需核对。"
+         if chart.get("calendar_provenance") else
+         "当前日辰与节令月支是手动输入值，尚未随本卦保存历法来源与交节核验记录。"),
         "旬空真假、空破相遇、暗动/日破、合绊、墓绝和应期尚未做确定性综合裁断。",
     ]
     if not chart["calendar"]["day"]:unresolved.insert(0,"日辰未提供，旬空与日冲证据缺失。")

@@ -28,7 +28,8 @@ LINE_KIND = {
 
 def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
                  month_branch: str | None = None, focus_liuqin: str | None = None,
-                 focus_position: int | None = None) -> dict:
+                 focus_position: int | None = None,
+                 calendar_provenance: dict | None = None) -> dict:
     """lines 从初爻至上爻，数为6/7/8/9。铜钱记分约定：字2、背3。"""
     if len(lines)!=6 or any(type(x) is not int or x not in LINE_KIND for x in lines):
         raise ValueError("请按初爻至上爻顺序，填写六次摇得的 6、7、8、9")
@@ -48,6 +49,8 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     }
     chart = decorate_six_yao(result)
     chart = decorate_calendar(chart, day_ganzhi, month_branch)
+    if calendar_provenance is not None:
+        chart["calendar_provenance"] = calendar_provenance
     chart = focus_six_yao(chart, focus_liuqin)
     chart = decorate_spirit_relations(chart)
     chart = decorate_hidden_spirits(chart)

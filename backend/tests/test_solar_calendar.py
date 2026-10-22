@@ -161,6 +161,9 @@ def test_accepted_calendar_is_recomputed_and_included_in_report():
     assert chart["calendar_provenance"]["source"]=="server_recomputed_calendar"
     assert chart["calendar_provenance"]["beijing_time"].endswith("+08:00")
     assert chart["calendar_provenance"]["solar_date"]=="2026-02-17"
+    assert chart["evidence_chain"]["date_origin"]=="server_recomputed_calendar"
+    assert any("服务器" in x for x in chart["strength_evidence"]["unresolved"])
+    assert "手动填写" not in chart["void_interactions"]["boundary"]
     assert "服务器历法库重算" in chart["review_flow"]["report"]["verified_by_program"][5]
     assert "均为手动参数" not in chart["review_flow"]["stages"][0]["summary"]
     assert chart["review_flow"]["report"]["conclusion"] is None

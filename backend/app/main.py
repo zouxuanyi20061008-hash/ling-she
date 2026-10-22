@@ -196,10 +196,9 @@ def _sixyao_chart(req: SixYaoCastRequest) -> dict:
         source=liuyao_calendar_preview(req.calendar_input)
         if req.day_ganzhi!=source["day_ganzhi"] or req.month_branch!=source["month_branch"]:
             raise ValueError("采纳的日干支或月建与原始日期重新换算不符，请重新确认。")
-    chart=cast_six_yao(req.numbers,req.day_ganzhi,req.month_branch,
-                       req.focus_liuqin,req.focus_position)
+    provenance=None
     if source is not None:
-        chart["calendar_provenance"]={
+        provenance={
             "source":"server_recomputed_calendar",
             "beijing_time":source["beijing_time"],
             "solar_date":source["solar_date"],
@@ -213,10 +212,10 @@ def _sixyao_chart(req: SixYaoCastRequest) -> dict:
             "warnings":source["warnings"],
             "verification":"calendar_library_recomputed_not_official_almanac",
         }
-        # The five-step digest is regenerated using the verified calendar provenance.
-        from .core.review_flow import decorate_review_flow
-        chart=decorate_review_flow(chart)
-    return chart
+    return cast_six_yao(
+        req.numbers,req.day_ganzhi,req.month_branch,
+        req.focus_liuqin,req.focus_position,calendar_provenance=provenance
+    )
 
 
 @app.post("/api/liuyao/cast")
