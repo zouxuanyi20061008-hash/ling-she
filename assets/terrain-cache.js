@@ -86,7 +86,7 @@ function buildStaticFlora(ix,iy){
   const top=Math.max(0,iy*4-1),bottom=Math.min(35,iy*4+4);
   for(let tx=left;tx<=right;tx++)for(let ty=top;ty<=bottom;ty++){
     const x=tx*100+50,y=ty*100+50;
-    if(biome(x,y)!==0||onQinglanRoad(x,y)||landmarkClearing(x,y,40)||isEncounterClearing(x,y,35))continue;
+    if(biome(x,y)!==0||onQinglanRoad(x,y)||landmarkClearing(x,y,40)||isEncounterClearing(x,y,35)||isAdventureClearing(x,y,40))continue;
     drawMeadow(x,y,g);
     const n=terrainHash(tx,ty,7);
     if(n>.78){
