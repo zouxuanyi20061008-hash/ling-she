@@ -28,6 +28,102 @@ const MONTH_WINDOWS=[
  ['申','立秋至白露'],['酉','白露至寒露'],['戌','寒露至立冬'],
  ['亥','立冬至大雪'],['子','大雪至小寒'],['丑','小寒至立春']
 ]
+
+function SolarDateAssist({day,month,onApply,busy}){
+  const [date,setDate]=useState('')
+  const [clock,setClock]=useState('12:00')
+  const [timezone,setTimezone]=useState('Asia/Shanghai')
+  const [boundary,setBoundary]=useState('midnight')
+  const [loading,setLoading]=useState(false)
+  const [preview,setPreview]=useState(null)
+  const [error,setError]=useState('')
+  const request=useRef(0)
+  const change=(setter,value)=>{
+    request.current+=1
+    setter(value);setPreview(null);setError('')
+  }
+  function currentTime(){
+    const parts=new Intl.DateTimeFormat('en-GB',{
+      timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+    }).formatToParts(new Date())
+    const v=x=>parts.find(p=>p.type===x)?.value||'00'
+    change(setDate,v('year')+'-'+v('month')+'-'+v('day'))
+    setClock(v('hour')+':'+v('minute'))
+  }
+  async function calculate(){
+    if(!date){setError('请先选择公历日期。');return}
+    const token=++request.current
+    setLoading(true);setError('');setPreview(null)
+    try{
+      const response=await fetch(api+'/api/liuyao/calendar-preview',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({date,clock,timezone,day_boundary:boundary})})
+      const result=await response.json()
+      if(!response.ok)throw Error(typeof result.detail==='string'?result.detail:'日期计算失败，请检查输入')
+      if(token===request.current)setPreview(result)
+    }catch(e){if(token===request.current)setError(e.message)}
+    finally{if(token===request.current)setLoading(false)}
+  }
+  return <section className="solar-assist" aria-label="公历节令辅助核对">
+    <div className="solar-assist-head"><strong>公历时刻 · 自动校历（可选）</strong>
+      <span>先预览，再手动采纳</span>
+    </div>
+    <p>使用节气与干支历法库计算。请确认实际发生地的民用时区，并选择零点或23点换日规则；本功能不计算真太阳时。</p>
+    <div className="solar-assist-grid">
+      <label>公历日期
+        <input type="date" value={date} min="1901-01-01" max="2099-12-31"
+          onChange={e=>change(setDate,e.target.value)}/>
+      </label>
+      <label>当地时刻
+        <input type="time" value={clock} onChange={e=>change(setClock,e.target.value)}/>
+      </label>
+      <label>时间区域
+        <select value={timezone} onChange={e=>change(setTimezone,e.target.value)}>
+          <option value="Asia/Shanghai">北京时间 · UTC+8</option>
+          <option value="Asia/Tokyo">日本时间 · UTC+9</option>
+        </select>
+      </label>
+      <label>日柱换日规则
+        <select value={boundary} onChange={e=>change(setBoundary,e.target.value)}>
+          <option value="midnight">零点换日</option>
+          <option value="zi_hour">子初 23:00 换日</option>
+        </select>
+      </label>
+    </div>
+    <div className="solar-assist-actions">
+      <button type="button" onClick={currentTime}>填写当前时刻</button>
+      <button type="button" disabled={loading||busy||!date} onClick={calculate}>
+        {loading?'正在计算节气…':'计算日辰与月建'}
+      </button>
+    </div>
+    {error&&<p role="alert" className="solar-assist-error">{error}</p>}
+    {preview&&<div className="solar-assist-result" aria-live="polite">
+      <div className="solar-assist-values">
+        <div><small>计算日干支</small><strong>{preview.day_ganzhi}日</strong></div>
+        <div><small>节令月建</small><strong>{preview.month_branch}月</strong><span>{preview.month_ganzhi}月柱</span></div>
+      </div>
+      <div className="solar-assist-terms">
+        <p>上一个节：{preview.previous_jie.name} · {preview.previous_jie.local_time.replace('T',' ').slice(0,16)}</p>
+        <p>下一个节：{preview.next_jie.name} · {preview.next_jie.local_time.replace('T',' ').slice(0,16)}</p>
+        <small>以上交节时刻按你选择的时区显示。</small>
+      </div>
+      {preview.warnings.length>0&&<div role="alert" className="solar-assist-warning">
+        {preview.warnings.map((v,i)=><p key={i}>{v}</p>)}
+      </div>}
+      {(day||month)&&<p className="solar-assist-compare">
+        当前已选：{day||'日辰未选'} / {month?month+'月':'月建未选'}。
+        {day===preview.day_ganzhi&&month===preview.month_branch?'与预览相同。':'与预览可能不同；请确认再采纳。'}
+      </p>}
+      <button type="button" className="solar-assist-apply" disabled={loading||busy}
+        onClick={()=>onApply(preview.day_ganzhi,preview.month_branch)}>
+        采纳此结果到六爻日月校时 ↗
+      </button>
+      <p className="solar-assist-disclaimer">{preview.notice}</p>
+    </div>}
+  </section>
+}
+
 function CalendarControls({chart,day,month,onChange,busy}) {
   const dayInfo=chart.calendar?.day
   const monthInfo=chart.calendar?.month
@@ -835,7 +931,8 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 <b>{step.summary}</b><span>{step.action}</span>
               </p>)}
             {reviewStage==='calendar'&&
-              <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>}
+              <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
+              <SolarDateAssist day={dayGanzhi} month={monthBranch} onApply={updateCalendar} busy={calendarBusy}/>}
             {reviewStage==='focus'&&<>
               <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
               <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
