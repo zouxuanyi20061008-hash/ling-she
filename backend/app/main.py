@@ -210,6 +210,7 @@ chart_deterministic.focus_decision 为《增删卜易》两现章和飞伏神章
 chart_deterministic.review_flow 是从既有排盘字段生成的五步研判教学报告。report.verified_by_program 中的日月只是用户手动输入的参数，不是程序验证过的真实日历；report.outstanding_questions 是未解决的问题，必须一并呈现。report.conclusion 始终为 null，禁止把五步走完说成获得确定性预测、自动选优或正式旺衰结论。
 chart_deterministic.strength_evidence 是已算本卦日月、其他动爻、本位变爻、空破等确定性条件的并列表。supporting 与 restraining 只表示支持线索和限制条件，不是强度权重；has_opposing_indicators 表示并存，禁止通过条数多少评旺衰。has_final_strength=false、strength_score=null、fortune_conclusion=null 是不可越过的边界，不能编造正式旺衰、唯一用神或应期。review_flow.report.evidence_digest 应当作为学习对照，不宣称最终应验。
 chart_deterministic.moving_effect_review 记录了每个真实动爻与本位变爻分别受日辰、月建作用的条件，另列旬空、月破及回头关系。变爻不得跨爻生克，本卦其他动爻亦不得跨位作用变爻；即使存在回头生克，也不得推定其在此日月条件下已经有效。effective_returning_action=null，effective_strength_computed=false 不容编造实效。review_flow.report.moving_effect_digest 只作学习笔记证据。
+chart_deterministic.special_conditions 为六合合起/合绊候选、两动爻合、动而化合和日墓/动墓/化墓及逢绝的古籍条件清单；其中 status=evidence_only，resolved_effectiveness=false，conclusion=null。不能把地支六合直接当合绊有效，不得以墓或绝断死生、失败或应期；土五行墓绝仅使用列明的教学寄宫。review_flow.report.special_conditions_digest 只是可复核摘记，非正式结论。
 区分【传统排盘规则】、【象义解释】和【用户未核实的背景】；有多动爻须全部呈现，不自动套梅花体用、单爻规则。
 不要据卦猜断确定未来、他人真实心理、健康疾病；不得恐吓或贬低怀疑者。按盘面→关键象义→背景匹配与反证→现实建议自然解读。"""
 
