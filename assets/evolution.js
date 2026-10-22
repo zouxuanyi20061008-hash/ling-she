@@ -167,8 +167,8 @@ function splashSerpentImpact(x,y,damage,excluded){
  const rad=66;
  for(const e of enemies){
   if(e===excluded||Math.hypot(e.x-x,e.y-y)>rad||e.hp<=0)continue;
-  e.hp-=damage;e.hitFlash=performance.now()+130;
-  damageTexts.push({x:e.x,y:e.y-18,text:'溅射 -'+Math.round(damage),life:.65,color:'#ffe1a0'});
+  let applied=damage*(e.armor||1);e.hp-=applied;e.hitFlash=performance.now()+130;
+  damageTexts.push({x:e.x,y:e.y-18,text:'溅射 -'+Math.round(applied),life:.65,color:'#ffe1a0'});
   if(e.hp<=0)killEnemy(e,false);
  }
 }
