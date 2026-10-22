@@ -30,9 +30,13 @@ const MONTH_WINDOWS=[
 ]
 
 function SolarDateAssist({day,month,onApply,busy}){
+  const [mode,setMode]=useState('solar')
   const [date,setDate]=useState('')
+  const [lunarYear,setLunarYear]=useState('')
+  const [lunarMonth,setLunarMonth]=useState('1')
+  const [lunarDay,setLunarDay]=useState('1')
+  const [isLeap,setIsLeap]=useState(false)
   const [clock,setClock]=useState('12:00')
-  const [timezone,setTimezone]=useState('Asia/Shanghai')
   const [boundary,setBoundary]=useState('midnight')
   const [loading,setLoading]=useState(false)
   const [preview,setPreview]=useState(null)
@@ -44,47 +48,78 @@ function SolarDateAssist({day,month,onApply,busy}){
   }
   function currentTime(){
     const parts=new Intl.DateTimeFormat('en-GB',{
-      timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit',
+      timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',
       hour:'2-digit',minute:'2-digit',hourCycle:'h23'
     }).formatToParts(new Date())
     const v=x=>parts.find(p=>p.type===x)?.value||'00'
-    change(setDate,v('year')+'-'+v('month')+'-'+v('day'))
+    request.current+=1;setMode('solar')
+    setDate(v('year')+'-'+v('month')+'-'+v('day'))
     setClock(v('hour')+':'+v('minute'))
+    setPreview(null);setError('')
   }
   async function calculate(){
-    if(!date){setError('请先选择公历日期。');return}
+    if(mode==='solar'&&!date){setError('请选择公历（阳历）日期。');return}
+    if(mode==='lunar'&&!lunarYear){setError('请填写农历年份。');return}
     const token=++request.current
     setLoading(true);setError('');setPreview(null)
+    const payload={calendar_type:mode,clock,day_boundary:boundary}
+    if(mode==='solar')payload.date=date
+    else {
+      payload.lunar_year=Number(lunarYear)
+      payload.lunar_month=Number(lunarMonth)
+      payload.lunar_day=Number(lunarDay)
+      payload.is_leap_month=isLeap
+    }
     try{
       const response=await fetch(api+'/api/liuyao/calendar-preview',{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({date,clock,timezone,day_boundary:boundary})})
+        body:JSON.stringify(payload)})
       const result=await response.json()
-      if(!response.ok)throw Error(typeof result.detail==='string'?result.detail:'日期计算失败，请检查输入')
+      if(!response.ok)throw Error(typeof result.detail==='string'?result.detail:'日期换算失败，请核对农历年份和闰月')
       if(token===request.current)setPreview(result)
     }catch(e){if(token===request.current)setError(e.message)}
     finally{if(token===request.current)setLoading(false)}
   }
-  return <section className="solar-assist" aria-label="公历节令辅助核对">
-    <div className="solar-assist-head"><strong>公历时刻 · 自动校历（可选）</strong>
-      <span>先预览，再手动采纳</span>
+  return <section className="solar-assist" aria-label="中国公历农历换算和节令月建">
+    <div className="solar-assist-head">
+      <strong>中国历法 · 农历 / 公历换算</strong>
+      <span>统一北京时间 UTC+8</span>
     </div>
-    <p>使用节气与干支历法库计算。请确认实际发生地的民用时区，并选择零点或23点换日规则；本功能不计算真太阳时。</p>
+    <p>两种日期都可以输入，统一按北京时间计算。<strong>农历月份不是六爻月建</strong>：月建以节气交节为准。系统只提供预览，你确认后才会改动卦盘。</p>
+    <div className="solar-assist-tabs" role="group" aria-label="选择日期类型">
+      <button type="button" className={mode==='solar'?'active':''}
+        aria-pressed={mode==='solar'} onClick={()=>change(setMode,'solar')}>公历（阳历）</button>
+      <button type="button" className={mode==='lunar'?'active':''}
+        aria-pressed={mode==='lunar'} onClick={()=>change(setMode,'lunar')}>农历（阴历）</button>
+    </div>
     <div className="solar-assist-grid">
-      <label>公历日期
+      {mode==='solar'?<label>公历年月日
         <input type="date" value={date} min="1901-01-01" max="2099-12-31"
           onChange={e=>change(setDate,e.target.value)}/>
-      </label>
-      <label>当地时刻
+      </label>:<>
+        <label>农历年份
+          <input type="number" value={lunarYear} min="1901" max="2099" step="1"
+            placeholder="例如 2026" onChange={e=>change(setLunarYear,e.target.value)}/>
+        </label>
+        <label>农历月份
+          <select value={lunarMonth} onChange={e=>{change(setLunarMonth,e.target.value);setIsLeap(false)}}>
+            {Array.from({length:12},(_,i)=><option value={i+1} key={i+1}>{i+1}月</option>)}
+          </select>
+        </label>
+        <label>农历日期
+          <select value={lunarDay} onChange={e=>change(setLunarDay,e.target.value)}>
+            {Array.from({length:30},(_,i)=><option value={i+1} key={i+1}>{i+1}日</option>)}
+          </select>
+        </label>
+        <label className="solar-assist-leap">
+          <input type="checkbox" checked={isLeap} onChange={e=>change(setIsLeap,e.target.checked)}/>
+          该月是闰月
+        </label>
+      </>}
+      <label>北京时间
         <input type="time" value={clock} onChange={e=>change(setClock,e.target.value)}/>
       </label>
-      <label>时间区域
-        <select value={timezone} onChange={e=>change(setTimezone,e.target.value)}>
-          <option value="Asia/Shanghai">北京时间 · UTC+8</option>
-          <option value="Asia/Tokyo">日本时间 · UTC+9</option>
-        </select>
-      </label>
-      <label>日柱换日规则
+      <label>日干支换日规则
         <select value={boundary} onChange={e=>change(setBoundary,e.target.value)}>
           <option value="midnight">零点换日</option>
           <option value="zi_hour">子初 23:00 换日</option>
@@ -92,32 +127,35 @@ function SolarDateAssist({day,month,onApply,busy}){
       </label>
     </div>
     <div className="solar-assist-actions">
-      <button type="button" onClick={currentTime}>填写当前时刻</button>
-      <button type="button" disabled={loading||busy||!date} onClick={calculate}>
-        {loading?'正在计算节气…':'计算日辰与月建'}
+      <button type="button" onClick={currentTime}>填写当前北京时间</button>
+      <button type="button" disabled={loading||busy||(mode==='solar'?!date:!lunarYear)} onClick={calculate}>
+        {loading?'正在换算…':'换算日期与节令'}
       </button>
     </div>
     {error&&<p role="alert" className="solar-assist-error">{error}</p>}
     {preview&&<div className="solar-assist-result" aria-live="polite">
+      <div className="solar-assist-date-pair">
+        <div><small>公历（阳历）</small><strong>{preview.solar_date}</strong></div>
+        <div><small>农历（阴历）</small><strong>{preview.lunar.display}</strong></div>
+      </div>
       <div className="solar-assist-values">
-        <div><small>计算日干支</small><strong>{preview.day_ganzhi}日</strong></div>
-        <div><small>节令月建</small><strong>{preview.month_branch}月</strong><span>{preview.month_ganzhi}月柱</span></div>
+        <div><small>日干支</small><strong>{preview.day_ganzhi}日</strong></div>
+        <div><small>六爻节令月建（非农历月份）</small><strong>{preview.month_branch}月</strong><span>{preview.month_ganzhi}月柱</span></div>
       </div>
       <div className="solar-assist-terms">
-        <p>上一个节：{preview.previous_jie.name} · {preview.previous_jie.local_time.replace('T',' ').slice(0,16)}</p>
-        <p>下一个节：{preview.next_jie.name} · {preview.next_jie.local_time.replace('T',' ').slice(0,16)}</p>
-        <small>以上交节时刻按你选择的时区显示。</small>
+        <p>上一交节：{preview.previous_jie.name} · 北京时间 {preview.previous_jie.beijing_time.replace('T',' ').slice(0,16)}</p>
+        <p>下一交节：{preview.next_jie.name} · 北京时间 {preview.next_jie.beijing_time.replace('T',' ').slice(0,16)}</p>
       </div>
       {preview.warnings.length>0&&<div role="alert" className="solar-assist-warning">
         {preview.warnings.map((v,i)=><p key={i}>{v}</p>)}
       </div>}
       {(day||month)&&<p className="solar-assist-compare">
         当前已选：{day||'日辰未选'} / {month?month+'月':'月建未选'}。
-        {day===preview.day_ganzhi&&month===preview.month_branch?'与预览相同。':'与预览可能不同；请确认再采纳。'}
+        {day===preview.day_ganzhi&&month===preview.month_branch?'与预览相同。':'预览结果与当前选择不同，请核对后再采纳。'}
       </p>}
       <button type="button" className="solar-assist-apply" disabled={loading||busy}
         onClick={()=>onApply(preview.day_ganzhi,preview.month_branch)}>
-        采纳此结果到六爻日月校时 ↗
+        确认采用这组日干支与月建 ↗
       </button>
       <p className="solar-assist-disclaimer">{preview.notice}</p>
     </div>}
@@ -132,7 +170,7 @@ function CalendarControls({chart,day,month,onChange,busy}) {
       <div><small>第四式 · 日月校时</small><h3>择日辰，布六神。</h3></div>
       <span className="calendar-volume-stamp">时</span>
     </header>
-    <p className="calendar-help">请从万年历核对<strong>真实的六十甲子日</strong>和以节气为界的月支。此处不按手机日期自动推算；只计算你确认的值，留空就不编六神、旬空。</p>
+    <p className="calendar-help">可使用下方中国农历／公历换算预览，再亲自采纳；也可以直接手动填写<strong>真实的六十甲子日</strong>和节令月建。留空则不编六神、旬空。</p>
     <div className="calendar-pickers">
       <label>日辰 · 六十甲子
         <select value={day} onChange={e=>onChange(e.target.value,month)}>
@@ -160,7 +198,7 @@ function CalendarControls({chart,day,month,onChange,busy}) {
         </div>
        </>}
     </div>
-    <p className="calendar-boundary">此处属于「已确认日月参数后的规则演算」，不是自动历法换算或完整旺衰判断；交节前后请优先核对权威历书。</p>
+    <p className="calendar-boundary">采纳自动换算结果后，日月参与传统排盘规则；节气边界、子时与历算争议仍需复核，不代表完整旺衰判断。</p>
   </section>
 }
 
