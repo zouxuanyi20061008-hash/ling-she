@@ -953,3 +953,40 @@ button:disabled{cursor:not-allowed}
 .human-review-sealed p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.8}
 .human-review-sealed small{font-size:11px;color:#705d47}
 @media(max-width:650px){.human-review-workbook{padding:11px}.human-review-fields,.human-review-evidence{grid-template-columns:1fr}.human-review-workbook header h3{font-size:17px}}
+
+/* V26 两现逐轴对照与用户自己的择用理由。 */
+.focus-comparison-study{background:#faf4e7;border:1px solid #c4b198;padding:16px;margin:15px 0;color:#36513f}
+.focus-comparison-study header{border-bottom:1px solid #d3c4a9;padding:0 0 10px}
+.focus-comparison-study header small{font-size:11px;color:#806044}
+.focus-comparison-study header h3{font-size:18px;color:#2c583f;margin:5px 0 0}
+.focus-comparison-study>p{line-height:1.8;font-size:12px;color:#4e5845}
+.focus-comparison-study>p strong{color:#255b43}
+.focus-compare-pair{border:1px solid #d0bda3;background:#fffaf1;margin:10px 0}
+.focus-compare-pair summary{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;padding:12px;min-height:48px;color:#315b45;cursor:pointer;font-size:14px;font-weight:700}
+.focus-compare-pair summary:focus-visible{outline:3px solid #316f4e;outline-offset:2px}
+.focus-compare-pair summary small{font-size:11px;color:#6d583f;font-weight:500}
+.focus-compare-table{margin:0 10px;border:1px solid #d9c6ad}
+.focus-compare-head,.focus-compare-row{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:4px;padding:10px;border-bottom:1px solid #dacebc;font-size:12px;align-items:start}
+.focus-compare-head{background:#e8ddc8;font-size:11px;color:#31523b}
+.focus-compare-row{background:#fffdf6;color:#425641}
+.focus-compare-row.different{background:#f0e8d9}
+.focus-compare-row.missing{background:#f7f0e6;color:#776248}
+.focus-compare-row strong{font-size:12px;color:#34573f}
+.focus-compare-row strong small{display:block;font-size:10px;font-weight:400;color:#825d3e;margin-top:3px}
+.focus-compare-row span{overflow-wrap:anywhere}
+.focus-compare-pair>p{font-size:11px;padding:8px 11px;color:#795c42;line-height:1.8}
+.focus-compare-empty{background:#f1e7d4;border-left:3px solid #a47e53;padding:11px;font-size:12px;line-height:1.8}
+.focus-choice-notes{border:1px solid #c9b399;background:#f7efde;padding:13px;margin:12px 0}
+.focus-choice-notes h4{color:#27523d;font-size:15px;margin:0 0 8px}
+.focus-choice-notes>p{font-size:12px;line-height:1.8;color:#605139}
+.focus-choice-notes label{display:block;font-size:12px;font-weight:700;color:#2d563f;margin:11px 0}
+.focus-choice-notes textarea{display:block;width:100%;font-size:13px;line-height:1.7;background:#fffdf6;border:1px solid #b9a889;padding:10px;margin-top:7px;resize:vertical;color:#304d3b}
+.focus-choice-notes textarea:focus{outline:2px solid #306c4d;outline-offset:2px}
+.focus-choice-notes .focus-choice-message{color:#286747}
+.focus-choice-notes .focus-choice-privacy{font-size:11px;color:#6d5944}
+.focus-comparison-study>.focus-compare-boundary{border-top:1px solid #d4c1a9;padding-top:11px;color:#6d5641}
+.focus-comparison-study>a{color:#255e43;text-decoration:underline;font-size:12px}
+.focus-choice-sealed{border:1px solid #cdb69a;background:#fcf3e2;padding:10px;margin:10px 0}
+.focus-choice-sealed h4{font-size:13px;color:#28583f}
+.focus-choice-sealed p{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}
+@media(max-width:650px){.focus-comparison-study{padding:11px}.focus-compare-head,.focus-compare-row{grid-template-columns:1.1fr 1fr 1fr;gap:4px;padding:7px 5px;font-size:11px}.focus-compare-row strong{font-size:11px}}

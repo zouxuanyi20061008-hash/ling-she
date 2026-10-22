@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react'
 import './academy.css'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
+import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
 
 const api=import.meta.env.VITE_API_URL ?? (import.meta.env.PROD?'':window.location.protocol+'//'+window.location.hostname+':8000')
 const K={6:{name:'老阴',yin:0,move:true},7:{name:'少阳',yin:1,move:false},8:{name:'少阴',yin:0,move:false},9:{name:'老阳',yin:1,move:true}}
@@ -947,6 +948,84 @@ function FocusDecisionStudy({chart,onChoose,busy}){
   </section>
 }
 
+export function FocusComparisonStudy({chart}){
+  const data=chart.focus_comparison
+  const selected=data?.selected_position
+  const key=choiceKey(chart)
+  const blank=()=>({reason:'',counter:'',context:''})
+  const [note,setNote]=useState(()=>selected?readChoices(chart)[String(selected)]||blank():blank())
+  const [message,setMessage]=useState('')
+  useEffect(()=>{
+    setNote(selected?readChoices(chart)[String(selected)]||blank():blank())
+    setMessage('')
+  },[key,selected])
+  if(!data)return null
+  const rows=data.candidates
+  const labels={recorded:'已按盘面计算',missing:'日月资料缺失'}
+  function write(field,value){
+    const next={...note,[field]:value}
+    setNote(next)
+    try{
+      saveChoice(chart,selected,next)
+      setMessage('理由草稿已自动保存到本机。')
+    }catch{
+      setMessage('本机保存不可用，请复制你写的理由另行留存。')
+    }
+  }
+  return <section className="focus-comparison-study" aria-label="用神两现逐项比较及人工选择理由">
+    <header><small>V26 · 两现择用合参</small><h3>先辨差异，再记选择依据</h3></header>
+    <p>比较表把相同、不同、缺资料分开。<strong>不同不等于更好，相同不等于作用相等。</strong>若尚未确认真实日月，相关项目保持待核状态。</p>
+    {data.status==='focus_not_selected'?<p className="focus-compare-empty">先在上方选择所问的六亲或世应。</p>:
+      data.status==='focus_not_visible'?<div className="focus-compare-empty">
+        <b>本卦用神不现</b>
+        <p>这里不补造本卦候选。先到上方的飞伏神部分研究日月同类与伏神，不能直接断伏神可用。</p>
+      </div>:<>
+        {data.pairs.length?data.pairs.map(pair=><details key={pair.first_position+'-'+pair.second_position}
+          className="focus-compare-pair">
+          <summary>{POS[pair.first_position-1]}爻 ↔ {POS[pair.second_position-1]}爻
+            <small>逐轴查看已算差异及待核项</small></summary>
+          <div className="focus-compare-table" role="table" aria-label="候选用神差异项目">
+            <div className="focus-compare-head" role="row">
+              <b>核查项</b><b>{POS[pair.first_position-1]}爻</b><b>{POS[pair.second_position-1]}爻</b>
+            </div>
+            {pair.axes.map(axis=><div className={'focus-compare-row '+axis.state} role="row" key={axis.id}>
+              <strong>{axis.title}<small>{axis.state==='different'?'条件不同':
+                axis.state==='same'?'现有条件相同':'尚缺数据'}</small></strong>
+              <span>{axis.state==='missing'||axis.first_value===null?'未核':
+                Array.isArray(axis.first_value)?axis.first_value.length?axis.first_value.map(i=>POS[i-1]+'爻').join('、'):'暂无明动来源':axis.first_value}</span>
+              <span>{axis.state==='missing'||axis.second_value===null?'未核':
+                Array.isArray(axis.second_value)?axis.second_value.length?axis.second_value.map(i=>POS[i-1]+'爻').join('、'):'暂无明动来源':axis.second_value}</span>
+            </div>)}
+          </div>
+          <p>差异仅代表可查证的盘面情况；不按不同项数量淘汰任何候选。</p>
+        </details>):rows.length===1?<p className="focus-compare-empty">本卦只有一处明现候选，没有需要两两比较的爻位。</p>:null}
+        {selected?<div className="focus-choice-notes">
+          <h4>你指定的研习主爻：{POS[selected-1]}爻</h4>
+          <p>这是你的研究选择，不是程序选出的唯一正确用神。请记下为什么先研究这一爻，以及什么证据可能推翻当前思路。</p>
+          <label>为什么先选择这一爻？
+            <textarea rows={3} maxLength={1200} value={note.reason}
+              onChange={e=>write('reason',e.target.value)}
+              placeholder="例如：考虑其明动、日月条件，但不把它视为唯一用神。"/>
+          </label>
+          <label>其他候选与相反证据
+            <textarea rows={3} maxLength={1200} value={note.counter}
+              onChange={e=>write('counter',e.target.value)}
+              placeholder="其他候选有哪些不能忽略的条件？现有推论可能错在哪？"/>
+          </label>
+          <label>所问事项的现实依据（可选）
+            <textarea rows={3} maxLength={1200} value={note.context}
+              onChange={e=>write('context',e.target.value)}
+              placeholder="只记录可核实事实，不必写姓名等隐私信息。"/>
+          </label>
+          {message&&<p className="focus-choice-message" role="status">{message}</p>}
+          <p className="focus-choice-privacy">按六爻、日月、所问类别和具体爻位隔离保存；仅在当前浏览器本机保存，不会上传给 AI 或服务器。封存研究案时会固定当前选择理由。</p>
+        </div>:<p className="focus-compare-empty">尚未指定研习主爻。上方点选任一明现候选后，可以记录你自己的取舍依据；程序不会自动排名。</p>}
+    </>}
+    <p className="focus-compare-boundary">{data.boundary}</p>
+    <a href={data.references.liangxian} target="_blank" rel="noopener noreferrer">《增删卜易》两现章 ↗</a>
+  </section>
+}
+
 export function TemporalReviewStudy({chart}){
   const data=chart.temporal_review
   if(!data)return null
@@ -1276,6 +1355,8 @@ export function ChineseLocalCaseArchive({chart,question}){
       question:question.trim().slice(0,700),
       before:(before.trim()||workbook?.fields?.hypothesis||'').slice(0,1500),
       snapshot:{
+        focus_selection:readSelectedChoice(chart)?{...readSelectedChoice(chart)}:null,
+        focus_comparison_digest:[...(report.focus_comparison_digest||[])],
         human_review:workbook?{
           version:workbook.version,fields:{...workbook.fields},
           recorded_at:workbook.recorded_at
@@ -1361,6 +1442,13 @@ export function ChineseLocalCaseArchive({chart,question}){
           关注：{selected.snapshot.chosen_category||'未选用神'}；
           主爻：{selected.snapshot.selected_position?POS[selected.snapshot.selected_position-1]+'爻':'未指定'}</p>
         <p><strong>事前原文（不可改动）：</strong>{selected.before}</p>
+        {selected.snapshot.focus_selection&&<div className="focus-choice-sealed">
+          <h4>封存时的人工取用依据 · 只读</h4>
+          <p><b>选定爻位：</b>{POS[selected.snapshot.focus_selection.position-1]}爻</p>
+          <p><b>选择理由：</b>{selected.snapshot.focus_selection.reason||'未填写'}</p>
+          <p><b>相反证据：</b>{selected.snapshot.focus_selection.counter||'未填写'}</p>
+          <p><b>现实关联：</b>{selected.snapshot.focus_selection.context||'未填写'}</p>
+        </div>}
         {selected.snapshot.human_review&&<div className="human-review-sealed">
           <h4>事前四栏研判（封存只读）</h4>
           {[
@@ -1433,6 +1521,11 @@ export function HumanReviewWorkbook({chart,question}){
       '所问：'+(question?.trim()||'未提供'),
       '关注：'+(sheet.focus_category||'未选')+'；研习主爻：'+(sheet.selected_position||'未指定'),
       '日月来源：'+sheet.calendar_source,
+      ...(readSelectedChoice(chart)?[
+        '个人择用理由（本机）：'+readSelectedChoice(chart).reason,
+        '个人保留反证（本机）：'+readSelectedChoice(chart).counter,
+        '个人现实背景（本机）：'+readSelectedChoice(chart).context
+      ]:[]),
       ...sheet.candidates.map(c=>c.position+'爻 '+c.ganzhi+'；支持：'+
         c.supporting.map(x=>x.title).join('、')+'；制约：'+
         c.restraining.map(x=>x.title).join('、')+'；未决：'+c.pending.join('、')),
@@ -1504,6 +1597,9 @@ function ReviewReport({chart,question}) {
     question?.trim()?'所问事项：'+question.trim():'所问事项：尚未填写',
     ...data.verified_by_program,
     '',
+    'V26 两现候选同异（不自动择优）：',
+    ...(data.focus_comparison_digest||[]),
+    '',
     'V25 结构化研判模板（数量非评分）：',
     ...(data.review_sheet_digest||[]),
     '',
@@ -1562,6 +1658,11 @@ function ReviewReport({chart,question}) {
     <div className="review-report-facts">
       {data.verified_by_program.map((x,i)=><p key={i}>{x}</p>)}
     </div>
+    {data.focus_comparison_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V26 用神候选两现对照</h4>
+      {data.focus_comparison_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>只展示相异条件和未核实事项，不推断哪一爻获胜。</small>
+    </div>}
     {data.review_sheet_digest?.length>0&&<div className="strength-evidence-report">
       <h4>程序支持、制约与未决条件概览</h4>
       {data.review_sheet_digest.map((x,i)=><p key={i}>{x}</p>)}
@@ -1824,6 +1925,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             {reviewStage==='focus'&&<>
               <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
               <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
+              <FocusComparisonStudy chart={chart}/>
               {chart.focus_decision?.status==='not_visible'?
                 <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>:
                 <details className="liuyao-depth-panel">
