@@ -24,24 +24,24 @@ function paintTreeCanopy(o,sz){if(!treeArt.complete||!treeArt.naturalWidth)retur
 /* V5.3: art-scene renderer. Assets are optional: the existing Canvas
    gameplay is still usable if any SVG fails to load. */
 var pathArt=new Image();pathArt.src='assets/stone-path-tile.svg';
-var cachedStonePattern=null;
-function stonePattern(){if(!isArtReady(pathArt))return '#aa9675';if(!cachedStonePattern)cachedStonePattern=ctx.createPattern(pathArt,'repeat');return cachedStonePattern||'#aa9675'}
+var cachedStonePatterns=new WeakMap();
+function stonePattern(g=ctx){if(!isArtReady(pathArt))return '#aa9675';var p=cachedStonePatterns.get(g);if(!p){p=g.createPattern(pathArt,'repeat');if(p)cachedStonePatterns.set(g,p)}return p||'#aa9675'}
 var bankArt=new Image();bankArt.src='assets/riverbank-edge.svg';
 function isArtReady(img){return !!(img&&img.complete&&img.naturalWidth>0)}
-function scenePathGeometry(){
-  ctx.beginPath();ctx.moveTo(80,1530);
-  ctx.bezierCurveTo(360,1530,600,1660,835,1760);
-  ctx.bezierCurveTo(920,1798,990,1800,streamCenter(1800),1800);
-  ctx.bezierCurveTo(1290,1800,1530,1800,1750,1800);
-  ctx.bezierCurveTo(2150,1800,2550,2100,3450,2210);
+function scenePathGeometry(g=ctx){
+  g.beginPath();g.moveTo(80,1530);
+  g.bezierCurveTo(360,1530,600,1660,835,1760);
+  g.bezierCurveTo(920,1798,990,1800,streamCenter(1800),1800);
+  g.bezierCurveTo(1290,1800,1530,1800,1750,1800);
+  g.bezierCurveTo(2150,1800,2550,2100,3450,2210);
 }
-function paintStoneRoad(){
-  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
-  scenePathGeometry();ctx.strokeStyle='#324c3a88';ctx.lineWidth=96;ctx.stroke();
-  scenePathGeometry();ctx.strokeStyle='#c0ad80';ctx.lineWidth=82;ctx.stroke();
-  scenePathGeometry();ctx.strokeStyle=stonePattern();ctx.lineWidth=71;ctx.stroke();
-  paintQinglanCourtyard();
-  ctx.restore();
+function paintStoneRoad(g=ctx){
+  g.save();g.lineCap='round';g.lineJoin='round';
+  scenePathGeometry(g);g.strokeStyle='#324c3a88';g.lineWidth=96;g.stroke();
+  scenePathGeometry(g);g.strokeStyle='#c0ad80';g.lineWidth=82;g.stroke();
+  scenePathGeometry(g);g.strokeStyle=stonePattern(g);g.lineWidth=71;g.stroke();
+  paintQinglanCourtyard(g);
+  g.restore();
 }
 function paintStreamBanks(){
   if(!isArtReady(bankArt))return;
@@ -96,11 +96,11 @@ function paintCreature(e){
 /* Bamboo clusters reuse an authored image rather than drawing vector ellipses
    on every frame. World positions stay fixed across saves. */
 var bambooArt=new Image();bambooArt.src='assets/jade-bamboo.svg';
-function paintBambooStand(x,y,scale){
+function paintBambooStand(x,y,scale,g=ctx){
   if(!isArtReady(bambooArt))return false;
   var width=76*scale,height=94*scale;
-  ctx.save();ctx.fillStyle='#193d3140';ctx.beginPath();ctx.ellipse(x+6,y+2,width*.48,width*.13,0,0,Math.PI*2);ctx.fill();
-  ctx.drawImage(bambooArt,x-width*.5,y-height,width,height);ctx.restore();return true;
+  g.save();g.fillStyle='#193d3140';g.beginPath();g.ellipse(x+6,y+2,width*.48,width*.13,0,0,Math.PI*2);g.fill();
+  g.drawImage(bambooArt,x-width*.5,y-height,width,height);g.restore();return true;
 }
 
 
@@ -183,35 +183,34 @@ var QINGLAN_LANTERNS=[
  {x:1673,y:1730,scale:.91},{x:1827,y:1730,scale:.91},
  {x:1925,y:1701,scale:1.03},{x:2233,y:1701,scale:1.03}
 ];
-function paintQinglanCourtyard(){
+function paintQinglanCourtyard(g=ctx){
   // Fork from the original east-west highway into the mountain gate
   // and then around the shrine. No waterways are crossed by this spur.
-  if(camX>2430||camX+W<1540||camY>1950||camY+H<1400)return;
-  var pattern=stonePattern();
-  ctx.save();
-  ctx.fillStyle='#314a3b82';
-  ctx.beginPath();ctx.ellipse(2080,1684,171,107,-.06,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#b5ad8a';
-  ctx.beginPath();ctx.ellipse(2080,1684,156,91,-.06,0,Math.PI*2);ctx.fill();
-  ctx.save();ctx.beginPath();ctx.ellipse(2080,1684,147,83,-.06,0,Math.PI*2);ctx.clip();
-  ctx.fillStyle=pattern;ctx.fillRect(1910,1585,340,215);ctx.restore();
+  var pattern=stonePattern(g);
+  g.save();
+  g.fillStyle='#314a3b82';
+  g.beginPath();g.ellipse(2080,1684,171,107,-.06,0,Math.PI*2);g.fill();
+  g.fillStyle='#b5ad8a';
+  g.beginPath();g.ellipse(2080,1684,156,91,-.06,0,Math.PI*2);g.fill();
+  g.save();g.beginPath();g.ellipse(2080,1684,147,83,-.06,0,Math.PI*2);g.clip();
+  g.fillStyle=pattern;g.fillRect(1910,1585,340,215);g.restore();
 
-  ctx.beginPath();ctx.moveTo(1750,1822);
-  ctx.bezierCurveTo(1750,1780,1750,1745,1750,1697);
-  ctx.bezierCurveTo(1760,1687,1809,1690,1856,1690);
-  ctx.bezierCurveTo(1930,1690,1970,1733,2078,1740);
-  ctx.lineCap='round';ctx.lineJoin='round';
-  ctx.strokeStyle='#365343aa';ctx.lineWidth=60;ctx.stroke();
-  ctx.strokeStyle='#b4a98c';ctx.lineWidth=52;ctx.stroke();
-  ctx.strokeStyle=pattern;ctx.lineWidth=43;ctx.stroke();
+  g.beginPath();g.moveTo(1750,1822);
+  g.bezierCurveTo(1750,1780,1750,1745,1750,1697);
+  g.bezierCurveTo(1760,1687,1809,1690,1856,1690);
+  g.bezierCurveTo(1930,1690,1970,1733,2078,1740);
+  g.lineCap='round';g.lineJoin='round';
+  g.strokeStyle='#365343aa';g.lineWidth=60;g.stroke();
+  g.strokeStyle='#b4a98c';g.lineWidth=52;g.stroke();
+  g.strokeStyle=pattern;g.lineWidth=43;g.stroke();
 
   // Wear and repeated paving lines; intentionally deterministic.
-  ctx.globalAlpha=.45;ctx.strokeStyle='#e2d1a5';ctx.lineWidth=2;
+  g.globalAlpha=.45;g.strokeStyle='#e2d1a5';g.lineWidth=2;
   for(var i=0;i<19;i++){
     var x=1940+i*15,y=1640+Math.sin(i*.82)*11;
-    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+11,y-2);ctx.stroke();
+    g.beginPath();g.moveTo(x,y);g.lineTo(x+11,y-2);g.stroke();
   }
-  ctx.restore();
+  g.restore();
 }
 function paintShrineLanterns(now){
   if(!isArtReady(lanternArt))return;
