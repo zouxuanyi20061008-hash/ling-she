@@ -919,3 +919,37 @@ button:disabled{cursor:not-allowed}
 .focus-effect-review>a{font-size:12px;color:#245b42;text-decoration:underline}
 .focus-effect-empty{font-size:12px;line-height:1.8;color:#66553f}
 @media(max-width:850px){.focus-effect-roles{grid-template-columns:1fr}.focus-effect-roles>article{padding:11px}}
+
+/* V25：本机人工研判草稿与程序事实分区 */
+.human-review-workbook{margin:14px 0;padding:16px;border:1px solid #c7b49a;background:#fbf6e9;color:#3b4f3e}
+.human-review-workbook header{border-bottom:1px solid #d3c4ae;padding-bottom:10px}
+.human-review-workbook header small{color:#836143;font-size:11px}
+.human-review-workbook header h3{font-size:19px;color:#29573f;margin:6px 0}
+.human-review-workbook>p{font-size:12px;line-height:1.85;color:#4c5c47}
+.human-review-workbook>p strong{color:#285c46}
+.human-review-candidates details{border:1px solid #cdbb9f;background:#fffaf1;margin:9px 0}
+.human-review-candidates summary{padding:12px;min-height:47px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#2f5a42;font-size:13px;font-weight:700;cursor:pointer}
+.human-review-candidates summary small{font-size:11px;color:#67523d;font-weight:500}
+.human-review-candidates summary:focus-visible{outline:3px solid #327051;outline-offset:2px}
+.human-review-evidence{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 10px}
+.human-review-evidence article{background:#f1eadb;border:1px solid #ddcdb5;padding:10px;min-width:0}
+.human-review-evidence h4{color:#31573f;font-size:12px}
+.human-review-evidence p,.human-review-open p{font-size:11px;line-height:1.8;color:#4c503e;overflow-wrap:anywhere}
+.human-review-open{margin:10px;background:#f6eddd;border-left:3px solid #aa8352;padding:10px}
+.human-review-open strong{color:#684a30;font-size:12px}
+.human-review-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.human-review-fields label{display:flex;flex-direction:column;gap:6px;min-width:0;color:#2b563f;font-size:13px;font-weight:700}
+.human-review-fields label small{font-size:11px;line-height:1.5;color:#6d614d;font-weight:400}
+.human-review-fields textarea{width:100%;min-height:92px;padding:10px;resize:vertical;background:#fffdf5;border:1px solid #b8ab93;color:#244d39;font-size:13px;line-height:1.6}
+.human-review-fields textarea:focus{outline:2px solid #32704f;outline-offset:2px}
+.human-review-actions{display:flex;flex-wrap:wrap;gap:9px}
+.human-review-actions button{min-height:42px;border:1px solid #2f5b43;background:#2f5b43;color:#fff8e7;padding:10px 13px;font-size:12px}
+.human-review-actions button+button{background:#f8ecde;color:#754932;border-color:#bca388}
+.human-review-workbook .human-review-status{color:#296b48}
+.human-review-workbook .human-review-boundary{border-top:1px solid #d4c6b0;padding-top:11px;font-size:11px;color:#6b5841}
+.human-review-pending{background:#f4ebdb;padding:10px;border-left:3px solid #9f7550}
+.human-review-sealed{border:1px solid #c9b89c;background:#faf0dc;padding:11px;margin:12px 0}
+.human-review-sealed h4{font-size:13px;color:#28583f}
+.human-review-sealed p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.8}
+.human-review-sealed small{font-size:11px;color:#705d47}
+@media(max-width:650px){.human-review-workbook{padding:11px}.human-review-fields,.human-review-evidence{grid-template-columns:1fr}.human-review-workbook header h3{font-size:17px}}

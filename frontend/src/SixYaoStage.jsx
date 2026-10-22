@@ -1,5 +1,6 @@
 import {useEffect,useRef,useState} from 'react'
 import './academy.css'
+import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 
 const api=import.meta.env.VITE_API_URL ?? (import.meta.env.PROD?'':window.location.protocol+'//'+window.location.hostname+':8000')
 const K={6:{name:'老阴',yin:0,move:true},7:{name:'少阳',yin:1,move:false},8:{name:'少阴',yin:0,move:false},9:{name:'老阳',yin:1,move:true}}
@@ -1264,14 +1265,25 @@ function ChineseLocalCaseArchive({chart,question}){
     }
   }
   function seal(){
-    if(!before.trim()){setMessage('请先写下事前研究的判断或尚待验证的问题，再封存。');return}
+    const workbook=readWorkbook(chart)
+    if(!before.trim()&&!workbook?.fields?.hypothesis?.trim()){
+      setMessage('请先写下事前判断，或在上方研判草稿填写假设，再封存。');return
+    }
     const now=new Date()
     const newCase={
       id:String(now.getTime())+'-'+Math.random().toString(36).slice(2),
       created_at:now.toISOString(),
       question:question.trim().slice(0,700),
-      before:before.trim().slice(0,1500),
+      before:(before.trim()||workbook?.fields?.hypothesis||'').slice(0,1500),
       snapshot:{
+        human_review:workbook?{
+          version:workbook.version,fields:{...workbook.fields},
+          recorded_at:workbook.recorded_at
+        }:null,
+        review_sheet:{
+          source:chart.review_sheet?.calendar_source||'manual_unverified',
+          digest:[...(report.review_sheet_digest||[])]
+        },
         original_numbers:chart.lines.map(x=>x.number),
         ben_gua:chart.ben_gua.full_name,
         bian_gua:chart.bian_gua.full_name,
@@ -1349,6 +1361,18 @@ function ChineseLocalCaseArchive({chart,question}){
           关注：{selected.snapshot.chosen_category||'未选用神'}；
           主爻：{selected.snapshot.selected_position?POS[selected.snapshot.selected_position-1]+'爻':'未指定'}</p>
         <p><strong>事前原文（不可改动）：</strong>{selected.before}</p>
+        {selected.snapshot.human_review&&<div className="human-review-sealed">
+          <h4>事前四栏研判（封存只读）</h4>
+          {[
+            ['hypothesis','事前假设'],['support','支持依据'],
+            ['counter','相反证据'],['verification','现实核实计划']
+          ].map(([id,label])=><p key={id}><b>{label}：</b>{selected.snapshot.human_review.fields?.[id]||'未填'}</p>)}
+          <small>这是封存时的固定快照，修改或删除草稿不会改变它。</small>
+        </div>}
+        {selected.snapshot.review_sheet?.digest?.length>0&&<details>
+          <summary>查看封存时的程序证据摘要</summary>
+          {selected.snapshot.review_sheet.digest.map((x,i)=><p key={i}>{x}</p>)}
+        </details>
         <div className="local-case-outcome">
           <h4>后续事实 · 只能追加</h4>
           <label>对事前研究的回看
@@ -1378,6 +1402,99 @@ function ChineseLocalCaseArchive({chart,question}){
   </section>
 }
 
+export function HumanReviewWorkbook({chart,question}){
+  const sheet=chart.review_sheet
+  const key=workbookKey(chart)
+  const empty=()=>({hypothesis:'',support:'',counter:'',verification:''})
+  const [draft,setDraft]=useState(()=>readWorkbook(chart)?.fields||empty())
+  const [message,setMessage]=useState('')
+  useEffect(()=>{
+    setDraft(readWorkbook(chart)?.fields||empty())
+    setMessage('')
+  },[key])
+  if(!sheet)return null
+  const setField=(field,value)=>{
+    const next={...draft,[field]:value}
+    setDraft(next)
+    try{
+      saveWorkbook(chart,next)
+      setMessage('已自动保存到本机浏览器，不会上传。')
+    }catch{setMessage('本机存储不可用，请导出草稿以免丢失。')}
+  }
+  function clear(){
+    if(!window.confirm('确定清空本机这份未封存的人工研判草稿吗？'))return
+    try{removeWorkbook(chart)}catch{}
+    setDraft(empty())
+    setMessage('已清空本机草稿。已经封存的案例不会被修改。')
+  }
+  function exportText(){
+    const text=[
+      '万象书院 · V25 人工研判草稿（非程序断语）',
+      '所问：'+(question?.trim()||'未提供'),
+      '关注：'+(sheet.focus_category||'未选')+'；研习主爻：'+(sheet.selected_position||'未指定'),
+      '日月来源：'+sheet.calendar_source,
+      ...sheet.candidates.map(c=>c.position+'爻 '+c.ganzhi+'；支持：'+
+        c.supporting.map(x=>x.title).join('、')+'；制约：'+
+        c.restraining.map(x=>x.title).join('、')+'；未决：'+c.pending.join('、')),
+      '',
+      '人工假设：'+draft.hypothesis,
+      '支持依据：'+draft.support,
+      '相反证据：'+draft.counter,
+      '核实计划：'+draft.verification,
+      '',
+      sheet.boundary
+    ].join('\n')
+    try{
+      const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}))
+      const a=document.createElement('a');a.href=url;a.download='万象书院-人工研判草稿.txt'
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)
+      setMessage('已保存一份本地文本。')
+    }catch{setMessage('下载失败，请检查浏览器下载权限。')}
+  }
+  const fields=[
+    ['hypothesis','事前研判假设','你现在倾向如何理解，哪些仍只是猜想？'],
+    ['support','支持依据','写出已算盘面关系与可核实的现实依据。'],
+    ['counter','相反证据与不确定性','哪些条件可能推翻当前观点？'],
+    ['verification','现实核验计划','之后如何检查事实、如何发现原先判断错误？']
+  ]
+  return <section className="human-review-workbook" aria-label="六爻人工研判工作台">
+    <header><small>V25 · 人工研判草稿</small><h3>由你合参 · 程序提供证据</h3></header>
+    <p>程序事实与个人观点严格分开。<strong>四栏草稿仅自动保存于本机浏览器，不会传回书院服务器。</strong></p>
+    {!sheet.candidates.length?<p className="human-review-pending">
+      {sheet.status==='focus_not_visible'?'当前用神本卦不现，先核对飞伏，不虚构可见候选。':
+      '请先进入「因事取用」选择关注对象，再查候选。'}</p>:
+    <div className="human-review-candidates">{sheet.candidates.map((c,i)=>
+      <details key={c.position} open={c.selected_by_user||(!sheet.selected_position&&i===0)}>
+        <summary>{POS[c.position-1]}爻 · {c.ganzhi}
+          <small>{c.selected_by_user?'你指定的研习主爻':'只供比较，不自动择优'}</small></summary>
+        <div className="human-review-evidence">
+          <article><h4>程序支持线索</h4>
+            {c.supporting.length?c.supporting.map((x,j)=><p key={j}>{x.title}：{x.detail}</p>):
+            <p>当前没有已计算的支持标记。</p>}</article>
+          <article><h4>程序限制条件</h4>
+            {c.restraining.length?c.restraining.map((x,j)=><p key={j}>{x.title}：{x.detail}</p>):
+            <p>当前没有已计算的限制标记。</p>}</article>
+        </div>
+        <div className="human-review-open"><strong>仍须核实</strong>
+          {c.pending.map((x,j)=><p key={j}>· {x}</p>)}
+        </div>
+      </details>)}</div>}
+    <div className="human-review-fields">
+      {fields.map(([id,label,hint])=><label key={id}>{label}
+        <small>{hint}</small>
+        <textarea maxLength={1400} rows={3} value={draft[id]}
+          placeholder={hint} onChange={e=>setField(id,e.target.value)}/>
+      </label>)}
+    </div>
+    <div className="human-review-actions">
+      <button type="button" onClick={exportText}>导出人工研判草稿</button>
+      <button type="button" onClick={clear}>清空本机草稿</button>
+    </div>
+    {message&&<p role="status" className="human-review-status">{message}</p>}
+    <p className="human-review-boundary">此草稿按本卦六爻、日月与人工所选研习主爻分别保存；换条件会换草稿。清除浏览器数据可能丢失，建议定期导出。封存案例时会固定当前草稿，不随今后修改变化。</p>
+  </section>
+}
+
 function ReviewReport({chart,question}) {
   const data=chart.review_flow?.report
   const [message,setMessage]=useState('')
@@ -1386,6 +1503,9 @@ function ReviewReport({chart,question}) {
     '# 万象书院 · 六爻研判学习笔记',
     question?.trim()?'所问事项：'+question.trim():'所问事项：尚未填写',
     ...data.verified_by_program,
+    '',
+    'V25 结构化研判模板（数量非评分）：',
+    ...(data.review_sheet_digest||[]),
     '',
     '六轴证据链（作用效力尚待合参）：',
     ...(data.evidence_chain_digest||[]),
@@ -1442,6 +1562,10 @@ function ReviewReport({chart,question}) {
     <div className="review-report-facts">
       {data.verified_by_program.map((x,i)=><p key={i}>{x}</p>)}
     </div>
+    {data.review_sheet_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>程序支持、制约与未决条件概览</h4>
+      {data.review_sheet_digest.map((x,i)=><p key={i}>{x}</p>)}
+    </div>}
     {data.evidence_chain_digest?.length>0&&<div className="strength-evidence-report">
       <h4>六轴证据链摘记</h4>
       {data.evidence_chain_digest.map((x,i)=><p key={i}>{x}</p>)}
@@ -1757,6 +1881,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
               </details>
             </>}
             {reviewStage==='report'&&<>
+              <HumanReviewWorkbook chart={chart} question={question}/>
               <ReviewReport chart={chart} question={question}/>
               <details className="liuyao-depth-panel">
                 <summary>案例簿 · 封存事前研习与事后复盘</summary>
