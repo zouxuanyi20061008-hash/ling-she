@@ -887,3 +887,35 @@ button:disabled{cursor:not-allowed}
 .void-context-study .void-context-end{font-size:12px;color:#6b5740;line-height:1.85;border-top:1px solid #d3c4ae;padding-top:11px}
 .void-context-link{font-size:12px;color:#225d44;text-decoration:underline}
 @media(max-width:650px){.void-context-study{padding:11px}.void-context-steps{grid-template-columns:1fr}.void-context-steps article{padding:10px}.void-context-picks{gap:4px}.void-context-picks button{font-size:11px}}
+
+/* V24 | 用神原忌仇联合审议：保持手机可读和旧版专题入口 */
+.focus-effect-review{border:1px solid #c5b49e;background:#f8f2e6;color:#36503d;margin:14px 0;padding:16px}
+.focus-effect-review header{border-bottom:1px solid #d2c2ae;padding-bottom:9px}
+.focus-effect-review header small{font-size:11px;color:#7b5b40}
+.focus-effect-review header h3{font-size:18px;color:#2d5841;margin:5px 0 0}
+.focus-effect-review>p{font-size:13px;line-height:1.85;color:#495b47}
+.focus-effect-picks{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.focus-effect-picks button{border:1px solid #b6a88e;background:#fffaf0;min-height:44px;padding:9px 12px;font-size:12px;color:#33583f}
+.focus-effect-picks button.active{background:#2d5e47;color:#fff9e9;border-color:#2d5e47}
+.focus-effect-picks button small{display:block;font-size:10px}
+.focus-effect-review .focus-effect-target{background:#eee7d8;padding:11px;color:#36533e}
+.focus-effect-warning,.focus-effect-cautions{border-left:3px solid #a77848;background:#f0e5d4;padding:10px 12px;font-size:12px;line-height:1.75;color:#67472d}
+.focus-effect-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+.focus-effect-roles>article{min-width:0;background:#fffaf1;border:1px solid #d7c6b1;padding:11px}
+.focus-effect-roles h4{font-size:14px;margin:0 0 10px;color:#2b5943}
+.focus-effect-roles h4 small{display:block;font-size:11px;color:#846a4c;font-weight:500}
+.focus-effect-source{background:#f6f0e5;border:1px solid #ddd0bf;margin:7px 0}
+.focus-effect-source summary{padding:10px;min-height:44px;cursor:pointer;font-size:12px;font-weight:700;color:#2f593f}
+.focus-effect-source summary span{margin-left:6px;font-size:10px;color:#775b3a}
+.focus-effect-source summary:focus-visible{outline:3px solid #357155;outline-offset:2px}
+.focus-effect-source>p{padding:0 9px;margin:7px 0;font-size:11px;line-height:1.7;color:#4b5843}
+.focus-effect-check{padding:9px;border-top:1px solid #dacdba}
+.focus-effect-check strong{font-size:11px;color:#3b583f}
+.focus-effect-check p{font-size:11px;line-height:1.7;color:#5e543e;margin:5px 0;overflow-wrap:anywhere}
+.focus-effect-cautions{margin:12px 0}
+.focus-effect-cautions strong{font-size:13px}
+.focus-effect-cautions p{margin:5px 0}
+.focus-effect-review .focus-effect-boundary{font-size:12px;color:#695238;border-top:1px solid #d2c2ae;padding-top:10px}
+.focus-effect-review>a{font-size:12px;color:#245b42;text-decoration:underline}
+.focus-effect-empty{font-size:12px;line-height:1.8;color:#66553f}
+@media(max-width:850px){.focus-effect-roles{grid-template-columns:1fr}.focus-effect-roles>article{padding:11px}}

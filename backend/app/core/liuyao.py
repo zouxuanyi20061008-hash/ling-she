@@ -20,6 +20,7 @@ from .yongshen_pathways import decorate_yongshen_pathways
 from .evidence_chain import decorate_evidence_chain
 from .temporal_review import decorate_temporal_review
 from .void_context import decorate_void_context
+from .focus_effect_review import decorate_focus_effect_review
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -68,4 +69,5 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     chart = decorate_evidence_chain(chart)
     chart = decorate_temporal_review(chart)
     chart = decorate_void_context(chart)
+    chart = decorate_focus_effect_review(chart)
     return decorate_review_flow(chart)

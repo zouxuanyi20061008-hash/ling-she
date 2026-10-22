@@ -360,6 +360,61 @@ function FuShenStudy({chart,onChoose,busy}){
 
 
 
+function FocusEffectReviewStudy({chart}){
+  const data=chart.focus_effect_review
+  const [requested,setRequested]=useState(null)
+  if(!data)return null
+  const roles=[{id:'原神',subtitle:'潜在生用来源'},
+               {id:'忌神',subtitle:'潜在克用来源'},
+               {id:'仇神',subtitle:'间接五行关系'}]
+  const positions=data.candidates.map(c=>c.position)
+  const selected=positions.includes(requested)?requested:
+    positions.includes(data.selected_position)?data.selected_position:positions[0]
+  const candidate=data.candidates.find(c=>c.position===selected)
+  const kindNames={
+    active_direct_edge_pending_effect:'本卦真实明动 · 有作用方向，效力未决',
+    static_element_relation_only:'本卦静态五行关系 · 不视为主动作用',
+    indirect_five_element_reference:'仇神间接参考 · 不是直接作用'
+  }
+  return <section className="focus-effect-review" aria-label="用神原忌仇实际作用来源核查">
+    <header><small>V24 · 多因素联合审议</small><h3>原忌仇神作用来源 · 逐条复核</h3></header>
+    <p>确认明动来源以后，再分别审议源爻自己的日月、旬空、回头关系与墓绝条件；不把静爻当动爻，也不拿证据条数断强弱。</p>
+    {!candidate?<p className="focus-effect-empty">
+      {data.status==='focus_not_visible'?'所选用神本卦不现，须先核对飞伏；这里不虚构原忌作用边。':
+       '请先进入「因事取用」选择关注的六亲或世应。'}</p>:<>
+      {data.candidates.length>1&&<div className="focus-effect-picks" role="group" aria-label="选择原忌仇作用复核的用神候选">
+        {data.candidates.map(c=><button type="button" key={c.position}
+          aria-pressed={selected===c.position} className={selected===c.position?'active':''}
+          onClick={()=>setRequested(c.position)}>{POS[c.position-1]}爻 {c.ganzhi}
+          {c.selected_by_user&&<small>手动指定</small>}</button>)}
+      </div>}
+      <p className="focus-effect-target">当前研习：<strong>{POS[candidate.position-1]}爻 · {candidate.ganzhi}</strong> · {candidate.selected_by_user?'由你指定':'仅为候选，不自动排序'}</p>
+      {candidate.simultaneous_yuan_ji_moving&&<p className="focus-effect-warning">原神和忌神均出现明动直连来源，但不能简单相互抵消或按数量判强弱。</p>}
+      <div className="focus-effect-roles">{roles.map(role=><article key={role.id}>
+        <h4>{role.id}<small>{role.subtitle}</small></h4>
+        {candidate.roles[role.id].length===0?<p className="focus-effect-empty">本卦暂无明现的此类来源，不补造。</p>:
+        candidate.roles[role.id].map(source=><details key={source.source_position} className="focus-effect-source">
+          <summary>{POS[source.source_position-1]}爻 · {source.source_ganzhi}
+            <span>{source.moving?'明动':'安静'}</span></summary>
+          <p className="focus-effect-kind">{kindNames[source.kind]}</p>
+          {source.relation_to_target&&<p>本卦作用边：{source.relation_to_target}</p>}
+          {source.checks.map(check=><div className="focus-effect-check" key={check.id}>
+            <strong>{check.title} · {check.status==='missing'?'资料缺失':'条件已记录'}</strong>
+            {check.facts.length?check.facts.map((x,i)=><p key={i}>· {x}</p>):
+            <p>没有已计算的对应标记，不等于实际作用已确定。</p>}
+          </div>)}
+          {source.source_flags.length>0&&<p className="focus-effect-flags">{source.source_flags.join('；')}</p>}
+        </details>)}
+      </article>)}</div>
+      {candidate.cautions.length>0&&<div className="focus-effect-cautions"><strong>此候选用神还需复核</strong>
+        {candidate.cautions.map((x,i)=><p key={i}>· {x}</p>)}
+      </div>}
+    </>}
+    <p className="focus-effect-boundary">{data.boundary}</p>
+    <a href={data.references.roles} rel="noopener noreferrer" target="_blank">《增删卜易》用神元神忌神仇神章 ↗</a>
+  </section>
+}
+
 function YongshenPathwaysStudy({chart}){
   const data=chart.yongshen_pathways
   const [chosen,setChosen]=useState(null)
@@ -1344,6 +1399,9 @@ function ReviewReport({chart,question}) {
     '用神原忌仇作用来源（效力未判定）：',
     ...(data.yongshen_pathway_digest||[]),
     '',
+    'V24 原忌仇联合审议摘记（非旺衰结论）：',
+    ...(data.focus_effect_digest||[]),
+    '',
     '六合、墓绝条件摘记（不判效力）：',
     ...(data.special_conditions_digest||[]),
     '',
@@ -1403,6 +1461,11 @@ function ReviewReport({chart,question}) {
       <h4>六合、墓绝条件摘记</h4>
       {data.special_conditions_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>只供日后复核，不意味着合绊、入墓或逢绝已经实际生效。</small>
+    </div>}
+    {data.focus_effect_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V24 原忌仇联合审议</h4>
+      {data.focus_effect_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>真正发动仅代表存在作用来源，各爻日月、空破与回头效力仍要分别判断。</small>
     </div>}
     {data.yongshen_pathway_digest?.length>0&&<div className="strength-evidence-report">
       <h4>用神原忌仇逐项审议</h4>
@@ -1667,7 +1730,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 <EvidenceChainStudy chart={chart}/>
                 <StrengthEvidenceStudy chart={chart}/>
               </> :
-                relationsView==='pathways'?<YongshenPathwaysStudy chart={chart}/>:
+                relationsView==='pathways'?<>
+                  <FocusEffectReviewStudy chart={chart}/>
+                  <YongshenPathwaysStudy chart={chart}/>
+                </>:
                 relationsView==='motion'?<MovingEffectReview chart={chart}/>:
                 relationsView==='special'?<SpecialConditionsStudy chart={chart}/>:
                 <>

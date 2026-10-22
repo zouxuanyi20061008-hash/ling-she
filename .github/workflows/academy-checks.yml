@@ -38,3 +38,20 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python -m pytest backend/tests -q
+  deploy_after_checks:
+    name: Deploy tested academy to Render
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Deploy with Render secret hook when configured
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        shell: bash
+        run: |
+          if [[ -z "$RENDER_DEPLOY_HOOK" ]]; then
+            echo "Render deploy hook secret has not been configured. Tests passed, but no deploy was started." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 25 --request POST "$RENDER_DEPLOY_HOOK" >/dev/null
+          echo "Render accepted the deployment request after both CI jobs passed." >> "$GITHUB_STEP_SUMMARY"

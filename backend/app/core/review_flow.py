@@ -25,6 +25,7 @@ def decorate_review_flow(chart: dict) -> dict:
     evidence_chain=chart["evidence_chain"]
     temporal=chart["temporal_review"]
     void_context=chart["void_context_review"]
+    focus_effect=chart["focus_effect_review"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -127,6 +128,8 @@ def decorate_review_flow(chart: dict) -> dict:
             unresolved.append("原神忌神同动，不能简单互相抵消，需核实各自日月动变状态")
     if void_context["attention_positions"]:
         unresolved.append("V23 已提供真假空六段审议，冲空、动空、化空等作用是否成立仍待合参")
+    if focus_effect["candidates"]:
+        unresolved.append("V24 已逐项核对原忌仇来源的日月空破和本位动变，实际作用效力仍需合参")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "仍未完成实际应期推断；V22 仅提供旬空换旬、日支相值相冲的历法候选核查",
@@ -208,8 +211,23 @@ def decorate_review_flow(chart: dict) -> dict:
         for row in void_context["rows"]
         if row["category"] not in ("neither_void","day_missing") or row["cross_checks"]
     ]
+    focus_effect_digest=[
+        str(c["position"])+"爻 "+c["ganzhi"]+"："+
+        "；".join(role+"（"+
+                 "、".join(
+                     str(source["source_position"])+"爻"+
+                     ("明动直连待复核" if source["kind"]=="active_direct_edge_pending_effect"
+                      else "间接参考" if source["kind"]=="indirect_five_element_reference"
+                      else "静态五行关系")
+                     for source in c["roles"][role]
+                 )+"）"
+                 for role in ("原神","忌神","仇神"))+
+        "；实际效力未定"
+        for c in focus_effect["candidates"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "focus_effect_digest":focus_effect_digest,
         "void_context_digest":void_context_digest,
         "temporal_digest":temporal_digest,
         "temporal_notice":temporal["notice"],
