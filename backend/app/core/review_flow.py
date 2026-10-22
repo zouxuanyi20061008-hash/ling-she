@@ -19,6 +19,7 @@ def decorate_review_flow(chart: dict) -> dict:
     day=calendar["day"]
     month=calendar["month"]
     moving=chart["moving_influences"]
+    special=chart["special_conditions"]
     voids=chart["void_interactions"]
 
     missing_calendar=[
@@ -68,7 +69,8 @@ def decorate_review_flow(chart: dict) -> dict:
          str(len(moving["edges"]))+"条动爻对本卦其他爻的静态关系、"+
          str(len(dynamics["movements"]))+"条本位动变关系，其中"+str(len(effect["movements"]))+
          "条已与日月空破对照；"+
-         str(len(strength["opposing_positions"]))+"爻同时存在生扶与制约线索。"),
+         str(len(strength["opposing_positions"]))+"爻同时存在生扶与制约线索；"+
+         str(len(special["affected_positions"]))+"爻有六合、墓或绝地核对条件。"),
         "查看综合证据对照，先分辨支持与限制条件，再考察原忌仇神；不可把证据条数当旺衰权重。"
     ))
     void_count=len(voids["original_void_positions"])
@@ -103,6 +105,8 @@ def decorate_review_flow(chart: dict) -> dict:
         unresolved.append("部分爻同时受生扶与制约：请在辨生克步骤逐条核对，不得简单相减")
     if effect["movements"]:
         unresolved.append("已列出动爻与本位变爻的日月空破条件；回头关系能否实际发生作用仍待人工复核")
+    if special["affected_positions"]:
+        unresolved.append("已列出六合、合绊、三墓及逢绝条件；实际合住、入墓、绝处逢生仍须人工审议")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "未完成强弱综合取用、用神吉凶或应期计算",
@@ -138,8 +142,17 @@ def decorate_review_flow(chart: dict) -> dict:
         "；日月空破需合参，未判效力"
         for x in effect["movements"]
     ]
+    special_digest=[
+        str(row["position"])+"爻 "+row["ganzhi"]+"："+
+        "、".join(item["kind"]+"("+item["source"]+")"
+                 for group in ("combinations","tombs","extinctions")
+                 for item in row[group])+
+        "；相关实效尚未判断"
+        for row in special["rows"] if row["has_any_condition"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "special_conditions_digest":special_digest,
         "moving_effect_digest":moving_digest,
         "evidence_digest":digest,
         "strength_conclusion":None,
