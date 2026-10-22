@@ -672,3 +672,42 @@
  .season-element-grid strong{font-size:17px}
  .season-element-grid span{font-size:9px}
 }
+
+/* 第十式：日冲月破与用神证据核对，强调条件而非旺衰评分 */
+.academy-review{margin:18px 0;padding:17px 15px;border:1px solid #abb69c;background:#f4f1e4;color:#305846}
+.academy-review-header{display:flex;align-items:center;justify-content:space-between;gap:11px;border-bottom:1px solid #c8c8ae;padding-bottom:10px}
+.academy-review-header span{font-size:11px;letter-spacing:.13em;color:#9c7655}
+.academy-review-header h3{font-size:18px;color:#2d5d46;margin:6px 0 0}
+.academy-review-header small{font-size:11px;color:#879177}
+.academy-review-intro{color:#637563;font-size:11px;line-height:1.95;margin:12px 0}
+.academy-review-picks{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin:12px 0}
+.academy-review-picks button{font-size:11px;min-height:40px;padding:8px 3px;border:1px solid #bbc1a9;color:#3b6950;background:#fff9ec}
+.academy-review-picks button.active{background:#32634b;color:#fff5e0;border-color:#32634b}
+.academy-review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.academy-review-grid article{background:#fbf7ec;border:1px solid #d4cab3;padding:12px 13px;min-width:0}
+.academy-review-grid small{font-size:11px;color:#a07859;display:block;margin-bottom:8px}
+.academy-review-grid strong{font-size:13px;color:#345c45;line-height:1.8;display:block}
+.academy-review-grid p,.academy-review-focus p{font-size:11px;color:#6e7968;line-height:1.9;margin:6px 0}
+.academy-review-focus{margin-top:14px;border-top:1px solid #d6c9ae;padding-top:13px}
+.academy-review-focus h4{font-size:16px;color:#2e6249;margin:0 0 9px}
+.academy-review-focus p b{color:#285c44}
+.academy-review-candidates{display:grid;gap:9px;margin-top:13px}
+.academy-review-candidates article{background:#fff9e9;border:1px solid #d3c7aa;padding:12px}
+.academy-review-focus-jump{color:#2e7050;border-bottom:1px solid #96ae99;font-size:13px;padding-bottom:3px}
+.academy-review-candidates article>small{display:block;font-size:10px;color:#8e8068;margin:7px 0}
+.academy-review-signals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.academy-review-signals>div{padding:9px 10px;background:#ebede2}
+.academy-review-signals>div:nth-child(2){background:#eee6dc}
+.academy-review-signals b{font-size:11px;color:#456b52}
+.academy-review-signals>div:nth-child(2) b{color:#a16d4e}
+.academy-review-signals p{font-size:10px;margin:4px 0}
+.academy-review-boundary{font-size:10px;color:#8d8571;line-height:1.95;border-top:1px solid #d4cbb2;padding-top:11px;margin:12px 0}
+.academy-review-links{display:flex;flex-wrap:wrap;gap:9px 16px}
+.academy-review-links a{font-size:11px;color:#346b4d;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){
+  .academy-review{padding:12px 9px}
+  .academy-review-header h3{font-size:16px}
+  .academy-review-picks{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .academy-review-grid,.academy-review-signals{grid-template-columns:1fr}
+  .academy-review-grid article{padding:11px}
+}

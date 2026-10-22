@@ -269,6 +269,69 @@ function SeasonalMovingStudy({chart}) {
   </section>
 }
 
+
+function DayMonthReview({chart}) {
+  const review=chart.day_month_review
+  const [selected,setSelected]=useState(1)
+  if(!review)return null
+  const row=chart.najia_lines[selected-1]
+  const day=row.conflict_review.day_clash
+  const month=row.conflict_review.month_break
+  const selectedFocus=chart.focus?.category
+  const findings=review.candidates||[]
+  return <section className="academy-review" aria-label="六爻日冲月破与用神条件复核">
+    <header className="academy-review-header">
+      <div><span>第十式 · 合参诸象</span><h3>月破与日冲，不可一概而断。</h3></div>
+      <small>逐爻核验</small>
+    </header>
+    <p className="academy-review-intro">{review.rule}</p>
+    <div className="academy-review-picks" role="group" aria-label="选择日冲月破复核的爻位">
+      {[1,2,3,4,5,6].map(pos=><button type="button" key={pos}
+        className={selected===pos?'active':''} aria-pressed={selected===pos}
+        onClick={()=>setSelected(pos)}>{POS[pos-1]}爻</button>)}
+    </div>
+    <div className="academy-review-grid" aria-live="polite">
+      <article><small>日冲辨析 · {row.ganzhi}</small>
+        <strong>{day.label}</strong>
+        <p>{day.month_grade?'节令概要：'+day.month_grade:'节令概要：未提供或尚不可用'}</p>
+        {day.cautions?.map((t,i)=><p key={i}>· {t}</p>)}
+      </article>
+      <article><small>月破条件</small><strong>{month.label}</strong>
+        {month.review?.map((t,i)=><p key={i}>· {t}</p>)}
+      </article>
+    </div>
+    <div className="academy-review-focus">
+      <h4>所问用神 · 证据对照</h4>
+      {review.status==='focus_not_selected'?<p>先在「因事取用」选择要研究的六亲或世应，系统才会整理相关候选爻的条件。</p>:
+       review.status==='focus_not_visible'?<div><p>{review.message}</p>
+         <p>本宫伏神候选：{review.hidden_candidates?.map(x=>POS[x.position-1]+'爻 '+x.hidden.ganzhi).join('、')||'无'}</p>
+       </div>:
+       <><p>当前关注：<b>{selectedFocus}</b>。以下只是已经计算出来的条件清单，不是吉凶评分。</p>
+         <div className="academy-review-candidates">
+          {findings.map(candidate=><article key={candidate.position}>
+            <button type="button" onClick={()=>setSelected(candidate.position)}
+              className="academy-review-focus-jump">{POS[candidate.position-1]}爻 · {candidate.ganzhi} ↗</button>
+            <small>{candidate.liuqin} · {candidate.element} · {candidate.season||'未确认月令'}</small>
+            <div className="academy-review-signals">
+              <div><b>已观察到的生扶、动静</b>
+                {(candidate.supportive_observations.length?candidate.supportive_observations:['暂无已确认的正向条件']).map((v,i)=><p key={i}>{v}</p>)}
+              </div>
+              <div><b>需要谨慎核对的条件</b>
+                {(candidate.cautionary_observations.length?candidate.cautionary_observations:['暂无已确认的制约标记']).map((v,i)=><p key={i}>{v}</p>)}
+              </div>
+            </div>
+          </article>)}
+         </div></>}
+    </div>
+    <p className="academy-review-boundary">{review.manual_calendar_notice} 此处不自动判断完整旺衰、暗动实效、日破实效或应期，也不将传统象征当作现实结论。</p>
+    <div className="academy-review-links">
+      <a href={review.source.day} target="_blank" rel="noopener noreferrer">《增删卜易》日辰章 ↗</a>
+      <a href={review.source.dark} target="_blank" rel="noopener noreferrer">暗动章 ↗</a>
+      <a href={review.source.month} target="_blank" rel="noopener noreferrer">月破章 ↗</a>
+    </div>
+  </section>
+}
+
 function LineDynamicsStudy({chart}) {
   const dynamics=chart.line_dynamics
   const [position,setPosition]=useState(1)
@@ -558,6 +621,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <LineDynamicsStudy chart={chart}/>
             <SeasonalMovingStudy chart={chart}/>
             <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
+            <DayMonthReview chart={chart}/>
             <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
             <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
             <NajiaBoard chart={chart} roleView={roleView}/>
@@ -567,7 +631,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及综合旺衰尚未实现。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及完整旺衰尚未实现；本轮新增日冲暗动／日破候选和用神多条件复核。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
