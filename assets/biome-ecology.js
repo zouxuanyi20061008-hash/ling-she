@@ -34,25 +34,27 @@ function regionalPerkUnlocked(id){
  return !!(regionalState&&regionalState.materials[id]>=REGIONAL_MATERIALS[id].threshold);
 }
 function regionalOnKill(enemy){
+ if(!regionalState)return;
  const key=REGIONAL_SPECIES[enemy.species];
- if(!key||enemy.trialToken||!regionalState)return;
- const info=REGIONAL_MATERIALS[key],before=regionalState.materials[key];
- regionalState.materials[key]=Math.min(9999,before+1);
- damageTexts.push({x:enemy.x,y:enemy.y-38,text:info.name+' +1',life:1,color:info.color});
- if(before<info.threshold&&regionalState.materials[key]>=info.threshold){
-  flash('✨ 悟得'+info.perk);
-  toast('✨ '+info.name+'集齐 · '+info.perk+'已解锁！');
-  for(let i=0;i<12;i++){
-   let a=i*Math.PI/6;
-   particles.push({x:player.x,y:player.y,vx:Math.cos(a)*80,vy:Math.sin(a)*80,life:.8,color:info.color});
+ if(key&&!enemy.trialToken){
+  const info=REGIONAL_MATERIALS[key],before=regionalState.materials[key];
+  regionalState.materials[key]=Math.min(9999,before+1);
+  damageTexts.push({x:enemy.x,y:enemy.y-38,text:info.name+' +1',life:1,color:info.color});
+  if(before<info.threshold&&regionalState.materials[key]>=info.threshold){
+   flash('✨ 悟得'+info.perk);
+   toast('✨ '+info.name+'集齐 · '+info.perk+'已解锁！');
+   for(let i=0;i<12;i++){
+    let a=i*Math.PI/6;
+    particles.push({x:player.x,y:player.y,vx:Math.cos(a)*80,vy:Math.sin(a)*80,life:.8,color:info.color});
+   }
+   saveGame(true);
   }
-  saveGame(true);
  }
- // Nether perk restores some HP after combat, without excessive healing from mass-swallow.
+ // Nether perk recovers HP on *any* monster kill, not only regional enemies.
+ // Keep a short cooldown to prevent mass-swallow from over-healing.
  const now=performance.now();
  if(regionalPerkUnlocked('nether')&&now-regionalLastHeal>1200){
-  const max=100+level*10;
-  const restored=Math.min(8,max-hp);
+  const max=100+level*10,restored=Math.min(8,max-hp);
   if(restored>0){
    hp+=restored;regionalLastHeal=now;
    damageTexts.push({x:player.x,y:player.y-24,text:'幽息 +'+restored,life:.8,color:'#d9c6ff'});
