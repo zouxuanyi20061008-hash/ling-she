@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
-import {afterEach,cleanup,fireEvent,render,screen} from '@testing-library/react'
-import {it,expect} from 'vitest'
+import {cleanup,fireEvent,render,screen} from '@testing-library/react'
+import {it,expect,afterEach} from 'vitest'
 import {FocusEffectReviewStudy} from '../src/SixYaoStage.jsx'
 afterEach(()=>cleanup())
 
