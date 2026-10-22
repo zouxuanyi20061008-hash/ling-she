@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>灵蛇问道·青岚仙境 V5.5 离线单文件版</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091b1a;color:#f3ecd3;font-family:system-ui,'Microsoft Yahei',sans-serif}canvas{display:block;width:100vw;height:100dvh;touch-action:none}#hud{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}.pill{background:#102b2bcf;border:1px solid #8cba8d66;border-radius:12px;padding:7px 11px;backdrop-filter:blur(8px);font-size:13px}#bar{width:125px;height:7px;background:#34514b;border-radius:9px;overflow:hidden;margin-top:5px}#fill{height:100%;background:linear-gradient(90deg,#79db9c,#e5cc6a);width:0%}#help{position:fixed;top:85px;left:10px;background:#102b2bbd;border-radius:10px;padding:7px 10px;font-size:12px;color:#d1dfcc;pointer-events:none}#actions{position:fixed;bottom:22px;right:16px;display:flex;gap:10px;z-index:25;touch-action:none}#actions button{touch-action:none;cursor:pointer}button{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;border:1px solid #b6d9b477;border-radius:16px;background:#183f39d9;color:#fff4d3;padding:14px 16px;font-size:15px;touch-action:manipulation}button:active{background:#477e58}#joy{position:fixed;bottom:22px;left:22px;width:128px;height:128px;border:2px solid #b1c8a466;border-radius:50%;background:#1e463b77;touch-action:none}#stick{position:absolute;left:42px;top:42px;width:42px;height:42px;border-radius:50%;background:#d6e4b0bb;pointer-events:none}#toast{position:fixed;top:36%;left:50%;transform:translateX(-50%);padding:14px 24px;border-radius:14px;background:#102a27d9;border:1px solid #e5d99e;color:#f8edbd;opacity:0;transition:opacity .2s;pointer-events:none;text-align:center;white-space:nowrap}#panel{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#071514aa}#card{background:#15322e;border:1px solid #93ba9c;border-radius:20px;padding:24px;max-width:340px;text-align:center;box-shadow:0 15px 70px #0009}#card h1{margin:0 0 10px;font-size:28px;color:#e9d697}#card p{line-height:1.7;color:#d2e1d1;font-size:14px}#card button{background:#327454;margin-top:8px}#minimap{position:fixed;right:12px;top:94px;width:112px;height:112px;border:1px solid #bbd6b577;border-radius:10px;background:#0a2425c9;pointer-events:none}@media(max-width:500px){#help{top:115px;max-width:210px}#minimap{top:140px;width:86px;height:86px}#actions{bottom:30px;right:10px;flex-direction:column}button{padding:12px}}@media (orientation:landscape) and (max-height:600px){#actions{max-width:47vw;flex-wrap:wrap;justify-content:flex-end}#actions button{padding:7px 9px;font-size:11px}#hud{top:5px;left:8px;right:120px;gap:5px;flex-wrap:nowrap}.pill{font-size:11px;padding:4px 7px;white-space:nowrap}#bar{height:4px;width:85px}#help{display:none}#minimap{top:8px;right:8px;width:88px;height:88px}#joy{left:22px;bottom:12px;width:110px;height:110px}#stick{left:35px;top:35px;width:36px;height:36px}#actions{bottom:14px;right:12px;flex-direction:row}#actions button{padding:10px;font-size:12px}#card{max-height:90dvh;overflow:auto;padding:12px 22px}#card h1{font-size:23px}#card p{margin:6px 0;font-size:12px}}#savebar{position:fixed;left:10px;top:48px;display:flex;align-items:center;gap:8px;z-index:15;font-size:11px;color:#e4dcb3}#savebar button{padding:5px 9px;font-size:11px;background:#214a3e} @media(orientation:landscape) and (max-height:600px){#savebar{top:38px}}#rotateHint{display:none;position:fixed;inset:0;z-index:99;background:#071514f5;align-items:center;justify-content:center;text-align:center;padding:24px}#rotateHint .hint{max-width:320px;font-size:18px;line-height:1.8}#rotateHint button{margin-top:12px}@media (orientation:portrait) and (max-width:800px){#rotateHint{display:flex}} #actions button{position:relative;min-width:82px;min-height:48px;font-weight:700;box-shadow:0 3px 0 #071b18;transition:transform .1s,background .1s}#actions button:active{transform:scale(.93);background:#5b946b}#actions button.cooling{background:#283a39;color:#b2c4bb;border-color:#71847a}#actions button.ready{border-color:#e8d67c;box-shadow:0 0 13px #f0d76d99}#actions button small{display:block;font-size:10px;margin-top:3px;opacity:.9}#toast{z-index:40;max-width:85vw;white-space:normal;font-weight:bold;box-shadow:0 4px 20px #0009}#feedback{position:fixed;top:29%;left:50%;transform:translateX(-50%);pointer-events:none;font-size:28px;font-weight:900;text-shadow:0 2px 6px #000,0 0 16px #f9dc7b;z-index:30;opacity:0}#feedback.show{animation:popfeedback .65s ease-out}@keyframes popfeedback{0%{opacity:0;transform:translate(-50%,15px) scale(.7)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.2)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}} </style></head><body><div id="rotateHint"><div class="hint">📱 请将手机横过来<br>横屏体验开放世界修仙贪吃蛇<br><button id="tryLandscape">尝试切换横屏</button><div style="font-size:12px;color:#b6c8b9;margin-top:10px">若未自动旋转，请开启手机的自动旋转功能</div></div></div><canvas id="game"></canvas><canvas id="minimap" width="112" height="112"></canvas><div id="hud"><div class="pill">🐍 <b id="realm">凡蛇</b> · <span id="level">1</span>阶<div id="bar"><div id="fill"></div></div></div><div class="pill">✨ 修为 <b id="xp">0</b>/<span id="need">50</span></div><div class="pill">❤️ <b id="hp">100</b>　⚔️ <b id="power">10</b></div><div class="pill">🐉 <b id="form">凡蛇</b> · 进化 <b id="evo">0</b>/<span id="evoNeed">5</span></div><div class="pill">🗺️ <span id="region">青岚平原</span></div></div><div id="help">摇杆 / WASD / 方向键移动 · 吞噬灵果 · 弱兽吞噬 · 强兽战斗 · F灵息弹 · B突破</div><div id="joy"><div id="stick"></div></div><div id="actions"><button id="dash">⚡ 灵蛇遁</button><button id="heal">🌿 回春术</button><button id="strike">🔥 灵息弹</button><button id="breakthrough">🌀 突破</button></div><div id="toast"></div><div id="feedback"></div><div id="savebar"><button id="saveBtn">💾 存档</button><span id="saveStatus">自动存档开启</span></div><div id="panel"><div id="card"><h1>🐉 灵蛇问道</h1><p>开放世界 · 修仙贪吃蛇 V5.2 · 地形先行<br>弱兽会逃跑，强兽追击，精英妖兽发射法术；吞噬妖兽积累进化点。<br>探索草原、雪境、荒漠与魔域，吞噬灵果提升修为，击败妖兽，突破境界！<br>移动时蛇身会跟随，死亡后可重新开始。</p><button id="start">踏入修仙世界</button></div></div><script>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>灵蛇问道·青岚仙境 V5.6 单文件离线版</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091b1a;color:#f3ecd3;font-family:system-ui,'Microsoft Yahei',sans-serif}canvas{display:block;width:100vw;height:100dvh;touch-action:none}#hud{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}.pill{background:#102b2bcf;border:1px solid #8cba8d66;border-radius:12px;padding:7px 11px;backdrop-filter:blur(8px);font-size:13px}#bar{width:125px;height:7px;background:#34514b;border-radius:9px;overflow:hidden;margin-top:5px}#fill{height:100%;background:linear-gradient(90deg,#79db9c,#e5cc6a);width:0%}#help{position:fixed;top:85px;left:10px;background:#102b2bbd;border-radius:10px;padding:7px 10px;font-size:12px;color:#d1dfcc;pointer-events:none}#actions{position:fixed;bottom:22px;right:16px;display:flex;gap:10px;z-index:25;touch-action:none}#actions button{touch-action:none;cursor:pointer}button{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;border:1px solid #b6d9b477;border-radius:16px;background:#183f39d9;color:#fff4d3;padding:14px 16px;font-size:15px;touch-action:manipulation}button:active{background:#477e58}#joy{position:fixed;bottom:22px;left:22px;width:128px;height:128px;border:2px solid #b1c8a466;border-radius:50%;background:#1e463b77;touch-action:none}#stick{position:absolute;left:42px;top:42px;width:42px;height:42px;border-radius:50%;background:#d6e4b0bb;pointer-events:none}#toast{position:fixed;top:36%;left:50%;transform:translateX(-50%);padding:14px 24px;border-radius:14px;background:#102a27d9;border:1px solid #e5d99e;color:#f8edbd;opacity:0;transition:opacity .2s;pointer-events:none;text-align:center;white-space:nowrap}#panel{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#071514aa}#card{background:#15322e;border:1px solid #93ba9c;border-radius:20px;padding:24px;max-width:340px;text-align:center;box-shadow:0 15px 70px #0009}#card h1{margin:0 0 10px;font-size:28px;color:#e9d697}#card p{line-height:1.7;color:#d2e1d1;font-size:14px}#card button{background:#327454;margin-top:8px}#minimap{position:fixed;right:12px;top:94px;width:112px;height:112px;border:1px solid #bbd6b577;border-radius:10px;background:#0a2425c9;pointer-events:none}@media(max-width:500px){#help{top:115px;max-width:210px}#minimap{top:140px;width:86px;height:86px}#actions{bottom:30px;right:10px;flex-direction:column}button{padding:12px}}@media (orientation:landscape) and (max-height:600px){#actions{max-width:47vw;flex-wrap:wrap;justify-content:flex-end}#actions button{padding:7px 9px;font-size:11px}#hud{top:5px;left:8px;right:120px;gap:5px;flex-wrap:nowrap}.pill{font-size:11px;padding:4px 7px;white-space:nowrap}#bar{height:4px;width:85px}#help{display:none}#minimap{top:8px;right:8px;width:88px;height:88px}#joy{left:22px;bottom:12px;width:110px;height:110px}#stick{left:35px;top:35px;width:36px;height:36px}#actions{bottom:14px;right:12px;flex-direction:row}#actions button{padding:10px;font-size:12px}#card{max-height:90dvh;overflow:auto;padding:12px 22px}#card h1{font-size:23px}#card p{margin:6px 0;font-size:12px}}#savebar{position:fixed;left:10px;top:48px;display:flex;align-items:center;gap:8px;z-index:15;font-size:11px;color:#e4dcb3}#savebar button{padding:5px 9px;font-size:11px;background:#214a3e}#fpsLabel{min-width:43px;color:#c3e5c3;font-variant-numeric:tabular-nums}@media(pointer:coarse){.pill{backdrop-filter:none}#savebar{gap:5px}#savebar button{padding:5px 6px}} @media(orientation:landscape) and (max-height:600px){#savebar{top:38px}}#rotateHint{display:none;position:fixed;inset:0;z-index:99;background:#071514f5;align-items:center;justify-content:center;text-align:center;padding:24px}#rotateHint .hint{max-width:320px;font-size:18px;line-height:1.8}#rotateHint button{margin-top:12px}@media (orientation:portrait) and (max-width:800px){#rotateHint{display:flex}} #actions button{position:relative;min-width:82px;min-height:48px;font-weight:700;box-shadow:0 3px 0 #071b18;transition:transform .1s,background .1s}#actions button:active{transform:scale(.93);background:#5b946b}#actions button.cooling{background:#283a39;color:#b2c4bb;border-color:#71847a}#actions button.ready{border-color:#e8d67c;box-shadow:0 0 13px #f0d76d99}#actions button small{display:block;font-size:10px;margin-top:3px;opacity:.9}#toast{z-index:40;max-width:85vw;white-space:normal;font-weight:bold;box-shadow:0 4px 20px #0009}#feedback{position:fixed;top:29%;left:50%;transform:translateX(-50%);pointer-events:none;font-size:28px;font-weight:900;text-shadow:0 2px 6px #000,0 0 16px #f9dc7b;z-index:30;opacity:0}#feedback.show{animation:popfeedback .65s ease-out}@keyframes popfeedback{0%{opacity:0;transform:translate(-50%,15px) scale(.7)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.2)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}} </style></head><body><div id="rotateHint"><div class="hint">📱 请将手机横过来<br>横屏体验开放世界修仙贪吃蛇<br><button id="tryLandscape">尝试切换横屏</button><div style="font-size:12px;color:#b6c8b9;margin-top:10px">若未自动旋转，请开启手机的自动旋转功能</div></div></div><canvas id="game"></canvas><canvas id="minimap" width="112" height="112"></canvas><div id="hud"><div class="pill">🐍 <b id="realm">凡蛇</b> · <span id="level">1</span>阶<div id="bar"><div id="fill"></div></div></div><div class="pill">✨ 修为 <b id="xp">0</b>/<span id="need">50</span></div><div class="pill">❤️ <b id="hp">100</b>　⚔️ <b id="power">10</b></div><div class="pill">🐉 <b id="form">凡蛇</b> · 进化 <b id="evo">0</b>/<span id="evoNeed">5</span></div><div class="pill">🗺️ <span id="region">青岚平原</span></div></div><div id="help">摇杆 / WASD / 方向键移动 · 吞噬灵果 · 弱兽吞噬 · 强兽战斗 · F灵息弹 · B突破</div><div id="joy"><div id="stick"></div></div><div id="actions"><button id="dash">⚡ 灵蛇遁</button><button id="heal">🌿 回春术</button><button id="strike">🔥 灵息弹</button><button id="breakthrough">🌀 突破</button></div><div id="toast"></div><div id="feedback"></div><div id="savebar"><button id="saveBtn">💾 存档</button><button id="qualityBtn" aria-label="切换画质">画质</button><span id="fpsLabel">FPS —</span><span id="saveStatus">自动存档开启</span></div><div id="panel"><div id="card"><h1>🐉 灵蛇问道</h1><p>开放世界 · 修仙贪吃蛇 V5.6 · 手机帧率优化<br>弱兽会逃跑，强兽追击，精英妖兽发射法术；吞噬妖兽积累进化点。<br>探索草原、雪境、荒漠与魔域，吞噬灵果提升修为，击败妖兽，突破境界！<br>移动时蛇身会跟随，死亡后可重新开始。</p><button id="start">踏入修仙世界</button></div></div><script>
 // Xianxia sprite atlas
 var treeArt=document.createElement('img');
 treeArt.src='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22180%22%20height%3D%22220%22%20viewBox%3D%220%200%20180%20220%22%3E%0A%3Cdefs%3E%3ClinearGradient%20id%3D%22trunk%22%20x2%3D%221%22%20y2%3D%22.3%22%3E%3Cstop%20stop-color%3D%22%23392d2c%22%2F%3E%3Cstop%20offset%3D%22.42%22%20stop-color%3D%22%23856448%22%2F%3E%3Cstop%20offset%3D%22.7%22%20stop-color%3D%22%23a98a58%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2343392e%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22leaf%22%20cx%3D%22.35%22%20cy%3D%22.22%22%20r%3D%22.8%22%3E%3Cstop%20stop-color%3D%22%23a2c78a%22%2F%3E%3Cstop%20offset%3D%22.36%22%20stop-color%3D%22%23478764%22%2F%3E%3Cstop%20offset%3D%22.75%22%20stop-color%3D%22%23235b4e%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23183b38%22%2F%3E%3C%2FradialGradient%3E%3Cfilter%20id%3D%22shade%22%3E%3CfeGaussianBlur%20stdDeviation%3D%221.5%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%0A%3Cellipse%20cx%3D%22100%22%20cy%3D%22205%22%20rx%3D%2258%22%20ry%3D%2210%22%20fill%3D%22%23172a24%22%20opacity%3D%22.36%22%2F%3E%0A%3Cpath%20d%3D%22M79%20199%20Q84%20158%2077%20111%20Q59%2096%2039%2090%20L36%2081%20Q66%2087%2087%20103%20Q99%2082%20111%2065%20L120%2067%20Q110%2096%20102%20116%20Q98%20156%20104%20199%20L116%20207%20L90%20205%20L72%20208Z%22%20fill%3D%22url(%23trunk)%22%20stroke%3D%22%23302f2b%22%20stroke-width%3D%223%22%2F%3E%0A%3Cpath%20d%3D%22M87%20190%20Q90%20147%2088%20112%20M98%20187%20Q92%20156%2098%20126%20M83%20150%20L94%20140%22%20fill%3D%22none%22%20stroke%3D%22%23d0ad79%22%20stroke-width%3D%222%22%20opacity%3D%22.5%22%2F%3E%0A%3Cg%20fill%3D%22url(%23leaf)%22%20stroke%3D%22%23194a40%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M18%20101%20Q1%2079%2021%2054%20Q26%2026%2053%2030%20Q73%208%20100%2025%20Q129%207%20144%2036%20Q171%2039%20168%2068%20Q189%2087%20163%20104%20Q161%20125%20133%20129%20Q112%20145%2090%20130%20Q62%20145%2047%20127%20Q24%20129%2018%20101Z%22%2F%3E%3Cpath%20d%3D%22M24%2074%20Q7%2049%2042%2033%20Q50%2011%2082%2022%20Q100%201%20124%2021%20Q155%2015%20163%2049%20Q179%2070%20159%2089%20Q140%20107%20118%2099%20Q91%20115%2068%2097%20Q37%20106%2024%2074Z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M25%2080%20Q38%2058%2061%2058%20M51%2041%20Q74%2033%2093%2042%20M99%2033%20Q126%2032%20146%2053%20M111%2076%20Q139%2061%20159%2079%20M41%20101%20Q67%2088%2082%20105%20M90%20116%20Q121%20111%20138%20100%22%20stroke%3D%22%23b8dca0%22%20stroke-width%3D%225%22%20opacity%3D%22.68%22%2F%3E%3Cpath%20d%3D%22M28%2091%20Q47%2077%2064%2083%20M74%2057%20Q92%2047%20106%2057%20M116%2042%20Q130%2042%20145%2061%20M74%20116%20Q91%20109%20104%20117%22%20stroke%3D%22%23d7e6ae%22%20stroke-width%3D%222.5%22%20opacity%3D%22.8%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23d7e9b4%22%20opacity%3D%22.72%22%3E%3Cpath%20d%3D%22M39%2052l5-8%209%204-5%207zM85%2028l7-5%208%208-10%203zM133%2059l10-6%206%208-9%205zM54%2092l8-7%207%207-9%205zM105%20102l7-8%208%206-9%206z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23153d34%22%20opacity%3D%22.55%22%3E%3Cpath%20d%3D%22M18%2098q21%2021%2042%2013l-14%2015Q24%20124%2018%2098M100%20129q37-6%2059-28-7%2023-30%2029-15%209-29-1%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E';
@@ -25,24 +25,24 @@ function paintTreeCanopy(o,sz){if(!treeArt.complete||!treeArt.naturalWidth)retur
 /* V5.3: art-scene renderer. Assets are optional: the existing Canvas
    gameplay is still usable if any SVG fails to load. */
 var pathArt=new Image();pathArt.src='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22256%22%20height%3D%22256%22%20viewBox%3D%220%200%20256%20256%22%3E%0A%3Cdefs%3E%3CradialGradient%20id%3D%22soil%22%20cx%3D%22.33%22%20cy%3D%22.18%22%20r%3D%22.85%22%3E%3Cstop%20stop-color%3D%22%23ddc698%22%2F%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23b79d72%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23806d55%22%2F%3E%3C%2FradialGradient%3E%3ClinearGradient%20id%3D%22stone%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%22.8%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23e3d7b3%22%2F%3E%3Cstop%20offset%3D%22.6%22%20stop-color%3D%22%239b9a82%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23777e70%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%0A%3Crect%20width%3D%22256%22%20height%3D%22256%22%20fill%3D%22url(%23soil)%22%2F%3E%0A%3Cpath%20d%3D%22M0%2014Q26%208%2043%2022T92%2015Q126%204%20151%2018T207%2013L256%206V34Q226%2040%20207%2034T155%2042Q122%2027%2099%2041T41%2040L0%2036Z%22%20fill%3D%22%23e4cda0%22%20opacity%3D%22.23%22%2F%3E%0A%3Cpath%20d%3D%22M0%20120Q43%20106%2067%20124T134%20120Q173%20104%20195%20123T256%20119V148Q207%20134%20176%20149T116%20146Q77%20135%2048%20148L0%20142Z%22%20fill%3D%22%23745e4a%22%20opacity%3D%22.13%22%2F%3E%0A%3Cg%20fill%3D%22url(%23stone)%22%20stroke%3D%22%236c7569%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M26%2071l20-12%2025%205%209%2013-12%2017-29%203-17-11Z%22%2F%3E%3Cpath%20d%3D%22M160%2056l24-9%2022%2010%205%2016-22%2013-27-7Z%22%2F%3E%3Cpath%20d%3D%22M86%20170l28-8%2025%2012%202%2017-30%2010-27-11Z%22%2F%3E%3Cpath%20d%3D%22M192%20211l20-13%2025%208%207%2015-17%2017-30-6Z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20stroke%3D%22%23f0e2bb%22%20stroke-width%3D%223%22%20opacity%3D%22.68%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M31%2071l15-8%2017%203M167%2057l17-5%2017%206M91%20173l22-7%2017%207M198%20212l16-10%2017%207%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%235d8258%22%3E%3Cpath%20d%3D%22M4%2046l12-24-4%2029%2013-16-8%2023ZM231%2031l7-26%202%2028%2014-20-10%2030ZM8%20193l14-26-5%2030%2014-16-9%2025ZM225%20158l7-27%202%2029%2015-21-9%2030ZM52%20241l6-20%204%2022%2012-15-7%2022Z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23d5d7a1%22%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2254%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22243%22%20cy%3D%2239%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%22206%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22242%22%20cy%3D%22168%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%2268%22%20cy%3D%22247%22%20r%3D%222%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23695f4c%22%20opacity%3D%22.65%22%3E%3Cpath%20d%3D%22M102%2034l5-3%208%203-4%205ZM224%20108l6-4%207%205-5%204ZM38%20147l9-4%207%205-8%205ZM146%20231l5-5%209%205-6%205Z%22%2F%3E%3C%2Fg%3E%0A%3C%2Fsvg%3E';
-var cachedStonePattern=null;
-function stonePattern(){if(!isArtReady(pathArt))return '#aa9675';if(!cachedStonePattern)cachedStonePattern=ctx.createPattern(pathArt,'repeat');return cachedStonePattern||'#aa9675'}
+var cachedStonePatterns=new WeakMap();
+function stonePattern(g=ctx){if(!isArtReady(pathArt))return '#aa9675';var p=cachedStonePatterns.get(g);if(!p){p=g.createPattern(pathArt,'repeat');if(p)cachedStonePatterns.set(g,p)}return p||'#aa9675'}
 var bankArt=new Image();bankArt.src='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22256%22%20height%3D%22256%22%20viewBox%3D%220%200%20256%20256%22%3E%0A%3Cdefs%3E%3ClinearGradient%20id%3D%22bank%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%220%22%3E%3Cstop%20stop-color%3D%22%236b9466%22%2F%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23456e54%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b584e%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22water%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%22.8%22%3E%3Cstop%20stop-color%3D%22%236bb4aa%22%2F%3E%3Cstop%20offset%3D%22.45%22%20stop-color%3D%22%23387f8b%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23285c76%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22edge%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%220%22%3E%3Cstop%20stop-color%3D%22%23c1cfa1%22%2F%3E%3Cstop%20offset%3D%22.65%22%20stop-color%3D%22%238fae8e%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23537b74%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%0A%3Cpath%20fill%3D%22url(%23bank)%22%20d%3D%22M0%200H256V256H0Z%22%2F%3E%0A%3Cpath%20d%3D%22M122%200Q103%2028%20118%2057T119%20110Q98%20137%20116%20161T106%20216Q108%20239%20100%20256H256V0Z%22%20fill%3D%22%23344f47%22%20opacity%3D%22.55%22%2F%3E%0A%3Cpath%20d%3D%22M136%200Q115%2029%20130%2058T129%20111Q112%20137%20130%20160T120%20215Q122%20241%20113%20256H256V0Z%22%20fill%3D%22%23a3a57b%22%2F%3E%0A%3Cpath%20d%3D%22M148%200Q126%2028%20141%2059T140%20111Q123%20137%20142%20159T132%20215Q134%20239%20125%20256H256V0Z%22%20fill%3D%22url(%23edge)%22%2F%3E%0A%3Cpath%20d%3D%22M158%200Q136%2030%20152%2059T151%20110Q136%20137%20154%20160T143%20216Q145%20239%20138%20256H256V0Z%22%20fill%3D%22url(%23water)%22%2F%3E%0A%3Cg%20fill%3D%22none%22%20stroke%3D%22%23b7e4d4%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.58%22%3E%3Cpath%20d%3D%22M170%2016q22-6%2041%200M191%2040q18-5%2035-2M166%2088q15-3%2032%200M190%20133q19-5%2043%201M169%20176q21-6%2040-1M193%20218q20-4%2037%200M161%20246q15-3%2026%200%22%20stroke-width%3D%222.6%22%2F%3E%3Cpath%20d%3D%22M183%2065q28-4%2051%201M181%20154q17-4%2036-1M168%20202q25-4%2048%201%22%20stroke-width%3D%221.3%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23728d72%22%20stroke%3D%22%23425e52%22%20stroke-width%3D%221.4%22%3E%3Cpath%20d%3D%22M103%2043l8-4%2012%205%201%208-14%204-10-6Z%22%2F%3E%3Cpath%20d%3D%22M91%20185l11-6%2017%207%202%2010-16%206-14-8Z%22%2F%3E%3Cpath%20d%3D%22M119%20232l7-4%209%205-2%208-12%201-5-6Z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23294f3e%22%3E%3Cpath%20d%3D%22M85%2080l4-18%203%2020%2011-14-6%2023ZM88%20140l-4-24%2010%2016%206-22%201%2027ZM76%20245l6-26%204%2021%2010-14-4%2023Z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23c8d2a2%22%20opacity%3D%22.75%22%3E%3Ccircle%20cx%3D%2293%22%20cy%3D%2229%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%2278%22%20cy%3D%22159%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22109%22%20cy%3D%22210%22%20r%3D%222%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E';
 function isArtReady(img){return !!(img&&img.complete&&img.naturalWidth>0)}
-function scenePathGeometry(){
-  ctx.beginPath();ctx.moveTo(80,1530);
-  ctx.bezierCurveTo(360,1530,600,1660,835,1760);
-  ctx.bezierCurveTo(920,1798,990,1800,streamCenter(1800),1800);
-  ctx.bezierCurveTo(1290,1800,1530,1800,1750,1800);
-  ctx.bezierCurveTo(2150,1800,2550,2100,3450,2210);
+function scenePathGeometry(g=ctx){
+  g.beginPath();g.moveTo(80,1530);
+  g.bezierCurveTo(360,1530,600,1660,835,1760);
+  g.bezierCurveTo(920,1798,990,1800,streamCenter(1800),1800);
+  g.bezierCurveTo(1290,1800,1530,1800,1750,1800);
+  g.bezierCurveTo(2150,1800,2550,2100,3450,2210);
 }
-function paintStoneRoad(){
-  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
-  scenePathGeometry();ctx.strokeStyle='#324c3a88';ctx.lineWidth=96;ctx.stroke();
-  scenePathGeometry();ctx.strokeStyle='#c0ad80';ctx.lineWidth=82;ctx.stroke();
-  scenePathGeometry();ctx.strokeStyle=stonePattern();ctx.lineWidth=71;ctx.stroke();
-  paintQinglanCourtyard();
-  ctx.restore();
+function paintStoneRoad(g=ctx){
+  g.save();g.lineCap='round';g.lineJoin='round';
+  scenePathGeometry(g);g.strokeStyle='#324c3a88';g.lineWidth=96;g.stroke();
+  scenePathGeometry(g);g.strokeStyle='#c0ad80';g.lineWidth=82;g.stroke();
+  scenePathGeometry(g);g.strokeStyle=stonePattern(g);g.lineWidth=71;g.stroke();
+  paintQinglanCourtyard(g);
+  g.restore();
 }
 function paintStreamBanks(){
   if(!isArtReady(bankArt))return;
@@ -97,11 +97,11 @@ function paintCreature(e){
 /* Bamboo clusters reuse an authored image rather than drawing vector ellipses
    on every frame. World positions stay fixed across saves. */
 var bambooArt=new Image();bambooArt.src='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20192%20236%22%20width%3D%22192%22%20height%3D%22236%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22stem%22%20x1%3D%220%22%20x2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23173e39%22%2F%3E%3Cstop%20offset%3D%22.23%22%20stop-color%3D%22%233f8660%22%2F%3E%3Cstop%20offset%3D%22.51%22%20stop-color%3D%22%238ebc79%22%2F%3E%3Cstop%20offset%3D%22.77%22%20stop-color%3D%22%234d966b%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23245b4d%22%2F%3E%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22blade%22%20x1%3D%220%22%20x2%3D%22.95%22%20y1%3D%220%22%20y2%3D%22.95%22%3E%3Cstop%20stop-color%3D%22%23b6d69a%22%2F%3E%3Cstop%20offset%3D%22.37%22%20stop-color%3D%22%236ea879%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23235f54%22%2F%3E%3C%2FlinearGradient%3E%0A%3ClinearGradient%20id%3D%22blade2%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%232b7860%22%2F%3E%3Cstop%20offset%3D%22.52%22%20stop-color%3D%22%234d9e75%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a2c68b%22%2F%3E%3C%2FlinearGradient%3E%0A%3C%2Fdefs%3E%0A%3Cellipse%20cx%3D%22104%22%20cy%3D%22217%22%20rx%3D%2277%22%20ry%3D%2213%22%20fill%3D%22%23142d29%22%20opacity%3D%22.27%22%2F%3E%0A%3Cg%20stroke-linecap%3D%22round%22%20fill%3D%22none%22%20stroke%3D%22%23244738%22%20stroke-width%3D%222%22%3E%0A%3Cpath%20d%3D%22M38%20205Q27%20120%2045%2048M72%20215Q81%20133%2073%2020M109%20211Q103%20116%20113%209M142%20219Q155%20130%20139%2039M166%20211Q164%20138%20171%2067%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20fill%3D%22url(%23stem)%22%20stroke%3D%22%23294f3e%22%20stroke-width%3D%222%22%3E%0A%3Cpath%20d%3D%22M39%20207Q31%20125%2047%2048L56%2045Q41%20133%2049%20207Z%22%2F%3E%0A%3Cpath%20d%3D%22M69%20215Q79%20118%2073%2020L84%2016Q91%20119%2080%20216Z%22%2F%3E%0A%3Cpath%20d%3D%22M102%20212Q111%20101%20113%209L125%207Q120%20107%20114%20214Z%22%2F%3E%0A%3Cpath%20d%3D%22M138%20218Q146%20116%20138%2039L150%2035Q159%20118%20150%20218Z%22%2F%3E%0A%3Cpath%20d%3D%22M162%20212Q164%20137%20171%2067L181%2064Q175%20136%20172%20213Z%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20stroke%3D%22%23315b47%22%20stroke-width%3D%223%22%20opacity%3D%22.78%22%3E%0A%3Cpath%20d%3D%22M37%20162l13-1M36%20131l17-3M39%2098l14-4M43%2066l12-3M71%20181l12-1M74%20145l13-2M76%20102l12-3M77%2061l10-3M105%20169l13-2M108%20130l12-2M110%2090l13-2M112%2047l13-2M142%20181l12-2M142%20145l12-2M141%20102l12-2M165%20181l11-1M168%20145l10-2M170%20107l10-2%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20fill%3D%22none%22%20stroke%3D%22%2345775b%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M45%20115Q17%2083%205%2070M80%2064Q44%2032%2013%2021M116%2054Q153%2024%20184%2015M147%20124Q168%20101%20188%2094M105%20148Q73%20115%2037%20108M173%20159Q147%20132%20126%20129%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22url(%23blade)%22%20stroke%3D%22%232d674e%22%20stroke-width%3D%22.8%22%3E%0A%3Cpath%20d%3D%22M43%20111Q12%2088%202%2071Q32%2075%2043%20111Z%22%2F%3E%3Cpath%20d%3D%22M40%20105Q11%2092%204%2096Q26%20107%2040%20105Z%22%2F%3E%0A%3Cpath%20d%3D%22M76%2061Q38%2031%209%2019Q34%2050%2076%2061Z%22%2F%3E%3Cpath%20d%3D%22M75%2057Q50%2017%2034%206Q43%2040%2075%2057Z%22%2F%3E%3Cpath%20d%3D%22M77%2067Q43%2066%2022%2076Q52%2082%2077%2067Z%22%2F%3E%0A%3Cpath%20d%3D%22M113%2052Q146%2018%20189%2014Q170%2045%20113%2052Z%22%2F%3E%3Cpath%20d%3D%22M115%2057Q164%2042%20190%2048Q159%2065%20115%2057Z%22%2F%3E%3Cpath%20d%3D%22M114%2049Q126%2018%20136%205Q142%2030%20114%2049Z%22%2F%3E%0A%3Cpath%20d%3D%22M143%20124Q170%2095%20192%2094Q182%20120%20143%20124Z%22%2F%3E%3Cpath%20d%3D%22M144%20131Q174%20124%20187%20135Q172%20143%20144%20131Z%22%2F%3E%0A%3Cpath%20d%3D%22M102%20148Q64%20121%2034%20108Q66%20112%20102%20148Z%22%2F%3E%3Cpath%20d%3D%22M103%20144Q82%20107%2067%2096Q75%20122%20103%20144Z%22%2F%3E%0A%3Cpath%20d%3D%22M172%20157Q154%20138%20124%20128Q144%20150%20172%20157Z%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20fill%3D%22url(%23blade2)%22%20stroke%3D%22%232c6551%22%20stroke-width%3D%22.8%22%3E%0A%3Cpath%20d%3D%22M45%2070Q18%2049%202%2049Q15%2066%2045%2070Z%22%2F%3E%3Cpath%20d%3D%22M80%20106Q52%2073%2034%2071Q44%2095%2080%20106Z%22%2F%3E%0A%3Cpath%20d%3D%22M116%2095Q153%2070%20180%2067Q166%2090%20116%2095Z%22%2F%3E%3Cpath%20d%3D%22M141%2083Q161%2056%20186%2043Q183%2071%20141%2083Z%22%2F%3E%0A%3Cpath%20d%3D%22M103%20178Q71%20155%2047%20158Q77%20177%20103%20178Z%22%2F%3E%3Cpath%20d%3D%22M145%20165Q171%20144%20190%20145Q177%20164%20145%20165Z%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23d5e7ad%22%20opacity%3D%22.76%22%3E%3Cpath%20d%3D%22M15%2024l29%2022-22-10ZM151%2021l23-7-26%2017ZM23%2080l14%2023-19-17ZM156%20105l23-9-19%2014ZM48%20116l33%2026-24-12ZM146%20146l22%208-19-4Z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%239cbb78%22%3E%3Cpath%20d%3D%22M28%20214l-7-20%2013%2016%205-23%201%2025%2011-12-5%2017ZM98%20214l-9-21%2016%2015%205-22%203%2024%2011-11-5%2017ZM155%20220l-7-21%2012%2018%209-22%202%2023%2011-10-5%2013Z%22%2F%3E%3C%2Fg%3E%0A%3C%2Fsvg%3E';
-function paintBambooStand(x,y,scale){
+function paintBambooStand(x,y,scale,g=ctx){
   if(!isArtReady(bambooArt))return false;
   var width=76*scale,height=94*scale;
-  ctx.save();ctx.fillStyle='#193d3140';ctx.beginPath();ctx.ellipse(x+6,y+2,width*.48,width*.13,0,0,Math.PI*2);ctx.fill();
-  ctx.drawImage(bambooArt,x-width*.5,y-height,width,height);ctx.restore();return true;
+  g.save();g.fillStyle='#193d3140';g.beginPath();g.ellipse(x+6,y+2,width*.48,width*.13,0,0,Math.PI*2);g.fill();
+  g.drawImage(bambooArt,x-width*.5,y-height,width,height);g.restore();return true;
 }
 
 
@@ -184,35 +184,34 @@ var QINGLAN_LANTERNS=[
  {x:1673,y:1730,scale:.91},{x:1827,y:1730,scale:.91},
  {x:1925,y:1701,scale:1.03},{x:2233,y:1701,scale:1.03}
 ];
-function paintQinglanCourtyard(){
+function paintQinglanCourtyard(g=ctx){
   // Fork from the original east-west highway into the mountain gate
   // and then around the shrine. No waterways are crossed by this spur.
-  if(camX>2430||camX+W<1540||camY>1950||camY+H<1400)return;
-  var pattern=stonePattern();
-  ctx.save();
-  ctx.fillStyle='#314a3b82';
-  ctx.beginPath();ctx.ellipse(2080,1684,171,107,-.06,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#b5ad8a';
-  ctx.beginPath();ctx.ellipse(2080,1684,156,91,-.06,0,Math.PI*2);ctx.fill();
-  ctx.save();ctx.beginPath();ctx.ellipse(2080,1684,147,83,-.06,0,Math.PI*2);ctx.clip();
-  ctx.fillStyle=pattern;ctx.fillRect(1910,1585,340,215);ctx.restore();
+  var pattern=stonePattern(g);
+  g.save();
+  g.fillStyle='#314a3b82';
+  g.beginPath();g.ellipse(2080,1684,171,107,-.06,0,Math.PI*2);g.fill();
+  g.fillStyle='#b5ad8a';
+  g.beginPath();g.ellipse(2080,1684,156,91,-.06,0,Math.PI*2);g.fill();
+  g.save();g.beginPath();g.ellipse(2080,1684,147,83,-.06,0,Math.PI*2);g.clip();
+  g.fillStyle=pattern;g.fillRect(1910,1585,340,215);g.restore();
 
-  ctx.beginPath();ctx.moveTo(1750,1822);
-  ctx.bezierCurveTo(1750,1780,1750,1745,1750,1697);
-  ctx.bezierCurveTo(1760,1687,1809,1690,1856,1690);
-  ctx.bezierCurveTo(1930,1690,1970,1733,2078,1740);
-  ctx.lineCap='round';ctx.lineJoin='round';
-  ctx.strokeStyle='#365343aa';ctx.lineWidth=60;ctx.stroke();
-  ctx.strokeStyle='#b4a98c';ctx.lineWidth=52;ctx.stroke();
-  ctx.strokeStyle=pattern;ctx.lineWidth=43;ctx.stroke();
+  g.beginPath();g.moveTo(1750,1822);
+  g.bezierCurveTo(1750,1780,1750,1745,1750,1697);
+  g.bezierCurveTo(1760,1687,1809,1690,1856,1690);
+  g.bezierCurveTo(1930,1690,1970,1733,2078,1740);
+  g.lineCap='round';g.lineJoin='round';
+  g.strokeStyle='#365343aa';g.lineWidth=60;g.stroke();
+  g.strokeStyle='#b4a98c';g.lineWidth=52;g.stroke();
+  g.strokeStyle=pattern;g.lineWidth=43;g.stroke();
 
   // Wear and repeated paving lines; intentionally deterministic.
-  ctx.globalAlpha=.45;ctx.strokeStyle='#e2d1a5';ctx.lineWidth=2;
+  g.globalAlpha=.45;g.strokeStyle='#e2d1a5';g.lineWidth=2;
   for(var i=0;i<19;i++){
     var x=1940+i*15,y=1640+Math.sin(i*.82)*11;
-    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+11,y-2);ctx.stroke();
+    g.beginPath();g.moveTo(x,y);g.lineTo(x+11,y-2);g.stroke();
   }
-  ctx.restore();
+  g.restore();
 }
 function paintShrineLanterns(now){
   if(!isArtReady(lanternArt))return;
@@ -287,20 +286,145 @@ function paintCloudfall(now){
 }
 
 </script><script>
+// Ling She V5.6: mobile-safe, bounded, world-space render caches.
+// Only static terrain is cached; monsters, combat, light and hero stay dynamic.
+// Cache is deliberately small enough for low-memory Android browsers.
+const STATIC_CHUNK_PX=400;
+const STATIC_CHUNK_LIMIT=18;
+const staticGroundChunks=new Map();
+const staticFloraChunks=new Map();
+function invalidateStaticGround(){staticGroundChunks.clear()}
+function invalidateStaticFlora(){staticFloraChunks.clear()}
+if(pathArt.addEventListener)pathArt.addEventListener('load',invalidateStaticGround);
+if(bambooArt.addEventListener)bambooArt.addEventListener('load',invalidateStaticFlora);
 
-// Offline edition: on opaque file:// origins localStorage may be unavailable.
-// Fallback keeps play functional; persistent saves are not claimed unless supported.
+function cachedWorldChunk(cache,ix,iy,build){
+  const key=ix+'_'+iy;
+  if(cache.has(key)){
+    let canvas=cache.get(key);cache.delete(key);cache.set(key,canvas);return canvas;
+  }
+  const canvas=build(ix,iy);
+  if(!canvas)return null;
+  cache.set(key,canvas);
+  if(cache.size>STATIC_CHUNK_LIMIT)cache.delete(cache.keys().next().value);
+  return canvas;
+}
+function makeStaticCanvas(ix,iy){
+  const c=document.createElement('canvas');
+  c.width=c.height=STATIC_CHUNK_PX;
+  const g=c.getContext('2d');
+  if(!g)return null;
+  g.imageSmoothingEnabled=false;
+  g.translate(-ix*STATIC_CHUNK_PX,-iy*STATIC_CHUNK_PX);
+  return {canvas:c,g};
+}
+function paintStaticRiver(g){
+  g.save();g.lineCap='round';g.lineJoin='round';
+  function riverPath(){
+    g.beginPath();
+    for(let y=1200;y<=3500;y+=36){
+      let x=streamCenter(y);
+      if(y===1200)g.moveTo(x,y);else g.lineTo(x,y);
+    }
+  }
+  const styles=[['#385b46',92],['#7d9f80',75],['#366e83',58],['#5ba5a5',40]];
+  for(const [color,width] of styles){
+    g.strokeStyle=color;g.lineWidth=width;riverPath();g.stroke();
+  }
+  g.globalAlpha=.32;g.strokeStyle='#c5eee1';g.lineWidth=2;
+  for(let j=0;j<48;j++){
+    const y=1230+j*47,x=streamCenter(y);
+    g.beginPath();g.moveTo(x-9,y);g.lineTo(x+7,y-3);g.stroke();
+  }
+  g.restore();
+}
+function buildStaticGround(ix,iy){
+  const out=makeStaticCanvas(ix,iy);if(!out)return null;
+  const {canvas,g}=out;
+  // One extra tile each side fixes seams at cache chunk boundaries.
+  const left=Math.max(0,ix*4-1),right=Math.min(35,ix*4+4);
+  const top=Math.max(0,iy*4-1),bottom=Math.min(35,iy*4+4);
+  for(let tx=left;tx<=right;tx++)for(let ty=top;ty<=bottom;ty++){
+    const b=biome(tx*100+50,ty*100+50),variant=Math.floor(terrainHash(tx,ty,4)*5);
+    g.drawImage(terrainAtlas[b][variant],tx*100,ty*100,101,101);
+  }
+  for(let tx=left;tx<=right;tx++)for(let ty=top;ty<=bottom;ty++){
+    const bx=tx*100,by=ty*100,b=biome(bx+50,by+50);
+    for(let k=0;k<10;k++){
+      let seed=Math.sin((tx*197+ty*71+k*43)*12.9898)*43758.5453;
+      let u=seed-Math.floor(seed);
+      seed=Math.sin((tx*29+ty*193+k*67)*78.233)*18374.239;
+      let v=seed-Math.floor(seed),px=bx+u*100,py=by+v*100;
+      g.globalAlpha=.18+(k%3)*.06;
+      g.fillStyle=b===1?'#ffffff':b===2?'#fff0ad':b===3?'#bca1db':'#b9eaa0';
+      g.fillRect(Math.round(px),Math.round(py),2+(k%4)*2,2+(k%2)*3);
+    }
+  }
+  g.globalAlpha=1;
+  // Roads and river are entirely static world geometry.
+  paintStoneRoad(g);
+  paintStaticRiver(g);
+  return canvas;
+}
+function buildStaticFlora(ix,iy){
+  const out=makeStaticCanvas(ix,iy);if(!out)return null;
+  const {canvas,g}=out;
+  // Vegetation sprites may extend beyond their tile; draw overscan.
+  const left=Math.max(0,ix*4-1),right=Math.min(35,ix*4+4);
+  const top=Math.max(0,iy*4-1),bottom=Math.min(35,iy*4+4);
+  for(let tx=left;tx<=right;tx++)for(let ty=top;ty<=bottom;ty++){
+    const x=tx*100+50,y=ty*100+50;
+    if(biome(x,y)!==0||onQinglanRoad(x,y)||landmarkClearing(x,y,40))continue;
+    drawMeadow(x,y,g);
+    const n=terrainHash(tx,ty,7);
+    if(n>.78){
+      if(!paintBambooStand(x-23,y+24,.65+n*.45,g))drawBamboo(x-23,y+24,.65+n*.45,g);
+      if(!paintBambooStand(x+8,y+13,.55+n*.3,g))drawBamboo(x+8,y+13,.55+n*.3,g);
+    }else if(n<.13){
+      drawPine(x+18,y+25,16+n*35,g);
+    }else if(n>.45&&n<.53){
+      drawRock(x+18,y+24,10+n*8,g);
+    }
+  }
+  return canvas;
+}
+function paintCachedLayer(cache,build){
+  const left=Math.max(0,Math.floor(camX/STATIC_CHUNK_PX));
+  const right=Math.min(Math.ceil(SIZE/STATIC_CHUNK_PX)-1,Math.floor((camX+W)/STATIC_CHUNK_PX));
+  const top=Math.max(0,Math.floor(camY/STATIC_CHUNK_PX));
+  const bottom=Math.min(Math.ceil(SIZE/STATIC_CHUNK_PX)-1,Math.floor((camY+H)/STATIC_CHUNK_PX));
+  for(let ix=left;ix<=right;ix++)for(let iy=top;iy<=bottom;iy++){
+    const tile=cachedWorldChunk(cache,ix,iy,build);
+    if(tile)ctx.drawImage(tile,ix*STATIC_CHUNK_PX,iy*STATIC_CHUNK_PX);
+  }
+}
+function paintCachedGround(){paintCachedLayer(staticGroundChunks,buildStaticGround)}
+function paintCachedFlora(){paintCachedLayer(staticFloraChunks,buildStaticFlora)}
+
+</script><script>
+// HTML file:// can restrict browser storage; fall back to memory without crashing.
 const offlineStore=(()=>{
- let real=null;const temporary=new Map();
- try{const s=window.localStorage, k="__ling_she_test";s.setItem(k,"1");s.removeItem(k);real=s;}catch(e){}
- return {persistent:!!real,
-  getItem(k){return real?real.getItem(k):(temporary.get(k)||null)},
-  setItem(k,v){if(real)real.setItem(k,v);else temporary.set(k,String(v))},
-  removeItem(k){if(real)real.removeItem(k);else temporary.delete(k)}
+ let persistentStore=null,volatile=new Map();
+ try{let s=window.localStorage,key="__lingshe_storage_probe";s.setItem(key,"1");s.removeItem(key);persistentStore=s}catch(_){}
+ return {
+  persistent:!!persistentStore,
+  getItem(k){try{return persistentStore?persistentStore.getItem(k):(volatile.get(k)||null)}catch(e){return volatile.get(k)||null}},
+  setItem(k,v){try{if(persistentStore)persistentStore.setItem(k,v);else volatile.set(k,String(v))}catch(e){volatile.set(k,String(v))}},
+  removeItem(k){try{if(persistentStore)persistentStore.removeItem(k)}catch(e){}volatile.delete(k)}
  };
 })();
 
-document.querySelector('#tryLandscape').addEventListener('click',async()=>{try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape')}catch(e){alert('浏览器不支持自动锁定横屏，请打开手机自动旋转并横放手机。')}});const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),mini=document.querySelector('#minimap'),mc=mini.getContext('2d');let W=innerWidth,H=innerHeight,dpr=1;function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+document.querySelector('#tryLandscape').addEventListener('click',async()=>{try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape')}catch(e){alert('浏览器不支持自动锁定横屏，请打开手机自动旋转并横放手机。')}});const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),mini=document.querySelector('#minimap'),mc=mini.getContext('2d');// V5.6 performance: use fewer backing pixels on touch devices by default.
+const TOUCH_DEVICE=/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent||'')||Number(navigator.maxTouchPoints||0)>0;
+let qualityMode=TOUCH_DEVICE?'smooth':'sharp';
+let W=innerWidth,H=innerHeight,dpr=1;
+function resize(){
+ W=innerWidth;H=innerHeight;
+ dpr=Math.min(devicePixelRatio||1,qualityMode==='smooth'?1.15:1.8);
+ canvas.width=Math.max(1,Math.round(W*dpr));
+ canvas.height=Math.max(1,Math.round(H*dpr));
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}addEventListener('resize',resize);resize();
 const SIZE=3600,biomes=[{name:'青岚平原',color:'#467f4f',ground:'#61915b'},{name:'寒霜雪境',color:'#afc8c5',ground:'#d6e5dc'},{name:'赤炎荒漠',color:'#b68b55',ground:'#d2ac6d'},{name:'幽冥魔域',color:'#5b4c6c',ground:'#74617c'}];function biome(x,y){if(x<900&&y<1250)return 1;if(x>2450&&y<1850)return 2;if(x>2200&&y>2400)return 3;return 0}function rand(a,b){return a+Math.random()*(b-a)}const obstacles=[],fruits=[],enemies=[],decor=[];let player,trail,exp,need,level,hp,invuln=0,running=false,last=0,camX=0,camY=0,joystick={x:0,y:0},keys={},dashUntil=0,dashReady=0,healReady=0,kills=0,toastTimer,projectiles=[],essence=0,breakReady=false,attackTime=0,evoPoints=0,evoStage=0,particles=[],damageTexts=[],boss=null,lastAutosave=0;const SAVE_KEY="lingshe_v4_save";const forms=["凡蛇","灵蛇","妖蟒","蛟龙","真龙"],evoThresholds=[5,14,30,55,9999];const realmNames=['凡蛇','炼气','筑基','金丹','元婴','化神','渡劫','真仙'];function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}function flash(t){let e=document.querySelector('#feedback');e.textContent=t;e.classList.remove('show');void e.offsetWidth;e.classList.add('show')}function toast(t){let el=document.querySelector('#toast');el.textContent=t;el.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.opacity=0,1600)}function place(arr,n,fn){for(let i=0;i<n;i++)arr.push(fn(rand(70,SIZE-70),rand(70,SIZE-70)))}function reset(){obstacles.length=fruits.length=enemies.length=decor.length=0;projectiles.length=0;essence=0;breakReady=false;attackTime=0;evoPoints=0;evoStage=0;particles.length=0;damageTexts.length=0;boss={x:3040,y:2950,hp:650,max:650,r:42,last:0,shot:0,defeated:false};placeStable(decor,1100,(x,y,i)=>({x,y,type:terrainHash(i,17,21),size:5+terrainHash(i,18,22)*14}),177,22);placeStable(obstacles,150,(x,y,i)=>({x,y,r:15+terrainHash(i,19,24)*16}),191,36);placeStable(fruits,240,(x,y,i)=>({x,y,kind:terrainHash(i,23,25)<.13?1:0}),223,8);placeStable(enemies,52,(x,y,i)=>({x,y,hp:25+biome(x,y)*20,max:25+biome(x,y)*20,r:14+biome(x,y)*3,t:terrainHash(i,26,33)*9,last:0,tier:1+biome(x,y),elite:terrainHash(i,27,34)<.16,shot:0,hitFlash:0}),233,85);player={x:1750,y:1800,angle:0};camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));trail=Array.from({length:17},(_,i)=>({x:player.x-i*7,y:player.y}));exp=0;need=50;level=1;hp=100;kills=0;dashUntil=0;dashReady=0;healReady=0;invuln=0;updateHud()}
 function saveGame(silent=false){if(!player)return;try{offlineStore.setItem(SAVE_KEY,JSON.stringify({version:4,player,trail,exp,need,level,hp,kills,evoPoints,evoStage,essence,bossDefeated:boss?.defeated||false}));document.querySelector('#saveStatus').textContent='已保存 '+new Date().toLocaleTimeString();if(!silent)toast('💾 修炼进度已保存')}catch(e){toast('存档不可用：请检查浏览器存储权限')}}
 function loadGame(){try{const v=JSON.parse(offlineStore.getItem(SAVE_KEY)||'null');if(!v||v.version!==4||!v.player||!Array.isArray(v.trail))return false;Object.assign(player,v.player);trail=v.trail;if(terrainBlocked(player.x,player.y)){player.x=1750;player.y=1800;trail=trail.map((_,i)=>({x:player.x-i*8,y:player.y}))}exp=v.exp;need=v.need;level=v.level;hp=v.hp;kills=v.kills;evoPoints=v.evoPoints;evoStage=v.evoStage;essence=v.essence||0;breakReady=exp>=need;if(boss)boss.defeated=!!v.bossDefeated;camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));updateHud();return true}catch(e){return false}}
@@ -334,15 +458,15 @@ for(let i=projectiles.length-1;i>=0;i--){let p=projectiles[i];p.x+=p.vx*dt;p.y+=
 for(let e of enemies){let d=dist(e,player);e.t+=dt;let weak=level>=e.tier+2;if(d<310&&d>22){let speed=weak?70:34+e.tier*6;let dir=weak?-1:1;let tx=e.x+(player.x-e.x)/d*speed*dt*dir,ty=e.y+(player.y-e.y)/d*speed*dt*dir;if(!terrainBlocked(tx,ty)){e.x=tx;e.y=ty}else{if(!terrainBlocked(tx,e.y))e.x=tx;if(!terrainBlocked(e.x,ty))e.y=ty}}else if(d>=310){let tx=e.x+Math.cos(e.t)*8*dt,ty=e.y+Math.sin(e.t*.7)*8*dt;if(!terrainBlocked(tx,ty)){e.x=tx;e.y=ty}}if(weak&&d<e.r+19){killEnemy(e,true);continue}if(!weak&&d<46&&now-e.last>580){let melee=9+level*6+evoStage*5;e.hp-=melee;e.hitFlash=now+120;damageTexts.push({x:e.x,y:e.y-18,text:'-'+melee,life:.7,color:'#ffe8aa'});e.x+=((e.x-player.x)/(d||1))*15;e.y+=((e.y-player.y)/(d||1))*15;e.last=now;if(e.hp<=0){killEnemy(e,false);continue}}if(!weak&&e.elite&&d<220&&d>70&&now>e.shot){e.shot=now+2500;projectiles.push({x:e.x,y:e.y,vx:(player.x-e.x)/d*220,vy:(player.y-e.y)/d*220,life:1.4,damage:6+e.tier*2,hostile:true})}if(!weak&&d<e.r+14&&now>invuln){let hurt=Math.max(4,8+e.tier*2-level*.5);hp-=hurt;damageTexts.push({x:player.x,y:player.y-25,text:'-'+Math.ceil(hurt),life:.8,color:'#ff9292'});invuln=now+950;if(hp<=0){hp=0;die()}}}
 if(boss&&!boss.defeated){let bd=dist(boss,player);if(bd<400){if(bd>65){let tx=boss.x+(player.x-boss.x)/bd*28*dt,ty=boss.y+(player.y-boss.y)/bd*28*dt;if(!terrainBlocked(tx,ty)){boss.x=tx;boss.y=ty}}if(bd<boss.r+18&&now>boss.last){boss.last=now+1200;hp-=15;damageTexts.push({x:player.x,y:player.y-22,text:'-15',life:.8,color:'#ff9090'});if(hp<=0){hp=0;die()}}if(bd<350&&now>boss.shot){boss.shot=now+1800;for(let a=-.3;a<=.3;a+=.3){let ang=Math.atan2(player.y-boss.y,player.x-boss.x)+a;projectiles.push({x:boss.x,y:boss.y,vx:Math.cos(ang)*210,vy:Math.sin(ang)*210,life:2,damage:12,hostile:true})}}}}
 if(now-lastAutosave>20000){lastAutosave=now;saveGame(true)}
-for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.life<=0)particles.splice(i,1)}for(let i=damageTexts.length-1;i>=0;i--){let t=damageTexts[i];t.y-=32*dt;t.life-=dt;if(t.life<=0)damageTexts.splice(i,1)}camX+=(Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2))-camX)*Math.min(1,dt*7);camY+=(Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2))-camY)*Math.min(1,dt*7);updateHud()}
+for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.life<=0)particles.splice(i,1)}for(let i=damageTexts.length-1;i>=0;i--){let t=damageTexts[i];t.y-=32*dt;t.life-=dt;if(t.life<=0)damageTexts.splice(i,1)}camX+=(Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2))-camX)*Math.min(1,dt*7);camY+=(Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2))-camY)*Math.min(1,dt*7);if(now-lastHudSync>180){lastHudSync=now;updateHud()}}
 function circle(x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
 // V5.2: deterministic, camera-culled hand-crafted environmental motifs.
 function terrainHash(x,y,k=0){let n=Math.sin(x*127.1+y*311.7+k*74.7)*43758.5453;return n-Math.floor(n)}
-function drawBamboo(x,y,scale=1){ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.strokeStyle='#233e2c';ctx.lineWidth=3;for(let i=-1;i<=1;i++){let xx=i*8,hh=25+((i+2)%3)*10;ctx.strokeStyle=i===0?'#90b66b':'#648e55';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(xx,0);ctx.lineTo(xx-2,-hh);ctx.stroke();ctx.strokeStyle='#355e42';ctx.lineWidth=1;for(let j=1;j<=3;j++){let yy=-j*hh/4;ctx.beginPath();ctx.moveTo(xx-3,yy);ctx.lineTo(xx+2,yy);ctx.stroke();ctx.fillStyle=j%2?'#38704a':'#559a59';ctx.beginPath();ctx.ellipse(xx+9,yy-5,12,3,-.4,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(xx-9,yy-2,10,3,.45,0,7);ctx.fill()}}ctx.restore()}
-function drawFlower(x,y,c){ctx.fillStyle='#224f36';ctx.fillRect(x,y-4,1,7);for(let a=0;a<5;a++){let t=a*Math.PI*2/5;ctx.fillStyle=c;ctx.beginPath();ctx.arc(x+Math.cos(t)*3,y-6+Math.sin(t)*3,2.2,0,7);ctx.fill()}ctx.fillStyle='#f8e5a0';ctx.fillRect(x-1,y-7,2,2)}
-function drawPine(x,y,r){ctx.fillStyle='#172d2b55';ctx.beginPath();ctx.ellipse(x+7,y+5,r*.95,r*.4,0,0,7);ctx.fill();ctx.fillStyle='#654f38';ctx.fillRect(x-3,y-r*.9,6,r*.95);for(let j=0;j<3;j++){let yy=y-r*1.6+j*r*.42;ctx.fillStyle=['#163d35','#245b43','#347752'][j];ctx.beginPath();ctx.moveTo(x,yy-r*.8);ctx.lineTo(x-r*(.75-j*.1),yy+r*.48);ctx.lineTo(x+r*(.75-j*.1),yy+r*.48);ctx.closePath();ctx.fill();ctx.strokeStyle='#8bb98a66';ctx.lineWidth=1;ctx.stroke()}}
-function drawRock(x,y,r){ctx.fillStyle='#172d2c66';ctx.beginPath();ctx.ellipse(x+4,y+5,r*1.1,r*.45,0,0,7);ctx.fill();ctx.fillStyle='#687f77';ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x-r*.62,y-r*.8);ctx.lineTo(x+r*.2,y-r);ctx.lineTo(x+r,y-r*.25);ctx.lineTo(x+r*.7,y+r*.35);ctx.closePath();ctx.fill();ctx.fillStyle='#b5c2aa';ctx.beginPath();ctx.moveTo(x-r*.62,y-r*.8);ctx.lineTo(x+r*.2,y-r);ctx.lineTo(x+r*.25,y-r*.3);ctx.lineTo(x-r*.15,y-r*.42);ctx.closePath();ctx.fill();ctx.strokeStyle='#334f4b';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+r*.2,y-r);ctx.lineTo(x+r*.25,y-r*.3);ctx.lineTo(x+r*.7,y+r*.35);ctx.stroke()}
-function drawMeadow(x,y){let b=biome(x,y);if(b!==0)return;let seed=terrainHash(Math.floor(x/100),Math.floor(y/100));ctx.strokeStyle=seed>.5?'#a2b967':'#315c39';ctx.lineWidth=1.5;for(let k=0;k<5;k++){let xx=x+(terrainHash(x,k,1)-.5)*65,yy=y+(terrainHash(y,k,2)-.5)*60;ctx.beginPath();ctx.moveTo(xx,yy+5);ctx.lineTo(xx-3,yy-4);ctx.moveTo(xx,yy+5);ctx.lineTo(xx+3,yy-6);ctx.stroke();if(k===2||k===4)drawFlower(xx,yy-3,k===2?'#f6d1dc':'#e9e2a6')}}
+function drawBamboo(x,y,scale=1,g=ctx){g.save();g.translate(x,y);g.scale(scale,scale);g.strokeStyle='#233e2c';g.lineWidth=3;for(let i=-1;i<=1;i++){let xx=i*8,hh=25+((i+2)%3)*10;g.strokeStyle=i===0?'#90b66b':'#648e55';g.lineWidth=4;g.beginPath();g.moveTo(xx,0);g.lineTo(xx-2,-hh);g.stroke();g.strokeStyle='#355e42';g.lineWidth=1;for(let j=1;j<=3;j++){let yy=-j*hh/4;g.beginPath();g.moveTo(xx-3,yy);g.lineTo(xx+2,yy);g.stroke();g.fillStyle=j%2?'#38704a':'#559a59';g.beginPath();g.ellipse(xx+9,yy-5,12,3,-.4,0,7);g.fill();g.beginPath();g.ellipse(xx-9,yy-2,10,3,.45,0,7);g.fill()}}g.restore()}
+function drawFlower(x,y,c,g=ctx){g.fillStyle='#224f36';g.fillRect(x,y-4,1,7);for(let a=0;a<5;a++){let t=a*Math.PI*2/5;g.fillStyle=c;g.beginPath();g.arc(x+Math.cos(t)*3,y-6+Math.sin(t)*3,2.2,0,7);g.fill()}g.fillStyle='#f8e5a0';g.fillRect(x-1,y-7,2,2)}
+function drawPine(x,y,r,g=ctx){g.fillStyle='#172d2b55';g.beginPath();g.ellipse(x+7,y+5,r*.95,r*.4,0,0,7);g.fill();g.fillStyle='#654f38';g.fillRect(x-3,y-r*.9,6,r*.95);for(let j=0;j<3;j++){let yy=y-r*1.6+j*r*.42;g.fillStyle=['#163d35','#245b43','#347752'][j];g.beginPath();g.moveTo(x,yy-r*.8);g.lineTo(x-r*(.75-j*.1),yy+r*.48);g.lineTo(x+r*(.75-j*.1),yy+r*.48);g.closePath();g.fill();g.strokeStyle='#8bb98a66';g.lineWidth=1;g.stroke()}}
+function drawRock(x,y,r,g=ctx){g.fillStyle='#172d2c66';g.beginPath();g.ellipse(x+4,y+5,r*1.1,r*.45,0,0,7);g.fill();g.fillStyle='#687f77';g.beginPath();g.moveTo(x-r,y);g.lineTo(x-r*.62,y-r*.8);g.lineTo(x+r*.2,y-r);g.lineTo(x+r,y-r*.25);g.lineTo(x+r*.7,y+r*.35);g.closePath();g.fill();g.fillStyle='#b5c2aa';g.beginPath();g.moveTo(x-r*.62,y-r*.8);g.lineTo(x+r*.2,y-r);g.lineTo(x+r*.25,y-r*.3);g.lineTo(x-r*.15,y-r*.42);g.closePath();g.fill();g.strokeStyle='#334f4b';g.lineWidth=1.5;g.beginPath();g.moveTo(x+r*.2,y-r);g.lineTo(x+r*.25,y-r*.3);g.lineTo(x+r*.7,y+r*.35);g.stroke()}
+function drawMeadow(x,y,g=ctx){let b=biome(x,y);if(b!==0)return;let seed=terrainHash(Math.floor(x/100),Math.floor(y/100));g.strokeStyle=seed>.5?'#a2b967':'#315c39';g.lineWidth=1.5;for(let k=0;k<5;k++){let xx=x+(terrainHash(x,k,1)-.5)*65,yy=y+(terrainHash(y,k,2)-.5)*60;g.beginPath();g.moveTo(xx,yy+5);g.lineTo(xx-3,yy-4);g.moveTo(xx,yy+5);g.lineTo(xx+3,yy-6);g.stroke();if(k===2||k===4)drawFlower(xx,yy-3,k===2?'#f6d1dc':'#e9e2a6',g)}}
 
 // V5 playable vertical slice: world-space terrain rules, bridge, collision and layered light.
 function streamCenter(y){return 1060+Math.sin(y*.0035)*175+Math.sin(y*.009)*58}
@@ -352,7 +476,29 @@ function isCliff(x,y){return x>1370&&x<1660&&y>1230&&y<1610&&Math.sin((x-1370)*.
 function terrainBlocked(x,y){return isWater(x,y)||isCliff(x,y)||isLandmarkBlocked(x,y)}
 function drawBridge(){let y=1800,x=streamCenter(y);ctx.save();ctx.translate(x,y);ctx.fillStyle='#261e1b88';ctx.fillRect(-60,-57,120,114);ctx.fillStyle='#745039';ctx.fillRect(-56,-55,112,110);for(let k=-5;k<=5;k++){ctx.fillStyle=k%2?'#aa8052':'#94683f';ctx.fillRect(-54,k*10-5,108,9);ctx.strokeStyle='#563d2a';ctx.lineWidth=1;ctx.strokeRect(-54,k*10-5,108,9)}ctx.fillStyle='#d5b47b';ctx.fillRect(-63,-57,8,114);ctx.fillRect(55,-57,8,114);for(let k=-1;k<=1;k++){ctx.fillStyle='#59432c';ctx.fillRect(-66,k*48-3,13,9);ctx.fillRect(54,k*48-3,13,9)}ctx.restore()}
 function drawCliff(){ctx.save();ctx.fillStyle='#34483b';ctx.beginPath();ctx.moveTo(1360,1230);ctx.lineTo(1660,1230);ctx.lineTo(1660,1570);ctx.lineTo(1540,1540);ctx.lineTo(1450,1610);ctx.lineTo(1360,1570);ctx.closePath();ctx.fill();ctx.fillStyle='#77826c';ctx.beginPath();ctx.moveTo(1360,1210);ctx.lineTo(1660,1210);ctx.lineTo(1660,1500);ctx.lineTo(1550,1480);ctx.lineTo(1450,1550);ctx.lineTo(1360,1500);ctx.closePath();ctx.fill();ctx.strokeStyle='#d0c69a';ctx.lineWidth=5;ctx.stroke();ctx.restore()}
-function drawAtmosphere(now){ctx.save();ctx.globalCompositeOperation='screen';let g=ctx.createRadialGradient(player.x-220,player.y-270,20,player.x-220,player.y-270,520);g.addColorStop(0,'#fff1a52c');g.addColorStop(1,'#fff1a500');ctx.fillStyle=g;ctx.fillRect(camX,camY,W,H);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=.11;ctx.fillStyle='#d7f5d9';for(let i=0;i<9;i++){let x=camX+((i*179+now*.009)%(W+280))-140,y=camY+((i*83)%Math.max(H,1));ctx.beginPath();ctx.ellipse(x,y,120,18,-.3,0,7);ctx.fill()}ctx.restore()}
+// The golden volumetric glow is cached; no per-frame full-screen gradient fill.
+const ambientCanvas=document.createElement('canvas');
+ambientCanvas.width=ambientCanvas.height=256;
+const ambientCtx=ambientCanvas.getContext('2d');
+const ambientGradient=ambientCtx.createRadialGradient(128,128,7,128,128,127);
+ambientGradient.addColorStop(0,'#fff1b481');
+ambientGradient.addColorStop(.4,'#f6e8aa30');
+ambientGradient.addColorStop(1,'#fff1a500');
+ambientCtx.fillStyle=ambientGradient;ambientCtx.fillRect(0,0,256,256);
+function drawAtmosphere(now){
+ ctx.save();ctx.globalCompositeOperation='screen';
+ ctx.globalAlpha=qualityMode==='smooth'?.22:.4;
+ ctx.drawImage(ambientCanvas,player.x-450,player.y-500,530,530);
+ ctx.globalCompositeOperation='source-over';
+ ctx.globalAlpha=qualityMode==='smooth'?.045:.095;
+ ctx.fillStyle='#d7f5d9';
+ let clouds=qualityMode==='smooth'?2:6;
+ for(let i=0;i<clouds;i++){
+  let x=camX+((i*193+now*.006)%(W+260))-130,y=camY+((i*97)%Math.max(H,1));
+  ctx.beginPath();ctx.ellipse(x,y,108,16,-.3,0,Math.PI*2);ctx.fill();
+ }
+ ctx.restore();
+}
 
 // V5.2 art pipeline: cached pixel-texture atlas, generated once rather than redrawn as primitives every frame.
 // Small fixed palette and clustered details keep a consistent pixel scale on mobile.
@@ -387,14 +533,54 @@ g.fillStyle=colors[3];for(let i=0;i<11;i++){let xx=32+terrainHash(i,biomeId,23)*
 makeFoliageAtlas();
 function drawFoliageSprite(o){let b=biome(o.x,o.y),sz=72+o.size*2.2;ctx.fillStyle='#12271d55';ctx.beginPath();ctx.ellipse(o.x+9,o.y+3,sz*.42,sz*.15,-.2,0,Math.PI*2);ctx.fill();ctx.drawImage(foliageAtlas[b],o.x-sz*.5,o.y-sz*1.04,sz,sz*1.13)}
 function inView(x,y,m=64){return x>=camX-m&&x<=camX+W+m&&y>=camY-m&&y<=camY+H+m}
-function draw(){ctx.clearRect(0,0,W,H);ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(-camX,-camY);let tile=100,startX=Math.max(0,Math.floor(camX/tile)-1),endX=Math.min(36,Math.ceil((camX+W)/tile)+1),startY=Math.max(0,Math.floor(camY/tile)-1),endY=Math.min(36,Math.ceil((camY+H)/tile)+1);for(let x=startX;x<endX;x++)for(let y=startY;y<endY;y++){let b=biome(x*tile+50,y*tile+50);let variant=Math.floor(terrainHash(x,y,4)*5);ctx.drawImage(terrainAtlas[b][variant],x*tile,y*tile,tile+1,tile+1)}
-// HD-2D terrain pass: stable pixel-scale microtextures and soft environmental accents.
-ctx.save();for(let tx=startX;tx<endX;tx++)for(let ty=startY;ty<endY;ty++){let bx=tx*tile,by=ty*tile,b=biome(bx+50,by+50);for(let k=0;k<10;k++){let seed=Math.sin((tx*197+ty*71+k*43)*12.9898)*43758.5453;let u=seed-Math.floor(seed);seed=Math.sin((tx*29+ty*193+k*67)*78.233)*18374.239;let v=seed-Math.floor(seed);let px=bx+u*tile,py=by+v*tile;ctx.globalAlpha=.18+(k%3)*.06;ctx.fillStyle=b===1?'#ffffff':b===2?'#fff0ad':b===3?'#bca1db':'#b9eaa0';ctx.fillRect(Math.round(px),Math.round(py),2+(k%4)*2,2+(k%2)*3)}}ctx.restore();
-paintStoneRoad();
-// River and its collision-safe crossing.
-ctx.save();ctx.lineCap='round';ctx.lineJoin='round';const riverPath=()=>{ctx.beginPath();for(let yy=1200;yy<=3500;yy+=36){let xx=1060+Math.sin(yy*.0035)*175+Math.sin(yy*.009)*58;if(yy===1200)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy)}};ctx.strokeStyle='#385b46';ctx.lineWidth=92;riverPath();ctx.stroke();ctx.strokeStyle='#7d9f80';ctx.lineWidth=75;riverPath();ctx.stroke();ctx.strokeStyle='#366e83';ctx.lineWidth=58;riverPath();ctx.stroke();ctx.strokeStyle='#5ba5a5';ctx.lineWidth=40;riverPath();ctx.stroke();ctx.globalAlpha=.32;ctx.strokeStyle='#c5eee1';ctx.lineWidth=2;for(let j=0;j<48;j++){let yy=1230+j*47,xx=1060+Math.sin(yy*.0035)*175+Math.sin(yy*.009)*58;ctx.beginPath();ctx.moveTo(xx-9,yy);ctx.lineTo(xx+7,yy-3);ctx.stroke()}ctx.restore();paintStreamBanks();if(inView(streamCenter(1800),1800,145)&&!paintBridge(streamCenter(1800),1800))drawBridge();if(camX<1700&&camX+W>1310&&camY<1600&&camY+H>1180&&!paintCliffScene())drawCliff();paintCloudfall(performance.now());
-// Detailed HD-2D foreground textures; deterministic placement avoids visual flicker.
-ctx.save();for(let tx=startX;tx<endX;tx++)for(let ty=startY;ty<endY;ty++){let x=tx*tile+50,y=ty*tile+50;if(biome(x,y)!==0)continue;if(onQinglanRoad(x,y)||landmarkClearing(x,y,40))continue;drawMeadow(x,y);let n=terrainHash(tx,ty,7);if(n>.78){if(!paintBambooStand(x-23,y+24,.65+n*.45))drawBamboo(x-23,y+24,.65+n*.45);if(!paintBambooStand(x+8,y+13,.55+n*.3))drawBamboo(x+8,y+13,.55+n*.3)}else if(n<.13){drawPine(x+18,y+25,16+n*35)}else if(n>.45&&n<.53){drawRock(x+18,y+24,10+n*8)}}ctx.restore();
-for(let o of decor){if(!inView(o.x,o.y,180))continue;let b=biome(o.x,o.y);if(o.type<.29){if(b!==0||!paintTreeScene(o,72+o.size*2.2))drawFoliageSprite(o)}else if(o.type<.65){drawFlower(o.x,o.y,b===1?'#f4ffff':b===2?'#f5db9a':'#eac8d9')}else if(o.type<.79){if(!paintBambooStand(o.x,o.y,.6+o.size/40))drawBamboo(o.x,o.y,.6+o.size/40)}else{drawRock(o.x,o.y,Math.max(5,o.size*.6))}}for(let o of obstacles){if(!inView(o.x,o.y,o.r+12))continue;circle(o.x+3,o.y+5,o.r,'#273d35a0');drawRock(o.x,o.y,o.r)}paintLandmarks();paintShrineLanterns(performance.now());paintLandmarkTitles();for(let f of fruits){if(!inView(f.x,f.y,20))continue;circle(f.x,f.y,11,f.kind?'#ffd26344':'#74ffc344');circle(f.x,f.y,f.kind?7:5,f.kind?'#ffe47d':'#8cf6b0')}if(boss&&!boss.defeated&&inView(boss.x,boss.y,140)){circle(boss.x+5,boss.y+8,boss.r+8,'#20172c');circle(boss.x,boss.y,boss.r,'#7f426f');circle(boss.x-14,boss.y-8,7,'#ffd678');circle(boss.x+14,boss.y-8,7,'#ffd678');ctx.fillStyle='#250d27';ctx.fillRect(boss.x-56,boss.y-65,112,9);ctx.fillStyle='#fa778f';ctx.fillRect(boss.x-56,boss.y-65,112*Math.max(0,boss.hp/boss.max),9);ctx.fillStyle='#fff2bd';ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillText('幽冥妖王 · BOSS',boss.x,boss.y-72)}for(let e of enemies){if(!inView(e.x,e.y,e.r+20))continue;circle(e.x,e.y,e.r+3,'#1b2837');if(!paintCreature(e)){circle(e.x,e.y,e.r,performance.now()<e.hitFlash?'#ffffff':e.elite?'#e1a34e':biome(e.x,e.y)===3?'#bc70d5':'#bf645b');circle(e.x-5,e.y-3,3,'#fff3cc');circle(e.x+5,e.y-3,3,'#fff3cc')}if(e.elite){ctx.strokeStyle='#f9da83';ctx.lineWidth=3;ctx.beginPath();ctx.arc(e.x,e.y,e.r+4,0,Math.PI*2);ctx.stroke()}ctx.fillStyle='#341f25';ctx.fillRect(e.x-17,e.y-e.r-11,34,4);ctx.fillStyle='#e6b07c';ctx.fillRect(e.x-17,e.y-e.r-11,34*e.hp/e.max,4)}for(let p of projectiles){if(!inView(p.x,p.y,20))continue;circle(p.x,p.y,12,p.hostile?'#bd6dff88':'#ff9b3988');circle(p.x,p.y,6,p.hostile?'#e6baff':'#ffe3a0')}for(let i=trail.length-1;i>=1;i--){let t=trail[i];if(!paintBody(t,i))circle(t.x,t.y,Math.max(5,10-i*.07),i%2?'#67bb77':'#87d48a')}if(!paintHead(player,player.angle,evoStage)){circle(player.x,player.y,13+evoStage*2,performance.now()<invuln?'#e9d9aa':['#a3f3a2','#82e8c0','#75d6db','#84b8ff','#e8d08d'][evoStage]);let ax=Math.cos(player.angle),ay=Math.sin(player.angle);circle(player.x+ax*8-ay*5,player.y+ay*8+ax*5,2.3,'#163d27');circle(player.x+ax*8+ay*5,player.y+ay*8-ax*5,2.3,'#163d27')}for(let p of particles)circle(p.x,p.y,Math.max(1,p.life*5),p.color);ctx.font='bold 16px system-ui';ctx.textAlign='center';for(let t of damageTexts){ctx.globalAlpha=Math.min(1,t.life*2);ctx.fillStyle=t.color;ctx.fillText(t.text,t.x,t.y)}ctx.globalAlpha=1;paintLandmarkFront(player);paintForegroundCanopies(player,decor,camX,camY,W,H);drawAtmosphere(performance.now());ctx.restore();mc.clearRect(0,0,112,112);for(let y=0;y<36;y+=2)for(let x=0;x<36;x+=2){mc.fillStyle=biomes[biome(x*100,y*100)].color;mc.fillRect(x*112/36,y*112/36,112/18+1,112/18+1)}mc.fillStyle='#b3e1db';mc.fillRect(QINGLAN_GATE.x/SIZE*112-2,QINGLAN_GATE.y/SIZE*112-2,4,4);mc.fillStyle='#e5bc87';mc.fillRect(QINGLAN_SHRINE.x/SIZE*112-2,QINGLAN_SHRINE.y/SIZE*112-2,4,4);mc.fillStyle='#ffe99a';mc.beginPath();mc.arc(player.x/SIZE*112,player.y/SIZE*112,3.5,0,7);mc.fill()}
-function buttonFeedback(now){const items=[['dash',dashReady,'⚡ 灵蛇遁'],['heal',healReady,'🌿 回春术'],['strike',attackTime,'🔥 灵息弹']];for(const [id,ready,label] of items){const b=document.getElementById(id),remaining=Math.max(0,(ready-now)/1000);b.classList.toggle('cooling',remaining>0);b.innerHTML=label+'<small>'+(remaining>0?'冷却 '+remaining.toFixed(1)+'s':'可使用')+'</small>'}const b=document.getElementById('breakthrough');b.classList.toggle('ready',exp>=need);b.innerHTML='🌀 突破<small>'+(exp>=need?'✨ 可以突破':'差 '+Math.max(0,Math.ceil(need-exp))+' 修为')+'</small>'}let lastButtons=0;function loop(now){if(now-lastButtons>100){buttonFeedback(now);lastButtons=now;}let dt=Math.min((now-last)/1000||0,.04);last=now;if(running)update(dt,now);draw();requestAnimationFrame(loop)}function startGame(resume=true){reset();const restored=resume&&loadGame();running=true;document.querySelector('#panel').style.display='none';toast(restored?'📜 已恢复上次修炼进度':'🌱 欢迎来到青岚平原')}document.querySelector('#start').onclick=()=>startGame(true);document.querySelector('#saveBtn').addEventListener('pointerdown',e=>{e.preventDefault();saveGame()});reset();if(offlineStore.getItem(SAVE_KEY))document.querySelector("#start").textContent="继续修仙（读取存档）";requestAnimationFrame(loop);
+// The minimap never needs to rebuild the world biome tiles each frame.
+let cachedMinimap=null,lastMiniStamp=0;
+function paintMinimap(now){
+ if(cachedMinimap&&now-lastMiniStamp<130)return;
+ if(!cachedMinimap){
+  cachedMinimap=document.createElement('canvas');
+  cachedMinimap.width=cachedMinimap.height=112;
+  const g=cachedMinimap.getContext('2d');
+  for(let y=0;y<36;y+=2)for(let x=0;x<36;x+=2){
+    g.fillStyle=biomes[biome(x*100,y*100)].color;
+    g.fillRect(x*112/36,y*112/36,112/18+1,112/18+1);
+  }
+  g.fillStyle='#b3e1db';
+  g.fillRect(QINGLAN_GATE.x/SIZE*112-2,QINGLAN_GATE.y/SIZE*112-2,4,4);
+  g.fillStyle='#e5bc87';
+  g.fillRect(QINGLAN_SHRINE.x/SIZE*112-2,QINGLAN_SHRINE.y/SIZE*112-2,4,4);
+ }
+ mc.clearRect(0,0,112,112);
+ mc.drawImage(cachedMinimap,0,0);
+ mc.fillStyle='#ffe99a';mc.beginPath();mc.arc(player.x/SIZE*112,player.y/SIZE*112,3.5,0,Math.PI*2);mc.fill();
+ lastMiniStamp=now;
+}
+function draw(){ctx.clearRect(0,0,W,H);ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(-camX,-camY);// Static world tiles, grass details, roads and river use bounded cache chunks.
+paintCachedGround();paintStreamBanks();if(inView(streamCenter(1800),1800,145)&&!paintBridge(streamCenter(1800),1800))drawBridge();if(camX<1700&&camX+W>1310&&camY<1600&&camY+H>1180&&!paintCliffScene())drawCliff();paintCloudfall(performance.now());
+paintCachedFlora();
+for(let o of decor){if(!inView(o.x,o.y,180))continue;let b=biome(o.x,o.y);if(o.type<.29){if(b!==0||!paintTreeScene(o,72+o.size*2.2))drawFoliageSprite(o)}else if(o.type<.65){drawFlower(o.x,o.y,b===1?'#f4ffff':b===2?'#f5db9a':'#eac8d9')}else if(o.type<.79){if(!paintBambooStand(o.x,o.y,.6+o.size/40))drawBamboo(o.x,o.y,.6+o.size/40)}else{drawRock(o.x,o.y,Math.max(5,o.size*.6))}}for(let o of obstacles){if(!inView(o.x,o.y,o.r+12))continue;circle(o.x+3,o.y+5,o.r,'#273d35a0');drawRock(o.x,o.y,o.r)}paintLandmarks();paintShrineLanterns(performance.now());paintLandmarkTitles();for(let f of fruits){if(!inView(f.x,f.y,20))continue;circle(f.x,f.y,11,f.kind?'#ffd26344':'#74ffc344');circle(f.x,f.y,f.kind?7:5,f.kind?'#ffe47d':'#8cf6b0')}if(boss&&!boss.defeated&&inView(boss.x,boss.y,140)){circle(boss.x+5,boss.y+8,boss.r+8,'#20172c');circle(boss.x,boss.y,boss.r,'#7f426f');circle(boss.x-14,boss.y-8,7,'#ffd678');circle(boss.x+14,boss.y-8,7,'#ffd678');ctx.fillStyle='#250d27';ctx.fillRect(boss.x-56,boss.y-65,112,9);ctx.fillStyle='#fa778f';ctx.fillRect(boss.x-56,boss.y-65,112*Math.max(0,boss.hp/boss.max),9);ctx.fillStyle='#fff2bd';ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillText('幽冥妖王 · BOSS',boss.x,boss.y-72)}for(let e of enemies){if(!inView(e.x,e.y,e.r+20))continue;circle(e.x,e.y,e.r+3,'#1b2837');if(!paintCreature(e)){circle(e.x,e.y,e.r,performance.now()<e.hitFlash?'#ffffff':e.elite?'#e1a34e':biome(e.x,e.y)===3?'#bc70d5':'#bf645b');circle(e.x-5,e.y-3,3,'#fff3cc');circle(e.x+5,e.y-3,3,'#fff3cc')}if(e.elite){ctx.strokeStyle='#f9da83';ctx.lineWidth=3;ctx.beginPath();ctx.arc(e.x,e.y,e.r+4,0,Math.PI*2);ctx.stroke()}ctx.fillStyle='#341f25';ctx.fillRect(e.x-17,e.y-e.r-11,34,4);ctx.fillStyle='#e6b07c';ctx.fillRect(e.x-17,e.y-e.r-11,34*e.hp/e.max,4)}for(let p of projectiles){if(!inView(p.x,p.y,20))continue;circle(p.x,p.y,12,p.hostile?'#bd6dff88':'#ff9b3988');circle(p.x,p.y,6,p.hostile?'#e6baff':'#ffe3a0')}for(let i=trail.length-1;i>=1;i--){let t=trail[i];if(!paintBody(t,i))circle(t.x,t.y,Math.max(5,10-i*.07),i%2?'#67bb77':'#87d48a')}if(!paintHead(player,player.angle,evoStage)){circle(player.x,player.y,13+evoStage*2,performance.now()<invuln?'#e9d9aa':['#a3f3a2','#82e8c0','#75d6db','#84b8ff','#e8d08d'][evoStage]);let ax=Math.cos(player.angle),ay=Math.sin(player.angle);circle(player.x+ax*8-ay*5,player.y+ay*8+ax*5,2.3,'#163d27');circle(player.x+ax*8+ay*5,player.y+ay*8-ax*5,2.3,'#163d27')}for(let p of particles)circle(p.x,p.y,Math.max(1,p.life*5),p.color);ctx.font='bold 16px system-ui';ctx.textAlign='center';for(let t of damageTexts){ctx.globalAlpha=Math.min(1,t.life*2);ctx.fillStyle=t.color;ctx.fillText(t.text,t.x,t.y)}ctx.globalAlpha=1;paintLandmarkFront(player);paintForegroundCanopies(player,decor,camX,camY,W,H);drawAtmosphere(performance.now());ctx.restore();paintMinimap(performance.now())}
+function buttonFeedback(now){const items=[['dash',dashReady,'⚡ 灵蛇遁'],['heal',healReady,'🌿 回春术'],['strike',attackTime,'🔥 灵息弹']];for(const [id,ready,label] of items){const b=document.getElementById(id),remaining=Math.max(0,(ready-now)/1000);b.classList.toggle('cooling',remaining>0);b.innerHTML=label+'<small>'+(remaining>0?'冷却 '+remaining.toFixed(1)+'s':'可使用')+'</small>'}const b=document.getElementById('breakthrough');b.classList.toggle('ready',exp>=need);b.innerHTML='🌀 突破<small>'+(exp>=need?'✨ 可以突破':'差 '+Math.max(0,Math.ceil(need-exp))+' 修为')+'</small>'}let lastButtons=0,lastHudSync=0,lastFrame=0,frames=0,lastFpsUpdate=0;
+function loop(now){
+ if(now-lastButtons>260){buttonFeedback(now);lastButtons=now}
+ let dt=Math.min((now-last)/1000||0,.04);last=now;
+ // Idle start screen does not require 60 redraws each second.
+ if(!running&&now-lastFrame<140){requestAnimationFrame(loop);return}
+ if(running)update(dt,now);
+ draw();lastFrame=now;frames++;
+ if(now-lastFpsUpdate>=1000){
+  let measured=Math.round(frames*1000/Math.max(1,now-lastFpsUpdate));
+  let e=document.querySelector('#fpsLabel');if(e)e.textContent='FPS '+measured;
+  lastFpsUpdate=now;frames=0;
+ }
+ requestAnimationFrame(loop);
+}function startGame(resume=true){reset();const restored=resume&&loadGame();running=true;document.querySelector('#panel').style.display='none';toast(restored?'📜 已恢复上次修炼进度':'🌱 欢迎来到青岚平原')}document.querySelector('#start').onclick=()=>startGame(true);document.querySelector('#saveBtn').addEventListener('pointerdown',e=>{e.preventDefault();saveGame()});
+const qualityBtn=document.querySelector('#qualityBtn');
+function updateQualityLabel(){qualityBtn.textContent=qualityMode==='smooth'?'画质·流畅':'画质·高清'}
+updateQualityLabel();
+qualityBtn.addEventListener('click',()=>{
+ qualityMode=qualityMode==='smooth'?'sharp':'smooth';
+ updateQualityLabel();resize();
+ toast(qualityMode==='smooth'?'⚡ 已切换流畅模式':'✨ 已切换高清模式');
+});
+reset();if(offlineStore.getItem(SAVE_KEY))document.querySelector("#start").textContent="继续修仙（读取存档）";requestAnimationFrame(loop);
 </script></body></html>
