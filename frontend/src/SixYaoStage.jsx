@@ -359,6 +359,77 @@ function FuShenStudy({chart,onChoose,busy}){
 
 
 
+
+function YongshenPathwaysStudy({chart}){
+  const data=chart.yongshen_pathways
+  const [chosen,setChosen]=useState(null)
+  if(!data)return null
+  const positions=data.focus_candidates.map(x=>x.position)
+  const pos=positions.includes(chosen)?chosen:
+    positions.includes(data.selected_position)?data.selected_position:positions[0]
+  const candidate=data.focus_candidates.find(x=>x.position===pos)
+  const groups=[
+    {key:'原神',explain:'五行生用神'},
+    {key:'忌神',explain:'五行克用神'},
+    {key:'仇神',explain:'克原神、间接生忌神'}
+  ]
+  return <section className="yongshen-chain" aria-label="用神原忌仇神逐爻合参">
+    <header className="yongshen-chain-head">
+      <div><small>第十六式 · 原忌仇合参</small><h3>沿着用神，追查每条作用路径。</h3></div>
+      <span>非自动断吉凶</span>
+    </header>
+    <p className="yongshen-chain-lead">{data.comparison} 原神、忌神与仇神的名称表示传统五行角色，并不代表一定已经发挥作用。</p>
+    {data.status==='focus_not_selected'?<p className="yongshen-chain-empty">请先进入第二步「因事取用」，选定要研究的六亲或世应。</p>:
+     data.status==='focus_not_visible'?<div className="yongshen-chain-empty">
+       <strong>本卦用神不现</strong><p>{data.message}</p>
+       <p>请先回到第二步核对日月与本宫飞伏，不凭隐藏伏神伪造本卦明动生克路径。</p>
+     </div>:<>
+       <div className="yongshen-chain-picks" role="group" aria-label="选择要核对的用神候选">
+         {data.focus_candidates.map(c=><button type="button" key={c.position}
+           aria-pressed={pos===c.position} className={pos===c.position?'active':''}
+           onClick={()=>setChosen(c.position)}>
+           {POS[c.position-1]}爻 · {c.ganzhi}
+           {c.selected_by_user&&<small>人工指定</small>}
+         </button>)}
+       </div>
+       {candidate&&<>
+         {candidate.focus_has_opposing_indicators&&<p className="yongshen-chain-notice">
+           当前候选用神自身已有生扶与制约并见的标记；以下原忌仇神同样必须分别审查。
+         </p>}
+         {data.moving_yuan_ji_together&&<p className="yongshen-chain-notice">
+           本卦原神与忌神均有明动爻。古籍讨论二者同动的特殊情况，但不能视作自动互相抵消。
+         </p>}
+         <div className="yongshen-chain-groups">
+           {groups.map(g=><article key={g.key} className={'yongshen-chain-role '+g.key}>
+             <header><strong>{g.key} · {data.roles[g.key]?.element}</strong><small>{g.explain}</small></header>
+             {!candidate.pathways[g.key].length?<p className="yongshen-chain-no-source">本卦此五行没有明现爻；不能补造来源。</p>:
+               candidate.pathways[g.key].map(path=><div className="yongshen-chain-source" key={path.source_position}>
+                 <b>{POS[path.source_position-1]}爻 · {path.source_ganzhi}</b>
+                 <small>{path.source_liuqin} · {path.source_season||'月令未核对'}</small>
+                 <p>{path.direction}</p>
+                 <p className="yongshen-chain-source-status">
+                   {path.status==='moving_path_pending_effect'?'明动路径已记录 · 实际效力待辨':
+                    path.status==='indirect_role_not_direct_action'?'间接五行角色 · 不是直接克用神':
+                    '安静爻 · 仅有五行关系，未形成已确认的动爻作用'}
+                 </p>
+                 {path.relation_to_target&&<p>本卦作用边：{path.relation_to_target}</p>}
+                 {path.source_flags.length>0&&<div className="yongshen-chain-flags">
+                   {path.source_flags.map((flag,i)=><span key={i}>{flag}</span>)}
+                 </div>}
+                 <small>生扶线索 {path.source_supporting_count} 项 / 制约条件 {path.source_restraining_count} 项 · 仅供追查，不是分数</small>
+               </div>)}
+           </article>)}
+         </div>
+       </>}
+     </>}
+    <p className="yongshen-chain-boundary">{data.boundary}</p>
+    <div className="yongshen-chain-links">
+      <a href={data.references.roles} target="_blank" rel="noopener noreferrer">《增删卜易》用神原忌仇章 ↗</a>
+      <a href={data.references.strength} target="_blank" rel="noopener noreferrer">元神忌神衰旺章 ↗</a>
+    </div>
+  </section>
+}
+
 function SpecialConditionsStudy({chart}){
   const data=chart.special_conditions
   const [inspected,setInspected]=useState(null)
@@ -972,6 +1043,149 @@ const REVIEW_STEPS=[
   {id:'conflicts',title:'参空破',no:'四'},
   {id:'report',title:'成研究案',no:'五'}
 ]
+const CASE_ARCHIVE_KEY='wanxiang-liuyao-case-archive-v1'
+function loadLocalCases(){
+  try{
+    const value=JSON.parse(window.localStorage.getItem(CASE_ARCHIVE_KEY)||'[]')
+    return Array.isArray(value)?value.filter(x=>x&&typeof x.id==='string'&&x.snapshot).slice(0,12):[]
+  }catch{return []}
+}
+function ChineseLocalCaseArchive({chart,question}){
+  const [cases,setCases]=useState(loadLocalCases)
+  const [before,setBefore]=useState('')
+  const [selectedId,setSelectedId]=useState(null)
+  const [actual,setActual]=useState('')
+  const [resultType,setResultType]=useState('部分吻合')
+  const [message,setMessage]=useState('')
+  const report=chart.review_flow?.report
+  const selected=cases.find(x=>x.id===selectedId)||cases[0]
+  if(!report)return null
+  function persist(next){
+    try{
+      window.localStorage.setItem(CASE_ARCHIVE_KEY,JSON.stringify(next))
+      setCases(next)
+      setMessage('已保存到本机浏览器，未上传服务器。')
+      return true
+    }catch{
+      setMessage('浏览器无法保存本地记录。可改用上方的文本笔记下载，检查是否为隐私模式或空间不足。')
+      return false
+    }
+  }
+  function seal(){
+    if(!before.trim()){setMessage('请先写下事前研究的判断或尚待验证的问题，再封存。');return}
+    const now=new Date()
+    const newCase={
+      id:String(now.getTime())+'-'+Math.random().toString(36).slice(2),
+      created_at:now.toISOString(),
+      question:question.trim().slice(0,700),
+      before:before.trim().slice(0,1500),
+      snapshot:{
+        original_numbers:chart.lines.map(x=>x.number),
+        ben_gua:chart.ben_gua.full_name,
+        bian_gua:chart.bian_gua.full_name,
+        day_ganzhi:chart.calendar.day?.ganzhi||null,
+        month_branch:chart.calendar.month?.branch||null,
+        chosen_category:chart.focus?.category||null,
+        selected_position:chart.focus_decision.selected_position,
+        focus_paths:report.yongshen_pathway_digest||[],
+        evidence:report.evidence_digest||[],
+        moving:report.moving_effect_digest||[],
+        special:report.special_conditions_digest||[],
+        unresolved:report.outstanding_questions||[]
+      },
+      feedback:[]
+    }
+    if(persist([newCase,...cases].slice(0,12))){
+      setSelectedId(newCase.id);setBefore('');setActual('')
+    }
+  }
+  function saveFeedback(){
+    if(!selected){setMessage('请先封存一份事前记录。');return}
+    if(!actual.trim()){setMessage('请先填写后续实际观察，再追记。');return}
+    const feedback={
+      recorded_at:new Date().toISOString(),result_type:resultType,
+      observations:actual.trim().slice(0,1600),
+      note:'事后自述，未经独立核实；并非算法自动预测成功率'
+    }
+    if(persist(cases.map(x=>x.id===selected.id?{...x,feedback:[...x.feedback,feedback]}:x))){
+      setActual('')
+    }
+  }
+  function removeCase(){
+    if(!selected||!window.confirm('确定删除这份仅存于本机的案例吗？删除后无法从本站恢复。'))return
+    if(persist(cases.filter(x=>x.id!==selected.id)))setSelectedId(null)
+  }
+  function exportCase(){
+    if(!selected)return
+    try{
+      const url=URL.createObjectURL(new Blob([JSON.stringify(selected,null,2)],
+        {type:'application/json;charset=utf-8'}))
+      const a=document.createElement('a')
+      a.href=url;a.download='万象书院-六爻封存复盘-'+selected.created_at.slice(0,10)+'.json'
+      document.body.appendChild(a);a.click();a.remove()
+      setTimeout(()=>URL.revokeObjectURL(url),1000)
+      setMessage('已导出本地 JSON 文件。')
+    }catch{setMessage('下载失败，请检查浏览器文件下载权限。')}
+  }
+  const cdate=iso=>{
+    try{return new Date(iso).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false})+'（北京时间）'}
+    catch{return iso}
+  }
+  return <section className="local-case-archive" aria-label="六爻本地案例封存与事后复盘">
+    <header><small>第十七式 · 案例复盘</small><h3>先封存事前研究，再追记实际发生。</h3></header>
+    <p>点击封存时，保存当前六爻、用神、证据及未决事项的<b>固定快照</b>；后续只追加观察，不修改原先写下的话。全部仅保存在当前设备浏览器，不会自动上传或同步。请避免填写敏感个人信息，清除浏览器数据可能导致记录丢失。</p>
+    <label>本次事前研习笔记（封存后不能修改）
+      <textarea maxLength={1500} rows={3} value={before}
+        onChange={e=>setBefore(e.target.value)}
+        placeholder="例如：这次主要观察哪一爻？我事前认为哪些条件更值得核实？还有什么相反的可能？"/>
+    </label>
+    <button type="button" className="local-case-seal" onClick={seal}>封存当前盘面与事前研究</button>
+    {cases.length>0&&<div className="local-case-history">
+      <h4>本机已封存案例（最多12份）</h4>
+      <div className="local-case-buttons">
+        {cases.map((entry,i)=><button key={entry.id} type="button"
+          aria-pressed={selected?.id===entry.id}
+          onClick={()=>{setSelectedId(entry.id);setActual('')}}>
+          {entry.snapshot.ben_gua} · {entry.created_at.slice(0,10)} · #{i+1}
+        </button>)}
+      </div>
+      {selected&&<div className="local-case-detail">
+        <b>封存于 {cdate(selected.created_at)}</b>
+        <p>本卦：{selected.snapshot.ben_gua}；之卦：{selected.snapshot.bian_gua}</p>
+        <p>当时日月：{selected.snapshot.day_ganzhi||'未核'}日 /
+          {selected.snapshot.month_branch?selected.snapshot.month_branch+'月':'未核月建'}；
+          关注：{selected.snapshot.chosen_category||'未选用神'}；
+          主爻：{selected.snapshot.selected_position?POS[selected.snapshot.selected_position-1]+'爻':'未指定'}</p>
+        <p><strong>事前原文（不可改动）：</strong>{selected.before}</p>
+        <div className="local-case-outcome">
+          <h4>后续事实 · 只能追加</h4>
+          <label>对事前研究的回看
+            <select value={resultType} onChange={e=>setResultType(e.target.value)}>
+              {['部分吻合','基本吻合','未吻合','尚无结果','无法判断'].map(x=><option key={x} value={x}>{x}</option>)}
+            </select>
+          </label>
+          <label>后来实际观察到什么？
+            <textarea rows={3} maxLength={1600} value={actual}
+              onChange={e=>setActual(e.target.value)}
+              placeholder="明确事实与尚未核实之处，尽量写具体；切勿事后改写原先的推断"/>
+          </label>
+          <button type="button" onClick={saveFeedback}>追加一条事后观察</button>
+          {selected.feedback.map((f,i)=><div className="local-case-feedback" key={i}>
+            <small>{cdate(f.recorded_at)} · {f.result_type}</small>
+            <p>{f.observations}</p>
+          </div>)}
+        </div>
+        <div className="local-case-actions">
+          <button type="button" onClick={exportCase}>导出该案例 JSON</button>
+          <button type="button" onClick={removeCase}>删除本机案例</button>
+        </div>
+      </div>}
+    </div>}
+    {message&&<p className="local-case-message" role="status">{message}</p>}
+    <p className="local-case-limit">案例中的“吻合”只是用户自述归类，不代表科学验证或可计算的预测准确率；建议同时记录未吻合、缺失的信息和现实证据。</p>
+  </section>
+}
+
 function ReviewReport({chart,question}) {
   const data=chart.review_flow?.report
   const [message,setMessage]=useState('')
@@ -986,6 +1200,9 @@ function ReviewReport({chart,question}) {
     '',
     '本位动变与日月空破核对（效力尚未判断）：',
     ...(data.moving_effect_digest||[]),
+    '',
+    '用神原忌仇作用来源（效力未判定）：',
+    ...(data.yongshen_pathway_digest||[]),
     '',
     '六合、墓绝条件摘记（不判效力）：',
     ...(data.special_conditions_digest||[]),
@@ -1034,6 +1251,11 @@ function ReviewReport({chart,question}) {
       <h4>六合、墓绝条件摘记</h4>
       {data.special_conditions_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>只供日后复核，不意味着合绊、入墓或逢绝已经实际生效。</small>
+    </div>}
+    {data.yongshen_pathway_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>用神原忌仇逐项审议</h4>
+      {data.yongshen_pathway_digest.map((entry,i)=><p key={i}>{entry}</p>)}
+      <small>来源是否发动可以核查，作用是否有效仍未判定。</small>
     </div>}
     <div className="review-report-outstanding">
       <h4>尚待核实</h4>
@@ -1197,6 +1419,9 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 <button type="button" className={relationsView==='summary'?'active':''}
                   aria-pressed={relationsView==='summary'}
                   onClick={()=>setRelationsView('summary')}>综合证据</button>
+                <button type="button" className={relationsView==='pathways'?'active':''}
+                  aria-pressed={relationsView==='pathways'}
+                  onClick={()=>setRelationsView('pathways')}>用神作用链</button>
                 <button type="button" className={relationsView==='motion'?'active':''}
                   aria-pressed={relationsView==='motion'}
                   onClick={()=>setRelationsView('motion')}>动爻效力</button>
@@ -1208,6 +1433,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                   onClick={()=>setRelationsView('details')}>纳甲与动变明细</button>
               </div>
               {relationsView==='summary'?<StrengthEvidenceStudy chart={chart}/>:
+                relationsView==='pathways'?<YongshenPathwaysStudy chart={chart}/>:
                 relationsView==='motion'?<MovingEffectReview chart={chart}/>:
                 relationsView==='special'?<SpecialConditionsStudy chart={chart}/>:
                 <>
@@ -1224,6 +1450,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             </>}
             {reviewStage==='report'&&<>
               <ReviewReport chart={chart} question={question}/>
+              <ChineseLocalCaseArchive chart={chart} question={question}/>
               <div className="academy-scope">{chart.review_flow?.workflow_note}</div>
             </>}
             <div className="review-flow-footer">
