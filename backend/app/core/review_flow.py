@@ -23,6 +23,7 @@ def decorate_review_flow(chart: dict) -> dict:
     pathways=chart["yongshen_pathways"]
     voids=chart["void_interactions"]
     evidence_chain=chart["evidence_chain"]
+    temporal=chart["temporal_review"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -125,7 +126,7 @@ def decorate_review_flow(chart: dict) -> dict:
             unresolved.append("原神忌神同动，不能简单互相抵消，需核实各自日月动变状态")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
-        "未完成强弱综合取用、用神吉凶或应期计算",
+        "仍未完成实际应期推断；V22 仅提供旬空换旬、日支相值相冲的历法候选核查",
     ])
     stages.append(_step(
         "report","整理研究","review",
@@ -184,8 +185,20 @@ def decorate_review_flow(chart: dict) -> dict:
         "；全项作用效力未决"
         for c in evidence_chain["candidates"]
     ]
+    temporal_digest=[
+        str(candidate["position"])+"爻 "+candidate["ganzhi"]+"："+
+        "；".join(
+            (event["solar_date"] or "第"+str(event["offset_days"])+"日")+
+            " "+event["day_ganzhi"]+"（"+
+            "、".join(x["title"] for x in event["conditions"])+"）"
+            for event in candidate["events"]
+        )
+        for candidate in temporal["candidates"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "temporal_digest":temporal_digest,
+        "temporal_notice":temporal["notice"],
         "evidence_chain_digest":chain_digest,
         "yongshen_pathway_digest":pathway_digest,
         "special_conditions_digest":special_digest,

@@ -837,6 +837,52 @@ function FocusDecisionStudy({chart,onChoose,busy}){
   </section>
 }
 
+function TemporalReviewStudy({chart}){
+  const data=chart.temporal_review
+  if(!data)return null
+  const statusHint={
+    focus_not_selected:'请先到「因事取用」选择关注的六亲或世应。',
+    focus_not_visible:'所选用神本卦不现，当前不对伏神虚构日支时间条件。',
+    day_missing:'请先在「核日月」确认六十甲子日，再查看相应干支序列。'
+  }
+  return <section className="temporal-review-study" aria-label="六爻旬空与时间条件对照">
+    <header>
+      <small>V22 · 传统历法研究</small>
+      <h3>旬空、值日、冲日 · 时间条件</h3>
+    </header>
+    <p className="temporal-review-intro">{data.notice}</p>
+    {data.anchor_date&&<p className="temporal-review-anchor">起算：{data.anchor_date} · 北京时间 {data.beijing_clock}
+      · {data.day_boundary==='zi_hour'?'23时子初换日':'零点换日'}</p>}
+    {statusHint[data.status]&&<p className="temporal-review-hint">{statusHint[data.status]}</p>}
+    {data.candidates.map((candidate,i)=><details key={candidate.position}
+      open={candidate.selected_by_user||(!data.selected_position&&i===0)}
+      className="temporal-review-candidate">
+      <summary>{POS[candidate.position-1]}爻 · {candidate.ganzhi}（{candidate.branch}支）
+        <span>{candidate.selected_by_user?'已选研习主爻':'保留候选，不排序'}</span>
+      </summary>
+      <p>{candidate.originally_void?'原起卦日此爻逢旬空，列出换旬、值日、相冲条件作参照。':
+        '原起卦日此爻未逢旬空，仅列相值与相冲日支关系。'}</p>
+      <div className="temporal-review-events">
+        {candidate.events.map(event=><article key={event.offset_days}>
+          <div className="temporal-review-event-day">
+            <strong>{event.solar_date||'第 '+event.offset_days+' 日'}</strong>
+            <span>{event.day_ganzhi}日 · +{event.offset_days}天</span>
+          </div>
+          <div>{event.conditions.map(condition=><p key={condition.id}>
+            <b>{condition.title}</b><small>{condition.basis}</small>
+          </p>)}</div>
+        </article>)}
+      </div>
+    </details>)}
+    <div className="temporal-review-limit">
+      {data.limitations.map((x,i)=><p key={i}>· {x}</p>)}
+      <p>原典参照：
+        <a href={data.references.void} target="_blank" rel="noopener noreferrer">《增删卜易》旬空章 ↗</a>
+      </p>
+    </div>
+  </section>
+}
+
 function DayMonthReview({chart}) {
   const review=chart.day_month_review
   const [selected,setSelected]=useState(1)
@@ -1247,6 +1293,10 @@ function ReviewReport({chart,question}) {
     '六合、墓绝条件摘记（不判效力）：',
     ...(data.special_conditions_digest||[]),
     '',
+    '时间条件参照（不是应期预测）：',
+    data.temporal_notice||'未提供日期来源',
+    ...(data.temporal_digest||[]),
+    '',
     '待核实与未完成事项：',
     ...data.outstanding_questions.map((x,i)=>(i+1)+'. '+x),
     '',
@@ -1301,6 +1351,11 @@ function ReviewReport({chart,question}) {
       <h4>用神原忌仇逐项审议</h4>
       {data.yongshen_pathway_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>来源是否发动可以核查，作用是否有效仍未判定。</small>
+    </div>}
+    {data.temporal_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>时间条件摘要 · 不是应期预测</h4>
+      <p>{data.temporal_notice}</p>
+      {data.temporal_digest.map((x,i)=><p key={i}>{x}</p>)}
     </div>}
     <div className="review-report-outstanding">
       <h4>尚待核实</h4>
@@ -1566,6 +1621,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             </>}
             {reviewStage==='conflicts'&&<>
               <DayMonthReview chart={chart}/>
+              <TemporalReviewStudy chart={chart}/>
               <details className="liuyao-depth-panel">
                 <summary>进一步核对：旬空、冲空、化空与伏神合参</summary>
                 <VoidInteractionsStudy chart={chart}/>
