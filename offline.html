@@ -1,4 +1,22 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>灵蛇问道·青岚仙境 V5.9 离线单文件版</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091b1a;color:#f3ecd3;font-family:system-ui,'Microsoft Yahei',sans-serif}canvas{display:block;width:100vw;height:100dvh;touch-action:none}#hud{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}.pill{background:#102b2bcf;border:1px solid #8cba8d66;border-radius:12px;padding:7px 11px;backdrop-filter:blur(8px);font-size:13px}#bar{width:125px;height:7px;background:#34514b;border-radius:9px;overflow:hidden;margin-top:5px}#fill{height:100%;background:linear-gradient(90deg,#79db9c,#e5cc6a);width:0%}#help{position:fixed;top:85px;left:10px;background:#102b2bbd;border-radius:10px;padding:7px 10px;font-size:12px;color:#d1dfcc;pointer-events:none}#actions{position:fixed;bottom:22px;right:16px;display:flex;gap:10px;z-index:25;touch-action:none}#actions button{touch-action:none;cursor:pointer}button{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;border:1px solid #b6d9b477;border-radius:16px;background:#183f39d9;color:#fff4d3;padding:14px 16px;font-size:15px;touch-action:manipulation}button:active{background:#477e58}#joy{position:fixed;bottom:22px;left:22px;width:128px;height:128px;border:2px solid #b1c8a466;border-radius:50%;background:#1e463b77;touch-action:none}#stick{position:absolute;left:42px;top:42px;width:42px;height:42px;border-radius:50%;background:#d6e4b0bb;pointer-events:none}#toast{position:fixed;top:36%;left:50%;transform:translateX(-50%);padding:14px 24px;border-radius:14px;background:#102a27d9;border:1px solid #e5d99e;color:#f8edbd;opacity:0;transition:opacity .2s;pointer-events:none;text-align:center;white-space:nowrap}#panel{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#071514aa}#card{background:#15322e;border:1px solid #93ba9c;border-radius:20px;padding:24px;max-width:340px;text-align:center;box-shadow:0 15px 70px #0009}#card h1{margin:0 0 10px;font-size:28px;color:#e9d697}#card p{line-height:1.7;color:#d2e1d1;font-size:14px}#card button{background:#327454;margin-top:8px}#minimap{position:fixed;right:12px;top:94px;width:112px;height:112px;border:1px solid #bbd6b577;border-radius:10px;background:#0a2425c9;pointer-events:none}@media(max-width:500px){#help{top:115px;max-width:210px}#minimap{top:140px;width:86px;height:86px}#actions{bottom:30px;right:10px;flex-direction:column}button{padding:12px}}@media (orientation:landscape) and (max-height:600px){#actions{max-width:47vw;flex-wrap:wrap;justify-content:flex-end}#actions button{padding:7px 9px;font-size:11px}#hud{top:5px;left:8px;right:120px;gap:5px;flex-wrap:nowrap}.pill{font-size:11px;padding:4px 7px;white-space:nowrap}#bar{height:4px;width:85px}#help{display:none}#minimap{top:8px;right:8px;width:88px;height:88px}#joy{left:22px;bottom:12px;width:110px;height:110px}#stick{left:35px;top:35px;width:36px;height:36px}#actions{bottom:14px;right:12px;flex-direction:row}#actions button{padding:10px;font-size:12px}#card{max-height:90dvh;overflow:auto;padding:12px 22px}#card h1{font-size:23px}#card p{margin:6px 0;font-size:12px}}#savebar{position:fixed;left:10px;top:48px;display:flex;align-items:center;gap:8px;z-index:15;font-size:11px;color:#e4dcb3}#savebar button{padding:5px 9px;font-size:11px;background:#214a3e}#fpsLabel{min-width:43px;color:#c3e5c3;font-variant-numeric:tabular-nums}#questHud{position:fixed;top:83px;left:10px;max-width:calc(100vw - 145px);padding:7px 10px;background:#122e28dc;border:1px solid #b0cda45c;border-radius:10px;color:#e4eac7;font-size:12px;z-index:12;pointer-events:none}#interactBtn{position:fixed;right:12px;top:214px;z-index:31;background:#386e58;border:1px solid #c1d4a0;color:#fff5cc;font-size:13px;padding:9px 13px;box-shadow:0 3px 10px #071b18a3}@media(orientation:landscape) and (max-height:600px){#questHud{top:73px;left:8px;font-size:11px;padding:5px 8px;max-width:calc(100vw - 160px)}#interactBtn{right:8px;top:108px;font-size:12px;padding:7px 10px}}@media(pointer:coarse){.pill{backdrop-filter:none}#savebar{gap:5px}#savebar button{padding:5px 6px}} @media(orientation:landscape) and (max-height:600px){#savebar{top:38px}}#rotateHint{display:none;position:fixed;inset:0;z-index:99;background:#071514f5;align-items:center;justify-content:center;text-align:center;padding:24px}#rotateHint .hint{max-width:320px;font-size:18px;line-height:1.8}#rotateHint button{margin-top:12px}@media (orientation:portrait) and (max-width:800px){#rotateHint{display:flex}} #actions button{position:relative;min-width:82px;min-height:48px;font-weight:700;box-shadow:0 3px 0 #071b18;transition:transform .1s,background .1s}#actions button:active{transform:scale(.93);background:#5b946b}#actions button.cooling{background:#283a39;color:#b2c4bb;border-color:#71847a}#actions button.ready{border-color:#e8d67c;box-shadow:0 0 13px #f0d76d99}#actions button small{display:block;font-size:10px;margin-top:3px;opacity:.9}#toast{z-index:40;max-width:85vw;white-space:normal;font-weight:bold;box-shadow:0 4px 20px #0009}#feedback{position:fixed;top:29%;left:50%;transform:translateX(-50%);pointer-events:none;font-size:28px;font-weight:900;text-shadow:0 2px 6px #000,0 0 16px #f9dc7b;z-index:30;opacity:0}#feedback.show{animation:popfeedback .65s ease-out}@keyframes popfeedback{0%{opacity:0;transform:translate(-50%,15px) scale(.7)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.2)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}} </style></head><body><div id="rotateHint"><div class="hint">📱 请将手机横过来<br>横屏体验开放世界修仙贪吃蛇<br><button id="tryLandscape">尝试切换横屏</button><div style="font-size:12px;color:#b6c8b9;margin-top:10px">若未自动旋转，请开启手机的自动旋转功能</div></div></div><canvas id="game"></canvas><canvas id="minimap" width="112" height="112"></canvas><div id="hud"><div class="pill">🐍 <b id="realm">凡蛇</b> · <span id="level">1</span>阶<div id="bar"><div id="fill"></div></div></div><div class="pill">✨ 修为 <b id="xp">0</b>/<span id="need">50</span></div><div class="pill">❤️ <b id="hp">100</b>　⚔️ <b id="power">10</b></div><div class="pill">🐉 <b id="form">凡蛇</b> · 进化 <b id="evo">0</b>/<span id="evoNeed">5</span></div><div class="pill">🗺️ <span id="region">青岚平原</span></div></div><div id="help">摇杆 / WASD / 方向键移动 · 吞噬灵果 · 弱兽吞噬 · 强兽战斗 · F灵息弹 · B突破</div><div id="joy"><div id="stick"></div></div><div id="actions"><button id="dash">⚡ 灵蛇遁</button><button id="heal">🌿 回春术</button><button id="strike">🔥 灵息弹</button><button id="breakthrough">🌀 突破</button></div><div id="toast"></div><div id="feedback"></div><div id="savebar"><button id="saveBtn">💾 存档</button><button id="qualityBtn" aria-label="切换画质">画质</button><span id="fpsLabel">FPS —</span><span id="saveStatus">自动存档开启</span></div><div id="questHud"><span id="questText">青岚机缘 0/3 · 狼王未讨伐</span></div><button id="interactBtn" style="display:none" aria-label="感悟附近机缘">✨ 感悟机缘</button><div id="panel"><div id="card"><h1>🐉 灵蛇问道</h1><p>开放世界 · 修仙贪吃蛇 V5.9 · 青岚试炼<br>灵兔会逃跑、狐妖会游斗、狼妖突袭、岩龟拥有护甲、妖蝠远程骚扰；吞噬妖兽积累进化点。<br>探索草原、雪境、荒漠与魔域，吞噬灵果提升修为，击败妖兽，突破境界！<br>移动时蛇身会跟随，死亡后可重新开始。</p><button id="start">踏入修仙世界</button></div></div><script>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>灵蛇问道·青岚仙境 V6.0 离线单文件版</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091b1a;color:#f3ecd3;font-family:system-ui,'Microsoft Yahei',sans-serif}canvas{display:block;width:100vw;height:100dvh;touch-action:none}#hud{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}.pill{background:#102b2bcf;border:1px solid #8cba8d66;border-radius:12px;padding:7px 11px;backdrop-filter:blur(8px);font-size:13px}#bar{width:125px;height:7px;background:#34514b;border-radius:9px;overflow:hidden;margin-top:5px}#fill{height:100%;background:linear-gradient(90deg,#79db9c,#e5cc6a);width:0%}#help{position:fixed;top:85px;left:10px;background:#102b2bbd;border-radius:10px;padding:7px 10px;font-size:12px;color:#d1dfcc;pointer-events:none}#actions{position:fixed;bottom:22px;right:16px;display:flex;gap:10px;z-index:25;touch-action:none}#actions button{touch-action:none;cursor:pointer}button{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;border:1px solid #b6d9b477;border-radius:16px;background:#183f39d9;color:#fff4d3;padding:14px 16px;font-size:15px;touch-action:manipulation}button:active{background:#477e58}#joy{position:fixed;bottom:22px;left:22px;width:128px;height:128px;border:2px solid #b1c8a466;border-radius:50%;background:#1e463b77;touch-action:none}#stick{position:absolute;left:42px;top:42px;width:42px;height:42px;border-radius:50%;background:#d6e4b0bb;pointer-events:none}#toast{position:fixed;top:36%;left:50%;transform:translateX(-50%);padding:14px 24px;border-radius:14px;background:#102a27d9;border:1px solid #e5d99e;color:#f8edbd;opacity:0;transition:opacity .2s;pointer-events:none;text-align:center;white-space:nowrap}#panel{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#071514aa}#card{background:#15322e;border:1px solid #93ba9c;border-radius:20px;padding:24px;max-width:340px;text-align:center;box-shadow:0 15px 70px #0009}#card h1{margin:0 0 10px;font-size:28px;color:#e9d697}#card p{line-height:1.7;color:#d2e1d1;font-size:14px}#card button{background:#327454;margin-top:8px}#minimap{position:fixed;right:12px;top:94px;width:112px;height:112px;border:1px solid #bbd6b577;border-radius:10px;background:#0a2425c9;pointer-events:none}@media(max-width:500px){#help{top:115px;max-width:210px}#minimap{top:140px;width:86px;height:86px}#actions{bottom:30px;right:10px;flex-direction:column}button{padding:12px}}@media (orientation:landscape) and (max-height:600px){#actions{max-width:47vw;flex-wrap:wrap;justify-content:flex-end}#actions button{padding:7px 9px;font-size:11px}#hud{top:5px;left:8px;right:120px;gap:5px;flex-wrap:nowrap}.pill{font-size:11px;padding:4px 7px;white-space:nowrap}#bar{height:4px;width:85px}#help{display:none}#minimap{top:8px;right:8px;width:88px;height:88px}#joy{left:22px;bottom:12px;width:110px;height:110px}#stick{left:35px;top:35px;width:36px;height:36px}#actions{bottom:14px;right:12px;flex-direction:row}#actions button{padding:10px;font-size:12px}#card{max-height:90dvh;overflow:auto;padding:12px 22px}#card h1{font-size:23px}#card p{margin:6px 0;font-size:12px}}#savebar{position:fixed;left:10px;top:48px;display:flex;align-items:center;gap:8px;z-index:15;font-size:11px;color:#e4dcb3}#savebar button{padding:5px 9px;font-size:11px;background:#214a3e}#fpsLabel{min-width:43px;color:#c3e5c3;font-variant-numeric:tabular-nums}#questHud{position:fixed;top:83px;left:10px;max-width:calc(100vw - 145px);padding:7px 10px;background:#122e28dc;border:1px solid #b0cda45c;border-radius:10px;color:#e4eac7;font-size:12px;z-index:12;pointer-events:none}#interactBtn{position:fixed;right:12px;top:214px;z-index:31;background:#386e58;border:1px solid #c1d4a0;color:#fff5cc;font-size:13px;padding:9px 13px;box-shadow:0 3px 10px #071b18a3}
+#adventureDock{position:fixed;top:123px;left:10px;z-index:19;display:flex;align-items:center;gap:6px;width:min(570px,calc(100vw - 135px));padding:3px 5px;border:1px solid #99ba9e59;border-radius:11px;background:#122b29e8;color:#eee6c7}
+#adventureOpen{font-size:12px;padding:5px 8px;min-width:auto;min-height:auto;white-space:nowrap;border-radius:7px;background:#365d4b}
+#adventureMini{font-size:11px;line-height:1.5;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+#trialStatus{position:fixed;top:156px;left:11px;z-index:20;background:#3d3335e6;color:#fff1bd;border:1px solid #f2ce8a99;font-size:12px;padding:5px 10px;border-radius:8px;pointer-events:none}
+#adventureJournal{position:fixed;inset:0;z-index:88;background:#071718e9;align-items:center;justify-content:center;padding:12px}
+#adventureCard{background:#1b3430;color:#e9e6ce;border:1px solid #b7cda07e;border-radius:17px;padding:13px 17px;width:min(560px,96vw);max-height:88dvh;overflow-y:auto;box-shadow:0 12px 45px #000a}
+#adventureCard h2{font-size:20px;margin:4px 0 11px;color:#f4dea5}
+#adventureCard p{line-height:1.55;margin:8px 0;padding:7px 10px;border-radius:8px;background:#ffffff0a;font-size:13px}
+#adventureCard p strong{display:block;color:#d3eecc}
+#adventureCard p span{display:block;color:#f2e5bf}
+.adventureSectionTitle{font-size:14px;font-weight:bold;color:#e2d3a4;margin:12px 0 6px}
+.adventureLine{border-top:1px solid #accb9c38;padding:7px 5px;font-size:13px}
+.adventureLine small{display:block;color:#a7c4bb;font-size:11px}
+.adventureLine button{float:right;min-height:0;min-width:0;padding:5px 9px;border-radius:8px;font-size:11px;margin-top:-28px}
+#adventureCard .adventureHint{font-size:11px;color:#b5cfc2;background:transparent}
+#adventureClose{width:100%;margin-top:8px;padding:10px;background:#437955}
+@media(orientation:landscape) and (max-height:600px){#adventureDock{top:98px;left:8px;max-width:calc(100vw - 165px)}#trialStatus{top:130px;left:8px}#adventureCard{padding:9px 14px}#adventureCard h2{font-size:17px}#adventureCard p{font-size:12px;margin:5px 0;padding:5px 8px}}
+@media(orientation:landscape) and (max-height:600px){#questHud{top:73px;left:8px;font-size:11px;padding:5px 8px;max-width:calc(100vw - 160px)}#interactBtn{right:8px;top:108px;font-size:12px;padding:7px 10px}}@media(pointer:coarse){.pill{backdrop-filter:none}#savebar{gap:5px}#savebar button{padding:5px 6px}} @media(orientation:landscape) and (max-height:600px){#savebar{top:38px}}#rotateHint{display:none;position:fixed;inset:0;z-index:99;background:#071514f5;align-items:center;justify-content:center;text-align:center;padding:24px}#rotateHint .hint{max-width:320px;font-size:18px;line-height:1.8}#rotateHint button{margin-top:12px}@media (orientation:portrait) and (max-width:800px){#rotateHint{display:flex}} #actions button{position:relative;min-width:82px;min-height:48px;font-weight:700;box-shadow:0 3px 0 #071b18;transition:transform .1s,background .1s}#actions button:active{transform:scale(.93);background:#5b946b}#actions button.cooling{background:#283a39;color:#b2c4bb;border-color:#71847a}#actions button.ready{border-color:#e8d67c;box-shadow:0 0 13px #f0d76d99}#actions button small{display:block;font-size:10px;margin-top:3px;opacity:.9}#toast{z-index:40;max-width:85vw;white-space:normal;font-weight:bold;box-shadow:0 4px 20px #0009}#feedback{position:fixed;top:29%;left:50%;transform:translateX(-50%);pointer-events:none;font-size:28px;font-weight:900;text-shadow:0 2px 6px #000,0 0 16px #f9dc7b;z-index:30;opacity:0}#feedback.show{animation:popfeedback .65s ease-out}@keyframes popfeedback{0%{opacity:0;transform:translate(-50%,15px) scale(.7)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.2)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}} </style></head><body><div id="rotateHint"><div class="hint">📱 请将手机横过来<br>横屏体验开放世界修仙贪吃蛇<br><button id="tryLandscape">尝试切换横屏</button><div style="font-size:12px;color:#b6c8b9;margin-top:10px">若未自动旋转，请开启手机的自动旋转功能</div></div></div><canvas id="game"></canvas><canvas id="minimap" width="112" height="112"></canvas><div id="hud"><div class="pill">🐍 <b id="realm">凡蛇</b> · <span id="level">1</span>阶<div id="bar"><div id="fill"></div></div></div><div class="pill">✨ 修为 <b id="xp">0</b>/<span id="need">50</span></div><div class="pill">❤️ <b id="hp">100</b>　⚔️ <b id="power">10</b></div><div class="pill">🐉 <b id="form">凡蛇</b> · 进化 <b id="evo">0</b>/<span id="evoNeed">5</span></div><div class="pill">🗺️ <span id="region">青岚平原</span></div></div><div id="help">摇杆 / WASD / 方向键移动 · 吞噬灵果 · 弱兽吞噬 · 强兽战斗 · F灵息弹 · B突破</div><div id="joy"><div id="stick"></div></div><div id="actions"><button id="dash">⚡ 灵蛇遁</button><button id="heal">🌿 回春术</button><button id="strike">🔥 灵息弹</button><button id="breakthrough">🌀 突破</button></div><div id="toast"></div><div id="feedback"></div><div id="savebar"><button id="saveBtn">💾 存档</button><button id="qualityBtn" aria-label="切换画质">画质</button><span id="fpsLabel">FPS —</span><span id="saveStatus">自动存档开启</span></div><div id="questHud"><span id="questText">青岚机缘 0/3 · 狼王未讨伐</span></div><button id="interactBtn" style="display:none" aria-label="感悟附近机缘">✨ 感悟机缘</button><div id="adventureDock"><button id="adventureOpen" aria-label="打开游历簿">📜 游历簿</button><span id="adventureMini">道途任务加载中…</span></div><div id="trialStatus" style="display:none"></div><div id="adventureJournal" style="display:none"><section id="adventureCard" role="dialog" aria-label="道途游历簿"><h2>📜 道途游历簿</h2><div id="adventureBody"></div><button id="adventureClose">返回游戏</button></section></div><div id="panel"><div id="card"><h1>🐉 灵蛇问道</h1><p>开放世界 · 修仙贪吃蛇 V6.0 · 道途游历<br>灵兔会逃跑、狐妖会游斗、狼妖突袭、岩龟拥有护甲、妖蝠远程骚扰；吞噬妖兽积累进化点。<br>探索草原、雪境、荒漠与魔域，吞噬灵果提升修为，击败妖兽，突破境界！<br>移动时蛇身会跟随，死亡后可重新开始。</p><button id="start">踏入修仙世界</button></div></div><script>
 // Xianxia sprite atlas
 var treeArt=document.createElement('img');
 treeArt.src='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22180%22%20height%3D%22220%22%20viewBox%3D%220%200%20180%20220%22%3E%0A%3Cdefs%3E%3ClinearGradient%20id%3D%22trunk%22%20x2%3D%221%22%20y2%3D%22.3%22%3E%3Cstop%20stop-color%3D%22%23392d2c%22%2F%3E%3Cstop%20offset%3D%22.42%22%20stop-color%3D%22%23856448%22%2F%3E%3Cstop%20offset%3D%22.7%22%20stop-color%3D%22%23a98a58%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2343392e%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22leaf%22%20cx%3D%22.35%22%20cy%3D%22.22%22%20r%3D%22.8%22%3E%3Cstop%20stop-color%3D%22%23a2c78a%22%2F%3E%3Cstop%20offset%3D%22.36%22%20stop-color%3D%22%23478764%22%2F%3E%3Cstop%20offset%3D%22.75%22%20stop-color%3D%22%23235b4e%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23183b38%22%2F%3E%3C%2FradialGradient%3E%3Cfilter%20id%3D%22shade%22%3E%3CfeGaussianBlur%20stdDeviation%3D%221.5%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%0A%3Cellipse%20cx%3D%22100%22%20cy%3D%22205%22%20rx%3D%2258%22%20ry%3D%2210%22%20fill%3D%22%23172a24%22%20opacity%3D%22.36%22%2F%3E%0A%3Cpath%20d%3D%22M79%20199%20Q84%20158%2077%20111%20Q59%2096%2039%2090%20L36%2081%20Q66%2087%2087%20103%20Q99%2082%20111%2065%20L120%2067%20Q110%2096%20102%20116%20Q98%20156%20104%20199%20L116%20207%20L90%20205%20L72%20208Z%22%20fill%3D%22url(%23trunk)%22%20stroke%3D%22%23302f2b%22%20stroke-width%3D%223%22%2F%3E%0A%3Cpath%20d%3D%22M87%20190%20Q90%20147%2088%20112%20M98%20187%20Q92%20156%2098%20126%20M83%20150%20L94%20140%22%20fill%3D%22none%22%20stroke%3D%22%23d0ad79%22%20stroke-width%3D%222%22%20opacity%3D%22.5%22%2F%3E%0A%3Cg%20fill%3D%22url(%23leaf)%22%20stroke%3D%22%23194a40%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M18%20101%20Q1%2079%2021%2054%20Q26%2026%2053%2030%20Q73%208%20100%2025%20Q129%207%20144%2036%20Q171%2039%20168%2068%20Q189%2087%20163%20104%20Q161%20125%20133%20129%20Q112%20145%2090%20130%20Q62%20145%2047%20127%20Q24%20129%2018%20101Z%22%2F%3E%3Cpath%20d%3D%22M24%2074%20Q7%2049%2042%2033%20Q50%2011%2082%2022%20Q100%201%20124%2021%20Q155%2015%20163%2049%20Q179%2070%20159%2089%20Q140%20107%20118%2099%20Q91%20115%2068%2097%20Q37%20106%2024%2074Z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M25%2080%20Q38%2058%2061%2058%20M51%2041%20Q74%2033%2093%2042%20M99%2033%20Q126%2032%20146%2053%20M111%2076%20Q139%2061%20159%2079%20M41%20101%20Q67%2088%2082%20105%20M90%20116%20Q121%20111%20138%20100%22%20stroke%3D%22%23b8dca0%22%20stroke-width%3D%225%22%20opacity%3D%22.68%22%2F%3E%3Cpath%20d%3D%22M28%2091%20Q47%2077%2064%2083%20M74%2057%20Q92%2047%20106%2057%20M116%2042%20Q130%2042%20145%2061%20M74%20116%20Q91%20109%20104%20117%22%20stroke%3D%22%23d7e6ae%22%20stroke-width%3D%222.5%22%20opacity%3D%22.8%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23d7e9b4%22%20opacity%3D%22.72%22%3E%3Cpath%20d%3D%22M39%2052l5-8%209%204-5%207zM85%2028l7-5%208%208-10%203zM133%2059l10-6%206%208-9%205zM54%2092l8-7%207%207-9%205zM105%20102l7-8%208%206-9%206z%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23153d34%22%20opacity%3D%22.55%22%3E%3Cpath%20d%3D%22M18%2098q21%2021%2042%2013l-14%2015Q24%20124%2018%2098M100%20129q37-6%2059-28-7%2023-30%2029-15%209-29-1%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E';
@@ -159,7 +177,7 @@ function placeStable(arr,n,fn,salt,pad){
   for(var i=0;i<n*12&&spawned<n;i++){
     var x=70+terrainHash(i,salt,7)*(SIZE-140);
     var y=70+terrainHash(i,salt,11)*(SIZE-140);
-    if(terrainBlocked(x,y)||landmarkClearing(x,y,pad)||onQinglanRoad(x,y)||isEncounterClearing(x,y,pad))continue;
+    if(terrainBlocked(x,y)||landmarkClearing(x,y,pad)||onQinglanRoad(x,y)||isEncounterClearing(x,y,pad)||isAdventureClearing(x,y,pad))continue;
     if(arr===obstacles&&arr.some(function(o){return Math.hypot(o.x-x,o.y-y)<o.r+33}))continue;
     arr.push(fn(x,y,i));spawned++;
   }
@@ -374,7 +392,7 @@ function buildStaticFlora(ix,iy){
   const top=Math.max(0,iy*4-1),bottom=Math.min(35,iy*4+4);
   for(let tx=left;tx<=right;tx++)for(let ty=top;ty<=bottom;ty++){
     const x=tx*100+50,y=ty*100+50;
-    if(biome(x,y)!==0||onQinglanRoad(x,y)||landmarkClearing(x,y,40)||isEncounterClearing(x,y,35))continue;
+    if(biome(x,y)!==0||onQinglanRoad(x,y)||landmarkClearing(x,y,40)||isEncounterClearing(x,y,35)||isAdventureClearing(x,y,40))continue;
     drawMeadow(x,y,g);
     const n=terrainHash(tx,ty,7);
     if(n>.78){
@@ -763,10 +781,12 @@ function rewardEncounter(site){
   particles.push({x:player.x,y:player.y,vx:Math.cos(a)*75,vy:Math.sin(a)*65,life:.8,color:colors[site.id]});
  }
  flash(first?'✨ 机缘发现 · '+site.short:'✨ 再获灵息');
+ adventureOnSite(site.id);
  if(first){saveGame(true)}
  updateHud();updateEncounterUI(now,true);
 }
 function activateNearbyEncounter(){
+ if(nearbyAdventureTrial()){activateAdventureTrial();return}
  const site=nearEncounterSite();
  if(site)rewardEncounter(site);
  else toast('靠近地图上的灵泉、灵木或青岚祠，可感悟机缘');
@@ -892,7 +912,7 @@ function defeatAzureKing(){
   let a=i*Math.PI*2/22;
   particles.push({x:azureKing.x,y:azureKing.y,vx:Math.cos(a)*160,vy:Math.sin(a)*155,life:1.25,color:i%2?'#ffdf9b':'#bcf4d6'});
  }
- saveGame(true);updateEncounterUI(performance.now(),true);
+ adventureOnWolf();saveGame(true);updateEncounterUI(performance.now(),true);
 }
 function paintAzureKing(now){
  const b=azureKing;if(!b||b.defeated||!inView(b.x,b.y,145))return;
@@ -931,6 +951,372 @@ function paintEncounterMinimap(){
  mc.fillRect(AZURE_LAIR.x/SIZE*112-3,AZURE_LAIR.y/SIZE*112-3,6,6);
  mc.restore();
 }
+</script><script>/* 灵蛇问道 V6.0 · 道途游历
+ * Goal: a lightweight, persistent main quest + automatic bounty rewards,
+ * and three mechanically distinct regional trials (collect / dodge / combat).
+ * Save only optional V4 fields; on older saves infer completed prior encounters.
+ */
+const ADVENTURE_TRIALS=[
+ {id:'frost',name:'寒镜遗迹',region:'寒霜雪境',x:465,y:680,requiredLevel:3,
+  title:'寒镜凝华',desc:'限时收集四枚寒魄',duration:35,color:'#baf6f7',art:'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22156%22%20height%3D%22196%22%20viewBox%3D%220%200%20156%20196%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22stone%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%22.9%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23eaf5e8%22%2F%3E%3Cstop%20offset%3D%22.32%22%20stop-color%3D%22%2399bbb8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23486b81%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22ice%22%20x1%3D%220%22%20y1%3D%22.1%22%20x2%3D%22.9%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23f6ffff%22%2F%3E%3Cstop%20offset%3D%22.26%22%20stop-color%3D%22%23b9f6f8%22%2F%3E%3Cstop%20offset%3D%22.67%22%20stop-color%3D%22%2367b4ca%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23286b97%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22aura%22%3E%3Cstop%20stop-color%3D%22%23e4ffff%22%20stop-opacity%3D%22.65%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2391d5ee%22%20stop-opacity%3D%220%22%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Cellipse%20cx%3D%2277%22%20cy%3D%22175%22%20rx%3D%2264%22%20ry%3D%2217%22%20fill%3D%22%231e4555%22%20opacity%3D%22.34%22%2F%3E%3Cpath%20d%3D%22M10%20161L30%20151L44%20160L65%20149L98%20155L124%20146L147%20164L134%20178L26%20178Z%22%20fill%3D%22%23526d75%22%20stroke%3D%22%23a0bec0%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M54%20167L58%2047L79%2020L101%2048L103%20167Z%22%20fill%3D%22url(%23stone)%22%20stroke%3D%22%233b6270%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20d%3D%22M62%2051L79%2028L96%2053L94%20145L78%20163L61%20144Z%22%20fill%3D%22url(%23ice)%22%20stroke%3D%22%23d9faf2%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M78%2037L78%20154M66%2057L85%2079L69%20103L88%20122M92%2055L76%2082L93%20101L76%20131%22%20stroke%3D%22%23f8ffff%22%20stroke-width%3D%223%22%20fill%3D%22none%22%20opacity%3D%22.75%22%2F%3E%3Cpath%20d%3D%22M76%2025L78%209L90%2027L78%2036L67%2027Z%22%20fill%3D%22%23edfff9%22%20stroke%3D%22%237fb8c7%22%20stroke-width%3D%222%22%2F%3E%3Cellipse%20cx%3D%2279%22%20cy%3D%2290%22%20rx%3D%2246%22%20ry%3D%2275%22%20fill%3D%22url(%23aura)%22%2F%3E%3Cpath%20d%3D%22M22%20160L38%20113L51%20153L43%20170Z%22%20fill%3D%22%23b7eff0%22%20stroke%3D%22%23578ea7%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M109%20154L124%20106L140%20161L127%20175Z%22%20fill%3D%22%23a1dfe5%22%20stroke%3D%22%23639bac%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M63%20169L78%20150L95%20169M28%20169L35%20155L42%20171%22%20fill%3D%22none%22%20stroke%3D%22%23f4fff7%22%20stroke-width%3D%224%22%2F%3E%3Cg%20fill%3D%22%23ecfff9%22%3E%3Ccircle%20cx%3D%2239%22%20cy%3D%2289%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%22113%22%20cy%3D%2271%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%22119%22%20cy%3D%22124%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M31%2036l3-8%203%208-3%206ZM122%2042l3-8%203%208-3%206Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'},
+ {id:'ember',name:'赤炎古柱',region:'赤炎荒漠',x:2910,y:950,requiredLevel:5,
+  title:'踏火取砂',desc:'避开火环，拾取四枚炎晶',duration:36,color:'#ffd28b',art:'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22156%22%20height%3D%22196%22%20viewBox%3D%220%200%20156%20196%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22stone%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%22.9%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23ecd8a5%22%2F%3E%3Cstop%20offset%3D%22.39%22%20stop-color%3D%22%23b0875f%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2364504b%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22fire%22%20x1%3D%22.5%22%20y1%3D%220%22%20x2%3D%22.5%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23fff4b4%22%2F%3E%3Cstop%20offset%3D%22.35%22%20stop-color%3D%22%23f9bc63%22%2F%3E%3Cstop%20offset%3D%22.8%22%20stop-color%3D%22%23ca553e%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23793b3c%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22aura%22%3E%3Cstop%20stop-color%3D%22%23fbe29a%22%20stop-opacity%3D%22.7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d36a48%22%20stop-opacity%3D%220%22%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Cellipse%20cx%3D%2278%22%20cy%3D%22174%22%20rx%3D%2263%22%20ry%3D%2215%22%20fill%3D%22%234d342d%22%20opacity%3D%22.35%22%2F%3E%3Cpath%20d%3D%22M13%20167L25%20148L52%20155L64%20149L93%20154L125%20147L146%20168L133%20179L24%20179Z%22%20fill%3D%22%236c5146%22%20stroke%3D%22%23b8956a%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M49%20161L55%2061L76%2039L99%2060L108%20161Z%22%20fill%3D%22url(%23stone)%22%20stroke%3D%22%236b4e45%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20d%3D%22M60%2069L78%2052L94%2069L94%20145L79%20153L61%20144Z%22%20fill%3D%22%23875b4d%22%20stroke%3D%22%23e7c083%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M78%2057L64%2080L78%2091L91%2079Z%22%20fill%3D%22%23f5c985%22%2F%3E%3Cpath%20d%3D%22M79%2086L64%20110L79%20132L93%20111Z%22%20fill%3D%22%23bc6843%22%20stroke%3D%22%23eac081%22%20stroke-width%3D%223%22%2F%3E%3Cellipse%20cx%3D%2278%22%20cy%3D%2299%22%20rx%3D%2253%22%20ry%3D%2267%22%20fill%3D%22url(%23aura)%22%2F%3E%3Cpath%20d%3D%22M67%20119Q47%2086%2066%2065Q63%2085%2078%2091Q89%2068%2081%2040Q119%2078%20100%20116Q91%20133%2077%20130Z%22%20fill%3D%22url(%23fire)%22%20stroke%3D%22%23df9f5a%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M75%20120Q65%20104%2082%2081Q78%20100%2090%20110Q87%20122%2075%20120Z%22%20fill%3D%22%23fff4b8%22%2F%3E%3Cpath%20d%3D%22M18%20161L32%20114L47%20165L39%20177Z%22%20fill%3D%22%23a77e5d%22%20stroke%3D%22%235b4a42%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M110%20160L125%20125L141%20165L127%20179Z%22%20fill%3D%22%23bd9165%22%20stroke%3D%22%236b4f45%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M27%20163L33%20151L40%20166M115%20160L126%20145L130%20169%22%20stroke%3D%22%23e7c995%22%20stroke-width%3D%224%22%20fill%3D%22none%22%2F%3E%3Cg%20fill%3D%22%23ffd899%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2273%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%22114%22%20cy%3D%2261%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M49%2038l4-11%204%2011-4%207ZM113%2046l3-8%203%208-3%204Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'},
+ {id:'nether',name:'幽冥封印',region:'幽冥魔域',x:2700,y:3290,requiredLevel:7,
+  title:'破除幽咒',desc:'限时击败三只封印守卫',duration:55,color:'#d9b5ff',art:'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22156%22%20height%3D%22196%22%20viewBox%3D%220%200%20156%20196%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22stone%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23b7a1c7%22%2F%3E%3Cstop%20offset%3D%22.4%22%20stop-color%3D%22%23665c80%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23302f54%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22sigil%22%3E%3Cstop%20stop-color%3D%22%23e7c8fc%22%2F%3E%3Cstop%20offset%3D%22.32%22%20stop-color%3D%22%23a3b4ec%22%2F%3E%3Cstop%20offset%3D%22.8%22%20stop-color%3D%22%237164a4%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23372c6d%22%2F%3E%3C%2FradialGradient%3E%3CradialGradient%20id%3D%22mist%22%3E%3Cstop%20stop-color%3D%22%23a79add%22%20stop-opacity%3D%22.6%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23433f88%22%20stop-opacity%3D%220%22%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Cellipse%20cx%3D%2278%22%20cy%3D%22177%22%20rx%3D%2264%22%20ry%3D%2216%22%20fill%3D%22%231c2243%22%20opacity%3D%22.42%22%2F%3E%3Cpath%20d%3D%22M10%20161L36%20144L61%20156L83%20145L117%20154L144%20163L133%20181L28%20181Z%22%20fill%3D%22%23383753%22%20stroke%3D%22%238978a1%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M46%20167L57%2047L79%2020L102%2047L110%20167L91%20177L61%20177Z%22%20fill%3D%22url(%23stone)%22%20stroke%3D%22%23303255%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20d%3D%22M64%2053L79%2036L94%2054L97%20142L78%20164L61%20139Z%22%20fill%3D%22%23413d72%22%20stroke%3D%22%23978bc0%22%20stroke-width%3D%223%22%2F%3E%3Cellipse%20cx%3D%2279%22%20cy%3D%2298%22%20rx%3D%2253%22%20ry%3D%2279%22%20fill%3D%22url(%23mist)%22%2F%3E%3Ccircle%20cx%3D%2279%22%20cy%3D%2298%22%20r%3D%2228%22%20fill%3D%22url(%23sigil)%22%20stroke%3D%22%23b3b0de%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M79%2067L101%20100L79%20128L56%20100Z%22%20fill%3D%22none%22%20stroke%3D%22%23cfc2ec%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M66%2091L89%20109M89%2090L66%20109M79%2077L79%20120%22%20stroke%3D%22%23f4e9ff%22%20stroke-width%3D%223%22%2F%3E%3Ccircle%20cx%3D%2279%22%20cy%3D%2298%22%20r%3D%229%22%20fill%3D%22%23d9d9fd%22%20stroke%3D%22%23756eb6%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M28%20162L35%20126L49%20164M107%20164L123%20120L140%20164%22%20fill%3D%22%2376688d%22%20stroke%3D%22%23453e67%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20d%3D%22M59%20170L79%20159L100%20172%22%20fill%3D%22none%22%20stroke%3D%22%23c7b9d8%22%20stroke-width%3D%224%22%2F%3E%3Cg%20fill%3D%22%23d8c4ef%22%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2291%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%22114%22%20cy%3D%2273%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%22122%22%20cy%3D%22115%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M30%2047l4-9%203%209-4%204ZM116%2033l3-9%203%209-3%205Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'}
+];
+const ADVENTURE_ART={};
+for(const trial of ADVENTURE_TRIALS){const im=new Image();im.src=trial.art;ADVENTURE_ART[trial.id]=im}
+const ADVENTURE_CHAPTERS=[
+ {name:'第一卷 · 灵根初醒',hint:'收集灵果 5 枚',metric:'fruit',need:5,xp:75},
+ {name:'第二卷 · 群妖试炼',hint:'击败或吞噬妖兽 4 只',metric:'kills',need:4,xp:120},
+ {name:'第三卷 · 青岚三缘',hint:'感悟灵泉、灵木、青岚祠',metric:'sites',need:3,xp:150,sigil:1},
+ {name:'第四卷 · 苍牙祸乱',hint:'击败青岚霸主苍牙狼王',metric:'wolf',need:1,xp:260,sigil:1},
+ {name:'第五卷 · 山海行旅',hint:'踏足寒霜、荒漠和幽冥三境',metric:'regions',need:3,xp:240},
+ {name:'第六卷 · 三境道试',hint:'完成寒镜、踏火和封印试炼',metric:'trials',need:3,xp:420,sigil:2},
+ {name:'终卷 · 蛟龙问道',hint:'进化为蛟龙或真龙',metric:'form',need:3,xp:350,sigil:2}
+];
+const ADVENTURE_BOUNTIES=[
+ {kind:'species',target:'hare',name:'玉耳寻踪',label:'吞噬或击败灵兔',need:4,xp:85,essence:1},
+ {kind:'species',target:'fox',name:'赤狐追猎',label:'击败狐妖',need:3,xp:110,essence:1},
+ {kind:'fruit',name:'采集灵果',label:'拾取灵果',need:7,xp:110,essence:1},
+ {kind:'species',target:'wolf',name:'清剿山狼',label:'击败山狼',need:3,xp:155,essence:2},
+ {kind:'species',target:'tortoise',name:'破甲修行',label:'击败岩龟',need:2,xp:190,essence:2,sigil:1},
+ {kind:'species',target:'bat',name:'净化幽羽',label:'击败妖蝠',need:3,xp:165,essence:2,sigil:1}
+];
+let adventureState=null,adventureSession=null,adventureBookOpen=false;
+let adventureTracked='story',lastAdventureHud='',lastAdventureRender=0,lastAdventureUi=0;
+function boundedNumber(v,limit=100000){return Number.isFinite(v)?Math.max(0,Math.min(limit,Math.floor(v))):0}
+function resetAdventure(){
+ adventureState={chapter:0,fruits:0,kills:0,siteIds:[],regionIds:[],trialWins:[],
+  wolf:false,sigils:0,commissionCycle:0,commissionProgress:0,trialCounts:{},trialReadyAt:{}};
+ adventureSession=null;adventureBookOpen=false;adventureTracked='story';
+ lastAdventureHud='';lastAdventureRender=0;lastAdventureUi=0;
+ const panel=document.getElementById('adventureJournal');if(panel)panel.style.display='none';
+}
+function restoreAdventure(saved){
+ if(!adventureState)resetAdventure();
+ const x=saved?.adventure;
+ const S=adventureState;
+ S.chapter=boundedNumber(x?.chapter,ADVENTURE_CHAPTERS.length);
+ S.fruits=boundedNumber(x?.fruits);
+ S.kills=boundedNumber(x?.kills??saved?.kills);
+ S.siteIds=[...new Set((Array.isArray(x?.siteIds)?x.siteIds:encounterState?.visited||[]).filter(i=>QINGLAN_SITES.some(s=>s.id===i)))];
+ S.regionIds=[...new Set((Array.isArray(x?.regionIds)?x.regionIds:[]).filter(v=>[1,2,3].includes(v)))];
+ S.trialWins=[...new Set((Array.isArray(x?.trialWins)?x.trialWins:[]).filter(id=>ADVENTURE_TRIALS.some(t=>t.id===id)))];
+ S.wolf=!!(x?.wolf||saved?.qinglanBossDefeated);
+ S.sigils=boundedNumber(x?.sigils,60);
+ S.commissionCycle=boundedNumber(x?.commissionCycle,9999);
+ S.commissionProgress=boundedNumber(x?.commissionProgress,999);
+ S.trialCounts=(x?.trialCounts&&typeof x.trialCounts==='object'&&!Array.isArray(x.trialCounts))?{...x.trialCounts}:{};
+ S.trialReadyAt=(x?.trialReadyAt&&typeof x.trialReadyAt==='object'&&!Array.isArray(x.trialReadyAt))?{...x.trialReadyAt}:{};
+ if(player){const here=biome(player.x,player.y);if(here!==0&&!S.regionIds.includes(here))S.regionIds.push(here)}
+ adventureSession=null;adventureBookOpen=false;adventureTracked='story';lastAdventureHud='';
+ lastAdventureUi=0;refreshAdventurePanel();updateAdventureHUD(true);
+}
+function adventureSaveFields(){
+ const S=adventureState;if(!S)return {};
+ return {adventure:{
+  chapter:S.chapter,fruits:S.fruits,kills:S.kills,siteIds:[...S.siteIds],
+  regionIds:[...S.regionIds],trialWins:[...S.trialWins],wolf:S.wolf,
+  sigils:S.sigils,commissionCycle:S.commissionCycle,
+  commissionProgress:S.commissionProgress,trialCounts:{...S.trialCounts},
+  trialReadyAt:{...S.trialReadyAt}
+ }};
+}
+function adventureCurrentBounty(){return ADVENTURE_BOUNTIES[(adventureState?.commissionCycle||0)%ADVENTURE_BOUNTIES.length]}
+function adventureChapterProgress(chapter=adventureState?.chapter||0){
+ const S=adventureState;if(!S||chapter>=ADVENTURE_CHAPTERS.length)return 0;
+ const m=ADVENTURE_CHAPTERS[chapter].metric;
+ if(m==='fruit')return S.fruits;
+ if(m==='kills')return S.kills;
+ if(m==='sites')return S.siteIds.length;
+ if(m==='wolf')return S.wolf?1:0;
+ if(m==='regions')return S.regionIds.length;
+ if(m==='trials')return S.trialWins.length;
+ if(m==='form')return evoStage;
+ return 0;
+}
+function adventureSpeedBonus(){return 1+Math.min(10,adventureState?.sigils||0)*.012}
+function adventureAttackBonus(){return 1+Math.min(12,adventureState?.sigils||0)*.026}
+function adventureReward(xp,sigils=0,essences=0,points=0){
+ if(xp>0)gain(xp);
+ if(sigils>0)adventureState.sigils=Math.min(60,adventureState.sigils+sigils);
+ if(essences>0)essence+=essences;
+ if(points>0){evoPoints+=points;triggerEvolutionIfReady()}
+}
+function updateAdventureAchievements(){
+ const S=adventureState;
+ if(!S||!running)return;
+ let changed=false,lastTitle='';
+ for(let i=0;i<ADVENTURE_CHAPTERS.length+1;i++){
+  const chapter=ADVENTURE_CHAPTERS[S.chapter];
+  if(!chapter||adventureChapterProgress()<chapter.need)break;
+  S.chapter++;changed=true;lastTitle=chapter.name;
+  adventureReward(chapter.xp,chapter.sigil||0,1,0);
+ }
+ if(changed){
+  flash('📜 道途完成 · '+lastTitle);
+  toast('📜 '+lastTitle+'完成，获得修为与道纹');
+  saveGame(true);
+  refreshAdventurePanel();
+  updateAdventureHUD(true);
+ }
+}
+function completeAdventureCommission(){
+ if(!adventureState||!running)return;
+ const S=adventureState,old=adventureCurrentBounty();
+ S.commissionCycle++;S.commissionProgress=0;
+ adventureReward(old.xp,old.sigil||0,old.essence||0,0);
+ flash('🎯 悬赏达成 · '+old.name);
+ toast('🎯 '+old.name+'完成！修为 +'+old.xp+'，灵蕴 +'+(old.essence||0));
+ saveGame(true);
+ updateAdventureHUD(true);refreshAdventurePanel();
+}
+function adventureTrack(kind,subject){
+ if(!adventureState||!running)return;
+ const S=adventureState;
+ if(kind==='fruit')S.fruits++;
+ if(kind==='kill')S.kills++;
+ if(kind==='site'&&QINGLAN_SITES.some(s=>s.id===subject)&&!S.siteIds.includes(subject))S.siteIds.push(subject);
+ if(kind==='region'&&[1,2,3].includes(subject)&&!S.regionIds.includes(subject)){
+  S.regionIds.push(subject);
+  flash('🗺️ 初访 '+biomes[subject].name);
+  toast('🗺️ 解锁地域：'+biomes[subject].name);
+ }
+ if(kind==='wolf')S.wolf=true;
+ if(kind==='trial'&&ADVENTURE_TRIALS.some(t=>t.id===subject)&&!S.trialWins.includes(subject))S.trialWins.push(subject);
+ const b=adventureCurrentBounty();
+ const match=(b.kind==='fruit'&&kind==='fruit')||(b.kind==='species'&&kind==='kill'&&subject===b.target);
+ if(match)S.commissionProgress++;
+ if(match&&S.commissionProgress>=b.need)completeAdventureCommission();
+ updateAdventureAchievements();
+}
+function adventureOnFruit(kind){adventureTrack('fruit',kind)}
+function adventureOnKill(enemy){adventureTrack('kill',enemy.species)}
+function adventureOnSite(id){adventureTrack('site',id)}
+function adventureOnWolf(){adventureTrack('wolf')}
+function adventureOnRegion(region){if(adventureState&&[1,2,3].includes(region)&&!adventureState.regionIds.includes(region))adventureTrack('region',region)}
+function adventureOnForm(){updateAdventureAchievements()}
+function adventureOnTrialWin(id){adventureTrack('trial',id)}
+function isAdventureClearing(x,y,pad=0){
+ return ADVENTURE_TRIALS.some(t=>Math.hypot(x-t.x,y-t.y)<102+pad);
+}
+function isAdventureBlocked(x,y){
+ return ADVENTURE_TRIALS.some(t=>Math.hypot(x-t.x,y-t.y+5)<17);
+}
+function nearbyAdventureTrial(){
+ if(!player)return null;
+ for(const t of ADVENTURE_TRIALS)if(Math.hypot(player.x-t.x,player.y-t.y)<92)return t;
+ return null;
+}
+function adventureTrialReady(trial){
+ return Date.now()>=(adventureState?.trialReadyAt?.[trial.id]||0);
+}
+function adventureDropOrbs(t){
+ const offsets=[[69,2],[52,61],[-58,51],[-80,-17],[-18,-74],[37,-67]];
+ const orbs=[];
+ for(const [dx,dy] of offsets){
+  const x=t.x+dx,y=t.y+dy;
+  if(x<35||y<35||x>SIZE-35||y>SIZE-35||terrainBlocked(x,y))continue;
+  orbs.push({x,y,found:false});
+ }
+ return orbs;
+}
+function startAdventureTrial(trial){
+ if(!running)return;
+ if(adventureSession){toast('先完成当前试炼，再开启下一处');return}
+ if(level<trial.requiredLevel){toast('🔒 '+trial.name+'需要修炼至 '+trial.requiredLevel+' 阶');return}
+ if(!adventureTrialReady(trial)){toast('⌛ '+trial.name+'尚在凝聚灵气');return}
+ const now=performance.now(),orbs=trial.id==='nether'?[]:adventureDropOrbs(trial);
+ if(trial.id!=='nether'&&orbs.length<4){toast('试炼场地暂不可用，请稍后重试');return}
+ adventureSession={id:trial.id,start:now,deadline:now+trial.duration*1000,
+  orbs,collected:0,killed:0,damageAt:0,hazards:[],active:true};
+ if(trial.id==='nether'){
+  const offsets=[[70,35],[-67,42],[12,-81]];
+  for(let i=0;i<3;i++){
+   let x=trial.x+offsets[i][0],y=trial.y+offsets[i][1];
+   if(terrainBlocked(x,y)){x=trial.x+72-i*28;y=trial.y+62}
+   const e=makeCreature(x,y,830+i);
+   e.species='bat';e.tier=Math.max(3,level-1);e.r=17;e.hp=e.max=60+level*5;
+   e.elite=i===2;e.armor=1;e.trialToken='nether';
+   enemies.push(e);
+  }
+ }
+ toast('⛩️ '+trial.title+'开始！'+trial.desc+'，限时 '+trial.duration+' 秒');
+ flash('⛩️ '+trial.name);
+ updateAdventureHUD(true);refreshAdventurePanel();
+}
+function activateAdventureTrial(){
+ const trial=nearbyAdventureTrial();
+ if(!trial){toast('靠近三境试炼碑后再尝试开启');return}
+ startAdventureTrial(trial);
+}
+function removeAdventureTrialEnemies(){
+ for(let i=enemies.length-1;i>=0;i--)if(enemies[i].trialToken)enemies.splice(i,1);
+}
+function endAdventureTrial(won){
+ const session=adventureSession;
+ if(!session)return;
+ const t=ADVENTURE_TRIALS.find(item=>item.id===session.id);
+ adventureSession=null;removeAdventureTrialEnemies();
+ if(won){
+  const S=adventureState;
+  S.trialCounts[t.id]=(boundedNumber(S.trialCounts[t.id],10000)+1);
+  const first=!S.trialWins.includes(t.id);
+  S.trialReadyAt[t.id]=Date.now()+120000;
+  adventureReward(first?190+level*12:90+level*6,first?1:0,2,first?3:1);
+  adventureOnTrialWin(t.id);
+  flash('🏆 试炼通过 · '+t.title);
+  toast('🏆 '+t.name+'通过！'+(first?'获得首次秘境奖励':'获得重修奖励'));
+  saveGame(true);
+ }else{
+  toast('⌛ '+t.name+'试炼结束，返回碑前可以重试');
+ }
+ updateAdventureHUD(true);refreshAdventurePanel();
+}
+function adventureOnTrialEnemy(enemy){
+ if(!adventureSession||enemy.trialToken!==adventureSession.id)return;
+ adventureSession.killed++;
+ if(adventureSession.killed>=3)endAdventureTrial(true);
+}
+function adventureTick(dt,now){
+ if(!running||!adventureState)return;
+ adventureOnRegion(biome(player.x,player.y));
+ // Chapter progression can depend on evolution gained through other rewards.
+ if(adventureState.chapter===ADVENTURE_CHAPTERS.length-1&&evoStage>=3)updateAdventureAchievements();
+ const s=adventureSession;if(!s)return;
+ if(now>s.deadline){endAdventureTrial(false);return}
+ const t=ADVENTURE_TRIALS.find(item=>item.id===s.id);
+ if(s.id!=='nether'){
+  for(const orb of s.orbs){
+   if(!orb.found&&Math.hypot(player.x-orb.x,player.y-orb.y)<22){
+    orb.found=true;s.collected++;
+    damageTexts.push({x:orb.x,y:orb.y-20,text:'灵晶 '+s.collected+'/4',life:.9,color:t.color});
+    if(s.collected>=4){endAdventureTrial(true);return}
+   }
+  }
+ }
+ if(s.id==='ember'&&now>s.damageAt&&now>invuln){
+  let hit=false;
+  for(let i=0;i<3;i++){
+   const angle=(now-s.start)*.0011+i*Math.PI*2/3;
+   const x=t.x+Math.cos(angle)*69,y=t.y+Math.sin(angle)*69;
+   if(Math.hypot(x-player.x,y-player.y)<28){hit=true;break}
+  }
+  if(hit){
+   const taken=encounterDamageTaken(9+Math.floor(level*.35),now);
+   hp-=taken;s.damageAt=now+700;invuln=now+600;
+   damageTexts.push({x:player.x,y:player.y-22,text:'灼烧 -'+taken,life:.8,color:'#ffab82'});
+   if(hp<=0){hp=0;die()}
+  }
+ }
+}
+function paintAdventureWorld(now){
+ ctx.save();
+ for(const t of ADVENTURE_TRIALS){
+  if(!inView(t.x,t.y,170))continue;
+  const img=ADVENTURE_ART[t.id],done=adventureState?.trialWins?.includes(t.id);
+  ctx.globalAlpha=qualityMode==='smooth'?.13:.23;
+  ctx.fillStyle=t.color;ctx.beginPath();ctx.ellipse(t.x,t.y,58,23,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  if(img.complete&&img.naturalWidth)ctx.drawImage(img,t.x-57,t.y-143,114,143);
+  else{ctx.fillStyle=t.color;ctx.fillRect(t.x-12,t.y-85,24,80)}
+  ctx.textAlign='center';ctx.font='bold 13px serif';
+  ctx.strokeStyle='#152a39';ctx.lineWidth=3;ctx.fillStyle=done?'#b2bfc9':t.color;
+  ctx.strokeText(t.name+(done?' · 已破':' · 试炼'),t.x,t.y-150);
+  ctx.fillText(t.name+(done?' · 已破':' · 试炼'),t.x,t.y-150);
+ }
+ const s=adventureSession;if(s){
+  const t=ADVENTURE_TRIALS.find(item=>item.id===s.id);
+  for(const orb of s.orbs){
+   if(orb.found||!inView(orb.x,orb.y,30))continue;
+   const bob=Math.sin(now*.004+orb.x*.03)*4;
+   ctx.save();ctx.translate(orb.x,orb.y+bob);
+   ctx.globalAlpha=.22;ctx.fillStyle=t.color;
+   ctx.beginPath();ctx.arc(0,0,15,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+   ctx.fillStyle='#f9ffe6';ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(9,0);ctx.lineTo(0,12);ctx.lineTo(-9,0);ctx.closePath();ctx.fill();
+   ctx.strokeStyle=t.color;ctx.lineWidth=2;ctx.stroke();ctx.restore();
+  }
+  if(s.id==='ember'){
+   for(let i=0;i<3;i++){
+    const a=(now-s.start)*.0011+i*Math.PI*2/3,x=t.x+Math.cos(a)*69,y=t.y+Math.sin(a)*69;
+    if(!inView(x,y,40))continue;
+    ctx.save();ctx.strokeStyle='#ffbf79';ctx.fillStyle='#a93f3670';ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(x,y,29,14,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.restore();
+   }
+  }
+ }
+ ctx.restore();
+}
+function paintAdventureMinimap(){
+ if(!adventureState)return;
+ mc.save();
+ for(const t of ADVENTURE_TRIALS){
+  mc.fillStyle=adventureState.trialWins.includes(t.id)?'#95bcb2':t.color;
+  let x=t.x/SIZE*112,y=t.y/SIZE*112;
+  mc.fillRect(x-2,y-2,4,4);
+ }
+ const objective=adventureTracked==='story'?null:ADVENTURE_TRIALS.find(x=>x.id===adventureTracked);
+ if(objective){
+  const x=objective.x/SIZE*112,y=objective.y/SIZE*112;
+  mc.strokeStyle='#ffe29e';mc.lineWidth=1.2;mc.strokeRect(x-4,y-4,8,8);
+ }
+ mc.restore();
+}
+function updateAdventureInteraction(now){
+ const b=document.getElementById('interactBtn');if(!b)return;
+ const t=nearbyAdventureTrial();
+ if(t){
+  b.style.display='block';
+  b.textContent=level<t.requiredLevel?'🔒 '+t.requiredLevel+'阶解封':adventureSession?'⌛ 试炼进行中':adventureTrialReady(t)?'⛩️ 开启 · '+t.name:'⌛ 灵气恢复中';
+  b.disabled=level<t.requiredLevel||!!adventureSession||!adventureTrialReady(t);
+ }else{
+  b.style.display=nearEncounterSite()?'block':'none';
+ }
+}
+function adventureMainLabel(){
+ const c=ADVENTURE_CHAPTERS[adventureState?.chapter||0];
+ return !c?'七卷道途已通 · 开启自由修炼':c.name+'：'+c.hint+' ('+Math.min(c.need,adventureChapterProgress())+'/'+c.need+')';
+}
+function updateAdventureHUD(force=false){
+ const S=adventureState;
+ if(!S)return;
+ const b=adventureCurrentBounty(),label='📜 '+adventureMainLabel()+'　|　🎯 '+b.name+' '+S.commissionProgress+'/'+b.need;
+ const el=document.getElementById('adventureMini');
+ if(el&&(force||lastAdventureHud!==label)){el.textContent=label;lastAdventureHud=label}
+ const time=performance.now();
+ const status=document.getElementById('trialStatus');
+ if(status){const sess=adventureSession;
+  status.textContent=sess?'试炼 · '+ADVENTURE_TRIALS.find(t=>t.id===sess.id).name+' '+Math.max(0,Math.ceil((sess.deadline-time)/1000))+'秒　'+(sess.id==='nether'?sess.killed:sess.collected)+'/'+(sess.id==='nether'?3:4):'';
+  status.style.display=sess?'block':'none';
+ }
+ if(adventureBookOpen&&time-lastAdventureRender>1000)refreshAdventurePanel();
+}
+function refreshAdventurePanel(){
+ if(!adventureBookOpen||!adventureState)return;
+ const s=adventureState,el=document.getElementById('adventureBody');if(!el)return;
+ const b=adventureCurrentBounty(),chapter=ADVENTURE_CHAPTERS[s.chapter];
+ const story=chapter?chapter.name+' · '+chapter.hint+'：'+Math.min(adventureChapterProgress(),chapter.need)+' / '+chapter.need:'七卷主线已全部完成';
+ const trials=ADVENTURE_TRIALS.map(t=>{
+  let done=s.trialWins.includes(t.id),unlocked=level>=t.requiredLevel;
+  return '<div class="adventureLine"><b>'+t.name+'</b> · '+t.region+' · '+(done?'已通关':unlocked?'可开启':'需要 '+t.requiredLevel+' 阶')+
+   '<small>'+t.desc+'</small><button class="trackBtn" data-trial="'+t.id+'">追踪</button></div>';
+ }).join('');
+ el.innerHTML='<p><strong>📜 修仙主线</strong><span>'+story+'</span></p>'+
+ '<p><strong>🎯 巡山悬赏</strong><span>'+b.label+' '+s.commissionProgress+'/'+b.need+'，自动结算</span></p>'+
+ '<p><strong>🐉 道纹</strong><span>'+s.sigils+' 枚 · 攻击+'+Math.round((adventureAttackBonus()-1)*100)+'% · 移速+'+Math.round((adventureSpeedBonus()-1)*100)+'%</span></p>'+
+ '<p><strong>🗺️ 游历进度</strong><span>发现 '+s.regionIds.length+'/3 个外境 · 通过 '+s.trialWins.length+'/3 处试炼</span></p>'+
+ '<div class="adventureSectionTitle">三境试炼</div>'+trials+
+ '<p class="adventureHint">主线、悬赏完成后自动领取奖励，不需要频繁确认。靠近试炼碑后点击屏幕的互动按钮即可参加挑战。</p>';
+ for(const btn of el.querySelectorAll?.('.trackBtn')||[])btn.addEventListener('click',()=>{adventureTracked=btn.dataset.trial;toggleAdventureBook(false);toast('🧭 已在小地图标记 '+ADVENTURE_TRIALS.find(t=>t.id===adventureTracked).name)});
+ lastAdventureRender=performance.now();
+}
+function toggleAdventureBook(force){
+ adventureBookOpen=typeof force==='boolean'?force:!adventureBookOpen;
+ const panel=document.getElementById('adventureJournal');if(panel)panel.style.display=adventureBookOpen?'flex':'none';
+ refreshAdventurePanel();
+}
 </script><script>
 // HTML file:// can restrict browser storage; fall back to memory without crashing.
 const offlineStore=(()=>{
@@ -948,6 +1334,7 @@ const offlineStore=(()=>{
 
 
 
+
 document.querySelector('#tryLandscape').addEventListener('click',async()=>{try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape')}catch(e){alert('浏览器不支持自动锁定横屏，请打开手机自动旋转并横放手机。')}});const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),mini=document.querySelector('#minimap'),mc=mini.getContext('2d');// V5.6 performance: use fewer backing pixels on touch devices by default.
 const TOUCH_DEVICE=/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent||'')||Number(navigator.maxTouchPoints||0)>0;
 let qualityMode=TOUCH_DEVICE?'smooth':'sharp';
@@ -959,18 +1346,19 @@ function resize(){
  canvas.height=Math.max(1,Math.round(H*dpr));
  ctx.setTransform(dpr,0,0,dpr,0,0);
 }addEventListener('resize',resize);resize();
-const SIZE=3600,biomes=[{name:'青岚平原',color:'#467f4f',ground:'#61915b'},{name:'寒霜雪境',color:'#afc8c5',ground:'#d6e5dc'},{name:'赤炎荒漠',color:'#b68b55',ground:'#d2ac6d'},{name:'幽冥魔域',color:'#5b4c6c',ground:'#74617c'}];function biome(x,y){if(x<900&&y<1250)return 1;if(x>2450&&y<1850)return 2;if(x>2200&&y>2400)return 3;return 0}function rand(a,b){return a+Math.random()*(b-a)}const obstacles=[],fruits=[],enemies=[],decor=[];let player,trail,exp,need,level,hp,invuln=0,running=false,last=0,camX=0,camY=0,joystick={x:0,y:0},keys={},dashUntil=0,dashReady=0,healReady=0,kills=0,toastTimer,projectiles=[],essence=0,breakReady=false,attackTime=0,evoPoints=0,evoStage=0,particles=[],damageTexts=[],boss=null,lastAutosave=0;const SAVE_KEY="lingshe_v4_save";const forms=["凡蛇","灵蛇","妖蟒","蛟龙","真龙"],evoThresholds=[5,14,30,55,9999];const realmNames=['凡蛇','炼气','筑基','金丹','元婴','化神','渡劫','真仙'];function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}function flash(t){let e=document.querySelector('#feedback');e.textContent=t;e.classList.remove('show');void e.offsetWidth;e.classList.add('show')}function toast(t){let el=document.querySelector('#toast');el.textContent=t;el.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.opacity=0,1600)}function place(arr,n,fn){for(let i=0;i<n;i++)arr.push(fn(rand(70,SIZE-70),rand(70,SIZE-70)))}function reset(){resetEvolutionEffects();resetEncounters();obstacles.length=fruits.length=enemies.length=decor.length=0;projectiles.length=0;essence=0;breakReady=false;attackTime=0;evoPoints=0;evoStage=0;particles.length=0;damageTexts.length=0;boss={x:3040,y:2950,hp:650,max:650,r:42,last:0,shot:0,defeated:false};placeStable(decor,1100,(x,y,i)=>({x,y,type:terrainHash(i,17,21),size:5+terrainHash(i,18,22)*14}),177,22);placeStable(obstacles,150,(x,y,i)=>({x,y,r:15+terrainHash(i,19,24)*16}),191,36);placeStable(fruits,240,(x,y,i)=>({x,y,kind:terrainHash(i,23,25)<.13?1:0}),223,8);placeStable(enemies,52,(x,y,i)=>makeCreature(x,y,i),233,85);player={x:1750,y:1800,angle:0};camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));trail=Array.from({length:17},(_,i)=>({x:player.x-i*7,y:player.y}));exp=0;need=50;level=1;hp=100;kills=0;dashUntil=0;dashReady=0;healReady=0;invuln=0;updateHud()}
-function saveGame(silent=false){if(!player)return;try{offlineStore.setItem(SAVE_KEY,JSON.stringify({version:4,player,trail,exp,need,level,hp,kills,evoPoints,evoStage,essence,bossDefeated:boss?.defeated||false,...encounterSaveFields()}));document.querySelector('#saveStatus').textContent='已保存 '+new Date().toLocaleTimeString();if(!silent)toast('💾 修炼进度已保存')}catch(e){toast('存档不可用：请检查浏览器存储权限')}}
-function loadGame(){try{const v=JSON.parse(offlineStore.getItem(SAVE_KEY)||'null');if(!v||v.version!==4||!v.player||!Array.isArray(v.trail))return false;Object.assign(player,v.player);trail=v.trail;if(terrainBlocked(player.x,player.y)){player.x=1750;player.y=1800;trail=trail.map((_,i)=>({x:player.x-i*8,y:player.y}))}exp=v.exp;need=v.need;level=v.level;hp=v.hp;kills=v.kills;evoPoints=v.evoPoints;evoStage=v.evoStage;essence=v.essence||0;breakReady=exp>=need;if(boss)boss.defeated=!!v.bossDefeated;restoreEncounters(v);camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));updateHud();return true}catch(e){return false}}
+const SIZE=3600,biomes=[{name:'青岚平原',color:'#467f4f',ground:'#61915b'},{name:'寒霜雪境',color:'#afc8c5',ground:'#d6e5dc'},{name:'赤炎荒漠',color:'#b68b55',ground:'#d2ac6d'},{name:'幽冥魔域',color:'#5b4c6c',ground:'#74617c'}];function biome(x,y){if(x<900&&y<1250)return 1;if(x>2450&&y<1850)return 2;if(x>2200&&y>2400)return 3;return 0}function rand(a,b){return a+Math.random()*(b-a)}const obstacles=[],fruits=[],enemies=[],decor=[];let player,trail,exp,need,level,hp,invuln=0,running=false,last=0,camX=0,camY=0,joystick={x:0,y:0},keys={},dashUntil=0,dashReady=0,healReady=0,kills=0,toastTimer,projectiles=[],essence=0,breakReady=false,attackTime=0,evoPoints=0,evoStage=0,particles=[],damageTexts=[],boss=null,lastAutosave=0;const SAVE_KEY="lingshe_v4_save";const forms=["凡蛇","灵蛇","妖蟒","蛟龙","真龙"],evoThresholds=[5,14,30,55,9999];const realmNames=['凡蛇','炼气','筑基','金丹','元婴','化神','渡劫','真仙'];function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}function flash(t){let e=document.querySelector('#feedback');e.textContent=t;e.classList.remove('show');void e.offsetWidth;e.classList.add('show')}function toast(t){let el=document.querySelector('#toast');el.textContent=t;el.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.opacity=0,1600)}function place(arr,n,fn){for(let i=0;i<n;i++)arr.push(fn(rand(70,SIZE-70),rand(70,SIZE-70)))}function reset(){resetEvolutionEffects();resetEncounters();resetAdventure();obstacles.length=fruits.length=enemies.length=decor.length=0;projectiles.length=0;essence=0;breakReady=false;attackTime=0;evoPoints=0;evoStage=0;particles.length=0;damageTexts.length=0;boss={x:3040,y:2950,hp:650,max:650,r:42,last:0,shot:0,defeated:false};placeStable(decor,1100,(x,y,i)=>({x,y,type:terrainHash(i,17,21),size:5+terrainHash(i,18,22)*14}),177,22);placeStable(obstacles,150,(x,y,i)=>({x,y,r:15+terrainHash(i,19,24)*16}),191,36);placeStable(fruits,240,(x,y,i)=>({x,y,kind:terrainHash(i,23,25)<.13?1:0}),223,8);placeStable(enemies,52,(x,y,i)=>makeCreature(x,y,i),233,85);player={x:1750,y:1800,angle:0};camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));trail=Array.from({length:17},(_,i)=>({x:player.x-i*7,y:player.y}));exp=0;need=50;level=1;hp=100;kills=0;dashUntil=0;dashReady=0;healReady=0;invuln=0;updateHud()}
+function saveGame(silent=false){if(!player)return;try{offlineStore.setItem(SAVE_KEY,JSON.stringify({version:4,player,trail,exp,need,level,hp,kills,evoPoints,evoStage,essence,bossDefeated:boss?.defeated||false,...encounterSaveFields(),...adventureSaveFields()}));document.querySelector('#saveStatus').textContent='已保存 '+new Date().toLocaleTimeString();if(!silent)toast('💾 修炼进度已保存')}catch(e){toast('存档不可用：请检查浏览器存储权限')}}
+function loadGame(){try{const v=JSON.parse(offlineStore.getItem(SAVE_KEY)||'null');if(!v||v.version!==4||!v.player||!Array.isArray(v.trail))return false;Object.assign(player,v.player);trail=v.trail;if(terrainBlocked(player.x,player.y)){player.x=1750;player.y=1800;trail=trail.map((_,i)=>({x:player.x-i*8,y:player.y}))}exp=v.exp;need=v.need;level=v.level;hp=v.hp;kills=v.kills;evoPoints=v.evoPoints;evoStage=v.evoStage;essence=v.essence||0;breakReady=exp>=need;if(boss)boss.defeated=!!v.bossDefeated;restoreEncounters(v);restoreAdventure(v);camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));updateHud();return true}catch(e){return false}}
 function die(){if(!running)return;running=false;saveGame(true);document.querySelector('#panel').style.display='flex';document.querySelector('#card').innerHTML='<h1>🐍 轮回之地</h1><p>你已倒下，修为和进化进度将保留。<br>选择复活后生命恢复，返回青岚平原安全区域。</p><button id="reviveBtn">🌱 原地复活（安全区）</button><button id="newBtn">重新开局（清除存档）</button>';document.querySelector('#reviveBtn').onclick=()=>{hp=Math.round((100+level*10)*.75);player.x=1750;player.y=1800;trail=trail.map((_,i)=>({x:player.x-i*8,y:player.y}));invuln=performance.now()+3500;running=true;document.querySelector('#panel').style.display='none';saveGame(true);toast('复活成功 · 3.5秒保护')};document.querySelector('#newBtn').onclick=()=>{offlineStore.removeItem(SAVE_KEY);startGame(false)}}
 function updateHud(){let r=Math.min(7,Math.floor((level-1)/3));document.querySelector('#realm').textContent=realmNames[r];document.querySelector('#level').textContent=level;document.querySelector('#xp').textContent=Math.floor(exp);document.querySelector('#need').textContent=need;document.querySelector('#hp').textContent=Math.max(0,Math.ceil(hp));document.querySelector('#power').textContent=10+level*6;document.querySelector('#fill').style.width=100*Math.min(1,exp/need)+'%';document.querySelector('#form').textContent=forms[evoStage];document.querySelector('#form').title=SNAKE_FORMS[evoStage]?.perk||'';document.querySelector('#evo').textContent=evoPoints;document.querySelector('#evoNeed').textContent=evoThresholds[evoStage];document.querySelector('#region').textContent=biomes[biome(player.x,player.y)].name}function gain(v){v=Math.round(v*encounterExperienceBonus(performance.now()));exp+=v;if(exp>=need&&!breakReady){breakReady=true;toast('🌀 修为已满！点击突破按钮')}updateHud()}
 function breakthrough(){if(!running)return;if(exp<need){toast('🌀 修为不足：还差 '+Math.ceil(need-exp)+' 修为');flash('修为不足');return}exp-=need;level++;need=Math.round(need*1.36+20);hp=Math.min(100+level*10,hp+40);trail.push(...Array.from({length:4},()=>({...trail[trail.length-1]})));breakReady=exp>=need;flash('✨ 境界突破！');toast('✨ 突破成功！'+realmNames[Math.min(7,Math.floor((level-1)/3))]+' '+level+'阶');updateHud()}
-function randomOpenGround(pad=0){for(let k=0;k<90;k++){let x=rand(70,SIZE-70),y=rand(70,SIZE-70);if(!terrainBlocked(x,y)&&!landmarkClearing(x,y,pad)&&!onQinglanRoad(x,y)&&!isEncounterClearing(x,y,pad))return {x,y}}return {x:1750,y:1890}}
+function randomOpenGround(pad=0){for(let k=0;k<90;k++){let x=rand(70,SIZE-70),y=rand(70,SIZE-70);if(!terrainBlocked(x,y)&&!landmarkClearing(x,y,pad)&&!onQinglanRoad(x,y)&&!isEncounterClearing(x,y,pad)&&!isAdventureClearing(x,y,pad))return {x,y}}return {x:1750,y:1890}}
 function respawnEnemy(e){let point=randomOpenGround(60);assignCreature(e,point.x,point.y,Math.floor(Math.random()*100000))}
-function killEnemy(e,swallow){let reward=14+e.tier*14;gain(reward);kills++;essence++;evoPoints+=e.elite?3:1;damageTexts.push({x:e.x,y:e.y-24,text:swallow?'吞噬 +'+reward:'击败 +'+reward,life:1,color:'#ffe394'});let justEvolved=triggerEvolutionIfReady();
+function killEnemy(e,swallow){let reward=14+e.tier*14;gain(reward);kills++;essence++;evoPoints+=e.elite?3:1;damageTexts.push({x:e.x,y:e.y-24,text:swallow?'吞噬 +'+reward:'击败 +'+reward,life:1,color:'#ffe394'});let justEvolved=triggerEvolutionIfReady();adventureOnForm();
 trail.push({...trail[trail.length-1]});
 toast(justEvolved?'🐉 '+forms[evoStage]+'觉醒：'+SNAKE_FORMS[evoStage].perk:(swallow?'🐍 吞噬弱小妖兽':'⚔️ 击败强敌')+' +'+reward+'修为');
-respawnEnemy(e)}
+adventureOnKill(e);
+if(e.trialToken){const token=e.trialToken;const index=enemies.indexOf(e);if(index>=0)enemies.splice(index,1);adventureOnTrialEnemy({trialToken:token})}else respawnEnemy(e)}
 function strike(){
  if(!running)return;
  let now=performance.now();
@@ -983,7 +1371,7 @@ function strike(){
  const triple=evoStage>=4,spread=triple?[-.18,0,.18]:[0];
  for(let angleOffset of spread){
   let ang=a+angleOffset;
-  let power=(18+level*9+evoStage*8)*(angleOffset===0?1:.7)*encounterDamageBonus(now);
+  let power=(18+level*9+evoStage*8)*(angleOffset===0?1:.7)*encounterDamageBonus(now)*adventureAttackBonus();
   projectiles.push({x:player.x,y:player.y,vx:Math.cos(ang)*540,vy:Math.sin(ang)*540,life:1,damage:power,stage:evoStage});
  }
  flash(triple?'🐉 三重龙息！':evoStage>=2?'🔥 金鳞震荡！':'🔥 灵息弹');
@@ -1025,13 +1413,13 @@ for(const [id,action] of Object.entries(skillActions)){
  // keyboard / accessibility clicks still work; ignore synthetic clicks after touch.
  btn.addEventListener('click',e=>{if(e.detail===0){action()}else e.preventDefault()});
 }
-const joy=document.querySelector('#joy'),stick=document.querySelector('#stick');function moveJoy(e){let b=joy.getBoundingClientRect(),dx=e.clientX-(b.left+b.width/2),dy=e.clientY-(b.top+b.height/2),l=Math.hypot(dx,dy)||1,k=Math.min(l,40)/l;joystick.x=dx/l*Math.min(1,l/25);joystick.y=dy/l*Math.min(1,l/25);stick.style.transform=`translate(${dx*k}px,${dy*k}px)`}joy.addEventListener('pointerdown',e=>{e.preventDefault();joy.setPointerCapture(e.pointerId);moveJoy(e)},{passive:false});joy.addEventListener('pointermove',e=>{if(joy.hasPointerCapture(e.pointerId)){e.preventDefault();moveJoy(e)}},{passive:false});function stopJoy(){joystick.x=joystick.y=0;stick.style.transform=''}joy.addEventListener('pointerup',stopJoy);joy.addEventListener('pointercancel',stopJoy);addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key===' ')dash();if(e.key.toLowerCase()==='e')heal();if(e.key.toLowerCase()==='f')strike();if(e.key.toLowerCase()==='b')breakthrough();if(e.key.toLowerCase()==='g')activateNearbyEncounter()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-function update(dt,now){let dx=joystick.x+(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),dy=joystick.y+(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),len=Math.hypot(dx,dy);if(len>.1){dx/=len;dy/=len;let speed=(170+Math.min(100,level*4))*(now<dashUntil?(evoStage>=3?3.75:3.2):1);let nx=Math.max(22,Math.min(SIZE-22,player.x+dx*speed*dt)),ny=Math.max(22,Math.min(SIZE-22,player.y+dy*speed*dt));let occupied=(x,y)=>terrainBlocked(x,y)||obstacles.some(o=>Math.hypot(o.x-x,o.y-y)<o.r+10);if(!occupied(nx,ny)){player.x=nx;player.y=ny}else{if(!occupied(nx,player.y))player.x=nx;if(!occupied(player.x,ny))player.y=ny}player.angle=Math.atan2(dy,dx)}trail[0].x=player.x;trail[0].y=player.y;for(let i=1;i<trail.length;i++){let prev=trail[i-1],p=trail[i],d=Math.hypot(prev.x-p.x,prev.y-p.y);if(d>8){p.x+=(prev.x-p.x)*(d-8)/d;p.y+=(prev.y-p.y)*(d-8)/d}}for(let f of fruits){if(dist(player,f)<23){gain(f.kind?35:12);let next=randomOpenGround(10);f.x=next.x;f.y=next.y;f.kind=Math.random()<.13?1:0}}
+const joy=document.querySelector('#joy'),stick=document.querySelector('#stick');function moveJoy(e){let b=joy.getBoundingClientRect(),dx=e.clientX-(b.left+b.width/2),dy=e.clientY-(b.top+b.height/2),l=Math.hypot(dx,dy)||1,k=Math.min(l,40)/l;joystick.x=dx/l*Math.min(1,l/25);joystick.y=dy/l*Math.min(1,l/25);stick.style.transform=`translate(${dx*k}px,${dy*k}px)`}joy.addEventListener('pointerdown',e=>{e.preventDefault();joy.setPointerCapture(e.pointerId);moveJoy(e)},{passive:false});joy.addEventListener('pointermove',e=>{if(joy.hasPointerCapture(e.pointerId)){e.preventDefault();moveJoy(e)}},{passive:false});function stopJoy(){joystick.x=joystick.y=0;stick.style.transform=''}joy.addEventListener('pointerup',stopJoy);joy.addEventListener('pointercancel',stopJoy);addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key===' ')dash();if(e.key.toLowerCase()==='e')heal();if(e.key.toLowerCase()==='f')strike();if(e.key.toLowerCase()==='b')breakthrough();if(e.key.toLowerCase()==='g')activateNearbyEncounter();if(e.key.toLowerCase()==='p')toggleAdventureBook();if(e.key==='Escape')toggleAdventureBook(false)});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+function update(dt,now){let dx=joystick.x+(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),dy=joystick.y+(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),len=Math.hypot(dx,dy);if(len>.1){dx/=len;dy/=len;let speed=(170+Math.min(100,level*4))*(now<dashUntil?(evoStage>=3?3.75:3.2):1)*adventureSpeedBonus();let nx=Math.max(22,Math.min(SIZE-22,player.x+dx*speed*dt)),ny=Math.max(22,Math.min(SIZE-22,player.y+dy*speed*dt));let occupied=(x,y)=>terrainBlocked(x,y)||obstacles.some(o=>Math.hypot(o.x-x,o.y-y)<o.r+10);if(!occupied(nx,ny)){player.x=nx;player.y=ny}else{if(!occupied(nx,player.y))player.x=nx;if(!occupied(player.x,ny))player.y=ny}player.angle=Math.atan2(dy,dx)}trail[0].x=player.x;trail[0].y=player.y;for(let i=1;i<trail.length;i++){let prev=trail[i-1],p=trail[i],d=Math.hypot(prev.x-p.x,prev.y-p.y);if(d>8){p.x+=(prev.x-p.x)*(d-8)/d;p.y+=(prev.y-p.y)*(d-8)/d}}for(let f of fruits){if(dist(player,f)<23){gain(f.kind?35:12);adventureOnFruit(f.kind);let next=randomOpenGround(10);f.x=next.x;f.y=next.y;f.kind=Math.random()<.13?1:0}}
 for(let i=projectiles.length-1;i>=0;i--){let p=projectiles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;let hit=false;if(p.hostile){if(dist(p,player)<21&&now>invuln){let taken=encounterDamageTaken(p.damage,now);hp-=taken;invuln=now+800;damageTexts.push({x:player.x,y:player.y-20,text:'-'+taken,life:.8,color:'#ff8b8b'});hit=true;if(hp<=0){hp=0;die()}}}else for(let e of enemies){if(dist(p,e)<e.r+9){let realDamage=p.damage*(e.armor||1);e.hp-=realDamage;e.hitFlash=performance.now()+130;damageTexts.push({x:e.x,y:e.y-16,text:'-'+Math.round(realDamage),life:.75,color:'#fff0a8'});for(let k=0;k<7;k++)particles.push({x:e.x,y:e.y,vx:rand(-90,90),vy:rand(-90,90),life:.4,color:'#ffb565'});hit=true;if((p.stage||0)>=2)splashSerpentImpact(e.x,e.y,p.damage*.4,e);if(e.hp<=0)killEnemy(e,false);break}if(boss&&!boss.defeated&&dist(p,boss)<boss.r+9){boss.hp-=p.damage;damageTexts.push({x:boss.x,y:boss.y-50,text:"-"+Math.round(p.damage),life:.8,color:"#ffe8a0"});hit=true;if(boss.hp<=0){boss.defeated=true;gain(550);evoPoints+=12;toast("🏆 击败幽冥妖王！获得550修为与12进化点");saveGame(true)}}}if(!hit&&!p.hostile&&hitAzureKingProjectile(p,now))hit=true;if(hit||p.life<=0)projectiles.splice(i,1)}
-for(let e of enemies){let d=dist(e,player);e.t+=dt;let weak=e.species==='hare'||level>=e.tier+2;updateCreatureMotion(e,player,dt,now,weak);if(weak&&d<e.r+19){killEnemy(e,true);continue}if(!weak&&d<46&&now-e.last>580){let melee=(9+level*6+evoStage*5)*(e.armor||1);e.hp-=melee;e.hitFlash=now+120;damageTexts.push({x:e.x,y:e.y-18,text:'-'+melee,life:.7,color:'#ffe8aa'});let kx=e.x+((e.x-player.x)/(d||1))*15,ky=e.y+((e.y-player.y)/(d||1))*15;if(!terrainBlocked(kx,ky)){e.x=kx;e.y=ky}e.last=now;if(e.hp<=0){killEnemy(e,false);continue}}if(!weak&&e.elite&&e.species!=='fox'&&e.species!=='bat'&&d<220&&d>70&&now>e.shot){e.shot=now+2500;projectiles.push({x:e.x,y:e.y,vx:(player.x-e.x)/d*220,vy:(player.y-e.y)/d*220,life:1.4,damage:6+e.tier*2,hostile:true})}if(!weak&&d<e.r+14&&now>invuln){let hurt=encounterDamageTaken(Math.max(4,8+e.tier*2-level*.5),now);hp-=hurt;damageTexts.push({x:player.x,y:player.y-25,text:'-'+Math.ceil(hurt),life:.8,color:'#ff9292'});invuln=now+950;if(hp<=0){hp=0;die()}}}
+for(let e of enemies){let d=dist(e,player);e.t+=dt;let weak=e.species==='hare'||level>=e.tier+2;updateCreatureMotion(e,player,dt,now,weak);if(weak&&d<e.r+19){killEnemy(e,true);continue}if(!weak&&d<46&&now-e.last>580){let melee=(9+level*6+evoStage*5)*adventureAttackBonus()*(e.armor||1);e.hp-=melee;e.hitFlash=now+120;damageTexts.push({x:e.x,y:e.y-18,text:'-'+melee,life:.7,color:'#ffe8aa'});let kx=e.x+((e.x-player.x)/(d||1))*15,ky=e.y+((e.y-player.y)/(d||1))*15;if(!terrainBlocked(kx,ky)){e.x=kx;e.y=ky}e.last=now;if(e.hp<=0){killEnemy(e,false);continue}}if(!weak&&e.elite&&e.species!=='fox'&&e.species!=='bat'&&d<220&&d>70&&now>e.shot){e.shot=now+2500;projectiles.push({x:e.x,y:e.y,vx:(player.x-e.x)/d*220,vy:(player.y-e.y)/d*220,life:1.4,damage:6+e.tier*2,hostile:true})}if(!weak&&d<e.r+14&&now>invuln){let hurt=encounterDamageTaken(Math.max(4,8+e.tier*2-level*.5),now);hp-=hurt;damageTexts.push({x:player.x,y:player.y-25,text:'-'+Math.ceil(hurt),life:.8,color:'#ff9292'});invuln=now+950;if(hp<=0){hp=0;die()}}}
 if(boss&&!boss.defeated){let bd=dist(boss,player);if(bd<400){if(bd>65){let tx=boss.x+(player.x-boss.x)/bd*28*dt,ty=boss.y+(player.y-boss.y)/bd*28*dt;if(!terrainBlocked(tx,ty)){boss.x=tx;boss.y=ty}}if(bd<boss.r+18&&now>boss.last){boss.last=now+1200;hp-=encounterDamageTaken(15,now);damageTexts.push({x:player.x,y:player.y-22,text:'-15',life:.8,color:'#ff9090'});if(hp<=0){hp=0;die()}}if(bd<350&&now>boss.shot){boss.shot=now+1800;for(let a=-.3;a<=.3;a+=.3){let ang=Math.atan2(player.y-boss.y,player.x-boss.x)+a;projectiles.push({x:boss.x,y:boss.y,vx:Math.cos(ang)*210,vy:Math.sin(ang)*210,life:2,damage:12,hostile:true})}}}}
-updateAzureKing(dt,now);if(now-lastAutosave>20000){lastAutosave=now;saveGame(true)}
-for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.life<=0)particles.splice(i,1)}for(let i=damageTexts.length-1;i>=0;i--){let t=damageTexts[i];t.y-=32*dt;t.life-=dt;if(t.life<=0)damageTexts.splice(i,1)}camX+=(Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2))-camX)*Math.min(1,dt*7);camY+=(Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2))-camY)*Math.min(1,dt*7);if(now-lastHudSync>180){lastHudSync=now;updateHud();updateEncounterUI(now)}}
+updateAzureKing(dt,now);adventureTick(dt,now);if(now-lastAutosave>20000){lastAutosave=now;saveGame(true)}
+for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.life<=0)particles.splice(i,1)}for(let i=damageTexts.length-1;i>=0;i--){let t=damageTexts[i];t.y-=32*dt;t.life-=dt;if(t.life<=0)damageTexts.splice(i,1)}camX+=(Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2))-camX)*Math.min(1,dt*7);camY+=(Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2))-camY)*Math.min(1,dt*7);if(now-lastHudSync>180){lastHudSync=now;updateHud();updateEncounterUI(now);updateAdventureInteraction(now);updateAdventureHUD()}}
 function circle(x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
 // V5.2: deterministic, camera-culled hand-crafted environmental motifs.
 function terrainHash(x,y,k=0){let n=Math.sin(x*127.1+y*311.7+k*74.7)*43758.5453;return n-Math.floor(n)}
@@ -1046,7 +1434,7 @@ function streamCenter(y){return 1060+Math.sin(y*.0035)*175+Math.sin(y*.009)*58}
 function isBridge(x,y){return y>1740&&y<1860&&Math.abs(x-streamCenter(y))<86}
 function isWater(x,y){let pool=(x-1480)*(x-1480)/(64*64)+(y-1551)*(y-1551)/(28*28)<1;return pool||(y>=1200&&y<=3500&&Math.abs(x-streamCenter(y))<30&&!isBridge(x,y))}
 function isCliff(x,y){return x>1370&&x<1660&&y>1230&&y<1610&&Math.sin((x-1370)*.018)*32+y<1560}
-function terrainBlocked(x,y){return isWater(x,y)||isCliff(x,y)||isLandmarkBlocked(x,y)||isEncounterBlocked(x,y)}
+function terrainBlocked(x,y){return isWater(x,y)||isCliff(x,y)||isLandmarkBlocked(x,y)||isEncounterBlocked(x,y)||isAdventureBlocked(x,y)}
 function drawBridge(){let y=1800,x=streamCenter(y);ctx.save();ctx.translate(x,y);ctx.fillStyle='#261e1b88';ctx.fillRect(-60,-57,120,114);ctx.fillStyle='#745039';ctx.fillRect(-56,-55,112,110);for(let k=-5;k<=5;k++){ctx.fillStyle=k%2?'#aa8052':'#94683f';ctx.fillRect(-54,k*10-5,108,9);ctx.strokeStyle='#563d2a';ctx.lineWidth=1;ctx.strokeRect(-54,k*10-5,108,9)}ctx.fillStyle='#d5b47b';ctx.fillRect(-63,-57,8,114);ctx.fillRect(55,-57,8,114);for(let k=-1;k<=1;k++){ctx.fillStyle='#59432c';ctx.fillRect(-66,k*48-3,13,9);ctx.fillRect(54,k*48-3,13,9)}ctx.restore()}
 function drawCliff(){ctx.save();ctx.fillStyle='#34483b';ctx.beginPath();ctx.moveTo(1360,1230);ctx.lineTo(1660,1230);ctx.lineTo(1660,1570);ctx.lineTo(1540,1540);ctx.lineTo(1450,1610);ctx.lineTo(1360,1570);ctx.closePath();ctx.fill();ctx.fillStyle='#77826c';ctx.beginPath();ctx.moveTo(1360,1210);ctx.lineTo(1660,1210);ctx.lineTo(1660,1500);ctx.lineTo(1550,1480);ctx.lineTo(1450,1550);ctx.lineTo(1360,1500);ctx.closePath();ctx.fill();ctx.strokeStyle='#d0c69a';ctx.lineWidth=5;ctx.stroke();ctx.restore()}
 // The golden volumetric glow is cached; no per-frame full-screen gradient fill.
@@ -1125,12 +1513,12 @@ function paintMinimap(now){
  }
  mc.clearRect(0,0,112,112);
  mc.drawImage(cachedMinimap,0,0);
- mc.fillStyle='#ffe99a';mc.beginPath();mc.arc(player.x/SIZE*112,player.y/SIZE*112,3.5,0,Math.PI*2);mc.fill();paintEncounterMinimap();
+ mc.fillStyle='#ffe99a';mc.beginPath();mc.arc(player.x/SIZE*112,player.y/SIZE*112,3.5,0,Math.PI*2);mc.fill();paintEncounterMinimap();paintAdventureMinimap();
  lastMiniStamp=now;
 }
 function draw(){ctx.clearRect(0,0,W,H);ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(-camX,-camY);// Static world tiles, grass details, roads and river use bounded cache chunks.
 paintCachedGround();paintStreamBanks();if(inView(streamCenter(1800),1800,145)&&!paintBridge(streamCenter(1800),1800))drawBridge();if(camX<1700&&camX+W>1310&&camY<1600&&camY+H>1180&&!paintCliffScene())drawCliff();paintCloudfall(performance.now());
-paintCachedFlora();paintEncounterSites(performance.now());
+paintCachedFlora();paintEncounterSites(performance.now());paintAdventureWorld(performance.now());
 for(let o of decor){if(!inView(o.x,o.y,180))continue;let b=biome(o.x,o.y);if(o.type<.29){if(b!==0||!paintTreeScene(o,72+o.size*2.2))drawFoliageSprite(o)}else if(o.type<.65){drawFlower(o.x,o.y,b===1?'#f4ffff':b===2?'#f5db9a':'#eac8d9')}else if(o.type<.79){if(!paintBambooStand(o.x,o.y,.6+o.size/40))drawBamboo(o.x,o.y,.6+o.size/40)}else{drawRock(o.x,o.y,Math.max(5,o.size*.6))}}for(let o of obstacles){if(!inView(o.x,o.y,o.r+12))continue;circle(o.x+3,o.y+5,o.r,'#273d35a0');drawRock(o.x,o.y,o.r)}paintLandmarks();paintShrineLanterns(performance.now());paintLandmarkTitles();for(let f of fruits){if(!inView(f.x,f.y,20))continue;circle(f.x,f.y,11,f.kind?'#ffd26344':'#74ffc344');circle(f.x,f.y,f.kind?7:5,f.kind?'#ffe47d':'#8cf6b0')}paintAzureKing(performance.now());if(boss&&!boss.defeated&&inView(boss.x,boss.y,140)){circle(boss.x+5,boss.y+8,boss.r+8,'#20172c');circle(boss.x,boss.y,boss.r,'#7f426f');circle(boss.x-14,boss.y-8,7,'#ffd678');circle(boss.x+14,boss.y-8,7,'#ffd678');ctx.fillStyle='#250d27';ctx.fillRect(boss.x-56,boss.y-65,112,9);ctx.fillStyle='#fa778f';ctx.fillRect(boss.x-56,boss.y-65,112*Math.max(0,boss.hp/boss.max),9);ctx.fillStyle='#fff2bd';ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillText('幽冥妖王 · BOSS',boss.x,boss.y-72)}for(let e of enemies){if(!inView(e.x,e.y,e.r+20))continue;circle(e.x,e.y,e.r+3,'#1b2837');if(!paintSpeciesEnemy(e,performance.now())){circle(e.x,e.y,e.r,performance.now()<e.hitFlash?'#ffffff':e.elite?'#e1a34e':biome(e.x,e.y)===3?'#bc70d5':'#bf645b');circle(e.x-5,e.y-3,3,'#fff3cc');circle(e.x+5,e.y-3,3,'#fff3cc')}if(e.elite){ctx.strokeStyle='#f9da83';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+5,0,Math.PI*2);ctx.stroke();ctx.save();ctx.font='bold 11px serif';ctx.textAlign='center';ctx.fillStyle='#ffe6a8';ctx.fillText(creatureLabel(e),e.x,e.y-e.r-24);ctx.restore()}ctx.fillStyle='#341f25';ctx.fillRect(e.x-17,e.y-e.r-11,34,4);ctx.fillStyle='#e6b07c';ctx.fillRect(e.x-17,e.y-e.r-11,34*e.hp/e.max,4)}for(let p of projectiles){if(!inView(p.x,p.y,24))continue;paintEvolvedProjectile(p,performance.now())}paintDashEchoes(performance.now());paintSerpentAura(player,evoStage,performance.now());for(let i=trail.length-1;i>=1;i--){let t=trail[i];if(!paintEvolvedBody(t,i,evoStage,performance.now()))circle(t.x,t.y,Math.max(5,10-i*.07),i%2?'#67bb77':'#87d48a')}if(!paintEvolvedHead(player,player.angle,evoStage,performance.now())){circle(player.x,player.y,13+evoStage*2,performance.now()<invuln?'#e9d9aa':['#a3f3a2','#82e8c0','#75d6db','#84b8ff','#e8d08d'][evoStage]);let ax=Math.cos(player.angle),ay=Math.sin(player.angle);circle(player.x+ax*8-ay*5,player.y+ay*8+ax*5,2.3,'#163d27');circle(player.x+ax*8+ay*5,player.y+ay*8-ax*5,2.3,'#163d27')}paintEvolutionWorldFx(player,performance.now());for(let p of particles)circle(p.x,p.y,Math.max(1,p.life*5),p.color);ctx.font='bold 16px system-ui';ctx.textAlign='center';for(let t of damageTexts){ctx.globalAlpha=Math.min(1,t.life*2);ctx.fillStyle=t.color;ctx.fillText(t.text,t.x,t.y)}ctx.globalAlpha=1;paintLandmarkFront(player);paintForegroundCanopies(player,decor,camX,camY,W,H);drawAtmosphere(performance.now());ctx.restore();paintEvolutionBanner(performance.now());paintMinimap(performance.now())}
 function buttonFeedback(now){const items=[['dash',dashReady,'⚡ 灵蛇遁'],['heal',healReady,'🌿 回春术'],['strike',attackTime,'🔥 灵息弹']];for(const [id,ready,label] of items){const b=document.getElementById(id),remaining=Math.max(0,(ready-now)/1000);b.classList.toggle('cooling',remaining>0);b.innerHTML=label+'<small>'+(remaining>0?'冷却 '+remaining.toFixed(1)+'s':'可使用')+'</small>'}const b=document.getElementById('breakthrough');b.classList.toggle('ready',exp>=need);b.innerHTML='🌀 突破<small>'+(exp>=need?'✨ 可以突破':'差 '+Math.max(0,Math.ceil(need-exp))+' 修为')+'</small>'}let lastButtons=0,lastHudSync=0,lastFrame=0,frames=0,lastFpsUpdate=0;
 function loop(now){
@@ -1138,7 +1526,7 @@ function loop(now){
  let dt=Math.min((now-last)/1000||0,.04);last=now;
  // Idle start screen does not require 60 redraws each second.
  if(!running&&now-lastFrame<140){requestAnimationFrame(loop);return}
- if(running)update(dt,now);
+ if(running&&!adventureBookOpen)update(dt,now);
  draw();lastFrame=now;frames++;
  if(now-lastFpsUpdate>=1000){
   let measured=Math.round(frames*1000/Math.max(1,now-lastFpsUpdate));
@@ -1146,8 +1534,9 @@ function loop(now){
   lastFpsUpdate=now;frames=0;
  }
  requestAnimationFrame(loop);
-}function startGame(resume=true){reset();const restored=resume&&loadGame();running=true;document.querySelector('#panel').style.display='none';toast(restored?'📜 已恢复上次修炼进度':'🌱 欢迎来到青岚平原');updateEncounterUI(performance.now(),true)}document.querySelector('#start').onclick=()=>startGame(true);document.querySelector('#saveBtn').addEventListener('pointerdown',e=>{e.preventDefault();saveGame()});
+}function startGame(resume=true){reset();const restored=resume&&loadGame();running=true;document.querySelector('#panel').style.display='none';toast(restored?'📜 已恢复上次修炼进度':'🌱 欢迎来到青岚平原');updateEncounterUI(performance.now(),true);updateAdventureInteraction(performance.now());updateAdventureHUD(true)}document.querySelector('#start').onclick=()=>startGame(true);document.querySelector('#saveBtn').addEventListener('pointerdown',e=>{e.preventDefault();saveGame()});
 const encounterBtn=document.querySelector('#interactBtn');encounterBtn.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();activateNearbyEncounter()},{passive:false});encounterBtn.addEventListener('click',e=>{if(e.detail===0)activateNearbyEncounter();else e.preventDefault()});
+document.querySelector('#adventureOpen').addEventListener('click',()=>toggleAdventureBook());document.querySelector('#adventureClose').addEventListener('click',()=>toggleAdventureBook(false));
 const qualityBtn=document.querySelector('#qualityBtn');
 function updateQualityLabel(){qualityBtn.textContent=qualityMode==='smooth'?'画质·流畅':'画质·高清'}
 updateQualityLabel();
