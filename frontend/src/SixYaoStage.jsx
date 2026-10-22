@@ -1243,7 +1243,7 @@ function loadLocalCases(){
     return Array.isArray(value)?value.filter(x=>x&&typeof x.id==='string'&&x.snapshot).slice(0,12):[]
   }catch{return []}
 }
-function ChineseLocalCaseArchive({chart,question}){
+export function ChineseLocalCaseArchive({chart,question}){
   const [cases,setCases]=useState(loadLocalCases)
   const [before,setBefore]=useState('')
   const [selectedId,setSelectedId]=useState(null)
