@@ -640,6 +640,67 @@ export function CaseNotebook({method,question,chart}) {
     </div>}
   </section>
 }
+
+const REVIEW_STEPS=[
+  {id:'calendar',title:'核日月',no:'一'},
+  {id:'focus',title:'因事取用',no:'二'},
+  {id:'relations',title:'辨生克',no:'三'},
+  {id:'conflicts',title:'参空破',no:'四'},
+  {id:'report',title:'成研究案',no:'五'}
+]
+function ReviewReport({chart,question}) {
+  const data=chart.review_flow?.report
+  const [message,setMessage]=useState('')
+  if(!data)return null
+  const lines=[
+    '# 万象书院 · 六爻研判学习笔记',
+    question?.trim()?'所问事项：'+question.trim():'所问事项：尚未填写',
+    ...data.verified_by_program,
+    '',
+    '待核实与未完成事项：',
+    ...data.outstanding_questions.map((x,i)=>(i+1)+'. '+x),
+    '',
+    data.notice
+  ]
+  function download(){
+    const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'})
+    const url=URL.createObjectURL(blob)
+    const link=document.createElement('a')
+    link.href=url
+    link.download='万象书院-六爻研判笔记.txt'
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    setMessage('已生成本地文本文件。不会把笔记上传到服务器。')
+  }
+  async function copy(){
+    try{
+      if(!navigator.clipboard)throw new Error('浏览器不支持剪贴板')
+      await navigator.clipboard.writeText(lines.join('\n'))
+      setMessage('学习笔记已复制到剪贴板。')
+    }catch(e){setMessage('剪贴板不可用，请点击「保存文本笔记」。')}
+  }
+  return <section className="review-report" aria-label="六爻研判学习报告">
+    <div className="review-report-head"><small>第五步 · 整理研究案</small><h3>{data.title}</h3></div>
+    <p>这一页记录已经排出的结构及需要核实的问题，不自动给出吉凶分数、最终取用或应期。</p>
+    <div className="review-report-facts">
+      {data.verified_by_program.map((x,i)=><p key={i}>{x}</p>)}
+    </div>
+    <div className="review-report-outstanding">
+      <h4>尚待核实</h4>
+      <ol>{data.outstanding_questions.map((x,i)=><li key={i}>{x}</li>)}</ol>
+    </div>
+    <p className="review-report-caution">{data.notice}</p>
+    <div className="review-report-actions">
+      <button type="button" onClick={download}>保存文本笔记 ↧</button>
+      <button type="button" onClick={copy}>复制研究记录</button>
+    </div>
+    {message&&<p className="review-report-message" role="status">{message}</p>}
+    <p className="review-report-hint">若需要结合现实问题讨论，可在本页下方填写背景并使用可选 AI；案例簿也在此页，先记事前分析，再记录事后结果。</p>
+  </section>
+}
+
 export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [coins,setCoins]=useState([2,3,2])
   const [lines,setLines]=useState([])
@@ -656,6 +717,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [focusLiugin,setFocusLiugin]=useState('')
   const [studyPosition,setStudyPosition]=useState(null)
   const [roleView,setRoleView]=useState('用神')
+  const [reviewStage,setReviewStage]=useState('calendar')
   const requestNumber=useRef(0)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
@@ -697,7 +759,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
     },800)
   }
-  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神')}
+  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar')}
   async function interpret(){
     if(!chart||busy||calendarBusy)return
     if(!question.trim()||background.trim().length<2){setError('请填写所问之事，并补充一次现实背景。');return}
@@ -757,21 +819,53 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           {chart?<div className="academy-computed">
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
-            <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
-            <LineDynamicsStudy chart={chart}/>
-            <SeasonalMovingStudy chart={chart}/>
-            <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
-            <DayMonthReview chart={chart}/>
-            <VoidInteractionsStudy chart={chart}/>
-            <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
-            <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
-            <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
-            <NajiaBoard chart={chart} roleView={roleView}/>
-            <div className="academy-scope">{chart.note}</div>
+            <nav className="review-flow-nav" aria-label="六爻五步研判页面">
+              {REVIEW_STEPS.map((step,i)=>{
+                const state=chart.review_flow?.stages?.[i]?.status
+                return <button type="button" key={step.id} onClick={()=>setReviewStage(step.id)}
+                  aria-current={reviewStage===step.id?'step':undefined}
+                  disabled={calendarBusy} className={reviewStage===step.id?'active':''}>
+                  <span>{step.no} · {step.title}</span>
+                  <small>{state==='pending'?'待输入':state==='partial'?'待补全':'需核对'}</small>
+                </button>
+              })}
+            </nav>
+            {chart.review_flow?.stages?.filter(x=>x.id===reviewStage).map(step=>
+              <p className="review-flow-message" key={step.id} role="status">
+                <b>{step.summary}</b><span>{step.action}</span>
+              </p>)}
+            {reviewStage==='calendar'&&
+              <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>}
+            {reviewStage==='focus'&&<>
+              <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
+              <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
+              <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
+            </>}
+            {reviewStage==='relations'&&<>
+              <NajiaBoard chart={chart} roleView={roleView}/>
+              <LineDynamicsStudy chart={chart}/>
+              <SeasonalMovingStudy chart={chart}/>
+              <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
+            </>}
+            {reviewStage==='conflicts'&&<>
+              <DayMonthReview chart={chart}/>
+              <VoidInteractionsStudy chart={chart}/>
+            </>}
+            {reviewStage==='report'&&<>
+              <ReviewReport chart={chart} question={question}/>
+              <div className="academy-scope">{chart.review_flow?.workflow_note}</div>
+            </>}
+            <div className="review-flow-footer">
+              <button type="button" disabled={reviewStage==='calendar'||calendarBusy}
+                onClick={()=>setReviewStage(REVIEW_STEPS[Math.max(0,REVIEW_STEPS.findIndex(s=>s.id===reviewStage)-1)].id)}>← 上一步</button>
+              <span>{REVIEW_STEPS.findIndex(s=>s.id===reviewStage)+1} / 5 · 研习流程</span>
+              <button type="button" disabled={reviewStage==='report'||calendarBusy}
+                onClick={()=>setReviewStage(REVIEW_STEPS[Math.min(4,REVIEW_STEPS.findIndex(s=>s.id===reviewStage)+1)].id)}>下一步 →</button>
+            </div>
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
         </section>
       </div>
-      {chart&&<section className="academy-ai-section">
+      {chart&&reviewStage==='report'&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
         <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。两现候选现可逐条对照，并由求测者选择研习主爻，但不会自动择优。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
