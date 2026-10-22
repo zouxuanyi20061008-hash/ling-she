@@ -1,0 +1,318 @@
+/* 万象书院 · 分门有境 UI V19
+   原则：独立术数气质、主次分明、正文优先可读、移动端减少纵向翻动。
+   只涉及展示层，不改变起卦算法、经文、日月转换及案例计算。 */
+:root{
+  --ux-ink:#203229;
+  --ux-text:#37463b;
+  --ux-muted:#4f6156;
+  --ux-paper:#f7f1e5;
+  --ux-paper-light:#fffaf0;
+  --ux-line:#acaa93;
+  --ux-focus:#174d3a;
+}
+:where(button,a,input,textarea,select,summary):focus-visible{
+  outline:3px solid #167456!important;
+  outline-offset:3px!important;
+}
+button:disabled{cursor:not-allowed}
+:where(.atlas,.academy-stage,.library-stage,.book-app) button{
+  -webkit-tap-highlight-color:rgba(33,92,62,.17);
+}
+
+/* 书院首页：深色正文、明确入口层级 */
+.atlas{color:var(--ux-ink);background:
+  radial-gradient(ellipse at 12% 0,rgba(253,246,226,.9),transparent 43%),
+  radial-gradient(ellipse at 94% 70%,rgba(78,120,86,.16),transparent 45%),#e8e0d0}
+.atlas-hero{min-height:360px;padding-bottom:36px}
+.atlas-lead,.atlas-hero-note,.atlas-selection p,
+.atlas-choice-help,.atlas-ident-text small{color:#405b4b}
+.atlas-motto,.atlas-eyebrow{color:#785334}
+.atlas-ghost,.atlas-library,.atlas-return{color:#254b39;border-color:#788a78;background:#fff8e9}
+.atlas-primary{background:#214b39;color:#fff8e9}
+.atlas-method{--accent:#285d49;--tile-bg:#f4f0e5;--tile-line:#beb49f;
+  background:var(--tile-bg);border-color:var(--tile-line);
+  border-top:5px solid var(--accent);
+  color:#263b30;min-height:268px}
+.atlas-method-top,.atlas-method-en,.atlas-method-no{color:#576054}
+.atlas-method h3{color:#26392e}
+.atlas-method p,.atlas-method>small{color:#48574d}
+.atlas-method-status{font-size:10px;font-weight:700;color:var(--accent);border-color:var(--accent)}
+.atlas-method-symbol{margin:7px 7px 1px;font-size:48px}
+.atlas-method-identity{color:var(--accent);font-size:11px;font-weight:700;
+  letter-spacing:.08em;position:relative;z-index:1;margin-bottom:8px}
+.atlas-method-arrow{color:var(--accent)}
+.atlas-method:focus-visible,.atlas-method:hover{border-color:var(--accent)}
+/* 八门分色：即使来源于同一种卡片组件，盘式气质互不混淆。 */
+.atlas-method--meihua{
+  --accent:#225c4c;--tile-bg:#edf2e8;--tile-line:#8ca994;
+  background-image:radial-gradient(circle at 86% 18%,rgba(142,181,153,.35),transparent 45%)}
+.atlas-method--liuyao{
+  --accent:#853f27;--tile-bg:#f6e8d6;--tile-line:#b88f70;
+  background-image:radial-gradient(circle at 80% 22%,rgba(171,103,65,.23),transparent 50%)}
+.atlas-method--qimen{
+  --accent:#f0cb87;--tile-bg:#172e43;--tile-line:#57748a;
+  color:#f9efd9;
+  background-image:radial-gradient(circle at 78% 20%,rgba(194,215,236,.18),transparent 37%),
+    radial-gradient(circle at 18% 67%,rgba(126,163,204,.13),transparent 38%)}
+.atlas-method--qimen h3,.atlas-method--qimen p,.atlas-method--qimen>small,
+.atlas-method--qimen .atlas-method-en,.atlas-method--qimen .atlas-method-no,
+.atlas-method--qimen .atlas-method-top{color:#f6eddb}
+.atlas-method--qimen .atlas-method-status{color:#f2d398}
+.atlas-method--bazi{
+  --accent:#824326;--tile-bg:#f3e3ca;--tile-line:#bd9a6e;
+  background-image:repeating-linear-gradient(90deg,transparent 0 32px,rgba(167,116,66,.075) 33px 34px)}
+.atlas-method--liuren{
+  --accent:#205a76;--tile-bg:#e7f0f2;--tile-line:#85a8b5;
+  background-image:radial-gradient(ellipse at 80% 88%,rgba(73,138,158,.18),transparent 65%)}
+.atlas-method--taiyi{
+  --accent:#2d6072;--tile-bg:#e7efeb;--tile-line:#8aa9a7;
+  background-image:radial-gradient(circle at 85% 21%,rgba(73,131,135,.19),transparent 45%)}
+.atlas-method--ziwei{
+  --accent:#dfc398;--tile-bg:#29243e;--tile-line:#807397;
+  background-image:radial-gradient(circle at 78% 24%,rgba(224,204,250,.19) 1px,transparent 2px),
+  radial-gradient(circle at 42% 67%,rgba(224,204,250,.2) 1px,transparent 2px),
+  radial-gradient(circle at 71% 86%,rgba(224,204,250,.17) 2px,transparent 3px)}
+.atlas-method--ziwei h3,.atlas-method--ziwei p,.atlas-method--ziwei>small,
+.atlas-method--ziwei .atlas-method-no,.atlas-method--ziwei .atlas-method-en{color:#f3e9f9}
+.atlas-method--ziwei .atlas-method-status{color:#f3d7a9}
+.atlas-method--fengshui{
+  --accent:#395b3f;--tile-bg:#e9ede0;--tile-line:#9eae91;
+  background-image:linear-gradient(150deg,transparent 52%,rgba(107,144,93,.15) 53% 63%,transparent 64%),
+    linear-gradient(28deg,transparent 60%,rgba(84,115,70,.13) 61% 72%,transparent 73%)}
+@media(hover:hover){.atlas-method:hover{transform:translateY(-3px)}}
+
+/* 各门研究空间使用独立配色变量。浅底配深字，暗色仅用于画面头部。 */
+.academy-stage{
+  --room-accent:#30594a;--room-accent-dark:#244b3f;
+  --room-surface:#faf5eb;--room-edge:#b6b39b;--room-back:#e9e2d5;
+  --room-banner:#eceddd;--room-banner-ink:#1f4938;--room-banner-sub:#385949;
+  background:var(--room-back);color:var(--ux-ink);overflow-x:hidden;
+}
+.academy-stage--liuyao{
+  --room-accent:#824228;--room-accent-dark:#67321f;
+  --room-surface:#fff5e7;--room-edge:#c49d7d;--room-back:#e8dccd;
+  --room-banner:#583521;--room-banner-ink:#fff4dc;--room-banner-sub:#f4dabb;
+  background:radial-gradient(ellipse at 92% 7%,rgba(176,120,68,.18),transparent 35%),
+  linear-gradient(160deg,#e9decf,#f0e4d4 50%,#e6d5c0);
+}
+.academy-stage--qimen{
+  --room-accent:#2a586f;--room-accent-dark:#17384f;--room-surface:#f4f7f7;
+  --room-edge:#94b2bf;--room-back:#d6e1e6;--room-banner:#192f44;
+  --room-banner-ink:#fff4dd;--room-banner-sub:#e6eef2;
+  background:radial-gradient(circle at 82% 5%,rgba(34,77,117,.23),transparent 34%),#d9e4e8;
+}
+.academy-stage--bazi{
+  --room-accent:#854e2c;--room-accent-dark:#68391c;--room-surface:#fff8e9;
+  --room-edge:#c9ac87;--room-back:#ebdecd;--room-banner:#6e3c22;
+  --room-banner-ink:#fff3db;--room-banner-sub:#f6dfbc;
+  background:repeating-linear-gradient(90deg,rgba(120,82,45,.025) 0 2px,transparent 3px 38px),#eee1d1;
+}
+.academy-stage--liuren{
+  --room-accent:#275d76;--room-accent-dark:#163d54;--room-surface:#f2f8f8;
+  --room-edge:#90b3c1;--room-back:#e0eef1;--room-banner:#15425a;
+  --room-banner-ink:#f3faff;--room-banner-sub:#d6edf3;
+}
+.academy-stage--taiyi{
+  --room-accent:#2d6371;--room-accent-dark:#234e60;--room-surface:#f0f7f4;
+  --room-edge:#98bac1;--room-back:#e0ece8;--room-banner:#2b5663;
+  --room-banner-ink:#f4faff;--room-banner-sub:#dcebee;
+}
+.academy-stage--ziwei{
+  --room-accent:#654a7c;--room-accent-dark:#46365e;--room-surface:#f8f5fb;
+  --room-edge:#aea0bf;--room-back:#e7e0ef;--room-banner:#302743;
+  --room-banner-ink:#f8edff;--room-banner-sub:#e5d5f6;
+  background:radial-gradient(circle at 85% 10%,rgba(129,103,160,.22),transparent 45%),#e9e1ef;
+}
+.academy-stage--fengshui{
+  --room-accent:#3e654d;--room-accent-dark:#234d34;--room-surface:#f3f8ed;
+  --room-edge:#9fb399;--room-back:#e2eada;--room-banner:#32543a;
+  --room-banner-ink:#f6fbe9;--room-banner-sub:#e4f3dd;
+  background:linear-gradient(150deg,transparent 20%,rgba(71,121,68,.09) 22% 25%,transparent 27%),#e7ecdd;
+}
+.academy-stage-nav{color:#253e32;border-bottom:1px solid var(--room-edge)}
+.academy-stage-nav button{color:var(--room-accent-dark);font-weight:700}
+.academy-stage-banner{
+  background:var(--room-banner);
+  color:var(--room-banner-ink);
+  border:2px solid var(--room-edge);box-shadow:4px 6px 0 rgba(30,30,25,.12);
+  min-height:192px;
+}
+.academy-stage-banner h1,.academy-stage-banner em{color:var(--room-banner-ink)}
+.academy-stage-banner p,.academy-stage-banner span{color:var(--room-banner-sub)}
+.academy-stage-banner span a{color:var(--room-banner-ink);text-decoration:underline;text-underline-offset:3px}
+.academy-stage-banner .academy-stage-glyph{color:var(--room-banner-ink);opacity:.64}
+.method-theme-identity{display:block;font-size:11px;letter-spacing:.14em;
+  color:var(--room-banner-sub);font-weight:700;margin-bottom:8px}
+.academy-knowledge-status{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--room-surface);border-left:5px solid var(--room-accent);
+  padding:12px 16px;margin-top:14px;color:#284331}
+.academy-knowledge-status span{font-size:12px;color:var(--room-accent-dark)}
+.academy-knowledge-status b{font-size:14px}
+.academy-knowledge-status small{font-size:11px;color:#46564a}
+.academy-learning-surface,.academy-learning-panel,.academy-prelude{
+  background:var(--room-surface);border-color:var(--room-edge);
+  color:var(--ux-text)
+}
+.academy-learning-layout h2,.academy-learning-layout h3,.academy-prelude h2{color:var(--room-accent-dark)}
+.academy-learning-layout p,.academy-prelude p{color:#43574c}
+.academy-small-picker button.selected,.academy-nine button.active,.academy-pillars button.active{
+  border-color:var(--room-accent);background:var(--room-accent);color:#fff7e9}
+.academy-stage--qimen .academy-nine{border:2px solid #7d9cad;padding:8px;background:#dae7ec}
+.academy-stage--qimen .academy-nine button{border-color:#9cb7c4}
+.academy-stage--qimen .academy-nine button.active{background:#21475f;color:#fff;border-color:#21475f}
+.academy-stage--bazi .academy-pillars{background:linear-gradient(90deg,rgba(146,96,55,.1),transparent)}
+.academy-stage--bazi .academy-pillars button{border-color:#bb956f}
+.academy-stage--bazi .academy-pillars button.active{background:#7e4929;color:#fff5e5}
+.academy-primary{background:var(--room-accent-dark);border-color:var(--room-accent-dark);color:#fff8e8}
+
+/* 六爻：一屏一重工坊。研判页单列，可保留所有算法功能。 */
+.liuyao-studio-switch{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+  position:sticky;top:0;z-index:24;margin-top:14px;padding:8px;
+  border:1px solid #a77d60;
+  background:#e9d9c4;box-shadow:0 5px 18px rgba(62,39,22,.12);
+}
+.liuyao-studio-switch button{
+  display:flex;flex-direction:column;justify-content:center;gap:5px;
+  min-width:0;min-height:58px;padding:10px 12px;text-align:left;
+  background:#fff8ec;border:1px solid #bca183;color:#613c27
+}
+.liuyao-studio-switch button.active{
+  background:#703e26;color:#fff6e8;border-color:#703e26;
+  box-shadow:inset 0 0 0 1px rgba(242,195,140,.24)}
+.liuyao-studio-switch button b{font-size:15px;line-height:1.3}
+.liuyao-studio-switch button small{font-size:11px;line-height:1.4;color:#715746}
+.liuyao-studio-switch button.active small{color:#f2d6b9}
+.liuyao-studio-switch button:disabled{opacity:.55;cursor:not-allowed}
+.liuyao-studio-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin-top:13px}
+.liuyao-studio-grid.view-casting .academy-casting-result{display:none}
+.liuyao-studio-grid.view-analysis .academy-casting-table{display:none}
+.liuyao-studio-grid.view-analysis .academy-ledger{display:none}
+.liuyao-studio-grid .academy-casting-table,.liuyao-studio-grid .academy-casting-result{
+  width:100%;max-width:100%;min-width:0;box-sizing:border-box;
+  background:var(--room-surface);border:1px solid #b99575;padding:20px;
+  color:#27372e}
+.liuyao-studio-grid.view-casting .academy-casting-table{
+  max-width:720px;justify-self:center}
+.liuyao-ready-action{display:block;width:100%;min-height:48px;margin-top:14px;
+  background:#753f25;color:#fff5e4;border:1px solid #753f25;font-weight:700}
+.liuyao-workbench-lead{border-left:4px solid #9d623e;background:#efe1cb;padding:12px 14px;
+  font-size:13px;line-height:1.8;color:#563a29}
+.academy-stage--liuyao .academy-panel-head{color:#76543b}
+.academy-stage--liuyao .academy-panel-head b{color:#743a25}
+.academy-stage--liuyao .academy-casting-result .academy-hex-pair{
+  max-width:850px;margin:12px auto}
+.academy-stage--liuyao .review-flow-nav{background:#e2d2be;border:1px solid #b59476;gap:6px;margin:13px 0}
+.academy-stage--liuyao .review-flow-nav button{
+  min-height:60px;border:1px solid #bd9c7b;background:#fff7e9;
+  color:#543b29;font-size:12px}
+.academy-stage--liuyao .review-flow-nav button small{color:#68533f}
+.academy-stage--liuyao .review-flow-nav button.active{
+  background:#6d3923;border-color:#6d3923;color:#fff8e9}
+.academy-stage--liuyao .review-flow-nav button.active small{color:#efd5b8}
+.academy-stage--liuyao .relations-view-tabs button{
+  font-size:12px;font-weight:600;color:#5b3c2b;border-color:#bfa186}
+.academy-stage--liuyao .relations-view-tabs button.active{
+  color:#fff6e8;background:#713e28;border-color:#713e28}
+.academy-stage--liuyao .review-flow-message{
+  background:#eee5d5;border-left:4px solid #8c5839;color:#3e4337;
+  font-size:12px;line-height:1.85}
+.academy-stage--liuyao .review-flow-message b{color:#583421}
+.academy-stage--liuyao .review-flow-message span{color:#4d5346}
+.academy-stage--liuyao .review-flow-footer button:last-child{background:#713e28;border-color:#713e28;color:#fff5e7}
+.academy-stage--liuyao .review-flow-footer{margin-top:20px}
+.academy-stage--liuyao .academy-ai-section{margin-top:14px;background:#fff5e7;border-color:#c7a17c}
+
+/* 梅花：不是铜钱坛；独立的墨绿书卷、梅影、翻页节奏。 */
+.book-app--meihua{
+  --paper:#f9f2e3;--paper-deep:#ece0c8;--paper-edge:#b1a38a;
+  --jade:#194737;--jade-deep:#103a2e;--jade-soft:#2d5c4a;
+  --ink:#25352a;color:#25352a;
+  background:radial-gradient(ellipse at 12% 8%,rgba(226,235,217,.65),transparent 40%),
+    radial-gradient(circle at 93% 84%,rgba(172,107,93,.14),transparent 31%),#e6e0d0;
+}
+.book-app--meihua .book-leaf{border-color:#a8a18b;box-shadow:0 9px 30px rgba(26,61,42,.12)}
+.book-app--meihua .book-name,.book-app--meihua .book-reading h3{color:#174232}
+.book-app--meihua .book-tab{color:#395146}
+.book-app--meihua .book-tab.active{color:#163d30;border-color:#1d513d}
+.book-app--meihua .book-step{color:#4a5c4c;font-weight:650}
+.book-app--meihua .book-step.active{color:#174733;background:#e5eddf;border:1px solid #98b09a}
+.book-app--meihua .book-intro,.book-app--meihua .book-mini p,
+.book-app--meihua .book-houtian p,.book-app--meihua .book-ai p{color:#405747}
+.book-app--meihua .book-epilogue,.book-app--meihua .book-footnote,
+.book-app--meihua .book-serial,.book-app--meihua .book-edition{color:#53614e}
+.book-app--meihua .book-hex .hexmeaning{font-size:12px;line-height:1.75;color:#314d3c}
+.book-app--meihua .book-hex .hex-keywords{color:#345742}
+.book-app--meihua .book-settings{border-color:#8a957a;color:#214f3a}
+.book-app--meihua .book-summary p{color:#f5eddc;opacity:1}
+.book-app--meihua .book-pagenav button{min-height:44px}
+
+/* 藏经阁：书架色更深、各门典籍独立色签，保留原翻页算法。 */
+.library-stage{--lib-ink:#253a2d;--lib-jade:#255240;--lib-moss:#526953;--lib-earth:#745e40}
+.library-stage .library-crumbs,.library-stage .library-brand small{color:#576450}
+.library-stage .library-section-links button{font-size:12px;color:#315641}
+.library-stage .library-section-links button.active{color:#fff5df;background:#27523c}
+.library-method-card{border-top:4px solid var(--book-accent,#245c46);background:var(--book-paper,#fbf4e6)}
+.library-method-card strong{color:var(--book-accent,#285840)}
+.library-method-card small{color:#4d5c4c}
+.library-method--meihua{--book-accent:#245b48;--book-paper:#edf3e9}
+.library-method--liuyao{--book-accent:#864229;--book-paper:#f6e8da}
+.library-method--qimen{--book-accent:#234b65;--book-paper:#e4edf3}
+.library-method--bazi{--book-accent:#845027;--book-paper:#f7ead6}
+.library-method--liuren{--book-accent:#285e7d;--book-paper:#e7f1f4}
+.library-method--taiyi{--book-accent:#356879;--book-paper:#e8f2ef}
+.library-method--ziwei{--book-accent:#593e70;--book-paper:#eee7f2}
+.library-method--fengshui{--book-accent:#3c6345;--book-paper:#edf2e5}
+.library-stage--liuyao{--lib-jade:#773e27;--lib-jade-dark:#54321f}
+.library-stage--qimen,.library-stage--liuren{--lib-jade:#285670;--lib-jade-dark:#153d55}
+.library-stage--bazi{--lib-jade:#854e2c;--lib-jade-dark:#663a1f}
+.library-stage--ziwei{--lib-jade:#644c7e;--lib-jade-dark:#3f3158}
+.library-stage--taiyi{--lib-jade:#316a70;--lib-jade-dark:#285357}
+.library-stage--fengshui{--lib-jade:#3b6248;--lib-jade-dark:#294833}
+
+/* 字重、字号与手机触控；不靠极浅色辨识层级。 */
+.academy-stage p,.book-app p,.library-stage p{overflow-wrap:anywhere}
+.academy-stage .academy-help,.academy-stage .academy-subtitle,
+.academy-stage .academy-caution,.academy-stage .academy-bottom{color:#455647}
+.academy-stage button,.book-app button,.library-stage button{
+  touch-action:manipulation;
+}
+@media(max-width:760px){
+  .atlas-hero{min-height:auto;padding:30px 10px 25px}
+  .atlas-hero h1{font-size:clamp(35px,10vw,58px)}
+  .atlas-lead{font-size:14px;line-height:1.9}
+  .atlas-method-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .atlas-method{min-height:238px;padding:13px 11px}
+  .atlas-method-symbol{font-size:38px;margin-top:9px}
+  .atlas-method h3{font-size:18px}
+  .atlas-method-status{font-size:9px;white-space:normal}
+  .atlas-method-identity{font-size:10px}
+  .academy-stage-banner{min-height:148px;padding:17px 15px}
+  .academy-stage-banner h1{font-size:clamp(26px,7vw,36px);margin:7px 0}
+  .academy-stage-banner span{font-size:12px;line-height:1.85}
+  .academy-stage--liuyao .academy-stage-grid{margin-top:11px}
+  .liuyao-studio-switch{margin-top:8px;padding:5px;gap:5px}
+  .liuyao-studio-switch button{min-height:54px;padding:7px 8px}
+  .liuyao-studio-switch button b{font-size:13px}
+  .liuyao-studio-switch button small{font-size:10px}
+  .liuyao-studio-grid .academy-casting-table,.liuyao-studio-grid .academy-casting-result{padding:13px 10px}
+  .academy-stage--liuyao .review-flow-nav{grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;padding:5px}
+  .academy-stage--liuyao .review-flow-nav button{padding:5px 2px;min-height:55px}
+  .academy-stage--liuyao .review-flow-nav button span{font-size:10px;line-height:1.4}
+  .academy-stage--liuyao .review-flow-nav button small{font-size:9px}
+  .academy-stage--liuyao .relations-view-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .academy-stage--liuyao .relations-view-tabs button{font-size:11px;min-height:40px}
+  .book-app--meihua .book-step{font-size:12px}
+  .book-app--meihua .book-hex .hexmeaning{font-size:11px}
+  .library-stage .library-topbar{min-height:61px}
+}
+@media(max-width:360px){
+  .atlas-method h3{font-size:16px}
+  .atlas-method{min-height:228px}
+  .liuyao-studio-switch button small{font-size:9px}
+  .academy-stage--liuyao .review-flow-nav button span{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  .atlas-method,.atlas-primary,.academy-primary{transition:none!important}
+  .atlas-yinyang{animation:none!important}
+}
