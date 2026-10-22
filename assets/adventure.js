@@ -335,7 +335,7 @@ function updateAdventureHUD(force=false){
  const time=performance.now();
  const status=document.getElementById('trialStatus');
  if(status){const sess=adventureSession;
-  status.textContent=sess?'试炼 · '+ADVENTURE_TRIALS.find(t=>t.id===sess.id).name+' '+Math.max(0,Math.ceil((sess.deadline-time)/1000))+'秒　'+(sess.id==='nether'?sess.killed:sess.collected)+'/3'+(sess.id==='nether'?'':'（收集4枚）'):'';
+  status.textContent=sess?'试炼 · '+ADVENTURE_TRIALS.find(t=>t.id===sess.id).name+' '+Math.max(0,Math.ceil((sess.deadline-time)/1000))+'秒　'+(sess.id==='nether'?sess.killed:sess.collected)+'/'+(sess.id==='nether'?3:4):'';
   status.style.display=sess?'block':'none';
  }
  if(adventureBookOpen&&time-lastAdventureRender>1000)refreshAdventurePanel();
