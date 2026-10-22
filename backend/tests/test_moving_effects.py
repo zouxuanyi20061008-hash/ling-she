@@ -33,7 +33,7 @@ def test_one_moving_line_same_position_and_beijing_calendar_actions():
     assert entry["transformed"]["month"]["status"]=="computed"
     assert entry["effective_returning_action"] is None
     assert entry["final_strength"] is None
-    assert "尚未判断" in entry["conclusion"]
+    assert "效力尚未判定" in entry["conclusion"]
     assert len(chart["review_flow"]["report"]["moving_effect_digest"])==1
 
 
@@ -91,7 +91,7 @@ def test_multi_movers_only_own_turnback_never_cross_act_on_changed_lines():
         assert row["returning_element_relation"]==chart["najia_lines"][pos-1]["turnback"]["five_element_relation"]
         assert row["status"]=="requires_joint_review"
         assert row["effective_returning_action"] is None
-    assert "其他本卦爻不可跨位" in " ".join(review["rules"])
+    assert "本卦其他爻不可跨位生克变爻" in " ".join(review["rules"])
 
 
 def test_void_changing_line_and_changed_void_status_stay_independent():
