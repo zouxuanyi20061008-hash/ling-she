@@ -1289,6 +1289,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [roleView,setRoleView]=useState('用神')
   const [reviewStage,setReviewStage]=useState('calendar')
   const [relationsView,setRelationsView]=useState('summary')
+  const [studioView,setStudioView]=useState('casting')
   const requestNumber=useRef(0)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
@@ -1319,7 +1320,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
     if(lines.length>=6||busy)return
     if(faces)setCoins(faces)
     const seq=[...lines,value];setLines(seq);setChart(null);setAnswer('');setError('')
-    if(seq.length===6)process(seq)
+    if(seq.length===6){setStudioView('analysis');setReviewStage('calendar');process(seq)}
   }
   function cast(){
     if(isSpinning||lines.length>=6)return
@@ -1330,7 +1331,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
     },800)
   }
-  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar')}
+  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar');setStudioView('casting')}
   async function interpret(){
     if(!chart||busy||calendarBusy)return
     if(!question.trim()||background.trim().length<2){setError('请填写所问之事，并补充一次现实背景。');return}
@@ -1350,14 +1351,26 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
     }catch(e){setError(e.message)}
     finally{setBusy(false)}
   }
-  return <main className="academy-stage">
+  return <main className="academy-stage academy-stage--liuyao">
     <div className="academy-container">
       <header className="academy-stage-nav"><button onClick={onBack}>← 返回万象书院</button><b>铜钱六爻 · 六次成卦</b><button onClick={onStudy}>藏经阁 ◎</button></header>
       <section className="academy-stage-banner"><div>
+        <small className="method-theme-identity">青铜卜筮 · 三钱纳甲 · 十八式研判</small>
         <p>六爻 · 铜钱起卦工坊</p><h1>铜钱一掷，<em>爻象渐生。</em></h1>
         <span>本工坊按《增删卜易》三钱六掷法演示。先取初爻，再从下向上记到上爻。<a href="https://zh.wikisource.org/zh-hans/增删卜易/2" target="_blank" rel="noopener noreferrer">阅读古籍来源 ↗</a></span>
       </div><div className="academy-stage-glyph">☰</div></section>
-      <div className="academy-stage-grid">
+      <nav className="liuyao-studio-switch" aria-label="六爻工坊工作区">
+        <button type="button" className={studioView==='casting'?'active':''} aria-current={studioView==='casting'?'page':undefined}
+          onClick={()=>{setStudioView('casting');window.scrollTo({top:0,behavior:'smooth'})}}>
+          <b>壹 · 起卦台</b><small>三钱六掷 · 记录六爻 {lines.length}/6</small>
+        </button>
+        <button type="button" className={studioView==='analysis'?'active':''}
+          aria-current={studioView==='analysis'?'page':undefined}
+          disabled={!chart} onClick={()=>{setStudioView('analysis');window.scrollTo({top:0,behavior:'smooth'})}}>
+          <b>贰 · 研判台</b><small>{chart?'卦已成 · 进入五步分析':'六爻齐备后开放'}</small>
+        </button>
+      </nav>
+      <div className={'academy-stage-grid liuyao-studio-grid '+(studioView==='casting'?'view-casting':'view-analysis')}>
         <section className="academy-casting-table">
           <div className="academy-panel-head"><span>第一式 · 摇钱成爻</span><b>{Math.min(6,lines.length+1)} / 六</b></div>
           <label className="academy-quick-question">你想问什么？
@@ -1377,6 +1390,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           <div className="academy-manual">{[6,7,8,9].map(n=><button key={n} onClick={()=>addLine(n)} disabled={lines.length===6||isSpinning}><b>{n}</b><small>{K[n].name}</small></button>)}</div>
           <p className="academy-help">三字为老阴6；一背两字为少阳7；两背一字为少阴8；三背为老阳9。老阴、老阳为动爻。</p>
           <div className="academy-under-actions"><button onClick={restart}>重新起卦 ↻</button><button onClick={onStudy}>学六爻原理 ↗</button></div>
+          {chart&&<button type="button" className="liuyao-ready-action" onClick={()=>setStudioView('analysis')}>卦已成 · 前往研判台 →</button>}
         </section>
         <section className="academy-casting-result">
           <div className="academy-panel-head"><span>第二式 · 记六爻</span><b>{lines.length}/6</b></div>
@@ -1388,6 +1402,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             </div>
           })}</div>
           {chart?<div className="academy-computed">
+            <p className="liuyao-workbench-lead">研判台 · 先看本卦与之卦，再选下方一个步骤。想修改六爻，可返回「起卦台」。</p>
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <nav className="review-flow-nav" aria-label="六爻五步研判页面">
