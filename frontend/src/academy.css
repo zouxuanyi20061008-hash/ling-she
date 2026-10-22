@@ -1027,3 +1027,61 @@
  .special-conditions-list{grid-template-columns:1fr}
  .special-conditions-selected span{font-size:10px}
 }
+
+/* V18 用神作用链与案例封存：逐项来源、不计分；隐私本机、主动持久化 */
+.relations-view-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
+.yongshen-chain,.local-case-archive{background:#f6f2e5;border:1px solid #b9bea6;color:#315b46;padding:16px 14px;margin:13px 0}
+.yongshen-chain-head,.local-case-archive>header{display:flex;justify-content:space-between;gap:9px;align-items:center;border-bottom:1px solid #d8cbb3;padding-bottom:11px}
+.yongshen-chain-head small,.local-case-archive>header small{color:#a18058;font-size:11px;letter-spacing:.11em}
+.yongshen-chain-head h3,.local-case-archive>header h3{font-size:17px;color:#305e44;margin:6px 0 0}
+.yongshen-chain-head>span{font-size:10px;color:#9b7755;white-space:nowrap}
+.yongshen-chain-lead,.local-case-archive>p{font-size:11px;line-height:1.95;color:#74806c;margin:11px 0}
+.yongshen-chain-picks{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}
+.yongshen-chain-picks button{border:1px solid #b7c3a9;background:#fffaf0;color:#396b4d;padding:9px 11px;font-size:12px}
+.yongshen-chain-picks button.active{background:#305f47;color:#fff3db;border-color:#305f47}
+.yongshen-chain-picks small{display:block;color:#b58a62;font-size:9px}
+.yongshen-chain-notice,.yongshen-chain-empty{font-size:11px;line-height:1.9;padding:11px 12px;background:#e7eddd;border-left:3px solid #789e78;color:#416e50;margin:10px 0}
+.yongshen-chain-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.yongshen-chain-role{border:1px solid #d5c7aa;background:#fffbf0;padding:10px;min-width:0}
+.yongshen-chain-role>header{display:flex;align-items:flex-start;flex-direction:column;gap:5px;border-bottom:1px solid #e2d8c3;padding-bottom:9px}
+.yongshen-chain-role>header strong{font-size:14px;color:#37664e}
+.yongshen-chain-role.忌神>header strong{color:#a36a4c}
+.yongshen-chain-role>header small{color:#92775e;font-size:10px}
+.yongshen-chain-source{padding:10px 0;border-bottom:1px solid #e5dacc}
+.yongshen-chain-source:last-child{border-bottom:0}
+.yongshen-chain-source b{font-size:12px;color:#315c46;display:block}
+.yongshen-chain-source small{font-size:9px;color:#938572;line-height:1.8;display:block}
+.yongshen-chain-source p,.yongshen-chain-no-source{font-size:10px;color:#67796a;line-height:1.9;margin:5px 0}
+.yongshen-chain-source-status{color:#956d4d!important}
+.yongshen-chain-flags{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.yongshen-chain-flags span{background:#eee7d9;border:1px solid #d9c8af;padding:4px 5px;font-size:9px;color:#866c54}
+.yongshen-chain-boundary{border-top:1px solid #d8ccb4;padding-top:11px;font-size:10px;line-height:1.9;color:#93846e}
+.yongshen-chain-links{display:flex;gap:9px 16px;flex-wrap:wrap}
+.yongshen-chain-links a{font-size:11px;color:#356d4f;text-decoration:underline;text-underline-offset:3px}
+.local-case-archive{background:#f5efe2}
+.local-case-archive>header{display:block}
+.local-case-archive>label,.local-case-outcome>label{display:flex;flex-direction:column;gap:7px;font-size:11px;color:#496b51;margin:12px 0}
+.local-case-archive textarea,.local-case-outcome select{border:1px solid #c1bea8;background:#fffcf2;color:#315e45;font-size:12px;padding:10px;min-height:42px;width:100%;box-sizing:border-box}
+.local-case-seal,.local-case-outcome>button{border:1px solid #305f49;background:#305f49;color:#fff5df;font-size:12px;min-height:43px;padding:10px 13px}
+.local-case-history{border-top:1px solid #d7cbb4;margin-top:14px;padding-top:12px}
+.local-case-history h4{font-size:13px;color:#37654c}
+.local-case-buttons{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
+.local-case-buttons button{border:1px solid #b7c3ad;padding:9px;background:#fffcf2;font-size:11px;color:#456e54}
+.local-case-buttons button[aria-pressed=true]{background:#315f49;color:#fff5da}
+.local-case-detail{background:#fffbef;border:1px solid #d6cbb5;padding:12px}
+.local-case-detail>b{font-size:11px;color:#9c7455}
+.local-case-detail>p,.local-case-outcome p{font-size:11px;color:#677761;line-height:1.9;overflow-wrap:anywhere}
+.local-case-outcome{border-top:1px solid #ddd1bd;margin:13px 0;padding-top:8px}
+.local-case-feedback{background:#e9eee1;border-left:3px solid #81a286;margin-top:9px;padding:9px 11px}
+.local-case-feedback small{font-size:10px;color:#52765b}
+.local-case-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.local-case-actions button{font-size:11px;padding:10px;background:#f8f5e9;color:#3d6c50;border:1px solid #9fb39e}
+.local-case-actions button:last-child{color:#a15d4f;border-color:#caa89b}
+.local-case-message{background:#e7ecdd;border-left:3px solid #7da07c;padding:10px;color:#466a50}
+.local-case-archive .local-case-limit{font-size:10px;color:#948374}
+@media(max-width:650px){
+ .relations-view-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .yongshen-chain,.local-case-archive{padding:11px 9px}
+ .yongshen-chain-groups{grid-template-columns:1fr}
+ .yongshen-chain-head h3{font-size:15px}
+}
