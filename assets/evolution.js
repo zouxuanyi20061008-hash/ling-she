@@ -172,3 +172,19 @@ function splashSerpentImpact(x,y,damage,excluded){
   if(e.hp<=0)killEnemy(e,false);
  }
 }
+
+/* Shared V5.9 evolution trigger: boss and encounter rewards can evolve too.
+ * Preserves the existing one-stage-per-reward progression and V4 data schema. */
+function triggerEvolutionIfReady(){
+ if(evoStage>=4||evoPoints<evoThresholds[evoStage])return false;
+ evoStage++;
+ hp=Math.min(100+level*10,hp+45);
+ beginEvolutionScene(evoStage);
+ flash('🐉 进化：'+forms[evoStage]);
+ for(let i=0;i<24;i++){
+  particles.push({x:player.x,y:player.y,vx:rand(-130,130),vy:rand(-130,130),life:.85,color:SNAKE_FORMS[evoStage].color});
+ }
+ for(let i=0;i<5;i++)trail.push({...trail[trail.length-1]});
+ updateHud();
+ return true;
+}
