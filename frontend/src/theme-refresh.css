@@ -703,3 +703,105 @@ button:disabled{cursor:not-allowed}
   .book-top-flip>div{width:100%;display:grid;grid-template-columns:1fr 1fr}
   .library-reader-quick button{font-size:11px;padding:8px 5px}
 }
+
+/* V20 精修：让用户在长章节中始终找得到“上一步 / 下一步”。 */
+.academy-stage--liuyao .review-flow-nav{
+  position:sticky;
+  top:72px;
+  z-index:19;
+  scroll-margin-top:82px;
+  box-shadow:0 4px 12px rgba(48,36,22,.09);
+}
+.academy-stage--liuyao .liuyao-studio-switch{
+  top:0;
+  z-index:25;
+  padding-top:max(8px,env(safe-area-inset-top));
+}
+.liuyao-cast-status{
+  margin-top:12px;padding:11px 12px;
+  background:#fff1d9;border-left:4px solid #9b6438;
+  color:#593a25;font-size:12px;line-height:1.8;
+}
+.liuyao-cast-error{
+  margin-top:12px;padding:12px;
+  background:#fff0e9;border:1px solid #c48a73;
+  color:#6b3023;font-size:13px;line-height:1.8;
+}
+.liuyao-cast-error button{
+  min-height:44px;margin-top:8px;padding:10px 13px;
+  border:1px solid #753e27;background:#753e27;color:#fff5e8;font-weight:700;
+}
+.liuyao-cast-error button:disabled{opacity:.55}
+.liuyao-cast-error button:focus-visible{outline-color:#8a3929!important}
+
+/* 梅花书卷：快速翻页固定在视线附近；深色墨字替代低对比的灰褐小字。 */
+.book-app--meihua .book-top-flip{
+  position:sticky;top:max(6px,env(safe-area-inset-top));
+  z-index:24;
+  background:#f8f0df;
+  border:1px solid #b6a488;
+  box-shadow:0 4px 14px rgba(47,54,37,.14);
+  scroll-margin-top:8px;
+}
+.book-app--meihua .book-top-flip>span{color:#4d4433;font-weight:700}
+.book-app--meihua .book-top-flip button{
+  min-height:42px;border:1px solid #8b9b85;
+  color:#244a37;background:#fff9ed;font-weight:650;
+}
+.book-app--meihua .book-top-flip button.book-top-next{
+  background:#214b39;border-color:#214b39;color:#fff7e8;
+}
+.book-app--meihua .book-kicker{color:#6f543b}
+.book-app--meihua .book-hex .kind{color:#65583f}
+.book-app--meihua .book-hex .trigrams{color:#435b4b}
+.book-app--meihua .book-page-mark{color:#625741;font-weight:650}
+.book-app--meihua .book-footnote{color:#435646}
+.book-app--meihua .book-summary .tag{color:#244b38;border-color:#79917a}
+.book-app--meihua .book-hex .hexmeaning{color:#314a39}
+.book-app--meihua .book-tabs{border-bottom-color:#b6a88c}
+.book-app--meihua .book-tab{color:#4f594b}
+.book-app--meihua .book-tab.active{color:#163f2f;border-bottom-color:#1b513c}
+
+/* 藏经阁：章节快速翻页吸附在屏幕上方；正文与出处注释加深。 */
+.library-stage .library-reader-quick{
+  position:sticky;top:max(6px,env(safe-area-inset-top));
+  z-index:22;
+  padding:9px 10px;
+  background:#f6ecda;
+  border:1px solid #b7a17f;
+  box-shadow:0 4px 14px rgba(62,49,30,.12);
+  scroll-margin-top:8px;
+}
+.library-stage .library-reader-quick>span{color:#493e2d;font-weight:700}
+.library-stage .library-reader-quick button{
+  min-height:43px;border:1px solid #9a8869;
+  background:#fff8e9;color:#3d5a43;
+}
+.library-stage .library-reader-quick button.library-reader-quick-next{
+  background:var(--lib-jade,#285840);color:#fff6e6;border-color:var(--lib-jade,#285840);
+}
+.library-stage .library-reader-quick button:disabled{color:#6d6658;opacity:.7}
+.library-stage .library-paper-line{color:#705b3e}
+.library-stage .library-text-section{color:#4b5c4b}
+.library-stage .library-reading-grid p{color:#455747}
+.library-stage .library-source span{color:#66583f}
+.library-stage .library-source a{color:#1e563c;font-weight:700}
+.library-stage .library-page-count{color:#4b493c}
+.library-stage .library-page-count strong{color:#254b38}
+.library-stage .library-page-controls>button:disabled{color:#625b4c;opacity:.62}
+@media(max-width:760px){
+  .academy-stage--liuyao .review-flow-nav{top:68px;scroll-margin-top:76px}
+  .academy-stage--liuyao .liuyao-studio-switch{padding-top:max(5px,env(safe-area-inset-top))}
+  .book-app--meihua .book-top-flip{
+    gap:7px;margin-left:0;margin-right:0;
+    border-radius:3px;
+  }
+  .book-app--meihua .book-top-flip button{font-size:12px;padding:9px 10px}
+  .library-stage .library-reader-quick{gap:7px;top:max(5px,env(safe-area-inset-top))}
+  .library-stage .library-reader-quick button{font-size:11px;padding:8px 7px}
+  .library-stage .library-reader-quick>span{font-size:11px}
+  .liuyao-cast-error button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  .book-app--meihua .book-top-flip,.library-stage .library-reader-quick{scroll-behavior:auto}
+}
