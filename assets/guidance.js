@@ -205,13 +205,19 @@ function guideRecalculateRoute(target,now){
   guidePath=[];guideHeading=null;guideTargetKey='';return;
  }
  const key=target.id+':'+Math.floor(target.x/35)+':'+Math.floor(target.y/35);
- const moved=guideOrigin&&Math.hypot(guideOrigin.x-player.x,guideOrigin.y-player.y)>110;
- if(key!==guideTargetKey||now-guidePathStamp>1800||moved){
+ const moved=guideOrigin&&Math.hypot(guideOrigin.x-player.x,guideOrigin.y-player.y)>210;
+ if(key!==guideTargetKey||now-guidePathStamp>3800||moved){
   guidePath=guidePathSearch(player.x,player.y,target.x,target.y);
   guideOrigin={x:player.x,y:player.y};guidePathStamp=now;guideTargetKey=key;
  }
- let waypoint=null;
- for(const p of guidePath){
+ // Follow the closest stretch of the previous path instead of recomputing each frame.
+ let waypoint=null,nearest=0,best=Infinity;
+ for(let i=0;i<guidePath.length;i++){
+  const d=Math.hypot(player.x-guidePath[i].x,player.y-guidePath[i].y);
+  if(d<best){best=d;nearest=i}
+ }
+ for(let i=nearest;i<guidePath.length;i++){
+  const p=guidePath[i];
   if(Math.hypot(player.x-p.x,player.y-p.y)>100){waypoint=p;break}
  }
  const far=Math.hypot(player.x-target.x,player.y-target.y)>GUIDE_GRID*2;
@@ -274,8 +280,8 @@ function updateGuideHUD(now,force=false){
  const dock=document.getElementById('adventureDock');
  if(!dock)return;
  const target=guideMainObjective();guideObjective=target;
- guideRecalculateRoute(target,now);
  const combat=guideMode==='smart'&&guideIsCombat(now);
+ if(!combat)guideRecalculateRoute(target,now); // no expensive A* during combat
  if(combat!==guideLastCombat||force){dock.classList.toggle('combat',combat);guideLastCombat=combat}
  dock.classList.toggle('guide-minimal',guideMode==='minimal');
  dock.classList.toggle('guide-detailed',guideMode==='detailed');
