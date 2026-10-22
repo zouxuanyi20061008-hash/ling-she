@@ -42,9 +42,9 @@ def test_multiple_focus_candidates_stay_equal_until_explicit_choice():
 
 
 def test_selected_candidate_traces_real_movement_and_same_line_transformation():
-    chart=cast_six_yao([8,6,7,7,7,7],"甲子","卯","世爻",3)
+    chart=cast_six_yao([7,9,7,7,7,7],"甲子","卯","世爻",6)
     chain=chart["evidence_chain"]
-    assert chain["selected_position"]==3
+    assert chain["selected_position"]==6
     candidate=chain["candidates"][0]
     assert candidate["selected_by_user"]
     axes={a["id"]:a for a in candidate["axes"]}
