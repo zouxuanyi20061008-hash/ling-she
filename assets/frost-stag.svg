@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="196" height="196" viewBox="0 0 160 160">
+<defs><linearGradient id="coat" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#f5ffec"/><stop offset=".33" stop-color="#c0e6df"/><stop offset=".67" stop-color="#80adc1"/><stop offset="1" stop-color="#3f738b"/></linearGradient><linearGradient id="horn" x1=".2" y1="0" x2=".9" y2="1"><stop stop-color="#fdffff"/><stop offset=".52" stop-color="#bfeef0"/><stop offset="1" stop-color="#78b9d2"/></linearGradient><linearGradient id="eye" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8e8aa"/><stop offset="1" stop-color="#79bed3"/></linearGradient></defs>
+<ellipse cx="80" cy="145" rx="56" ry="10" fill="#204455" opacity=".3"/>
+<path d="M61 66Q50 54 37 39L21 40L30 34L20 16L34 31L34 11L41 35L55 46L43 17L54 28L59 44L64 27L69 61ZM99 66Q110 54 123 39L139 40L130 34L140 16L126 31L126 11L119 35L105 46L117 17L106 28L101 44L96 27L91 61Z" fill="url(#horn)" stroke="#4d92a9" stroke-width="2.7" stroke-linejoin="round"/>
+<path d="M45 65L20 47Q21 72 52 80L62 77M115 65L140 47Q139 72 108 80L98 77" fill="#9ecbd4" stroke="#4b8494" stroke-width="3"/>
+<path d="M56 52Q79 44 104 54L116 78Q116 103 101 122L94 145H66L60 122Q44 102 44 81Z" fill="url(#coat)" stroke="#356d80" stroke-width="4"/>
+<path d="M55 75Q80 62 105 75L103 105L92 126L68 126L55 104Z" fill="#cfece4" stroke="#6babb1" stroke-width="2"/>
+<path d="M54 90L65 83L71 96L57 101ZM106 90L95 83L89 96L103 101Z" fill="#fbf8d8" stroke="#4c8b96" stroke-width="2"/>
+<path d="M61 90L67 86L66 97L60 98ZM99 90L93 86L94 97L100 98Z" fill="#305772"/>
+<path d="M80 110L71 118L80 124L89 118Z" fill="url(#eye)" stroke="#528b9b" stroke-width="2"/>
+<path d="M80 123L78 134L70 139M80 123L82 134L90 139" fill="none" stroke="#4f8393" stroke-width="2"/>
+<path d="M64 56L80 49L96 56M60 107L80 101L100 107" stroke="#fafff1" stroke-width="3" opacity=".76" fill="none"/>
+<path d="M65 129L56 143L71 141M95 129L104 143L89 141" fill="#d2f0ea" stroke="#5f9cae" stroke-width="2"/>
+<path d="M80 64L74 73L80 82L86 73Z" fill="#efffff" stroke="#7ac4d1" stroke-width="2"/>
+<g fill="#f5ffff"><circle cx="47" cy="62" r="2"/><circle cx="113" cy="62" r="2"/><circle cx="118" cy="119" r="2"/><circle cx="36" cy="117" r="2"/></g>
+</svg>
