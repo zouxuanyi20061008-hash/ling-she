@@ -154,5 +154,5 @@ def test_api_and_ai_receive_identical_nondecisive_evidence(monkeypatch):
         "background_confirmed":True})
     assert ai.status_code==200
     assert seen["evidence"]==evidence
-    assert "不得通过条数多少评旺衰" in seen["prompt"]
+    assert "禁止通过条数多少评旺衰" in seen["prompt"]
     assert ai.json()["interpretation"]=="生扶与制约并存，尚无最终判定"
