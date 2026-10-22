@@ -837,7 +837,7 @@ function FocusDecisionStudy({chart,onChoose,busy}){
   </section>
 }
 
-function TemporalReviewStudy({chart}){
+export function TemporalReviewStudy({chart}){
   const data=chart.temporal_review
   if(!data)return null
   const statusHint={
