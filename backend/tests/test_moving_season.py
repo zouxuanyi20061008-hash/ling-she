@@ -73,7 +73,7 @@ def test_moving_to_moving_targets_are_included_not_fake_returning():
     assert len(edges)==2*5
     relation=next(e for e in edges if e["source_position"]==1 and e["target_position"]==2)
     assert relation["target_moving"] is True
-    assert relation["element_relation"]=="动爻生本卦爻"
+    assert relation["element_relation"]=="动爻克本卦爻"  # 己卯木克己丑土
     assert relation["target_position"]!=relation["source_position"]
     assert len(chart["line_dynamics"]["movements"])==2
 
@@ -125,7 +125,7 @@ def test_api_and_ai_have_same_fields_and_limits(monkeypatch):
     chart=response.json()
     assert chart["moving_influences"]["moving_positions"]==[1,2]
     assert chart["seasonal_outline"]["visible"] is True
-    assert chart["najia_lines"][0]["seasonal_status"]["grade"]=="休囚（未细分）"
+    assert chart["najia_lines"][0]["seasonal_status"]["grade"]=="余气"  # 辰月木余气
 
     server=importlib.import_module("app.main")
     seen={}
