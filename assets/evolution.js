@@ -10,11 +10,16 @@ const SNAKE_FORMS=[
  {name:'蛟龙',title:'覆海生角',perk:'灵蛇遁·疾风',color:'#b7efff',accent:'#62b6cf',size:64,body:38},
  {name:'真龙',title:'九霄龙吟',perk:'灵息弹·三重龙息',color:'#fff1b9',accent:'#e5bb68',size:72,body:43}
 ];
+const HEAD_ART_PATHS=[
+ 'assets/jade-snake-head.svg','assets/evo1-head.svg','assets/evo2-head.svg','assets/evo3-head.svg','assets/evo4-head.svg'
+];
+const BODY_ART_PATHS=[
+ 'assets/jade-snake-body.svg','assets/evo1-body.svg','assets/evo2-body.svg','assets/evo3-body.svg','assets/evo4-body.svg'
+];
 const SNAKE_HEAD_IMAGES=[],SNAKE_BODY_IMAGES=[];
 for(let stage=0;stage<5;stage++){
  const head=new Image(),body=new Image();
- head.src=stage===0?'assets/jade-snake-head.svg':'assets/evo'+stage+'-head.svg';
- body.src=stage===0?'assets/jade-snake-body.svg':'assets/evo'+stage+'-body.svg';
+ head.src=HEAD_ART_PATHS[stage];body.src=BODY_ART_PATHS[stage];
  SNAKE_HEAD_IMAGES.push(head);SNAKE_BODY_IMAGES.push(body);
 }
 let evolutionScene={start:0,stage:0,until:0};
