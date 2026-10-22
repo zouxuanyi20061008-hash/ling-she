@@ -338,6 +338,73 @@ function VoidInteractionsStudy({chart}){
   </section>
 }
 
+
+function FocusDecisionStudy({chart,onChoose,busy}){
+  const data=chart.focus_decision
+  if(!data)return null
+  const selected=data.selected_position
+  return <section className="focus-decision" aria-label="用神两现与取舍证据研究">
+    <header className="focus-decision-head">
+      <div><span>第十二式 · 两现取用</span><h3>多爻同现，逐证对照。</h3></div>
+      <small>人工审议 · 不自动择优</small>
+    </header>
+    <p className="focus-decision-lead">《增删卜易》“两现章”记载了传统的动静、旺相、空破比较，也有旬空、月破之爻实际应事的反例。<strong>由你亲自选择研习主爻，软件只展示证据。</strong></p>
+    {data.status==='not_selected'?<p className="focus-decision-empty">请先在上面的「因事取用」选择关注的六亲或世应。未选择时，不推断用神。</p>:
+      data.status==='not_visible'?<div className="focus-decision-missing">
+        <h4>本卦不现 · 先日月，后伏神</h4>
+        <p>{data.message}</p>
+        {(data.hidden_candidates||[]).map(c=><article key={c.position}>
+          <b>{POS[c.position-1]}爻 · 伏神 {c.hidden_ganzhi}</b>
+          <p>飞神 {c.flying_ganzhi} · {c.flying_hidden_relation}</p>
+          <p>日支同五行：{c.day_element_match===null?'未核对':c.day_element_match?'是':'否'}；月支同五行：{c.month_element_match===null?'未核对':c.month_element_match?'是':'否'}</p>
+          <p>伏神旬空：{c.hidden_is_void===null?'未核对':c.hidden_is_void?'是':'否'}；飞神旬空：{c.flying_is_void===null?'未核对':c.flying_is_void?'是':'否'}</p>
+        </article>)}
+        <p className="focus-decision-caution">这里只核对日月同五行与飞伏位置，不会自动认定某个伏神可用。</p>
+      </div>:
+      <>
+        <div className="focus-decision-status" role="status">
+          {data.status==='multiple_visible'?'本卦有 '+data.candidates.length+' 个「'+data.category+'」候选，全部保留。':'本卦有一处「'+data.category+'」相关爻。'}
+          {selected?' 你已指定'+POS[selected-1]+'爻为本次研习焦点。':' 尚未手动指定研习主爻。'}
+        </div>
+        <div className="focus-decision-cards">
+          {data.candidates.map(c=><article key={c.position} className={selected===c.position?'active':''}>
+            <div className="focus-decision-card-head"><b>{POS[c.position-1]}爻 · {c.ganzhi}</b><small>{c.liuqin} · {c.element}</small></div>
+            <dl>
+              <div><dt>月令概要</dt><dd>{c.indicators.season||'未核对'}</dd></div>
+              <div><dt>动静</dt><dd>{c.indicators.moving}</dd></div>
+              <div><dt>旬空</dt><dd>{c.indicators.xunkong===null?'未核对':c.indicators.xunkong?'旬空':'不空'}</dd></div>
+              <div><dt>月破</dt><dd>{c.indicators.month_break===null?'未核对':c.indicators.month_break?'月冲':'未月冲'}</dd></div>
+              <div><dt>动变</dt><dd>{c.indicators.turnback||'无本位回头关系'}</dd></div>
+            </dl>
+            <button type="button" disabled={busy} className="focus-decision-select"
+              aria-pressed={selected===c.position}
+              onClick={()=>onChoose(selected===c.position?null:c.position)}>
+              {selected===c.position?'✓ 已指定 · 点此取消':'指定为本次研习主爻 ↗'}
+            </button>
+          </article>)}
+        </div>
+        {data.comparisons.length>0&&<div className="focus-decision-compare">
+          <h4>同类候选的不同之处</h4>
+          {data.comparisons.map(pair=><article key={pair.first_position+'-'+pair.second_position}>
+            <b>{POS[pair.first_position-1]}爻 ↔ {POS[pair.second_position-1]}爻</b>
+            {pair.differences.length?pair.differences.map(v=><p key={v.criterion}>{v.criterion}：{String(v.first_value)} / {String(v.second_value)}</p>):<p>当前已计算条件没有可比的差异，不等于两爻完全相同。</p>}
+            <small>{pair.note}</small>
+          </article>)}
+        </div>}
+        {data.outstanding_checks?.length>0&&<div className="focus-decision-caution">
+          <b>仍须人工判断</b>
+          {data.outstanding_checks.map((x,i)=><p key={i}>· {x}</p>)}
+        </div>}
+        {data.selected_candidate&&<p className="focus-decision-status">已将{POS[data.selected_candidate.position-1]}爻作为<strong>本次研习焦点</strong>交给排盘和 AI。其他候选仍然保留，不构成最终断卦。</p>}
+      </>}
+    <p className="focus-decision-limit">此功能不提供吉凶排名、自动选优或应期预测。{data.limitation||'必须核实真实日月及所问事项。'}</p>
+    <div className="focus-decision-links">
+      <a href={data.references.multiple} rel="noopener noreferrer" target="_blank">《增删卜易》两现章 ↗</a>
+      <a href={data.references.hidden} rel="noopener noreferrer" target="_blank">飞伏神章 ↗</a>
+    </div>
+  </section>
+}
+
 function DayMonthReview({chart}) {
   const review=chart.day_month_review
   const [selected,setSelected]=useState(1)
@@ -587,15 +654,16 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [monthBranch,setMonthBranch]=useState('')
   const [calendarBusy,setCalendarBusy]=useState(false)
   const [focusLiugin,setFocusLiugin]=useState('')
+  const [studyPosition,setStudyPosition]=useState(null)
   const [roleView,setRoleView]=useState('用神')
   const requestNumber=useRef(0)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
-  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin){
+  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin,position=studyPosition){
     const token=++requestNumber.current
     setCalendarBusy(true)
     try{
-      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null})})
+      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null})})
       const data=await response.json()
       if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'排盘失败')
       if(token===requestNumber.current)setChart(data)
@@ -607,8 +675,12 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
     if(lines.length===6)process(lines,day,month)
   }
   function chooseFocus(next){
-    setFocusLiugin(next);setRoleView('用神');setAnswer('');setError('')
-    if(lines.length===6)process(lines,dayGanzhi,monthBranch,next)
+    setFocusLiugin(next);setStudyPosition(null);setRoleView('用神');setAnswer('');setError('')
+    if(lines.length===6)process(lines,dayGanzhi,monthBranch,next,null)
+  }
+  function chooseStudyPosition(next){
+    setStudyPosition(next);setAnswer('');setError('')
+    if(lines.length===6)process(lines,dayGanzhi,monthBranch,focusLiugin,next)
   }
   function addLine(value,faces){
     if(lines.length>=6||busy)return
@@ -625,7 +697,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
     },800)
   }
-  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setRoleView('用神')}
+  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神')}
   async function interpret(){
     if(!chart||busy||calendarBusy)return
     if(!question.trim()||background.trim().length<2){setError('请填写所问之事，并补充一次现实背景。');return}
@@ -636,7 +708,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       else if(apiConfig.aiAccessCode)headers['X-AI-Access-Code']=apiConfig.aiAccessCode
       const res=await fetch(api+'/api/liuyao/interpret',{method:'POST',headers,body:JSON.stringify({
         numbers:lines,day_ganzhi:dayGanzhi||null,month_branch:monthBranch||null,
-        focus_liuqin:focusLiugin||null,
+        focus_liuqin:focusLiugin||null,focus_position:studyPosition||null,
         question,background,background_confirmed:true,ai_model:apiConfig.aiModel
       })})
       const data=await res.json()
@@ -691,6 +763,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
             <DayMonthReview chart={chart}/>
             <VoidInteractionsStudy chart={chart}/>
+            <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
             <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
             <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
             <NajiaBoard chart={chart} roleView={roleView}/>
@@ -700,7 +773,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。两现候选现可逐条对照，并由求测者选择研习主爻，但不会自动择优。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
