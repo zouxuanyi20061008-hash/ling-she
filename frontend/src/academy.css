@@ -897,3 +897,57 @@
 .solar-assist-date-pair strong{color:#2d6549;font-size:14px;line-height:1.8;overflow-wrap:anywhere}
 .solar-assist-values strong{font-size:20px}
 @media(max-width:650px){.solar-assist-date-pair{grid-template-columns:1fr}.solar-assist-date-pair>div{padding:9px}}
+
+/* V15 · 综合旺衰证据表（只整理已计算条件，不进行数值强弱排名） */
+.relations-view-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:14px 0}
+.relations-view-tabs button{border:1px solid #b8c5ae;min-height:43px;padding:8px;color:#416950;background:#faf7e9;font-size:12px}
+.relations-view-tabs button.active{background:#305f48;color:#fff3dd;border-color:#305f48}
+.strength-evidence-study{padding:15px;margin:12px 0;border:1px solid #c1b398;background:#f7f3e8;color:#305b44}
+.strength-evidence-head{display:flex;justify-content:space-between;align-items:center;gap:11px;border-bottom:1px solid #d9caae;padding-bottom:12px}
+.strength-evidence-head small{font-size:11px;letter-spacing:.12em;color:#9c7552}
+.strength-evidence-head h3{font-size:17px;margin:5px 0 0;color:#28533e}
+.strength-evidence-head>span{font-size:10px;color:#8c7b60;text-align:right}
+.strength-evidence-intro{font-size:11px;line-height:1.95;margin:12px 0;color:#6a796a}
+.strength-evidence-intro strong{color:#3a6248}
+.strength-evidence-positions{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
+.strength-evidence-positions button{border:1px solid #bdc6b1;background:#fff9ee;color:#376349;padding:9px 2px;min-height:49px;font-size:11px}
+.strength-evidence-positions button.active{background:#315f47;color:#fff5dc;border-color:#315f47}
+.strength-evidence-positions button small{display:block;font-size:8px;margin-top:3px;color:#a77b57}
+.strength-evidence-positions button.active small{color:#e8cfa4}
+.strength-evidence-target{display:flex;justify-content:space-between;gap:11px;align-items:center;background:#eee9d8;border:1px solid #d3c6a9;padding:13px;margin-top:12px}
+.strength-evidence-target b{display:block;font-size:15px;color:#346049}
+.strength-evidence-target small{font-size:10px;color:#8e7961}
+.strength-evidence-target>span{color:#a8694d;font-size:11px;max-width:40%;text-align:right}
+.strength-evidence-summary{font-size:11px;line-height:1.9;color:#806c54;margin:9px 0}
+.strength-evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.strength-evidence-col{border:1px solid #d8ccb8;background:#fffcf2;padding:12px;min-width:0}
+.strength-evidence-col.context{grid-column:1/-1;background:#eee9dc}
+.strength-evidence-col h4{font-size:12px;color:#305a42;border-bottom:1px solid #dfd5c3;padding-bottom:8px;margin:0 0 8px}
+.strength-evidence-col.restraining h4{color:#a36c52}
+.strength-evidence-entry{border-bottom:1px solid #e6dccc;padding:8px 0}
+.strength-evidence-entry:last-child{border-bottom:0}
+.strength-evidence-entry strong{font-size:11px;color:#335e48}
+.strength-evidence-col.restraining .strength-evidence-entry strong{color:#99674c}
+.strength-evidence-entry p{font-size:11px;color:#647565;line-height:1.8;margin:4px 0}
+.strength-evidence-entry small{font-size:10px;color:#978871}
+.strength-evidence-no-entry{font-size:11px;line-height:1.8;color:#8b826f}
+.strength-evidence-pending,.strength-evidence-multi{border-left:3px solid #ad805b;background:#efe8dc;padding:10px;margin:10px 0;font-size:11px;line-height:1.9;color:#846d59}
+.strength-evidence-pending b{color:#9b6f55}
+.strength-evidence-pending p{margin:4px 0}
+.strength-evidence-multi{background:#e9efe4;border-color:#7e987b;color:#496b54}
+.strength-evidence-boundary{font-size:10px;line-height:2;color:#908570;border-top:1px solid #d7cdb5;padding-top:11px;margin:13px 0}
+.strength-evidence-links{display:flex;gap:7px 15px;flex-wrap:wrap}
+.strength-evidence-links a{font-size:11px;text-decoration:underline;text-underline-offset:3px;color:#377355}
+.strength-evidence-report{margin:12px 0;background:#edf0e3;border:1px solid #c9d1b9;padding:12px}
+.strength-evidence-report h4{font-size:13px;color:#3c6b4e;margin:0 0 8px}
+.strength-evidence-report p{font-size:11px;line-height:1.9;color:#536b54;margin:6px 0}
+.strength-evidence-report small{font-size:10px;color:#877f68}
+@media(max-width:650px){
+ .strength-evidence-study{padding:11px 9px}
+ .strength-evidence-head h3{font-size:15px}
+ .strength-evidence-head>span{font-size:9px}
+ .strength-evidence-positions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .strength-evidence-grid{grid-template-columns:1fr}
+ .strength-evidence-col.context{grid-column:auto}
+ .strength-evidence-target{padding:10px}
+}
