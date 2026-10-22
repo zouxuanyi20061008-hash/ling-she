@@ -357,7 +357,8 @@ function refreshAdventurePanel(){
  '<p><strong>🐉 道纹</strong><span>'+s.sigils+' 枚 · 攻击+'+Math.round((adventureAttackBonus()-1)*100)+'% · 移速+'+Math.round((adventureSpeedBonus()-1)*100)+'%</span></p>'+
  '<p><strong>🗺️ 游历进度</strong><span>发现 '+s.regionIds.length+'/3 个外境 · 通过 '+s.trialWins.length+'/3 处试炼</span></p>'+
  '<div class="adventureSectionTitle">三境试炼</div>'+trials+
- '<p class="adventureHint">主线、悬赏完成后自动领取奖励，不需要频繁确认。靠近试炼碑后点击屏幕的互动按钮即可参加挑战。</p>';
+ regionalJournalMarkup()+
+ '<p class="adventureHint">主线与悬赏自动结算；三境灵材通过区域专属妖兽获得，集齐后自动解锁被动功法。靠近试炼碑即可挑战。</p>';
  for(const btn of el.querySelectorAll?.('.trackBtn')||[])btn.addEventListener('click',()=>{adventureTracked=btn.dataset.trial;toggleAdventureBook(false);toast('🧭 已在小地图标记 '+ADVENTURE_TRIALS.find(t=>t.id===adventureTracked).name)});
  lastAdventureRender=performance.now();
 }
