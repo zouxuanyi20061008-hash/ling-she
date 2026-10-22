@@ -214,6 +214,13 @@ export default function StudyHall({onClose,apiKey,setApiKey,aiModel,setAiModel,a
                 </select>
               </div>
             </div>
+            <nav className="library-reader-quick" aria-label="藏经阁快速翻篇">
+              <button type="button" disabled={index===0} onClick={prev}>← 上一篇</button>
+              <span>第 {index+1} 篇 / 共 {items.length} 篇</span>
+              {index===items.length-1?
+                <button type="button" className="library-reader-quick-next" onClick={()=>navigate('bookshelf')}>返回目录 ↑</button>:
+                <button type="button" className="library-reader-quick-next" onClick={next}>下一篇 →</button>}
+            </nav>
             <article className="library-page-paper">
               <div className="library-paper-line"><span>原典选读</span><span>{item.volume}</span></div>
               <p className="library-text-section">{item.section}</p>
