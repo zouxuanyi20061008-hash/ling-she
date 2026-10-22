@@ -1,0 +1,40 @@
+name: Academy checks
+on:
+  push:
+    branches:
+      - meihua-web-deploy
+  workflow_dispatch:
+jobs:
+  frontend:
+    name: Frontend tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install --no-audit --no-fund
+      - name: Run frontend regression tests
+        working-directory: frontend
+        run: npm run test:ui
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+  backend:
+    name: Backend deterministic tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        run: python -m pip install -r backend/requirements.txt
+      - name: Download public stroke/IDS reference data
+        run: python backend/scripts/download_data.py
+      - name: Run backend regression tests
+        env:
+          PYTHONPATH: backend
+        run: python -m pytest backend/tests -q
