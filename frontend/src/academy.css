@@ -884,3 +884,16 @@
  .solar-assist-grid input,.solar-assist-grid select{font-size:11px;padding:6px}
  .solar-assist-actions button{padding:10px}
 }
+
+/* 中国北京时间统一的农历、公历双向输入 */
+.solar-assist-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}
+.solar-assist-tabs button{min-height:43px;border:1px solid #b8c3ae;background:#fffcf2;color:#426b53;font-size:12px}
+.solar-assist-tabs button.active{background:#325f49;border-color:#325f49;color:#fff4dc}
+.solar-assist-leap{display:flex!important;flex-direction:row!important;align-items:center;gap:10px!important;min-height:42px;padding:8px 10px;border:1px solid #cdc5b3;background:#fff9ed;cursor:pointer}
+.solar-assist-leap input{width:18px!important;min-height:18px!important;height:18px;accent-color:#35654c}
+.solar-assist-date-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:10px}
+.solar-assist-date-pair>div{background:#e9eddd;border:1px solid #d1d1bd;display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;text-align:center}
+.solar-assist-date-pair small{font-size:11px;color:#7c8069}
+.solar-assist-date-pair strong{color:#2d6549;font-size:14px;line-height:1.8;overflow-wrap:anywhere}
+.solar-assist-values strong{font-size:20px}
+@media(max-width:650px){.solar-assist-date-pair{grid-template-columns:1fr}.solar-assist-date-pair>div{padding:9px}}
