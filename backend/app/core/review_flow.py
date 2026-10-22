@@ -24,6 +24,7 @@ def decorate_review_flow(chart: dict) -> dict:
     voids=chart["void_interactions"]
     evidence_chain=chart["evidence_chain"]
     temporal=chart["temporal_review"]
+    void_context=chart["void_context_review"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -124,6 +125,8 @@ def decorate_review_flow(chart: dict) -> dict:
         unresolved.append("原忌仇神的五行作用路径已追溯；实际能否生扶或克害仍未完成综合效力判断")
         if pathways["moving_yuan_ji_together"]:
             unresolved.append("原神忌神同动，不能简单互相抵消，需核实各自日月动变状态")
+    if void_context["attention_positions"]:
+        unresolved.append("V23 已提供真假空六段审议，冲空、动空、化空等作用是否成立仍待合参")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "仍未完成实际应期推断；V22 仅提供旬空换旬、日支相值相冲的历法候选核查",
@@ -195,8 +198,19 @@ def decorate_review_flow(chart: dict) -> dict:
         )
         for candidate in temporal["candidates"]
     ]
+    void_context_digest=[
+        str(row["position"])+"爻 "+row["ganzhi"]+" · "+
+        ("本爻及变爻均空" if row["category"]=="original_and_transformed_void" else
+         "本卦旬空" if row["category"]=="original_void" else
+         "动而化空（本爻不空）" if row["category"]=="transformed_void_only" else
+         "缺日辰未核空" if row["category"]=="day_missing" else "本卦不空且无真实化空")+
+        "；"+("、".join(row["cross_checks"]) if row["cross_checks"] else "无额外交叉冲突标记")+"；真假空未定"
+        for row in void_context["rows"]
+        if row["category"] not in ("neither_void","day_missing") or row["cross_checks"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "void_context_digest":void_context_digest,
         "temporal_digest":temporal_digest,
         "temporal_notice":temporal["notice"],
         "evidence_chain_digest":chain_digest,

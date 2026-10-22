@@ -703,6 +703,60 @@ function SeasonalMovingStudy({chart}) {
 
 
 
+function VoidContextStudy({chart}){
+  const data=chart.void_context_review
+  const [requested,setRequested]=useState(null)
+  if(!data)return null
+  const pos=requested??data.selected_position??data.focus_candidate_positions[0]??data.attention_positions[0]??1
+  const current=data.rows[pos-1]
+  const categoryName={
+    day_missing:'日辰尚未核定',original_void:'本卦旬空',transformed_void_only:'仅真实明动化空',
+    original_and_transformed_void:'本卦旬空且动而化空',neither_void:'本卦不空，亦无实际化空'
+  }
+  return <section className="void-context-study" aria-label="六爻旬空真假联合审议">
+    <header><small>V23 · 六段复核</small><h3>真假空须合参 · 逐爻核查</h3></header>
+    <p>先核本卦日旬，再查日辰、月令、动静、本位化空与墓绝。这里的各项标签只是排盘规则关系，
+       <strong>不代表已经断定真空、假空或实际应期。</strong></p>
+    {data.status==='day_unconfirmed'&&<p className="void-context-warning" role="status">
+      尚缺有效日辰。请先回到「核日月」，当前所有旬空与化空的真假判定保持未知。
+    </p>}
+    <div className="void-context-picks" role="group" aria-label="选择真假空审议爻位">
+      {data.rows.map(row=><button type="button" key={row.position}
+        aria-pressed={pos===row.position}
+        className={pos===row.position?'active':''}
+        onClick={()=>setRequested(row.position)}>
+        {POS[row.position-1]}爻
+        {row.selected_by_user&&<small>主爻</small>}
+        {row.category==='original_void'&&<small>本空</small>}
+        {row.category==='transformed_void_only'&&<small>化空</small>}
+        {row.category==='original_and_transformed_void'&&<small>双空</small>}
+      </button>)}
+    </div>
+    <div className="void-context-current">
+      <b>{POS[current.position-1]}爻 · {current.ganzhi}</b>
+      <span>{categoryName[current.category]}</span>
+    </div>
+    {data.focus_status==='not_visible'&&<p className="void-context-warning">
+      所选六亲本卦不现。这里仅审核本卦六爻，伏神空破须在「因事取用」中另查，不能冒称可见主爻。
+    </p>}
+    <div className="void-context-steps">
+      {current.steps.map((step,i)=><article key={step.id}>
+        <h4>{i+1}. {step.title}<small>{step.status==='missing'?'资料待补':'关系已列，效力未决'}</small></h4>
+        {step.observations.map((ob,j)=><p key={j}>· {ob}</p>)}
+        {step.pending.map((p,j)=><p className="void-context-missing" key={j}>待补：{p}</p>)}
+      </article>)}
+    </div>
+    {current.cross_checks.length>0&&<div className="void-context-cross">
+      <strong>需要交叉复核的条件</strong>
+      {current.cross_checks.map((x,i)=><p key={i}>· {x}</p>)}
+    </div>}
+    <p className="void-context-end">{current.note} {data.boundary}</p>
+    <a className="void-context-link" href={data.references.void} target="_blank" rel="noopener noreferrer">
+      核读《增删卜易》旬空章 ↗
+    </a>
+  </section>
+}
+
 function VoidInteractionsStudy({chart}){
   const voidData=chart.void_interactions
   const [selected,setSelected]=useState(1)
@@ -1293,6 +1347,9 @@ function ReviewReport({chart,question}) {
     '六合、墓绝条件摘记（不判效力）：',
     ...(data.special_conditions_digest||[]),
     '',
+    '真假空六段审议（未作真假空裁定）：',
+    ...(data.void_context_digest||[]),
+    '',
     '时间条件参照（不是应期预测）：',
     data.temporal_notice||'未提供日期来源',
     ...(data.temporal_digest||[]),
@@ -1351,6 +1408,11 @@ function ReviewReport({chart,question}) {
       <h4>用神原忌仇逐项审议</h4>
       {data.yongshen_pathway_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>来源是否发动可以核查，作用是否有效仍未判定。</small>
+    </div>}
+    {data.void_context_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>真假空六段审议摘要</h4>
+      {data.void_context_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>只核对原爻空与真实化空及交叉条件，未断出空、填实或实际吉凶。</small>
     </div>}
     {data.temporal_digest?.length>0&&<div className="strength-evidence-report">
       <h4>时间条件摘要 · 不是应期预测</h4>
@@ -1621,6 +1683,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             </>}
             {reviewStage==='conflicts'&&<>
               <DayMonthReview chart={chart}/>
+              <VoidContextStudy chart={chart}/>
               <TemporalReviewStudy chart={chart}/>
               <details className="liuyao-depth-panel">
                 <summary>进一步核对：旬空、冲空、化空与伏神合参</summary>
