@@ -465,7 +465,7 @@ export default function App({onBack,onOpenStudy,apiConfig}) {
     submit(pendingAi, override, false, null)
   }
 
-  return <main className="book-app">
+  return <main className="book-app book-app--meihua">
     <div className="book-frame">
       <div className="academy-meihua-back"><button type="button" onClick={onBack}>← 返回万象书院</button><span>象数易 · 梅花易数</span></div>
       <header className="book-top">
