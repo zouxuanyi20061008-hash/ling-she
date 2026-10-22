@@ -358,6 +358,63 @@ function FuShenStudy({chart,onChoose,busy}){
 
 
 
+
+function SpecialConditionsStudy({chart}){
+  const data=chart.special_conditions
+  const [inspected,setInspected]=useState(null)
+  if(!data)return null
+  const chosen=inspected??data.selected_focus_position??data.affected_positions[0]??1
+  const row=data.rows[chosen-1]
+  const types=[
+    {id:'combinations',name:'六合、合起与合绊',empty:'此爻尚无已计算的六合条件'},
+    {id:'tombs',name:'日墓、动墓与化墓',empty:'此爻尚无已计算的三墓条件'},
+    {id:'extinctions',name:'绝地与化绝',empty:'此爻尚无已计算的逢绝条件'}
+  ]
+  return <section className="special-conditions" aria-label="六合墓绝的教学审议">
+    <div className="special-conditions-head"><div>
+      <small>第十五式 · 合墓绝审议</small>
+      <h3>见合须分动静，逢墓绝先列条件。</h3>
+    </div><span>{data.affected_positions.length} 爻有参考条件</span></div>
+    <p className="special-conditions-intro">
+      本页参考《增删卜易》的六合、三墓章与《卜筮正宗》的绝处逢生论。
+      <strong>这里只核对对应地支，不断合绊有效、出入墓成败或绝处生死。</strong>
+    </p>
+    <div className="special-conditions-positions" role="group" aria-label="选择查看墓绝合条件的爻位">
+      {data.rows.map(x=><button key={x.position} type="button" aria-pressed={chosen===x.position}
+          onClick={()=>setInspected(x.position)} className={chosen===x.position?'active':''}>
+        {POS[x.position-1]}爻
+        {x.has_any_condition&&<small>有条件</small>}
+      </button>)}
+    </div>
+    <div className="special-conditions-selected">
+      <strong>{POS[row.position-1]}爻 · {row.ganzhi}</strong>
+      <span>{row.element} · {row.moving?'明动':'静爻'} · 墓支{row.tomb_branch} · 绝地{row.extinction_branch}</span>
+    </div>
+    <div className="special-conditions-list">
+      {types.map(group=><article key={group.id}>
+        <h4>{group.name}</h4>
+        {row[group.id].length?row[group.id].map((x,i)=><div key={i} className="special-conditions-entry">
+          <b>{x.kind}</b><small>来源：{x.source}</small><p>{x.detail}</p>
+        </div>):<p className="special-conditions-empty">{group.empty}</p>}
+      </article>)}
+    </div>
+    {row.pending.length>0&&<div className="special-conditions-caution">
+      <b>缺少日月条件</b>
+      {row.pending.map((x,i)=><p key={i}>{x}</p>)}
+    </div>}
+    {row.warnings.length>0&&<div className="special-conditions-caution">
+      <b>必须合参</b>
+      {row.warnings.map((x,i)=><p key={i}>{x}</p>)}
+    </div>}
+    <p className="special-conditions-limits">{data.scope}</p>
+    <div className="special-conditions-sources">
+      <a href={data.references.liuhe} target="_blank" rel="noopener noreferrer">六合章 ↗</a>
+      <a href={data.references.three_tombs} target="_blank" rel="noopener noreferrer">随鬼入墓章 ↗</a>
+      <a href={data.references.extinction} target="_blank" rel="noopener noreferrer">绝处逢生论 ↗</a>
+    </div>
+  </section>
+}
+
 function MovingEffectReview({chart}) {
   const data=chart.moving_effect_review
   const [inspected,setInspected]=useState(null)
@@ -930,6 +987,9 @@ function ReviewReport({chart,question}) {
     '本位动变与日月空破核对（效力尚未判断）：',
     ...(data.moving_effect_digest||[]),
     '',
+    '六合、墓绝条件摘记（不判效力）：',
+    ...(data.special_conditions_digest||[]),
+    '',
     '待核实与未完成事项：',
     ...data.outstanding_questions.map((x,i)=>(i+1)+'. '+x),
     '',
@@ -969,6 +1029,11 @@ function ReviewReport({chart,question}) {
       <h4>动变与日月合参摘记</h4>
       {data.moving_effect_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>本位回头关系不等于作用已生效。</small>
+    </div>}
+    {data.special_conditions_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>六合、墓绝条件摘记</h4>
+      {data.special_conditions_digest.map((entry,i)=><p key={i}>{entry}</p>)}
+      <small>只供日后复核，不意味着合绊、入墓或逢绝已经实际生效。</small>
     </div>}
     <div className="review-report-outstanding">
       <h4>尚待核实</h4>
@@ -1135,12 +1200,16 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 <button type="button" className={relationsView==='motion'?'active':''}
                   aria-pressed={relationsView==='motion'}
                   onClick={()=>setRelationsView('motion')}>动爻效力</button>
+                <button type="button" className={relationsView==='special'?'active':''}
+                  aria-pressed={relationsView==='special'}
+                  onClick={()=>setRelationsView('special')}>六合墓绝</button>
                 <button type="button" className={relationsView==='details'?'active':''}
                   aria-pressed={relationsView==='details'}
                   onClick={()=>setRelationsView('details')}>纳甲与动变明细</button>
               </div>
               {relationsView==='summary'?<StrengthEvidenceStudy chart={chart}/>:
                 relationsView==='motion'?<MovingEffectReview chart={chart}/>:
+                relationsView==='special'?<SpecialConditionsStudy chart={chart}/>:
                 <>
                   <NajiaBoard chart={chart} roleView={roleView}/>
                   <LineDynamicsStudy chart={chart}/>
