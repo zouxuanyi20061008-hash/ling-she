@@ -184,7 +184,7 @@ function startAdventureTrial(trial){
    let x=trial.x+offsets[i][0],y=trial.y+offsets[i][1];
    if(terrainBlocked(x,y)){x=trial.x+72-i*28;y=trial.y+62}
    const e=makeCreature(x,y,830+i);
-   e.species='bat';e.tier=3;e.r=17;e.hp=e.max=60+level*5;
+   e.species='bat';e.tier=Math.max(3,level-1);e.r=17;e.hp=e.max=60+level*5;
    e.elite=i===2;e.armor=1;e.trialToken='nether';
    enemies.push(e);
   }
