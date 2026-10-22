@@ -7,36 +7,40 @@ const CREATURE_META={
  fox:{name:'赤焰狐妖',role:'游斗',hp:47,tier:2,r:16,speed:73,art:'assets/spirit-fox.svg'},
  wolf:{name:'裂牙山狼',role:'突袭',hp:73,tier:3,r:19,speed:82,art:'assets/spirit-wolf.svg'},
  tortoise:{name:'玄岩甲龟',role:'坚甲',hp:142,tier:4,r:23,speed:27,art:'assets/stone-tortoise.svg'},
- bat:{name:'幽羽妖蝠',role:'远袭',hp:53,tier:3,r:16,speed:91,art:'assets/shadow-bat.svg'}
+ bat:{name:'幽羽妖蝠',role:'远袭',hp:53,tier:3,r:16,speed:91,art:'assets/shadow-bat.svg'},
+ frost_stag:{name:'霜角灵鹿',role:'寒魄·游击',hp:92,tier:4,r:21,speed:76,art:'assets/frost-stag.svg'},
+ ember_scorpion:{name:'赤砂炎蝎',role:'烈焰·猛袭',hp:118,tier:5,r:22,speed:60,art:'assets/ember-scorpion.svg'},
+ nether_wisp:{name:'幽冥鬼灯',role:'幽咒·闪现',hp:88,tier:6,r:19,speed:86,art:'assets/nether-wisp.svg'}
 };
 const CREATURE_ART={};
 for(const [id,info] of Object.entries(CREATURE_META)){const img=new Image();img.src=info.art;CREATURE_ART[id]=img}
 function creatureSpecies(x,y,seed){
  const n=terrainHash(seed,Math.floor(x/160),Math.floor(y/170));
  const b=biome(x,y);
- if(b===3)return n<.15?'fox':n<.32?'wolf':n<.5?'tortoise':'bat';
- if(b===1)return n<.2?'hare':n<.47?'fox':n<.69?'wolf':n<.87?'tortoise':'bat';
- if(b===2)return n<.2?'hare':n<.41?'fox':n<.66?'wolf':n<.84?'tortoise':'bat';
+ if(b===3)return n<.66?'nether_wisp':n<.79?'bat':n<.9?'wolf':'tortoise';
+ if(b===1)return n<.64?'frost_stag':n<.75?'hare':n<.88?'fox':'tortoise';
+ if(b===2)return n<.64?'ember_scorpion':n<.77?'wolf':n<.9?'tortoise':'hare';
  return n<.28?'hare':n<.53?'fox':n<.79?'wolf':n<.9?'tortoise':'bat';
 }
-function assignCreature(e,x,y,index){
- const species=creatureSpecies(x,y,index),meta=CREATURE_META[species],zone=biome(x,y);
+function assignCreature(e,x,y,index,forcedSpecies=null){
+ const species=forcedSpecies&&CREATURE_META[forcedSpecies]?forcedSpecies:creatureSpecies(x,y,index),meta=CREATURE_META[species],zone=biome(x,y);
  const elite=terrainHash(index,17,zone+14)>.88;
  const scale=1+zone*.32+(elite?.48:0);
  Object.assign(e,{
-  x,y,species,armor:species==='tortoise'?.58:1,
+  x,y,species,armor:species==='tortoise'?.58:species==='ember_scorpion'?.8:species==='frost_stag'?.93:species==='nether_wisp'?1.06:1,
   hp:Math.round(meta.hp*scale),max:Math.round(meta.hp*scale),
   r:meta.r+(elite?3:0),tier:meta.tier+Math.max(0,zone-1),
   t:terrainHash(index,31,zone)*7,last:0,shot:0,
   elite,hitFlash:0,rushUntil:0,rushReady:0,
-  wander:terrainHash(index,53,zone)*Math.PI*2
+  wander:terrainHash(index,53,zone)*Math.PI*2,regionalBurnUntil:0,regionalBurnTick:0
  });
  return e;
 }
-function makeCreature(x,y,index){return assignCreature({},x,y,index)}
+function makeCreature(x,y,index,forcedSpecies=null){return assignCreature({},x,y,index,forcedSpecies)}
 function updateCreatureMotion(e,hero,dt,now,weak){
  let dx=hero.x-e.x,dy=hero.y-e.y,d=Math.max(1,Math.hypot(dx,dy));
  const id=e.species||'fox',meta=CREATURE_META[id]||CREATURE_META.fox;
+ if(updateRegionalCreature(e,hero,dt,now,weak))return;
  let vx=0,vy=0,speed=meta.speed;
  if(id==='hare'||weak){
   if(d<340){vx=-dx/d;vy=-dy/d;speed*=id==='hare'?1.14:1.08}
@@ -71,8 +75,8 @@ function updateCreatureMotion(e,hero,dt,now,weak){
 function paintSpeciesEnemy(e,now){
  const id=e.species||'fox',img=CREATURE_ART[id],meta=CREATURE_META[id];
  if(!img||!img.complete||!img.naturalWidth)return false;
- let width=e.r*(id==='wolf'?3.55:id==='bat'?3.8:id==='tortoise'?3.3:3.2);
- let bob=id==='hare'?Math.sin(e.t*11)*3.6:id==='bat'?Math.sin(e.t*9)*4:Math.sin(e.t*2.4)*1.3;
+ let width=e.r*(id==='wolf'?3.55:id==='bat'?3.8:id==='tortoise'?3.3:id==='frost_stag'?3.65:id==='ember_scorpion'?3.8:id==='nether_wisp'?3.5:3.2);
+ let bob=id==='hare'?Math.sin(e.t*11)*3.6:id==='bat'?Math.sin(e.t*9)*4:id==='nether_wisp'?Math.sin(e.t*6.8)*6:Math.sin(e.t*2.4)*1.3;
  const hurt=now<e.hitFlash;
  ctx.save();
  if(e.elite&&qualityMode==='sharp'){ctx.shadowColor='#f8ca71';ctx.shadowBlur=9}
