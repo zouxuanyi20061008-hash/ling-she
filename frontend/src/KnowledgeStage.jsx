@@ -30,13 +30,15 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [branch,setBranch]=useState([0,0,0,0])
   const [activePillar,setActivePillar]=useState(0)
   const palace=PALACES.find(a=>a.n===palaceNum)
-  return <main className="academy-stage">
+  return <main className={"academy-stage academy-stage--"+mode+" academy-knowledge-mode"}>
     <div className="academy-container">
       <header className="academy-stage-nav"><button onClick={onBack}>← 返回万象书院</button><b>{art.group} · {art.name}</b><button onClick={onStudy}>藏经阁 ◎</button></header>
       <section className="academy-stage-banner"><div>
+        <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
         <p>{isQimen?'时空九宫 · 学习如何认盘':isBazi?'干支四柱 · 入门认识命盘':'古典文献 · 入门导览'}</p>
         <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen||isBazi?'这里是互动教学演示，不会伪装成真实完整排盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'九宫阵盘 · 宫位探索':isBazi?'四柱命简 · 干支辨识':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen||isBazi?'互动结构教学 · 不冒充完整实盘':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isQimen?<section className="academy-learning-layout">
         <div className="academy-learning-surface">
           <span>洛书九宫 · 上南下北</span>
