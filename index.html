@@ -18,15 +18,7 @@ function updateHud(){let r=Math.min(7,Math.floor((level-1)/3));document.querySel
 function breakthrough(){if(!running)return;if(exp<need){toast('🌀 修为不足：还差 '+Math.ceil(need-exp)+' 修为');flash('修为不足');return}exp-=need;level++;need=Math.round(need*1.36+20);hp=Math.min(100+level*10,hp+40);trail.push(...Array.from({length:4},()=>({...trail[trail.length-1]})));breakReady=exp>=need;flash('✨ 境界突破！');toast('✨ 突破成功！'+realmNames[Math.min(7,Math.floor((level-1)/3))]+' '+level+'阶');updateHud()}
 function randomOpenGround(pad=0){for(let k=0;k<90;k++){let x=rand(70,SIZE-70),y=rand(70,SIZE-70);if(!terrainBlocked(x,y)&&!landmarkClearing(x,y,pad)&&!onQinglanRoad(x,y)&&!isEncounterClearing(x,y,pad))return {x,y}}return {x:1750,y:1890}}
 function respawnEnemy(e){let point=randomOpenGround(60);assignCreature(e,point.x,point.y,Math.floor(Math.random()*100000))}
-function killEnemy(e,swallow){let reward=14+e.tier*14;gain(reward);kills++;essence++;evoPoints+=e.elite?3:1;damageTexts.push({x:e.x,y:e.y-24,text:swallow?'吞噬 +'+reward:'击败 +'+reward,life:1,color:'#ffe394'});let justEvolved=false;
-if(evoStage<4&&evoPoints>=evoThresholds[evoStage]){
- evoStage++;justEvolved=true;
- hp=Math.min(100+level*10,hp+45);
- beginEvolutionScene(evoStage);
- flash('🐉 进化：'+forms[evoStage]);
- for(let i=0;i<24;i++)particles.push({x:player.x,y:player.y,vx:rand(-130,130),vy:rand(-130,130),life:.85,color:SNAKE_FORMS[evoStage].color});
- for(let i=0;i<5;i++)trail.push({...trail[trail.length-1]});
-}
+function killEnemy(e,swallow){let reward=14+e.tier*14;gain(reward);kills++;essence++;evoPoints+=e.elite?3:1;damageTexts.push({x:e.x,y:e.y-24,text:swallow?'吞噬 +'+reward:'击败 +'+reward,life:1,color:'#ffe394'});let justEvolved=triggerEvolutionIfReady();
 trail.push({...trail[trail.length-1]});
 toast(justEvolved?'🐉 '+forms[evoStage]+'觉醒：'+SNAKE_FORMS[evoStage].perk:(swallow?'🐍 吞噬弱小妖兽':'⚔️ 击败强敌')+' +'+reward+'修为');
 respawnEnemy(e)}
