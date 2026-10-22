@@ -1370,6 +1370,9 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           <b>贰 · 研判台</b><small>{chart?'卦已成 · 进入五步分析':'六爻齐备后开放'}</small>
         </button>
       </nav>
+      {studioView==='analysis'&&!chart&&(calendarBusy?
+        <p className="liuyao-state-message" role="status">正在生成纳甲排盘和五步研判……</p>:
+        error?<p className="liuyao-state-message" role="alert">{error}</p>:null)}
       <div className={'academy-stage-grid liuyao-studio-grid '+(studioView==='casting'?'view-casting':'view-analysis')}>
         <section className="academy-casting-table">
           <div className="academy-panel-head"><span>第一式 · 摇钱成爻</span><b>{Math.min(6,lines.length+1)} / 六</b></div>
@@ -1421,13 +1424,21 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 <b>{step.summary}</b><span>{step.action}</span>
               </p>)}
             {reviewStage==='calendar'&&<>
-              <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
               <SolarDateAssist day={dayGanzhi} month={monthBranch} onApply={updateCalendar} busy={calendarBusy}/>
+              <details className="liuyao-depth-panel">
+                <summary>不使用自动换算？手动填写日干支与月建</summary>
+                <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
+              </details>
             </>}
             {reviewStage==='focus'&&<>
               <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
               <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
-              <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
+              {chart.focus_decision?.status==='not_visible'?
+                <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>:
+                <details className="liuyao-depth-panel">
+                  <summary>飞伏神装配详情（需要时展开）</summary>
+                  <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
+                </details>}
             </>}
             {reviewStage==='relations'&&<>
               <div className="relations-view-tabs" role="group" aria-label="辨生克详细程度">
@@ -1453,19 +1464,28 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 relationsView==='special'?<SpecialConditionsStudy chart={chart}/>:
                 <>
                   <NajiaBoard chart={chart} roleView={roleView}/>
-                  <LineDynamicsStudy chart={chart}/>
-                  <SeasonalMovingStudy chart={chart}/>
-                  <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
+                  <details className="liuyao-depth-panel">
+                    <summary>深入：展开动变、月令与原忌仇传统装卦明细</summary>
+                    <LineDynamicsStudy chart={chart}/>
+                    <SeasonalMovingStudy chart={chart}/>
+                    <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
+                  </details>
                 </>
               }
             </>}
             {reviewStage==='conflicts'&&<>
               <DayMonthReview chart={chart}/>
-              <VoidInteractionsStudy chart={chart}/>
+              <details className="liuyao-depth-panel">
+                <summary>进一步核对：旬空、冲空、化空与伏神合参</summary>
+                <VoidInteractionsStudy chart={chart}/>
+              </details>
             </>}
             {reviewStage==='report'&&<>
               <ReviewReport chart={chart} question={question}/>
-              <ChineseLocalCaseArchive chart={chart} question={question}/>
+              <details className="liuyao-depth-panel">
+                <summary>案例簿 · 封存事前研习与事后复盘</summary>
+                <ChineseLocalCaseArchive chart={chart} question={question}/>
+              </details>
               <div className="academy-scope">{chart.review_flow?.workflow_note}</div>
             </>}
             <div className="review-flow-footer">
