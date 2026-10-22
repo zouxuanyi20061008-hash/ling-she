@@ -333,13 +333,11 @@ function adventureMainLabel(){
 function updateAdventureHUD(force=false){
  const S=adventureState;
  if(!S)return;
- const b=adventureCurrentBounty(),label='📜 '+adventureMainLabel()+'　|　🎯 '+b.name+' '+S.commissionProgress+'/'+b.need;
- const el=document.getElementById('adventureMini');
- if(el&&(force||lastAdventureHud!==label)){el.textContent=label;lastAdventureHud=label}
  const time=performance.now();
+ updateGuideHUD(time,force); // V6.1: a single compact, route-aware objective replaces two long task bars.
  const status=document.getElementById('trialStatus');
  if(status){const sess=adventureSession;
-  status.textContent=sess?'试炼 · '+ADVENTURE_TRIALS.find(t=>t.id===sess.id).name+' '+Math.max(0,Math.ceil((sess.deadline-time)/1000))+'秒　'+(sess.id==='nether'?sess.killed:sess.collected)+'/'+(sess.id==='nether'?3:4):'';
+  status.textContent=sess?'⏳ '+ADVENTURE_TRIALS.find(t=>t.id===sess.id).name+' '+Math.max(0,Math.ceil((sess.deadline-time)/1000))+'s · '+(sess.id==='nether'?sess.killed:sess.collected)+'/'+(sess.id==='nether'?3:4):'';
   status.style.display=sess?'block':'none';
  }
  if(adventureBookOpen&&time-lastAdventureRender>1000)refreshAdventurePanel();
