@@ -848,3 +848,39 @@
  .review-report{padding:14px 11px}
  .review-report-facts{grid-template-columns:1fr}
 }
+
+/* 六爻公历时刻与节令校验：预览与采纳彻底分离。 */
+.solar-assist{margin:14px 0;padding:15px;border:1px solid #b5baa3;background:#f5f2e5}
+.solar-assist-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px solid #d4cab4}
+.solar-assist-head strong{font-size:15px;color:#315a45}
+.solar-assist-head span{font-size:11px;color:#9d7955}
+.solar-assist>p{font-size:11px;line-height:1.9;color:#6b7865;margin:10px 0}
+.solar-assist-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.solar-assist-grid label{display:flex;flex-direction:column;gap:7px;min-width:0;font-size:11px;color:#516b55}
+.solar-assist-grid input,.solar-assist-grid select{width:100%;min-width:0;min-height:42px;border:1px solid #c4c3ab;background:#fffdf1;color:#2d5c45;padding:8px;font-size:12px;outline:none}
+.solar-assist-grid input:focus,.solar-assist-grid select:focus{border-color:#518166;box-shadow:0 0 0 2px rgba(65,118,81,.15)}
+.solar-assist-actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.solar-assist-actions button{padding:10px 14px;min-height:41px;background:#fdfaf0;border:1px solid #98a992;color:#315f47;font-size:12px}
+.solar-assist-actions button:last-child{background:#2e5d46;color:#fff5dc;border-color:#2e5d46}
+.solar-assist-actions button:disabled,.solar-assist-apply:disabled{opacity:.5;cursor:default}
+.solar-assist-result{background:#fffaef;border:1px solid #c5b699;padding:13px}
+.solar-assist-values{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.solar-assist-values>div{display:flex;flex-direction:column;align-items:center;gap:3px;background:#f0e9d7;padding:12px}
+.solar-assist-values small{font-size:10px;color:#907957}
+.solar-assist-values strong{font-size:23px;color:#265c44}
+.solar-assist-values span{font-size:10px;color:#8d826c}
+.solar-assist-terms{border-top:1px solid #d7cbb5;margin-top:12px;padding-top:10px}
+.solar-assist-terms p{font-size:11px;line-height:1.9;color:#536c58}
+.solar-assist-terms small{font-size:10px;color:#898773}
+.solar-assist-warning{border-left:3px solid #ad794e;background:#f7eadc;padding:8px 11px;margin:10px 0}
+.solar-assist-warning p{font-size:11px;line-height:1.8;color:#976344}
+.solar-assist-compare{font-size:11px;color:#886d53;line-height:1.8;margin:12px 0}
+.solar-assist-apply{width:100%;background:#2f634b;color:#fff4de;min-height:45px;padding:12px 8px;font-size:12px}
+.solar-assist-result .solar-assist-disclaimer{font-size:10px;line-height:1.8;color:#93876e;margin-top:9px}
+.solar-assist-error{font-size:11px;color:#a14d45;margin:10px 0}
+@media(max-width:650px){
+ .solar-assist{padding:11px 9px}
+ .solar-assist-grid{gap:8px}
+ .solar-assist-grid input,.solar-assist-grid select{font-size:11px;padding:6px}
+ .solar-assist-actions button{padding:10px}
+}
