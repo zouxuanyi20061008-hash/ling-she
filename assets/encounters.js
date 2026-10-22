@@ -192,7 +192,7 @@ function updateAzureKing(dt,now){
  const after=Math.hypot(player.x-b.x,player.y-b.y);
  if(after<b.r+14&&now>b.hitReady&&now>invuln){
   b.hitReady=now+1000;invuln=now+780;
-  let damage=encounterDamageTaken(b.phase===2?19:14,now);
+  let damage=regionalDamageTaken(encounterDamageTaken(b.phase===2?19:14,now));
   hp-=damage;
   damageTexts.push({x:player.x,y:player.y-24,text:'狼王 -'+damage,life:.9,color:'#ffb5a3'});
   if(hp<=0){hp=0;die()}
