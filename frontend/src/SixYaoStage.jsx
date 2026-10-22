@@ -154,7 +154,7 @@ function SolarDateAssist({day,month,onApply,busy}){
         {day===preview.day_ganzhi&&month===preview.month_branch?'与预览相同。':'预览结果与当前选择不同，请核对后再采纳。'}
       </p>}
       <button type="button" className="solar-assist-apply" disabled={loading||busy}
-        onClick={()=>onApply(preview.day_ganzhi,preview.month_branch)}>
+        onClick={()=>onApply(preview.day_ganzhi,preview.month_branch,preview.input)}>
         确认采用这组日干支与月建 ↗
       </button>
       <p className="solar-assist-disclaimer">{preview.notice}</p>
@@ -198,7 +198,7 @@ function CalendarControls({chart,day,month,onChange,busy}) {
         </div>
        </>}
     </div>
-    <p className="calendar-boundary">采纳自动换算结果后，日月参与传统排盘规则；节气边界、子时与历算争议仍需复核，不代表完整旺衰判断。</p>
+    <p className="calendar-boundary">采纳换算结果后，服务器会用原始公历或农历重新核对日月并记下来源；手动改动日月将取消这一来源记录。临近节气、子时还需人工复核。</p>
   </section>
 }
 
@@ -1283,6 +1283,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [busy,setBusy]=useState(false)
   const [dayGanzhi,setDayGanzhi]=useState('')
   const [monthBranch,setMonthBranch]=useState('')
+  const [confirmedCalendarInput,setConfirmedCalendarInput]=useState(null)
   const [calendarBusy,setCalendarBusy]=useState(false)
   const [focusLiugin,setFocusLiugin]=useState('')
   const [studyPosition,setStudyPosition]=useState(null)
@@ -1294,11 +1295,11 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const reviewNavRef=useRef(null)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
-  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin,position=studyPosition,openOnSuccess=false){
+  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin,position=studyPosition,openOnSuccess=false,calendarSource=confirmedCalendarInput){
     const token=++requestNumber.current
     setCalendarBusy(true)
     try{
-      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null})})
+      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null,calendar_input:calendarSource||null})})
       const data=await response.json()
       if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'排盘失败')
       if(token===requestNumber.current){
@@ -1314,9 +1315,19 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
     }catch(e){if(token===requestNumber.current){setError(e.message||'排盘失败，请检查网络后重试。');if(openOnSuccess)setStudioView('casting')}}
     finally{if(token===requestNumber.current)setCalendarBusy(false)}
   }
-  function updateCalendar(day,month) {
+  function updateCalendar(day,month,previewInput=null) {
+    // Manually altering either field revokes the previous conversion's provenance.
+    const source=previewInput?{
+      calendar_type:previewInput.calendar_type,
+      clock:previewInput.clock,day_boundary:previewInput.day_boundary,
+      ...(previewInput.calendar_type==='solar'?{date:previewInput.date}:{
+        lunar_year:previewInput.lunar_year,lunar_month:previewInput.lunar_month,
+        lunar_day:previewInput.lunar_day,is_leap_month:previewInput.is_leap_month
+      })
+    }:null
+    setConfirmedCalendarInput(source)
     setDayGanzhi(day);setMonthBranch(month);setAnswer('')
-    if(lines.length===6)process(lines,day,month)
+    if(lines.length===6)process(lines,day,month,focusLiugin,studyPosition,false,source)
   }
   function chooseFocus(next){
     setFocusLiugin(next);setStudyPosition(null);setRoleView('用神');setAnswer('');setError('')
@@ -1361,7 +1372,8 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       const res=await fetch(api+'/api/liuyao/interpret',{method:'POST',headers,body:JSON.stringify({
         numbers:lines,day_ganzhi:dayGanzhi||null,month_branch:monthBranch||null,
         focus_liuqin:focusLiugin||null,focus_position:studyPosition||null,
-        question,background,background_confirmed:true,ai_model:apiConfig.aiModel
+        question,background,background_confirmed:true,ai_model:apiConfig.aiModel,
+        calendar_input:confirmedCalendarInput||null
       })})
       const data=await res.json()
       if(!res.ok)throw Error(typeof data.detail==='string'?data.detail:data.detail?.message||'AI 暂不可用')
@@ -1451,6 +1463,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
               </p>)}
             {reviewStage==='calendar'&&<>
               <SolarDateAssist day={dayGanzhi} month={monthBranch} onApply={updateCalendar} busy={calendarBusy}/>
+              {chart.calendar_provenance?.source==='server_recomputed_calendar'&&
+                <p className="calendar-boundary" role="status">已由服务器按北京时间重新换算：
+                  {chart.calendar_provenance.beijing_time.replace('T',' ').slice(0,16)}，
+                  {chart.calendar_provenance.day_boundary_label}。临近交节或子时仍请复核。</p>}
               <details className="liuyao-depth-panel">
                 <summary>不使用自动换算？手动填写日干支与月建</summary>
                 <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>

@@ -22,6 +22,12 @@ def decorate_review_flow(chart: dict) -> dict:
     special=chart["special_conditions"]
     pathways=chart["yongshen_pathways"]
     voids=chart["void_interactions"]
+    provenance=chart.get("calendar_provenance")
+    source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
+    calendar_origin=(
+        "已由服务器使用中国历法库按北京时间和选定换日规则复算；边界时刻仍需核对。"
+        if source_verified else "均为手动参数，尚未按实际日期验证交节与换日。"
+    )
 
     missing_calendar=[
         text for present,text in ((day,"请核对六十甲子日"),(month,"请核对交节后的节令月建"))
@@ -37,7 +43,7 @@ def decorate_review_flow(chart: dict) -> dict:
         "calendar","核日月",calendar_state,
         ("日辰："+(day["ganzhi"] if day else "未确认")+
          "；月建："+(month["branch"]+"月" if month else "未确认")+
-         "。均为手动参数，并未自动校验交节和换日。"),
+         "。"+calendar_origin),
         "、".join(missing_calendar) if missing_calendar else "请用可靠历书再次核对日期、时区、换日与交节。"
     )]
 
@@ -85,6 +91,10 @@ def decorate_review_flow(chart: dict) -> dict:
     ))
 
     unresolved=[]
+    if (day or month) and not source_verified:
+        unresolved.append("日月为手动输入，尚未按实际日期核查公历、交节和换日")
+    if source_verified:
+        unresolved.extend(provenance["warnings"])
     if not day:unresolved.append("日辰未确认，六神、旬空与日冲相关数据不全")
     if not month:unresolved.append("节令月建未确认，旺相、月破与月令关系不全")
     if not focus:unresolved.append("尚未明确所问事项对应的用神关注对象")
@@ -128,6 +138,11 @@ def decorate_review_flow(chart: dict) -> dict:
         "动爻："+("、".join(str(i) for i in chart["dong_yao"])+"爻" if chart["dong_yao"] else "无"),
         "日辰："+(day["ganzhi"] if day else "未确认"),
         "月建："+(month["branch"]+"月" if month else "未确认"),
+        "历法来源："+(
+            "服务器历法库重算；北京时间 "+provenance["beijing_time"]+
+            "；"+provenance["day_boundary_label"]+"（非权威历书）"
+            if source_verified else "手动填写，未自动核对真实日期"
+        ),
         "关注对象："+(focus["category"] if focus else "未选择"),
         "研习主爻："+(
             str(selected["position"])+"爻 "+selected["ganzhi"]+"（由用户指定）"
@@ -173,7 +188,11 @@ def decorate_review_flow(chart: dict) -> dict:
         "selected_position":selected["position"] if selected else None,
         "focus_candidate_count":len(decision.get("candidates",[])),
         "outstanding_questions":list(dict.fromkeys(unresolved)),
-        "notice":"本报告仅列可复核的传统排盘关系。用户手动日辰与节令月建未经真实历法验证；无自动断吉凶、应期或专业建议。",
+        "notice":(
+            "本报告仅列可复核的传统排盘关系。日月已由服务器按历法库重算，临界交节仍需人工核对；无自动断吉凶、应期或专业建议。"
+            if source_verified else
+            "本报告仅列可复核的传统排盘关系。用户手动日辰与节令月建未经真实历法验证；无自动断吉凶、应期或专业建议。"
+        ),
         "conclusion":None,
         "has_final_decision":False,
     }

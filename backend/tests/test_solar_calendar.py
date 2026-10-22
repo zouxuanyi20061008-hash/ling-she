@@ -147,3 +147,58 @@ def test_api_solar_type_timezone_and_ambiguous_fields_rejected():
                     {"day_boundary":"wrong"}):
         res=client.post("/api/liuyao/calendar-preview",json={**payload,**changes})
         assert res.status_code==422
+
+def test_accepted_calendar_is_recomputed_and_included_in_report():
+    client=TestClient(app)
+    raw={"calendar_type":"solar","date":"2026-02-17","clock":"12:00","day_boundary":"midnight"}
+    derived=client.post("/api/liuyao/calendar-preview",json=raw).json()
+    result=client.post("/api/liuyao/cast",json={
+        "numbers":[7]*6,"day_ganzhi":derived["day_ganzhi"],
+        "month_branch":derived["month_branch"],"calendar_input":raw
+    })
+    assert result.status_code==200, result.text
+    chart=result.json()
+    assert chart["calendar_provenance"]["source"]=="server_recomputed_calendar"
+    assert chart["calendar_provenance"]["beijing_time"].endswith("+08:00")
+    assert chart["calendar_provenance"]["solar_date"]=="2026-02-17"
+    assert "服务器历法库重算" in chart["review_flow"]["report"]["verified_by_program"][5]
+    assert "均为手动参数" not in chart["review_flow"]["stages"][0]["summary"]
+    assert chart["review_flow"]["report"]["conclusion"] is None
+
+def test_lunar_source_and_zi_hour_warning_follow_recomputation():
+    client=TestClient(app)
+    raw={"calendar_type":"lunar","lunar_year":2026,"lunar_month":1,"lunar_day":1,
+         "is_leap_month":False,"clock":"23:30","day_boundary":"zi_hour"}
+    derived=client.post("/api/liuyao/calendar-preview",json=raw).json()
+    result=client.post("/api/liuyao/cast",json={
+        "numbers":[6,7,8,9,7,8],"day_ganzhi":derived["day_ganzhi"],
+        "month_branch":derived["month_branch"],"calendar_input":raw
+    })
+    assert result.status_code==200, result.text
+    chart=result.json()
+    assert chart["calendar_provenance"]["lunar"]["month"]==1
+    assert chart["calendar_provenance"]["day_boundary"]=="zi_hour"
+    assert chart["calendar"]["day"]["ganzhi"]==derived["day_ganzhi"]
+    assert any("子时" in w for w in chart["calendar_provenance"]["warnings"])
+
+def test_cast_rejects_mismatch_and_keeps_manual_input_unverified():
+    client=TestClient(app)
+    raw={"calendar_type":"solar","date":"2026-02-17","clock":"12:00","day_boundary":"midnight"}
+    derived=client.post("/api/liuyao/calendar-preview",json=raw).json()
+    wrong="甲子" if derived["day_ganzhi"]!="甲子" else "乙丑"
+    payload={"numbers":[7]*6,"day_ganzhi":wrong,"month_branch":derived["month_branch"],
+             "calendar_input":raw}
+    result=client.post("/api/liuyao/cast",json=payload)
+    assert result.status_code==422
+    assert "不符" in result.json()["detail"]
+    forbidden=client.post("/api/liuyao/cast",json={
+        **payload,"day_ganzhi":derived["day_ganzhi"],
+        "calendar_input":{**raw,"timezone":"Asia/Tokyo"}
+    })
+    assert forbidden.status_code==422
+    manual=client.post("/api/liuyao/cast",json={
+        "numbers":[7]*6,"day_ganzhi":derived["day_ganzhi"],"month_branch":derived["month_branch"]
+    })
+    assert manual.status_code==200
+    assert "calendar_provenance" not in manual.json()
+    assert "手动参数" in manual.json()["review_flow"]["stages"][0]["summary"]
