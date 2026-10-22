@@ -20,6 +20,7 @@ def decorate_review_flow(chart: dict) -> dict:
     month=calendar["month"]
     moving=chart["moving_influences"]
     special=chart["special_conditions"]
+    pathways=chart["yongshen_pathways"]
     voids=chart["void_interactions"]
 
     missing_calendar=[
@@ -107,6 +108,10 @@ def decorate_review_flow(chart: dict) -> dict:
         unresolved.append("已列出动爻与本位变爻的日月空破条件；回头关系能否实际发生作用仍待人工复核")
     if special["affected_positions"]:
         unresolved.append("已列出六合、合绊、三墓及逢绝条件；实际合住、入墓、绝处逢生仍须人工审议")
+    if pathways["status"]=="visible_candidates":
+        unresolved.append("原忌仇神的五行作用路径已追溯；实际能否生扶或克害仍未完成综合效力判断")
+        if pathways["moving_yuan_ji_together"]:
+            unresolved.append("原神忌神同动，不能简单互相抵消，需核实各自日月动变状态")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "未完成强弱综合取用、用神吉凶或应期计算",
@@ -150,8 +155,16 @@ def decorate_review_flow(chart: dict) -> dict:
         "；相关实效尚未判断"
         for row in special["rows"] if row["has_any_condition"]
     ]
+    pathway_digest=[
+        str(c["position"])+"爻 "+c["ganzhi"]+"："+
+        "；".join(role+"明动"+("、".join(str(p)+"爻" for p in c["active_direct_sources"][role]) or "无")
+                 for role in ("原神","忌神"))+
+        "；仇神为间接五行链，作用效力未判定"
+        for c in pathways["focus_candidates"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "yongshen_pathway_digest":pathway_digest,
         "special_conditions_digest":special_digest,
         "moving_effect_digest":moving_digest,
         "evidence_digest":digest,
