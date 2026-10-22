@@ -1304,7 +1304,12 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       if(token===requestNumber.current){
         setChart(data)
         setError('')
-        if(openOnSuccess)setStudioView('analysis')
+        if(openOnSuccess){
+          setStudioView('analysis')
+          window.requestAnimationFrame?.(()=>window.scrollTo({
+            top:0,behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'
+          }))
+        }
       }
     }catch(e){if(token===requestNumber.current){setError(e.message||'排盘失败，请检查网络后重试。');if(openOnSuccess)setStudioView('casting')}}
     finally{if(token===requestNumber.current)setCalendarBusy(false)}
@@ -1462,6 +1467,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                 </details>}
             </>}
             {reviewStage==='relations'&&<>
+              <p className="relations-view-hint">左右滑动切换研习专题，已排好的卦盘不会改变。</p>
               <div className="relations-view-tabs" role="group" aria-label="辨生克详细程度">
                 <button type="button" className={relationsView==='summary'?'active':''}
                   aria-pressed={relationsView==='summary'}
