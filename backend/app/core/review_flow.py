@@ -26,6 +26,7 @@ def decorate_review_flow(chart: dict) -> dict:
     temporal=chart["temporal_review"]
     void_context=chart["void_context_review"]
     focus_effect=chart["focus_effect_review"]
+    sheet=chart["review_sheet"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -225,8 +226,16 @@ def decorate_review_flow(chart: dict) -> dict:
         "；实际效力未定"
         for c in focus_effect["candidates"]
     ]
+    sheet_digest=[
+        str(item["position"])+"爻 "+item["ganzhi"]+
+        "：支持"+str(len(item["supporting"]))+"条、限制"+
+        str(len(item["restraining"]))+"条、待复核"+
+        str(len(item["pending"]))+"项（数量不是旺衰评分）"
+        for item in sheet["candidates"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "review_sheet_digest":sheet_digest,
         "focus_effect_digest":focus_effect_digest,
         "void_context_digest":void_context_digest,
         "temporal_digest":temporal_digest,
