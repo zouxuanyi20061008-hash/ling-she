@@ -61,11 +61,13 @@ def decorate_review_flow(chart: dict) -> dict:
 
     dynamics=chart["line_dynamics"]
     strength=chart["strength_evidence"]
+    effect=chart["moving_effect_review"]
     stages.append(_step(
         "relations","辨生克","review",
         ("本卦共"+str(len(moving["moving_positions"]))+"个动爻；已核对"+
          str(len(moving["edges"]))+"条动爻对本卦其他爻的静态关系、"+
-         str(len(dynamics["movements"]))+"条本位动变关系；"+
+         str(len(dynamics["movements"]))+"条本位动变关系，其中"+str(len(effect["movements"]))+
+         "条已与日月空破对照；"+
          str(len(strength["opposing_positions"]))+"爻同时存在生扶与制约线索。"),
         "查看综合证据对照，先分辨支持与限制条件，再考察原忌仇神；不可把证据条数当旺衰权重。"
     ))
@@ -99,6 +101,8 @@ def decorate_review_flow(chart: dict) -> dict:
         if main.get("turnback"):unresolved.append("研习主爻存在回头关系，实际生克仍需复核")
     if strength["opposing_positions"]:
         unresolved.append("部分爻同时受生扶与制约：请在辨生克步骤逐条核对，不得简单相减")
+    if effect["movements"]:
+        unresolved.append("已列出动爻与本位变爻的日月空破条件；回头关系能否实际发生作用仍待人工复核")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "未完成强弱综合取用、用神吉凶或应期计算",
@@ -128,8 +132,15 @@ def decorate_review_flow(chart: dict) -> dict:
         for row in (strength["focus_candidates"] or
                     ([] if focus else strength["rows"]))
     ]
+    moving_digest=[
+        str(x["position"])+"爻 "+x["moving"]["ganzhi"]+"→"+
+        x["transformed"]["ganzhi"]+"："+x["returning_term"]+
+        "；日月空破需合参，未判效力"
+        for x in effect["movements"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "moving_effect_digest":moving_digest,
         "evidence_digest":digest,
         "strength_conclusion":None,
         "verified_by_program":facts,
