@@ -6,6 +6,7 @@ import SixYaoStage from './SixYaoStage.jsx'
 import KnowledgeStage from './KnowledgeStage.jsx'
 import StudyHall from './StudyHall.jsx'
 import './style.css'
+import './theme-refresh.css'
 
 const VALID_ROUTES=new Set(['home','choose','library',...ARTS.map(a=>a.id)])
 function routeFromUrl(){
