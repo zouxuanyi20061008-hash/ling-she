@@ -392,3 +392,196 @@ button:disabled{cursor:not-allowed}
   .academy-stage--liuyao .academy-coin-altar{padding:18px 10px 13px;margin-top:12px}
   .academy-stage--liuyao .academy-coin{width:72px;height:72px}
 }
+
+/* V20 手机精修 · 所有附加样式仅针对对应研习页 */
+.liuyao-cast-status{
+  background:#f2e4cb;
+  border-left:4px solid #82492b;
+  padding:12px 14px;
+  margin-top:12px;
+  color:#553921;
+  font-size:13px;
+  line-height:1.75;
+}
+.liuyao-cast-error{
+  background:#f8e9df;
+  border:1px solid #af694b;
+  padding:12px 14px;
+  margin-top:12px;
+  color:#683721;
+  font-size:13px;
+  line-height:1.8;
+}
+.liuyao-cast-error button{
+  display:block;
+  margin-top:10px;
+  background:#703d27;
+  color:#fff8ec;
+  border:1px solid #703d27;
+  min-height:46px;
+  padding:9px 16px;
+  font-weight:700;
+}
+.relations-view-hint{
+  background:#f2e6d4;
+  color:#533e2d!important;
+  font-size:12px;
+  line-height:1.7;
+  padding:7px 10px;
+  border-left:3px solid #905938;
+  margin:11px 0 4px!important;
+}
+.academy-stage--liuyao .academy-casting-result .academy-hex h3{
+  color:#603920;
+  line-height:1.5;
+  font-weight:700;
+}
+.academy-stage--liuyao .academy-casting-result .academy-hex small,
+.academy-stage--liuyao .academy-casting-result .academy-hex>p{
+  color:#455b4b;
+}
+.academy-stage--liuyao .academy-casting-result .academy-hex>b{
+  color:#6b432d;
+}
+.academy-stage--liuyao .academy-hex{
+  background:#fffaf1;
+  border:1px solid #c2a686;
+}
+.academy-stage--liuyao .review-flow-footer span{
+  color:#593c2a;
+  font-weight:700;
+}
+.academy-stage--liuyao .review-flow-footer button{
+  min-height:46px;
+  font-weight:700;
+}
+.academy-stage--liuyao .review-flow-footer button:disabled{
+  opacity:.45;
+}
+.book-app--meihua .book-mini h3{
+  color:#1d4b39;
+  font-weight:700;
+}
+.book-app--meihua .book-page-mark,
+.book-app--meihua .book-hex .kind{
+  color:#58624e;
+}
+.book-app--meihua .book-pagenav button{
+  min-height:48px;
+  font-weight:700;
+}
+.book-app--meihua .book-mini,
+.book-app--meihua .book-hex{
+  border-color:#b0b9a4;
+}
+.book-app--meihua .book-hex .hexmeaning{
+  color:#344d3e;
+  font-weight:500;
+}
+.library-stage .library-paper-line,
+.library-stage .library-page-count span{
+  color:#565949;
+}
+.library-stage .library-content-heading span,
+.library-stage .library-crumbs{
+  color:#435545;
+}
+.library-stage .library-page-paper,
+.library-stage .library-lesson-paper,
+.library-stage .library-quiz-paper{
+  border-color:#ad9d81;
+}
+.library-stage .library-page-controls{
+  background:#f6f0e3;
+  border:1px solid #b5a68a;
+  padding:8px;
+  border-radius:2px;
+}
+.library-stage .library-page-controls button{
+  font-size:13px;
+  font-weight:700;
+  min-height:48px;
+}
+.library-stage .library-page-count strong{
+  color:#284e3b;
+}
+@media(max-width:760px){
+  /* 一行横滑，不再以多排按钮挤占手机纵向空间 */
+  .academy-stage--liuyao .relations-view-tabs{
+    display:flex;
+    overflow-x:auto;
+    overflow-y:hidden;
+    gap:7px;
+    padding:5px 3px 9px;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x proximity;
+    scrollbar-width:thin;
+    -webkit-overflow-scrolling:touch;
+  }
+  .academy-stage--liuyao .relations-view-tabs button{
+    flex:0 0 auto;
+    min-width:112px;
+    min-height:46px;
+    padding:10px 12px;
+    scroll-snap-align:start;
+    font-size:12px;
+    white-space:nowrap;
+  }
+  .academy-stage--liuyao .review-flow-nav{
+    scroll-margin-top:86px;
+  }
+  .academy-stage--liuyao .review-flow-nav button{
+    min-height:60px;
+  }
+  .academy-stage--liuyao .review-flow-footer{
+    gap:6px;
+    padding:8px;
+  }
+  .academy-stage--liuyao .review-flow-footer button{
+    padding:10px 8px;
+    font-size:12px;
+  }
+  .academy-stage--liuyao .review-flow-footer span{
+    font-size:10px;
+  }
+  .book-app--meihua .book-page{
+    padding-bottom:20px;
+  }
+  .book-app--meihua .book-page-footer{
+    gap:9px;
+    margin-top:15px;
+  }
+  .book-app--meihua .book-pagenav button{
+    min-height:48px;
+    padding:11px 10px;
+    font-size:13px;
+  }
+  .library-stage .library-page-controls{
+    gap:7px;
+    padding:8px 5px;
+    margin-top:14px;
+  }
+  .library-stage .library-page-controls button{
+    padding:9px 10px;
+    font-size:12px;
+    white-space:normal;
+    min-width:0;
+  }
+  .library-stage .library-page-count{
+    min-width:57px;
+  }
+  .library-stage .library-page-paper,
+  .library-stage .library-lesson-paper,
+  .library-stage .library-quiz-paper{
+    padding-top:18px;
+  }
+}
+@media(max-width:360px){
+  .academy-stage--liuyao .review-flow-footer span{
+    max-width:60px;
+    line-height:1.4;
+  }
+  .library-stage .library-page-controls button{
+    padding:8px 6px;
+  }
+}
