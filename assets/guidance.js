@@ -3,7 +3,7 @@
  * Navigation: world-grid A* around water, cliffs and landmarks; cached every 1.8s.
  * A compass points to the next walkable waypoint, not through the river.
  */
-const GUIDE_GRID=80,GUIDE_SIDE=Math.ceil(SIZE/GUIDE_GRID);
+const GUIDE_GRID=80,GUIDE_SIDE=45; // 3600px world / 80px; initialized before the main game script
 const GUIDE_DIRS=[[1,0],[0,1],[-1,0],[0,-1],[1,1],[-1,1],[-1,-1],[1,-1]];
 const GUIDE_OPTIONS=['smart','minimal','detailed'];
 let guideMode='smart',guideObjective=null,guidePath=[],guideHeading=null;
