@@ -356,6 +356,69 @@ function FuShenStudy({chart,onChoose,busy}){
 
 
 
+
+function StrengthEvidenceStudy({chart}){
+  const data=chart.strength_evidence
+  const [inspected,setInspected]=useState(null)
+  if(!data)return null
+  const focus=data.focus_candidate_positions
+  const pos=inspected??data.selected_position??focus[0]??1
+  const line=data.rows[pos-1]
+  const sections=[
+    {key:'supporting',title:'生扶线索',empty:'本卦目前没有已计算的生扶标记。'},
+    {key:'restraining',title:'制约条件',empty:'本卦目前没有已计算的制约标记。'},
+    {key:'context',title:'动静、六合与其他背景',empty:'暂无额外参考标记。'},
+  ]
+  return <section className="strength-evidence-study" aria-label="六爻日月动变与空破综合证据">
+    <header className="strength-evidence-head">
+      <div><small>第十三式 · 合参旺衰</small><h3>逐爻列证，不以分数论吉凶。</h3></div>
+      <span>六爻逐项核对</span>
+    </header>
+    <p className="strength-evidence-intro">{data.method} <strong>生扶与制约可能同时存在，条目数量不代表力量大小。</strong></p>
+    <div className="strength-evidence-positions" role="group" aria-label="选择查看综合证据的爻位">
+      {data.rows.map(row=><button type="button" key={row.position}
+        aria-pressed={pos===row.position}
+        className={pos===row.position?'active':''}
+        onClick={()=>setInspected(row.position)}>
+        {POS[row.position-1]}爻
+        {data.selected_position===row.position&&<small>研习主爻</small>}
+        {!data.selected_position&&focus.includes(row.position)&&<small>候选</small>}
+      </button>)}
+    </div>
+    <div className="strength-evidence-target">
+      <div><b>{POS[line.position-1]}爻 · {line.ganzhi}</b>
+        <small>{line.liuqin} · {line.element} · {line.moving?'明动':'静爻'}</small></div>
+      {line.has_opposing_indicators&&<span>生扶与制约并存</span>}
+    </div>
+    <p className="strength-evidence-summary" role="status">{line.summary}</p>
+    <div className="strength-evidence-grid">
+      {sections.map(section=><article key={section.key} className={'strength-evidence-col '+section.key}>
+        <h4>{section.title}</h4>
+        {line[section.key].length?line[section.key].map((e,i)=><div key={i} className="strength-evidence-entry">
+          <strong>{e.title}</strong><p>{e.detail}</p><small>规则：{e.origin}</small>
+        </div>):<p className="strength-evidence-no-entry">{section.empty}</p>}
+      </article>)}
+    </div>
+    {line.pending.length>0&&<div className="strength-evidence-pending">
+      <b>尚缺输入</b>
+      {line.pending.map((x,i)=><p key={i}>· {x}</p>)}
+    </div>}
+    {data.focus_candidates.length>1&&<p className="strength-evidence-multi">
+      所选六亲在本卦有 {data.focus_candidates.length} 处候选。所有候选均可按上方爻位查看，
+      当前显示哪一爻不代表软件已替你择优。
+    </p>}
+    {data.focus_status==='not_visible'&&<p className="strength-evidence-multi">
+      用神本卦不现，请回到「因事取用」核对飞伏。此页只列六爻明现关系，不把伏神冒充明爻。
+    </p>}
+    <p className="strength-evidence-boundary">{data.boundary}</p>
+    <div className="strength-evidence-links">
+      <a href={data.references.month} target="_blank" rel="noopener noreferrer">《增删卜易》月将章 ↗</a>
+      <a href={data.references.day} target="_blank" rel="noopener noreferrer">日辰章 ↗</a>
+      <a href={data.references.void} target="_blank" rel="noopener noreferrer">旬空章 ↗</a>
+    </div>
+  </section>
+}
+
 function SeasonalMovingStudy({chart}) {
   const influences=chart.moving_influences
   const seasonal=chart.seasonal_outline
@@ -791,6 +854,9 @@ function ReviewReport({chart,question}) {
     question?.trim()?'所问事项：'+question.trim():'所问事项：尚未填写',
     ...data.verified_by_program,
     '',
+    '综合证据摘记（条数并非旺衰分数）：',
+    ...(data.evidence_digest||[]),
+    '',
     '待核实与未完成事项：',
     ...data.outstanding_questions.map((x,i)=>(i+1)+'. '+x),
     '',
@@ -821,6 +887,11 @@ function ReviewReport({chart,question}) {
     <div className="review-report-facts">
       {data.verified_by_program.map((x,i)=><p key={i}>{x}</p>)}
     </div>
+    {data.evidence_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>综合证据摘记</h4>
+      {data.evidence_digest.map((text,i)=><p key={i}>{text}</p>)}
+      <small>这里只记录两类条件，不作净额评分，也不视为最终旺衰结论。</small>
+    </div>}
     <div className="review-report-outstanding">
       <h4>尚待核实</h4>
       <ol>{data.outstanding_questions.map((x,i)=><li key={i}>{x}</li>)}</ol>
@@ -852,6 +923,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [studyPosition,setStudyPosition]=useState(null)
   const [roleView,setRoleView]=useState('用神')
   const [reviewStage,setReviewStage]=useState('calendar')
+  const [relationsView,setRelationsView]=useState('summary')
   const requestNumber=useRef(0)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
@@ -978,10 +1050,22 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
               <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
             </>}
             {reviewStage==='relations'&&<>
-              <NajiaBoard chart={chart} roleView={roleView}/>
-              <LineDynamicsStudy chart={chart}/>
-              <SeasonalMovingStudy chart={chart}/>
-              <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
+              <div className="relations-view-tabs" role="group" aria-label="辨生克详细程度">
+                <button type="button" className={relationsView==='summary'?'active':''}
+                  aria-pressed={relationsView==='summary'}
+                  onClick={()=>setRelationsView('summary')}>综合证据</button>
+                <button type="button" className={relationsView==='details'?'active':''}
+                  aria-pressed={relationsView==='details'}
+                  onClick={()=>setRelationsView('details')}>纳甲与动变明细</button>
+              </div>
+              {relationsView==='summary'?<StrengthEvidenceStudy chart={chart}/>:
+                <>
+                  <NajiaBoard chart={chart} roleView={roleView}/>
+                  <LineDynamicsStudy chart={chart}/>
+                  <SeasonalMovingStudy chart={chart}/>
+                  <SpiritRelationsPanel chart={chart} activeRole={roleView} onChange={setRoleView} busy={calendarBusy}/>
+                </>
+              }
             </>}
             {reviewStage==='conflicts'&&<>
               <DayMonthReview chart={chart}/>
@@ -1003,7 +1087,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
       </div>
       {chart&&reviewStage==='report'&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但真正的历法换算、精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。两现候选现可逐条对照，并由求测者选择研习主爻，但不会自动择优。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但自动农历／公历换算预览已支持北京时间；精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。两现候选现可逐条对照，并由求测者选择研习主爻，但不会自动择优。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
