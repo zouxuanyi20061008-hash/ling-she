@@ -360,7 +360,7 @@ function FuShenStudy({chart,onChoose,busy}){
 
 
 
-function FocusEffectReviewStudy({chart}){
+export function FocusEffectReviewStudy({chart}){
   const data=chart.focus_effect_review
   const [requested,setRequested]=useState(null)
   if(!data)return null
