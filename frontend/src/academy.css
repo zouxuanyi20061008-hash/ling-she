@@ -796,3 +796,55 @@
  .focus-decision-cards{grid-template-columns:1fr;gap:8px}
  .focus-decision-cards article{padding:12px}
 }
+
+/* V12 五步研判：以功能分页替代长卷堆叠 */
+.review-flow-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;
+ margin:15px 0 11px;padding:6px;background:#ece9db;border:1px solid #c9c4ae}
+.review-flow-nav button{display:flex;flex-direction:column;justify-content:center;gap:5px;
+ align-items:center;text-align:center;min-width:0;min-height:62px;padding:8px 3px;
+ background:#faf6eb;color:#537058;border:1px solid #d7cbb2;transition:background .15s}
+.review-flow-nav button>span{font-size:11px;line-height:1.4;white-space:nowrap}
+.review-flow-nav button>small{font-size:9px;color:#8d816b}
+.review-flow-nav button.active{color:#fff4de;background:#315f49;border-color:#315f49}
+.review-flow-nav button.active>small{color:#dcd7b9}
+.review-flow-nav button:disabled{opacity:.55}
+.review-flow-message{display:flex;flex-direction:column;gap:7px;padding:12px 14px;
+ font-size:11px;line-height:1.85;background:#e6eee2;border-left:3px solid #638d67;margin-bottom:13px}
+.review-flow-message b{color:#315d47}
+.review-flow-message span{color:#78826e}
+.review-flow-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;
+ background:#ede9dc;border:1px solid #cec4aa;padding:12px;margin-top:15px}
+.review-flow-footer button{border:1px solid #91a790;color:#315f45;padding:10px 14px;
+ background:#fbf8ed;font-size:12px;min-height:43px}
+.review-flow-footer button:last-child{background:#315f49;border-color:#315f49;color:#fff4dc}
+.review-flow-footer button:disabled{opacity:.38}
+.review-flow-footer span{font-size:11px;color:#907b5e;text-align:center}
+.review-report{padding:17px 16px;background:#fbf6e9;border:1px solid #c4b89c}
+.review-report-head{border-bottom:1px solid #d5c7ae;padding-bottom:11px}
+.review-report-head small{font-size:10px;letter-spacing:.13em;color:#9f8058}
+.review-report-head h3{font-size:20px;margin:7px 0 0;color:#2b5f47}
+.review-report>p{font-size:11px;line-height:2;color:#697969;margin:12px 0}
+.review-report-facts{padding:11px 12px;background:#f1ead7;display:grid;
+ grid-template-columns:1fr 1fr;gap:4px 13px}
+.review-report-facts p{font-size:11px;line-height:1.8;color:#3d654f;overflow-wrap:anywhere}
+.review-report-outstanding{margin-top:15px;border:1px solid #d9c6a6;padding:12px;background:#f7f0e2}
+.review-report-outstanding h4{font-size:14px;color:#9b684e;margin:0 0 8px}
+.review-report-outstanding ol{padding-left:20px;margin:0;font-size:11px;line-height:2;color:#776e5c}
+.review-report .review-report-caution{font-size:10px;color:#978671;border-top:1px solid #d7cbb3;padding-top:10px}
+.review-report-actions{display:flex;gap:8px;flex-wrap:wrap}
+.review-report-actions button{background:#315f49;border:1px solid #315f49;color:#f9edcf;padding:10px 14px;min-height:42px;font-size:11px}
+.review-report-actions button+button{background:#f7f2e5;color:#315f49}
+.review-report .review-report-message{border-left:3px solid #779b7c;background:#e7eee2;padding:9px 12px;color:#3e7353}
+.review-report .review-report-hint{color:#8d8069}
+@media(max-width:650px){
+ .review-flow-nav{grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;padding:4px}
+ .review-flow-nav button{padding:7px 2px;min-height:57px}
+ .review-flow-nav button>span{font-size:9px;white-space:normal}
+ .review-flow-nav button>small{font-size:8px}
+ .review-flow-message{padding:10px 9px}
+ .review-flow-footer{padding:9px 6px}
+ .review-flow-footer button{padding:9px 8px;font-size:11px;min-height:40px}
+ .review-flow-footer span{font-size:10px}
+ .review-report{padding:14px 11px}
+ .review-report-facts{grid-template-columns:1fr}
+}
