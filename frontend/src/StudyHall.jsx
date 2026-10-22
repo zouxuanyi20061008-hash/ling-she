@@ -44,7 +44,7 @@ function StudySymbol({kind,playing=false}){
 
 function MethodSelection({section,onSelect}){
   return <div className="library-method-grid">
-    {METHODS.map((method,i)=><button type="button" key={method.id} className="library-method-card" onClick={()=>onSelect(method.id)}>
+    {METHODS.map((method,i)=><button type="button" key={method.id} className={"library-method-card library-method--"+method.id} onClick={()=>onSelect(method.id)}>
       <span className="library-method-index">{String(i+1).padStart(2,'0')}　·　{method.status}</span>
       <strong>{method.title}</strong>
       <small>{method.sub}</small>
@@ -161,7 +161,7 @@ export default function StudyHall({onClose,apiKey,setApiKey,aiModel,setAiModel,a
 
   const quiz=items[index]
   const answered=choice!==null
-  return <main className="library-stage">
+  return <main className={"library-stage library-stage--"+(view==="lobby"?"archive":method)}>
     <div className="library-shell">
       <Locus view={view} method={method} index={index} onClose={onClose}
         onLobby={()=>navigate('lobby')} onSection={navigate}/>
