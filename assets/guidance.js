@@ -55,6 +55,13 @@ function guideMainObjective(){
    kind:'trial',x:pick?.x??trial.x,y:pick?.y??trial.y,progress:(session.id==='nether'?session.killed:session.collected)+'/'+(session.id==='nether'?3:4),
    brief:trial.name,short:trial.name,priority:true};
  }
+ // The '追踪' choice in the journal always overrides automatic recommendations.
+ if(adventureTracked!=='story'){
+  const picked=ADVENTURE_TRIALS.find(t=>t.id===adventureTracked);
+  if(picked)return {id:'pinned-'+picked.id,title:'前往'+picked.name,kind:'pinned',
+   x:picked.x+35,y:picked.y+38,progress:level<picked.requiredLevel?'需'+picked.requiredLevel+'阶':'已追踪',
+   brief:'手动追踪 · '+picked.region,short:picked.name};
+ }
  // Advanced players get appropriate content instead of being forced to stare at beginner chores.
  if(S.chapter<4&&level>=7&&evoStage>=3){
   const t=[...ADVENTURE_TRIALS].reverse().find(x=>level>=x.requiredLevel&&!S.trialWins.includes(x.id));
@@ -198,12 +205,14 @@ function guideRecalculateRoute(target,now){
  for(const p of guidePath){
   if(Math.hypot(player.x-p.x,player.y-p.y)>100){waypoint=p;break}
  }
- guideHeading=waypoint||{x:target.x,y:target.y};
+ const far=Math.hypot(player.x-target.x,player.y-target.y)>GUIDE_GRID*2;
+ guideHeading=!guidePath.length&&far?null:(waypoint||{x:target.x,y:target.y});
 }
 function guideDistanceLabel(target){
  if(!target||!Number.isFinite(target.x)||!Number.isFinite(target.y))return '查看游历簿';
  const direct=Math.hypot(player.x-target.x,player.y-target.y);
  if(direct<90)return '已接近 · 可互动';
+ if(!guidePath.length&&direct>GUIDE_GRID*2)return '暂未找到安全路线';
  // Route distance is an approximation, not physical steps or an ETA.
  let route=0,last=player;
  if(guidePath.length){
@@ -235,6 +244,9 @@ function guideArrowUpdate(now,combat){
  }
  const dist=Math.hypot(t.x-player.x,t.y-player.y);
  if(dist<105){el.style.display='none';return}
+ // World target is already visible and marked: no extra arrow on top of gameplay.
+ const screenX=t.x-camX,screenY=t.y-camY;
+ if(screenX>70&&screenX<W-70&&screenY>146&&screenY<H-90){el.style.display='none';return}
  // Keep the arrow inside the central visual safe area: outside joystick, skills and minimap.
  const anchorX=player.x-camX,anchorY=player.y-camY;
  const angle=Math.atan2(guideHeading.y-player.y,guideHeading.x-player.x);
