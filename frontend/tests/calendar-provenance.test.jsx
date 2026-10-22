@@ -4,6 +4,7 @@ import {beforeEach,afterEach,it,expect,vi} from 'vitest'
 import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react'
 import SixYaoStage from '../src/SixYaoStage.jsx'
 const config={personalApiKey:'',aiAccessCode:'',aiModel:'deepseek-chat'}
+const studio=label=>screen.getByRole('button',{name:new RegExp(label)})
 const makeChart=()=>({
   ben_gua:{full_name:'乾为天',lines_bottom_to_top:[1,1,1,1,1,1],keywords:'刚健',meaning:'刚健'},
   bian_gua:{full_name:'乾为天',lines_bottom_to_top:[1,1,1,1,1,1],keywords:'刚健',meaning:'刚健'},
