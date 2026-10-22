@@ -555,6 +555,43 @@ function MovingEffectReview({chart}) {
   </section>
 }
 
+function EvidenceChainStudy({chart}){
+  const data=chart.evidence_chain
+  if(!data)return null
+  return <section className="evidence-chain-study" aria-label="六爻六轴综合证据链">
+    <header><small>综合研判 · V21</small><h3>六轴证据链 · 逐爻溯源</h3></header>
+    <p>{data.method}</p>
+    {data.blockers.length>0&&<div className="evidence-chain-blockers">
+      <strong>进入综合判断前仍需核对</strong>
+      {data.blockers.map((x,i)=><p key={i}>· {x}</p>)}
+    </div>}
+    {data.candidates.length===0?<p className="evidence-chain-empty">
+      {data.status==='focus_not_visible'?'本卦用神不现，请先在「因事取用」查看伏神候选。':
+       '请先在「因事取用」选择关注的六亲或世应，然后才能整理相应证据链。'}
+    </p>:data.candidates.map((candidate,i)=>
+      <details className="evidence-chain-candidate" key={candidate.position}
+        open={candidate.selected_by_user||(!data.selected_position&&i===0)}>
+        <summary>
+          {POS[candidate.position-1]}爻 · {candidate.ganzhi}
+          <span>{candidate.selected_by_user?'你指定的研习主爻':'候选 · 不自动排名'}</span>
+        </summary>
+        <div className="evidence-chain-axes">{candidate.axes.map(axis=>
+          <article className="evidence-chain-axis" key={axis.id}>
+            <h4>{axis.title} <small>{axis.status==='pending'?'资料不足':axis.status==='review'?'需合参':'条件已记录'}</small></h4>
+            {axis.observations.length?
+              axis.observations.map((x,j)=><p key={j}>· {x}</p>):
+              <p>暂无可计算的对应关系，不推断结果。</p>}
+            <small>{axis.caution}</small>
+          </article>)}</div>
+        {candidate.cautions.length>0&&<div className="evidence-chain-cautions">
+          <strong>此爻待核查的交叉条件</strong>
+          {candidate.cautions.map((x,j)=><p key={j}>· {x}</p>)}
+        </div>}
+      </details>)}
+    <p className="evidence-chain-boundary">{data.boundary}</p>
+  </section>
+}
+
 function StrengthEvidenceStudy({chart}){
   const data=chart.strength_evidence
   const [inspected,setInspected]=useState(null)
@@ -1195,6 +1232,9 @@ function ReviewReport({chart,question}) {
     question?.trim()?'所问事项：'+question.trim():'所问事项：尚未填写',
     ...data.verified_by_program,
     '',
+    '六轴证据链（作用效力尚待合参）：',
+    ...(data.evidence_chain_digest||[]),
+    '',
     '综合证据摘记（条数并非旺衰分数）：',
     ...(data.evidence_digest||[]),
     '',
@@ -1237,6 +1277,11 @@ function ReviewReport({chart,question}) {
     <div className="review-report-facts">
       {data.verified_by_program.map((x,i)=><p key={i}>{x}</p>)}
     </div>
+    {data.evidence_chain_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>六轴证据链摘记</h4>
+      {data.evidence_chain_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>源头与数据覆盖状态，不代表实际生克效力，更不是证据评分。</small>
+    </div>}
     {data.evidence_digest?.length>0&&<div className="strength-evidence-report">
       <h4>综合证据摘记</h4>
       {data.evidence_digest.map((text,i)=><p key={i}>{text}</p>)}
@@ -1501,7 +1546,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
                   aria-pressed={relationsView==='details'}
                   onClick={()=>setRelationsView('details')}>纳甲与动变明细</button>
               </div>
-              {relationsView==='summary'?<StrengthEvidenceStudy chart={chart}/>:
+              {relationsView==='summary'?<>
+                <EvidenceChainStudy chart={chart}/>
+                <StrengthEvidenceStudy chart={chart}/>
+              </> :
                 relationsView==='pathways'?<YongshenPathwaysStudy chart={chart}/>:
                 relationsView==='motion'?<MovingEffectReview chart={chart}/>:
                 relationsView==='special'?<SpecialConditionsStudy chart={chart}/>:

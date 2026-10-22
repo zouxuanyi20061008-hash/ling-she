@@ -22,6 +22,7 @@ def decorate_review_flow(chart: dict) -> dict:
     special=chart["special_conditions"]
     pathways=chart["yongshen_pathways"]
     voids=chart["void_interactions"]
+    evidence_chain=chart["evidence_chain"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -177,8 +178,15 @@ def decorate_review_flow(chart: dict) -> dict:
         "；仇神为间接五行链，作用效力未判定"
         for c in pathways["focus_candidates"]
     ]
+    chain_digest=[
+        str(c["position"])+"爻 "+c["ganzhi"]+"："+
+        "、".join(axis["title"]+"["+axis["status"]+"]" for axis in c["axes"])+
+        "；全项作用效力未决"
+        for c in evidence_chain["candidates"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "evidence_chain_digest":chain_digest,
         "yongshen_pathway_digest":pathway_digest,
         "special_conditions_digest":special_digest,
         "moving_effect_digest":moving_digest,

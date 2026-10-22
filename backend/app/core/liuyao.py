@@ -17,6 +17,7 @@ from .strength_evidence import decorate_strength_evidence
 from .moving_effects import decorate_moving_effects
 from .special_conditions import decorate_union_tomb_extinction
 from .yongshen_pathways import decorate_yongshen_pathways
+from .evidence_chain import decorate_evidence_chain
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -59,4 +60,5 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     chart = decorate_moving_effects(chart)
     chart = decorate_union_tomb_extinction(chart)
     chart = decorate_yongshen_pathways(chart)
+    chart = decorate_evidence_chain(chart)
     return decorate_review_flow(chart)

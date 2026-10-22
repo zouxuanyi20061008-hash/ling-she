@@ -805,3 +805,32 @@ button:disabled{cursor:not-allowed}
 @media(prefers-reduced-motion:reduce){
   .book-app--meihua .book-top-flip,.library-stage .library-reader-quick{scroll-behavior:auto}
 }
+
+/* V21 - 六爻六轴证据链。旧版研判入口、排卦字段与算法保持不变。 */
+.evidence-chain-study{margin:14px 0;padding:17px;border:1px solid #bfae95;background:#f8f2e6;color:#394f3d}
+.evidence-chain-study>header{border-bottom:1px solid #cfc2ae;padding-bottom:10px}
+.evidence-chain-study>header small{font-size:11px;color:#80613f}
+.evidence-chain-study>header h3{margin:5px 0 0;font-size:18px;color:#2a5540}
+.evidence-chain-study>p{font-size:13px;line-height:1.8;color:#475c48;margin:12px 0}
+.evidence-chain-blockers,.evidence-chain-cautions{background:#f3e8d8;border-left:3px solid #85694a;padding:10px 12px;margin:12px 0}
+.evidence-chain-blockers strong,.evidence-chain-cautions strong{font-size:13px;color:#67482c}
+.evidence-chain-blockers p,.evidence-chain-cautions p{font-size:12px;line-height:1.8;color:#583f2d;margin:4px 0}
+.evidence-chain-empty{padding:14px;border:1px dashed #bbab91;font-size:13px}
+.evidence-chain-candidate{background:#fffaf0;border:1px solid #cbbda5;margin:9px 0}
+.evidence-chain-candidate>summary{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;cursor:pointer;font-weight:700;font-size:14px;color:#26533c;padding:14px;min-height:48px}
+.evidence-chain-candidate>summary span{font-size:11px;color:#69553a;font-weight:500}
+.evidence-chain-candidate>summary:focus-visible{outline:3px solid #2c7050;outline-offset:2px}
+.evidence-chain-axes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:2px 11px 12px}
+.evidence-chain-axis{background:#f5f0e5;border:1px solid #d4c6b2;padding:11px;min-width:0}
+.evidence-chain-axis h4{margin:0 0 8px;font-size:13px;color:#2d5942;display:flex;justify-content:space-between;gap:6px}
+.evidence-chain-axis h4 small{font-size:10px;color:#7c563b;font-weight:500}
+.evidence-chain-axis p{font-size:12px;line-height:1.8;color:#384c3b;margin:5px 0;overflow-wrap:anywhere}
+.evidence-chain-axis>small{display:block;margin-top:8px;font-size:11px;line-height:1.7;color:#705d43}
+.evidence-chain-cautions{margin:0 11px 12px}
+.evidence-chain-study .evidence-chain-boundary{font-size:12px;border-top:1px solid #cfc2ae;padding-top:11px;color:#62513e}
+@media(max-width:650px){
+ .evidence-chain-study{padding:12px}
+ .evidence-chain-axes{grid-template-columns:1fr;padding:2px 9px 10px}
+ .evidence-chain-candidate>summary{padding:11px}
+ .evidence-chain-axis{padding:11px}
+}
