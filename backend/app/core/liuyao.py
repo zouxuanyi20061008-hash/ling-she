@@ -13,6 +13,7 @@ from .conflict_review import decorate_conflicts_and_focus_review
 from .void_review import decorate_void_interactions
 from .focus_decision import decorate_focus_decision
 from .review_flow import decorate_review_flow
+from .strength_evidence import decorate_strength_evidence
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -38,16 +39,18 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
         "ben_gua":hexagram_from_lines(main_bits),
         "bian_gua":hexagram_from_lines(changed_bits),
         "dong_yao":changing,
-        "note":"已计算本变卦、八宫世应、纳甲干支与六亲；输入有效日辰可装六神、旬空，输入节令月支可标记月支关系。日月历法换算、完整旺衰及最终用神取舍尚未实现；选定关注对象后可查本卦可见的原神、忌神、仇神五行关系；本卦缺失六亲可按八宫首卦装伏神、辨飞伏。已增加日月对各爻的五行、冲合标记，以及动爻本位的回头生克冲合；新增动爻对其他本卦爻的静态生克冲合、节令月支的旺相余气休囚概览；新增日冲的暗动/日破候选、月破条件复核与用神证据汇总；再据确认日旬复核旬空、冲空、明动化空与空破交互；新增两现候选的逐条对照与求测者手动选定研习主爻；已组织成核日月、因事取用、辨生克、参空破、整理研究五步。完整旺衰、真假空、填实与应期仍未自动判断。",
+        "note":"已计算本变卦、八宫世应、纳甲干支与六亲；输入有效日辰可装六神、旬空，输入节令月支可标记月支关系。日月历法现可由中国农历或公历辅助换算并手动采纳，但完整旺衰及最终用神取舍尚未实现；选定关注对象后可查本卦可见的原神、忌神、仇神五行关系；本卦缺失六亲可按八宫首卦装伏神、辨飞伏。已增加日月对各爻的五行、冲合标记，以及动爻本位的回头生克冲合；新增动爻对其他本卦爻的静态生克冲合、节令月支的旺相余气休囚概览；新增日冲的暗动/日破候选、月破条件复核与用神证据汇总；再据确认日旬复核旬空、冲空、明动化空与空破交互；新增两现候选的逐条对照与求测者手动选定研习主爻；已组织成核日月、因事取用、辨生克、参空破、整理研究五步。新增月令、日辰、动爻及空破的综合证据核对表；完整旺衰、真假空、填实与应期仍未自动判断。",
         "rules":"以三枚铜钱分别记字为2、背为3；三字6为老阴、两字一背7为少阳、两背一字8为少阴、三背9为老阳。第一次为初爻，从下往上记录六次。",
     }
-    return decorate_review_flow(decorate_focus_decision(
-        decorate_void_interactions(
-            decorate_conflicts_and_focus_review(
-            decorate_moving_and_seasons(
-            decorate_line_dynamics(
-                decorate_hidden_spirits(
-                    decorate_spirit_relations(
-                        focus_six_yao(
-                            decorate_calendar(decorate_six_yao(result), day_ganzhi, month_branch),
-                            focus_liuqin))))))), focus_position))
+    chart = decorate_six_yao(result)
+    chart = decorate_calendar(chart, day_ganzhi, month_branch)
+    chart = focus_six_yao(chart, focus_liuqin)
+    chart = decorate_spirit_relations(chart)
+    chart = decorate_hidden_spirits(chart)
+    chart = decorate_line_dynamics(chart)
+    chart = decorate_moving_and_seasons(chart)
+    chart = decorate_conflicts_and_focus_review(chart)
+    chart = decorate_void_interactions(chart)
+    chart = decorate_focus_decision(chart, focus_position)
+    chart = decorate_strength_evidence(chart)
+    return decorate_review_flow(chart)
