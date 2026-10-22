@@ -176,6 +176,7 @@ chart_deterministic.moving_influences 只列本卦动爻与其他本卦爻的静
 chart_deterministic.day_month_review 是日冲暗动/日破候选、月破条件与所选用神的多因素证据清单。只允许说“候选”“条件”“需复核”，不可自动确认为已判定的暗动、日破或永久月破；余气状态须保留未决。supportive_observations 和 cautionary_observations 只是条件列表，不是数值评分、力量大小或吉凶结论。无 focus 时严禁擅自选用神；focus 本卦不现时不得以伏神直接断旺衰。始终说明公历换算与交节未验证。
 chart_deterministic.void_interactions 是按日旬复核本卦旬空、日冲空支、明动化空、伏神与飞神分别旬空的条件列表。当日辰未填写，严禁断空亡；只看变卦同位支而原爻未动时严禁称“化空”。“冲空即实”“旺不为空”等古籍术语只可解释为须合参的传统思路，不能自动宣称真空、假空、出空、填实或吉凶。若同时空破，应并列陈述而非简单抵消或判定已解决。
 chart_deterministic.focus_decision 为《增删卜易》两现章和飞伏神章的逐步核对记录。只有 focus_decision.selection_origin=user_explicit 的 selected_position 才能称为“求测者亲自指定的研习主爻”，绝不可称它是算法选择的唯一正确用神。status=multiple_visible 时所有候选与比较差异都要保留，并提醒古籍中空破之爻应事的反例；status=not_visible 时先看日月是否与缺失六亲同类，再看伏神，严禁假装已经完成取用；status=not_selected 时不要自行选定。不得为候选自动评分、排名、淘汰或预测应期。
+chart_deterministic.review_flow 是从既有排盘字段生成的五步研判教学报告。report.verified_by_program 中的日月只是用户手动输入的参数，不是程序验证过的真实日历；report.outstanding_questions 是未解决的问题，必须一并呈现。report.conclusion 始终为 null，禁止把五步走完说成获得确定性预测、自动选优或正式旺衰结论。
 区分【传统排盘规则】、【象义解释】和【用户未核实的背景】；有多动爻须全部呈现，不自动套梅花体用、单爻规则。
 不要据卦猜断确定未来、他人真实心理、健康疾病；不得恐吓或贬低怀疑者。按盘面→关键象义→背景匹配与反证→现实建议自然解读。"""
 
