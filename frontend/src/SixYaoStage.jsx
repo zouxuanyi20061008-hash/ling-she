@@ -1393,7 +1393,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           {chart&&<button type="button" className="liuyao-ready-action" onClick={()=>setStudioView('analysis')}>卦已成 · 前往研判台 →</button>}
         </section>
         <section className="academy-casting-result">
-          <div className="academy-panel-head"><span>第二式 · 记六爻</span><b>{lines.length}/6</b></div>
+          <div className="academy-panel-head"><span>{studioView==='analysis'?'本变卦 · 五步研判':'第二式 · 记六爻'}</span><b>{lines.length}/6</b></div>
           <div className="academy-ledger">{[0,1,2,3,4,5].map(i=>{
             const num=lines[i], info=K[num]
             return <div className={'academy-ledger-row '+(info?.move?'moving':'')} key={i}>
@@ -1478,7 +1478,7 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
         </section>
       </div>
-      {chart&&reviewStage==='report'&&<section className="academy-ai-section">
+      {chart&&studioView==='analysis'&&reviewStage==='report'&&<section className="academy-ai-section">
         <h2>你的这一卦，问的是什么？</h2>
         <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但自动农历／公历换算预览已支持北京时间；精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。两现候选现可逐条对照，并由求测者选择研习主爻，但不会自动择优。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
         <div className="academy-ai-inputs">
