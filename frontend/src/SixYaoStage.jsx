@@ -930,9 +930,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
               <p className="review-flow-message" key={step.id} role="status">
                 <b>{step.summary}</b><span>{step.action}</span>
               </p>)}
-            {reviewStage==='calendar'&&
+            {reviewStage==='calendar'&&<>
               <CalendarControls chart={chart} day={dayGanzhi} month={monthBranch} onChange={updateCalendar} busy={calendarBusy}/>
-              <SolarDateAssist day={dayGanzhi} month={monthBranch} onApply={updateCalendar} busy={calendarBusy}/>}
+              <SolarDateAssist day={dayGanzhi} month={monthBranch} onApply={updateCalendar} busy={calendarBusy}/>
+            </>}
             {reviewStage==='focus'&&<>
               <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
               <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
