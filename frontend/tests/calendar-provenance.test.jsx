@@ -37,7 +37,7 @@ it('六爻历法被采纳才提交日期来源；手动编辑即取消旧来源'
     ok:true,json:async()=>url.endsWith('/api/liuyao/calendar-preview')?converted:chart
   }))
   render(<SixYaoStage onBack={()=>{}} onStudy={()=>{}} apiConfig={config}/>)
-  (()=>{for(let n=0;n<6;n++)fireEvent.click(screen.getAllByRole('button',{name:/7.*少阳/})[0])})()
+  for(let n=0;n<6;n++)fireEvent.click(screen.getAllByRole('button',{name:/7.*少阳/})[0])
   await waitFor(()=>expect(studio('贰 · 研判台').getAttribute('aria-current')).toBe('page'))
   fireEvent.change(screen.getByLabelText('公历年月日'),{target:{value:'2026-02-17'}})
   fireEvent.click(screen.getByRole('button',{name:'换算日期与节令'}))
