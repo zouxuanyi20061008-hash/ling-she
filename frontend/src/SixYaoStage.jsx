@@ -1291,17 +1291,22 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
   const [relationsView,setRelationsView]=useState('summary')
   const [studioView,setStudioView]=useState('casting')
   const requestNumber=useRef(0)
+  const reviewNavRef=useRef(null)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
-  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin,position=studyPosition){
+  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin,position=studyPosition,openOnSuccess=false){
     const token=++requestNumber.current
     setCalendarBusy(true)
     try{
       const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null})})
       const data=await response.json()
       if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'排盘失败')
-      if(token===requestNumber.current)setChart(data)
-    }catch(e){if(token===requestNumber.current)setError(e.message)}
+      if(token===requestNumber.current){
+        setChart(data)
+        setError('')
+        if(openOnSuccess)setStudioView('analysis')
+      }
+    }catch(e){if(token===requestNumber.current){setError(e.message||'排盘失败，请检查网络后重试。');if(openOnSuccess)setStudioView('casting')}}
     finally{if(token===requestNumber.current)setCalendarBusy(false)}
   }
   function updateCalendar(day,month) {
@@ -1317,10 +1322,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
     if(lines.length===6)process(lines,dayGanzhi,monthBranch,focusLiugin,next)
   }
   function addLine(value,faces){
-    if(lines.length>=6||busy)return
+    if(lines.length>=6||busy||calendarBusy)return
     if(faces)setCoins(faces)
     const seq=[...lines,value];setLines(seq);setChart(null);setAnswer('');setError('')
-    if(seq.length===6){setStudioView('analysis');setReviewStage('calendar');process(seq)}
+    if(seq.length===6){setReviewStage('calendar');process(seq,dayGanzhi,monthBranch,focusLiugin,studyPosition,true)}
   }
   function cast(){
     if(isSpinning||lines.length>=6)return
@@ -1332,6 +1337,14 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
     },800)
   }
   function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar');setStudioView('casting')}
+  function goReviewStep(target){
+    if(calendarBusy)return
+    setReviewStage(target)
+    window.requestAnimationFrame?.(()=>reviewNavRef.current?.scrollIntoView({
+      behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
+      block:'start'
+    }))
+  }
   async function interpret(){
     if(!chart||busy||calendarBusy)return
     if(!question.trim()||background.trim().length<2){setError('请填写所问之事，并补充一次现实背景。');return}
@@ -1392,7 +1405,15 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           <p className="academy-subtitle">也可手动输入自己掷出的爻态</p>
           <div className="academy-manual">{[6,7,8,9].map(n=><button key={n} onClick={()=>addLine(n)} disabled={lines.length===6||isSpinning}><b>{n}</b><small>{K[n].name}</small></button>)}</div>
           <p className="academy-help">三字为老阴6；一背两字为少阳7；两背一字为少阴8；三背为老阳9。老阴、老阳为动爻。</p>
-          <div className="academy-under-actions"><button onClick={restart}>重新起卦 ↻</button><button onClick={onStudy}>学六爻原理 ↗</button></div>
+          <div className="academy-under-actions"><button type="button" onClick={restart}>重新起卦 ↻</button><button type="button" onClick={onStudy}>学六爻原理 ↗</button></div>
+          {calendarBusy&&<p className="liuyao-cast-status" role="status">六爻已齐，正在排盘。原始爻数已保留，请勿重复起卦。</p>}
+          {error&&<div className="liuyao-cast-error" role="alert">
+            <p>{error}</p>
+            {lines.length===6&&!chart&&<button type="button" disabled={calendarBusy}
+              onClick={()=>process(lines,dayGanzhi,monthBranch,focusLiugin,studyPosition,true)}>
+              保留这六爻 · 重新排盘 ↻
+            </button>}
+          </div>}
           {chart&&<button type="button" className="liuyao-ready-action" onClick={()=>setStudioView('analysis')}>卦已成 · 前往研判台 →</button>}
         </section>
         <section className="academy-casting-result">
@@ -1408,10 +1429,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             <p className="liuyao-workbench-lead">研判台 · 先看本卦与之卦，再选下方一个步骤。想修改六爻，可返回「起卦台」。</p>
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
-            <nav className="review-flow-nav" aria-label="六爻五步研判页面">
+            <nav className="review-flow-nav" ref={reviewNavRef} aria-label="六爻五步研判页面">
               {REVIEW_STEPS.map((step,i)=>{
                 const state=chart.review_flow?.stages?.[i]?.status
-                return <button type="button" key={step.id} onClick={()=>setReviewStage(step.id)}
+                return <button type="button" key={step.id} onClick={()=>goReviewStep(step.id)}
                   aria-current={reviewStage===step.id?'step':undefined}
                   disabled={calendarBusy} className={reviewStage===step.id?'active':''}>
                   <span>{step.no} · {step.title}</span>
@@ -1490,10 +1511,10 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
             </>}
             <div className="review-flow-footer">
               <button type="button" disabled={reviewStage==='calendar'||calendarBusy}
-                onClick={()=>setReviewStage(REVIEW_STEPS[Math.max(0,REVIEW_STEPS.findIndex(s=>s.id===reviewStage)-1)].id)}>← 上一步</button>
+                onClick={()=>goReviewStep(REVIEW_STEPS[Math.max(0,REVIEW_STEPS.findIndex(s=>s.id===reviewStage)-1)].id)}>← 上一步</button>
               <span>{REVIEW_STEPS.findIndex(s=>s.id===reviewStage)+1} / 5 · 研习流程</span>
               <button type="button" disabled={reviewStage==='report'||calendarBusy}
-                onClick={()=>setReviewStage(REVIEW_STEPS[Math.min(4,REVIEW_STEPS.findIndex(s=>s.id===reviewStage)+1)].id)}>下一步 →</button>
+                onClick={()=>goReviewStep(REVIEW_STEPS[Math.min(4,REVIEW_STEPS.findIndex(s=>s.id===reviewStage)+1)].id)}>下一步 →</button>
             </div>
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
         </section>
