@@ -6,7 +6,7 @@ import secrets
 import threading
 import time
 from collections import defaultdict, deque
-from datetime import datetime
+from datetime import datetime, date, time as time_value
 from pathlib import Path
 from typing import Literal
 from urllib.request import Request as UrlRequest, urlopen
@@ -23,6 +23,7 @@ from .prompts import build_messages
 from .clarification import followup_question
 from .yaoci import moving_line_text
 from .core.liuyao import cast_six_yao
+from .core.solar_calendar import preview_solar_calendar
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
 LAN_REGEX = (
@@ -143,6 +144,19 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
 
     return answer
 
+
+class SolarCalendarPreviewRequest(BaseModel):
+    date: date
+    clock: time_value
+    timezone: Literal["Asia/Shanghai","Asia/Tokyo"] = "Asia/Shanghai"
+    day_boundary: Literal["midnight","zi_hour"] = "midnight"
+
+@app.post("/api/liuyao/calendar-preview")
+def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
+    try:
+        return preview_solar_calendar(req.date, req.clock,req.timezone,req.day_boundary)
+    except ValueError as exc:
+        raise HTTPException(422,str(exc)) from exc
 
 class SixYaoCastRequest(BaseModel):
     numbers: list[int] = Field(min_length=6,max_length=6)
