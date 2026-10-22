@@ -1372,7 +1372,7 @@ export function ChineseLocalCaseArchive({chart,question}){
         {selected.snapshot.review_sheet?.digest?.length>0&&<details>
           <summary>查看封存时的程序证据摘要</summary>
           {selected.snapshot.review_sheet.digest.map((x,i)=><p key={i}>{x}</p>)}
-        </details>
+        </details>}
         <div className="local-case-outcome">
           <h4>后续事实 · 只能追加</h4>
           <label>对事前研究的回看
