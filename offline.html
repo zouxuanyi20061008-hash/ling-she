@@ -737,6 +737,7 @@ function rewardEncounter(site){
  const now=performance.now();
  if(Math.hypot(player.x-site.x,player.y-site.y)>90)return;
  const first=!encounterState.visited.includes(site.id),ready=encounterState.cooldowns[site.id]||0;
+ const xpBefore=exp;
  if(!first&&now<ready){
   toast(site.short+'灵气尚未恢复，还有 '+Math.ceil((ready-now)/1000)+' 秒');
   return;
@@ -747,14 +748,14 @@ function rewardEncounter(site){
  if(site.id==='spring'){
   const before=hp;hp=Math.min(100+level*10,hp+62);
   if(first)gain(65);
-  toast('💧 碧泉灵汐：气血 +'+Math.round(hp-before)+'，90秒减伤'+(first?'，首次修为 +65':''));
+  toast('💧 碧泉灵汐：气血 +'+Math.round(hp-before)+'，90秒减伤'+(first?'，首次修为 +'+Math.round(exp-xpBefore):''));
  }else if(site.id==='wood'){
   if(first){gain(85);evoPoints+=2;triggerEvolutionIfReady()}
-  toast('🌳 千年灵木：90秒灵息伤害提升'+(first?'，首次修为 +85、进化点 +2':''));
+  toast('🌳 千年灵木：90秒灵息伤害提升'+(first?'，首次修为 +'+Math.round(exp-xpBefore)+'、进化点 +2':''));
  }else{
   if(first){gain(90);essence+=3}
   hp=Math.min(100+level*10,hp+25);
-  toast('📜 青岚祠：90秒修炼加速'+(first?'，首次修为 +90、灵蕴 +3':''));
+  toast('📜 青岚祠：90秒修炼加速'+(first?'，首次修为 +'+Math.round(exp-xpBefore)+'、灵蕴 +3':''));
  }
  const colors={spring:'#b2f7db',wood:'#cbe7a3',shrine:'#ffe2aa'};
  for(let i=0;i<12;i++){
