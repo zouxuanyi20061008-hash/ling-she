@@ -1,6 +1,7 @@
 import React,{useState} from 'react'
 import {parseSharedCase,importToInbox,markInboxCase,removeInboxCase,
-  readCaseInbox,restoreInboxBackup,MAX_INBOX} from './case-exchange.js'
+  readCaseInbox,restoreInboxBackup,updateInboxReviewNote,MAX_INBOX} from './case-exchange.js'
+import {inspectCaseEvidence,exportCaseReviewCsv} from './case-review.js'
 
 function downloadJson(data,name){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'})
@@ -50,6 +51,22 @@ export default function CaseExchangeCenter({onClose}){
     try{setEntries(markInboxCase(id,status));setNotice('审核状态已保存在本机。')}
     catch(err){setError(err.message||'保存失败')}
   }
+  function changeNote(id,value){
+    try{setEntries(updateInboxReviewNote(id,value));setError('')}
+    catch(err){setError(err.message||'审核备注保存失败')}
+  }
+  function exportSummary(){
+    if(!entries.length)return
+    try{
+      const csv=exportCaseReviewCsv(entries)
+      const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}))
+      const anchor=document.createElement('a')
+      anchor.href=url;anchor.download='万象书院-案例审核摘要.csv'
+      document.body.appendChild(anchor);anchor.click();anchor.remove()
+      setTimeout(()=>URL.revokeObjectURL(url),1000)
+      setNotice('CSV 研究摘要已下载。文件仍可能包含自愿分享的事前研究，请妥善保管。')
+    }catch{setError('导出研究摘要失败，请检查浏览器下载权限')}
+  }
   function remove(id){
     if(!window.confirm('确认从本机收案簿删除这份案例？删除后无法在本站恢复。'))return
     try{setEntries(removeInboxCase(id));setNotice('已从本机收案簿删除。')}
@@ -79,7 +96,8 @@ export default function CaseExchangeCenter({onClose}){
   const shown=entries.filter(x=>filter==='全部'||x.status===filter)
   const counts={total:entries.length,pending:entries.filter(x=>x.status==='待审核').length,
     approved:entries.filter(x=>x.status==='收录').length,
-    unfinished:entries.filter(x=>!x.case.feedback?.length).length}
+    unfinished:entries.filter(x=>!inspectCaseEvidence(x.case).has_followup).length,
+    needsReview:entries.filter(x=>inspectCaseEvidence(x.case).needs_time_review).length}
   return <main className="academy-case-exchange" aria-label="万象书院本机案例收集与研究">
     <div className="case-exchange-top"><span>万象书院 · V27 案例共建</span>
       <button type="button" onClick={onClose}>返回书院</button></div>
@@ -91,7 +109,7 @@ export default function CaseExchangeCenter({onClose}){
       <div><strong>{counts.total}</strong><span>本机案例</span></div>
       <div><strong>{counts.pending}</strong><span>待审核</span></div>
       <div><strong>{counts.approved}</strong><span>已收录</span></div>
-      <div><strong>{counts.unfinished}</strong><span>暂无后续观察</span></div>
+      <div><strong>{counts.unfinished}</strong><span>后续事实待补</span></div>
     </div>
     <section className="case-exchange-import">
       <h2>导入朋友自愿分享的案例</h2>
@@ -114,7 +132,10 @@ export default function CaseExchangeCenter({onClose}){
     {notice&&<p className="case-exchange-success" role="status">{notice}</p>}
     <section className="case-exchange-cases">
       <div className="case-exchange-section-head"><h2>案例审核簿</h2>
-        <button type="button" onClick={backup} disabled={!entries.length}>导出全部本机备份</button></div>
+        <div className="case-exchange-downloads">
+          <button type="button" onClick={exportSummary} disabled={!entries.length}>导出研究摘要 CSV</button>
+          <button type="button" onClick={backup} disabled={!entries.length}>导出全部本机备份</button>
+        </div></div>
       <label className="case-exchange-upload">从以前导出的收案簿备份恢复（不会覆盖已有案例）
         <input aria-label="从收案簿备份恢复" type="file" accept=".json,application/json" onChange={restoreBackup}/>
       </label>
@@ -128,7 +149,8 @@ export default function CaseExchangeCenter({onClose}){
       shown.map((x,i)=><article className="case-exchange-item" key={x.fingerprint}>
         <div className="case-exchange-item-head">
           <div><strong>{x.case.ben_gua||'未知本卦'} → {x.case.bian_gua||'未知变卦'}</strong>
-            <small>{formatTime(x.case.created_at)} · {x.status}</small></div>
+            <small>{formatTime(x.case.created_at)} · {x.status}</small>
+            <span className="case-evidence-indicator">{inspectCaseEvidence(x.case).status}</span></div>
           <button type="button" onClick={()=>setExpanded(expanded===x.fingerprint?'':x.fingerprint)}>
             {expanded===x.fingerprint?'收起内容':'展开研判与反馈'}</button>
         </div>
@@ -147,6 +169,22 @@ export default function CaseExchangeCenter({onClose}){
           {!x.case.feedback.length&&<p>暂无后续观察。</p>}
           {x.case.feedback.map((f,j)=><p key={j}>{formatTime(f.recorded_at)} ·
             {f.result_type}：{f.observations}</p>)}
+          <div className="case-evidence-review">
+            <h3>V28 · 案例证据与复核提示</h3>
+            {inspectCaseEvidence(x.case).tags.map(tag=>
+              <span className="case-evidence-tag" key={tag}>{tag}</span>)}
+            {inspectCaseEvidence(x.case).notices.map((notice,index)=>
+              <p key={index}>· {notice}</p>)}
+            <strong>建议人工检查：</strong>
+            {inspectCaseEvidence(x.case).questions.map((question,index)=>
+              <p key={index}>· {question}</p>)}
+            <small>提示由规则生成，不证明卦象预测有效；“吻合”仅是分享者的自我描述。</small>
+          </div>
+          <label className="case-review-note-label">你的复盘审核备注（保留疑点、缺少的材料、不同解释）
+            <textarea aria-label="复盘审核备注" maxLength={600} rows={3}
+              value={x.review_note||''} placeholder="仅存于本机，不修改朋友封存的事前原话"
+              onChange={event=>changeNote(x.fingerprint,event.target.value)}/>
+          </label>
           <p className="case-exchange-caution">请检查是否包含个人隐私、事实缺失或事后改写。自述吻合不等于已经验证预测有效。</p>
         </div>}
         <div className="case-exchange-review-actions">

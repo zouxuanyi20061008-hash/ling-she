@@ -1051,3 +1051,15 @@ button:disabled{cursor:not-allowed}
 .case-exchange-export label{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.75;margin:11px 0}
 .case-exchange-export input{width:17px;height:17px;flex:none;accent-color:#2d6344;margin-top:3px}
 @media(max-width:600px){.academy-case-exchange{margin:8px;padding:12px}.academy-case-exchange h1{font-size:22px}.case-exchange-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.case-exchange-item{padding:10px}.case-exchange-item-head{align-items:start}}
+
+/* V28: explicit research-evidence cautions and reviewer notes */
+.case-evidence-indicator{display:inline-block;margin-top:6px;border:1px solid #c8b69a;background:#f5ebdc;padding:3px 9px;color:#614c35;font-size:11px}
+.case-evidence-review{padding:11px;margin:13px 0;border:1px solid #c8b99e;background:#f5efe2}
+.case-evidence-review h3{margin:0 0 8px;color:#315d46;font-size:14px}
+.case-evidence-review p{margin:7px 0;font-size:12px;line-height:1.75}
+.case-evidence-review small{display:block;color:#755d43;font-size:11px;line-height:1.8;margin:9px 0}
+.case-evidence-tag{display:inline-block;background:#e0e9dc;color:#315f44;border:1px solid #aac1ae;font-size:11px;padding:3px 7px;margin:3px}
+.case-review-note-label{display:block;color:#28553f;font-weight:700;font-size:12px;line-height:1.7}
+.case-review-note-label textarea{display:block;margin:7px 0;min-height:88px;width:100%;padding:11px;border:1px solid #b6a78c;background:#fffdf7;color:#254a3a;font-size:13px;line-height:1.7;resize:vertical}
+.case-review-note-label textarea:focus{outline:2px solid #327352;outline-offset:2px}
+.case-exchange-downloads{display:flex;flex-wrap:wrap;gap:8px}

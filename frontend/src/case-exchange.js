@@ -108,7 +108,7 @@ export function parseSharedCase(raw){
 }
 function inboxRecord(obj){
   return {fingerprint:obj.source_key,
-    imported_at:new Date().toISOString(),status:'待审核',
+    imported_at:new Date().toISOString(),status:'待审核',review_note:'',
     case:obj.case}
 }
 export function readCaseInbox(storage=window.localStorage){
@@ -117,6 +117,7 @@ export function readCaseInbox(storage=window.localStorage){
     if(!Array.isArray(records))return []
     return records.filter(x=>x&&typeof x.fingerprint==='string'
       &&x.case&&Array.isArray(x.case.original_numbers)).slice(0,MAX_INBOX)
+      .map(x=>({...x,review_note:typeof x.review_note==='string'?x.review_note.slice(0,600):''}))
   }catch{return []}
 }
 export function importToInbox(raw,storage=window.localStorage){
@@ -135,6 +136,16 @@ export function markInboxCase(fingerprint,status,storage=window.localStorage){
   const records=readCaseInbox(storage)
   if(!records.some(x=>x.fingerprint===fingerprint))throw new Error('未找到案例')
   const updated=records.map(x=>x.fingerprint===fingerprint?{...x,status}:x)
+  storage.setItem(INBOX_KEY,JSON.stringify(updated))
+  return updated
+}
+
+/** A researcher's own observations never modify the contributor's sealed content. */
+export function updateInboxReviewNote(fingerprint,note,storage=window.localStorage){
+  if(typeof note!=='string'||note.length>600)throw new Error('审核备注最多600字')
+  const cases=readCaseInbox(storage)
+  if(!cases.some(x=>x.fingerprint===fingerprint))throw new Error('案例不存在')
+  const updated=cases.map(x=>x.fingerprint===fingerprint?{...x,review_note:note}:x)
   storage.setItem(INBOX_KEY,JSON.stringify(updated))
   return updated
 }
@@ -165,7 +176,9 @@ export function restoreInboxBackup(raw,storage=window.localStorage){
       throw new Error('备份中的审核状态无效')
     const valid=sanitizeSharedCase(item.case,{includeResearch:true})
     restored.push({fingerprint:item.fingerprint,
-      imported_at:scalar(item.imported_at,60),status:item.status,case:valid})
+      imported_at:scalar(item.imported_at,60),status:item.status,
+      review_note:typeof item.review_note==='string'?item.review_note.slice(0,600):'',
+      case:valid})
   }
   const old=readCaseInbox(storage)
   const oldKeys=new Set(old.map(x=>x.fingerprint))
