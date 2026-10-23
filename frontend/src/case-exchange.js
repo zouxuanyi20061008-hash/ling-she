@@ -131,6 +131,23 @@ export function importToInbox(raw,storage=window.localStorage){
   storage.setItem(INBOX_KEY,JSON.stringify(updated))
   return updated
 }
+/** Bulk moderation does not change contributors' sealed words or reviewer notes.
+ * Deliberately no bulk "收录": every accepted case needs manual examination. */
+export function markInboxCases(ids,status,storage=window.localStorage){
+  if(!['待审核','暂不收录'].includes(status))
+    throw new Error('批量操作只允许重置待审核或暂不收录；逐个审阅后才能收录')
+  if(!Array.isArray(ids)||ids.length<1||ids.length>MAX_INBOX
+    ||ids.some(x=>typeof x!=='string')||new Set(ids).size!==ids.length)
+    throw new Error('请选择有效且不重复的案例')
+  const old=readCaseInbox(storage)
+  const selected=new Set(ids)
+  if(old.filter(x=>selected.has(x.fingerprint)).length!==selected.size)
+    throw new Error('部分所选案例已经不存在，请重新选择')
+  const updated=old.map(x=>selected.has(x.fingerprint)?{...x,status}:x)
+  storage.setItem(INBOX_KEY,JSON.stringify(updated))
+  return updated
+}
+
 export function markInboxCase(fingerprint,status,storage=window.localStorage){
   if(!['待审核','收录','暂不收录'].includes(status))throw new Error('审核状态无效')
   const records=readCaseInbox(storage)
