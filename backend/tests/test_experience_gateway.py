@@ -108,3 +108,34 @@ def test_login_and_content_are_escaped_and_wrong_origin_denied(setup_beta):
     admin=c.get("/admin").text
     assert "<script>alert('unsafe')</script>" not in admin
     assert "&lt;script&gt;" in admin
+
+
+def test_correct_login_not_blocked_by_proxy_shared_address(setup_beta):
+    """Wrong guesses are throttled; valid credentials still work behind a shared IP."""
+    c=setup_beta
+    for _ in range(12):
+        response=c.post("/admin/login",data={"password":"definitely-wrong"})
+    assert response.status_code==429
+    # A legitimate owner may share the proxy source address with failed requests.
+    correct=c.post("/admin/login",
+                   data={"password":"private-owner-password-not-for-guests"})
+    assert correct.status_code==303
+    assert c.get("/api/experience/session").json()["role"]=="admin"
+
+    for _ in range(13):
+        response=c.post("/invite",data={"code":"BAD-CODE-0000"})
+    assert response.status_code==429
+    friend=c.post("/invite",data={"code":"DEMOFRIEND88"})
+    assert friend.status_code==303
+    assert c.get("/api/experience/session").json()["role"]=="guest"
+
+
+def test_wrong_origin_is_a_distinct_forbidden_error_not_rate_limit(setup_beta):
+    c=setup_beta
+    for _ in range(10):
+        res=c.post("/admin/login",headers={"Origin":"https://evil.example"},
+                  data={"password":"private-owner-password-not-for-guests"})
+        assert res.status_code==403
+    allowed=c.post("/admin/login",
+                  data={"password":"private-owner-password-not-for-guests"})
+    assert allowed.status_code==303
