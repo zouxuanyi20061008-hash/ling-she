@@ -26,6 +26,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 
 _COOKIE = "wanxiang_session"
+_LOGIN_COOKIE = "wanxiang_login_proof"
+_LOGIN_TTL_SECONDS = 15 * 60
 _DB_LOCK = threading.RLock()
 _RATE_LOCK = threading.Lock()
 _RATE = defaultdict(deque)
@@ -35,6 +37,12 @@ _CONSENT_NOTICE = "体验码会记录一次登录及提交时间。可选的功�
 
 def enabled():
     return os.getenv("ACCESS_GATE_ENABLED") == "1"
+
+def admin_enabled():
+    # The owner portal may be tested/used independently of the friend gate.
+    # The public academy stays accessible when ACCESS_GATE_ENABLED=0.
+    return (enabled() or os.getenv("ADMIN_PORTAL_ENABLED") == "1") and bool(
+        os.getenv("ADMIN_PASSWORD") and os.getenv("APP_SESSION_SECRET"))
 
 def _secret():
     return os.getenv("APP_SESSION_SECRET", "")
@@ -56,6 +64,47 @@ def _safe_equal(a, b):
     return hmac.compare_digest(hashlib.sha256(str(a).encode()).digest(),
                                hashlib.sha256(str(b).encode()).digest())
 
+def _admin_version():
+    """Rotating ADMIN_PASSWORD invalidates previously issued owner cookies."""
+    return hmac.new(_secret().encode(),b"admin-password-version:"+os.getenv(
+        "ADMIN_PASSWORD","").encode(),hashlib.sha256).hexdigest()[:24]
+
+def _login_proof():
+    """Sign a fresh browser-bound login-form token; no proxy Host/Origin assumptions."""
+    raw=secrets.token_urlsafe(28)+"."+str(int(time.time()))
+    mac=hmac.new(_secret().encode(),("login-form:"+raw).encode(),hashlib.sha256).hexdigest()
+    return raw+"."+mac
+
+def _attach_login_proof(response,token):
+    response.set_cookie(_LOGIN_COOKIE,token,max_age=_LOGIN_TTL_SECONDS,
+        path="/",httponly=True,secure=True,samesite="lax")
+    return response
+
+def _fetch_metadata_safe(request):
+    # Optional browser signal: supported browsers explicitly mark cross-site writes.
+    return request.headers.get("sec-fetch-site","").lower()!="cross-site"
+
+def _valid_login_form(request,form):
+    if not _secret() or not _fetch_metadata_safe(request):
+        return False
+    cookie=request.cookies.get(_LOGIN_COOKIE,"")
+    given=form.get("login_proof","")
+    if not isinstance(cookie,str) or not isinstance(given,str):
+        return False
+    if len(cookie)<80 or len(cookie)>250 or not hmac.compare_digest(cookie,given):
+        return False
+    try:
+        raw,stamp,mac=cookie.rsplit(".",2)
+        expected=hmac.new(_secret().encode(),("login-form:"+raw+"."+stamp).encode(),
+                           hashlib.sha256).hexdigest()
+        age=time.time()-int(stamp)
+        return 0<=age<_LOGIN_TTL_SECONDS and hmac.compare_digest(mac,expected)
+    except (ValueError,TypeError):
+        return False
+
+def _form_token_input(token):
+    return "<input type='hidden' name='login_proof' value='"+html.escape(token,quote=True)+"'>"
+
 def _encode(claims):
     payload = base64.urlsafe_b64encode(json.dumps(claims, ensure_ascii=False,
                           separators=(",", ":")).encode()).decode().rstrip("=")
@@ -76,7 +125,9 @@ def _decode(request: Request):
             return None
         role = claims.get("role")
         if role == "admin":
-            return claims if os.getenv("ADMIN_PASSWORD", "") else None
+            return claims if (admin_enabled()
+                and hmac.compare_digest(str(claims.get("auth_version","")),
+                                        _admin_version())) else None
         if role != "guest":
             return None
         code_id = claims.get("id")
@@ -131,16 +182,8 @@ def _limited(request: Request, scope: str, limit=12):
         bucket.append(now)
     return False
 
-def _same_origin(request):
-    host = request.headers.get("host", "").lower()
-    origin = request.headers.get("origin", "").lower()
-    referer = request.headers.get("referer", "").lower()
-    allowed = ("https://" + host, "http://" + host)
-    if origin:
-        return origin.rstrip("/") in allowed
-    if referer:
-        return any(referer.startswith(url + "/") for url in allowed)
-    return True  # Only an authenticated same-site cookie and unguessable csrf can authorize writes.
+# Login forms and privileged writes use browser-bound signed CSRF secrets instead
+# of comparing the reverse-proxy Host with mobile-browser Origin / Referer.
 
 async def _form(request):
     body = await request.body()
@@ -191,10 +234,9 @@ def _record(claims, kind, module="other"):
           (uuid.uuid4().hex, claims["id"], claims["label"][:50], kind, module, _now()))
 
 def _csrf(request: Request, claims):
-    return (_same_origin(request)
-            and _safe_equal(request.headers.get("x-experience-csrf", ""),
-                            claims.get("csrf", ""))
-            and len(request.headers.get("x-experience-csrf", "")) >= 16)
+    token=request.headers.get("x-experience-csrf","")
+    return (_fetch_metadata_safe(request) and len(token)>=16
+            and _safe_equal(token,claims.get("csrf","")))
 
 def _page(title, content, variant=""):
     return _headers(HTMLResponse("""<!doctype html><html lang='zh-CN'><head>
@@ -218,16 +260,22 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto}
 def install_gateway(app: FastAPI):
     @app.middleware("http")
     async def access_gate(request: Request, call_next):
+        path=request.url.path
+        if path.startswith("/admin") and path!="/admin/login":
+            if not admin_enabled():
+                return _headers(JSONResponse({"detail":"站长后台暂未启用"},status_code=503))
+            claims=_decode(request)
+            if not claims or claims.get("role")!="admin":
+                return _headers(RedirectResponse("/admin/login",status_code=303))
+            return await call_next(request)
         if not enabled():
+            # Public academy always works even with an independent owner portal.
             return await call_next(request)
-        if request.url.path in ("/health", "/invite", "/admin/login", "/favicon.ico"):
+        if path in ("/health","/invite","/admin/login","/favicon.ico"):
             return await call_next(request)
-        claims = _decode(request)
-        if request.url.path.startswith("/admin"):
-            if not claims or claims.get("role") != "admin":
-                return _headers(RedirectResponse("/admin/login", status_code=303))
-        elif not claims:
-            if request.url.path.startswith("/api/"):
+        claims=_decode(request)
+        if not claims:
+            if path.startswith("/api/"):
                 return _headers(JSONResponse({"detail":"请先输入体验码"},status_code=401))
             return _headers(RedirectResponse("/invite",status_code=303))
         return await call_next(request)
@@ -236,22 +284,28 @@ def install_gateway(app: FastAPI):
     async def invitation_page(request: Request):
         if enabled() and _decode(request):
             return RedirectResponse("/#choose",status_code=303)
-        return _page("朋友体验入口", """<h1>万象书院 · 朋友体验入口</h1>
+        if not enabled():
+            return _page("书院开放体验","<h1>万象书院当前公开体验</h1>"
+                "<p>无需体验码，朋友可以直接使用书院，案例请用本机文件交换。</p>"
+                "<p><a href='/#choose'>进入书院 →</a></p>")
+        token=_login_proof()
+        response=_page("朋友体验入口", """<h1>万象书院 · 朋友体验入口</h1>
 <p>欢迎体验梅花易数、六爻纳甲及书院学习功能。请输入站长单独提供的体验码。</p>
-<form method='post' action='/invite'>
+<form method='post' action='/invite'>"""+_form_token_input(token)+"""
 <label>体验码<input type='password' name='code' autocomplete='off' required minlength='8' maxlength='80'></label>
 <label><input type='checkbox' name='analytics' value='yes'>我同意记录各模块使用次数（可选）</label>
 <button type='submit'>进入书院</button></form>
 <p class='small'>"""+html.escape(_CONSENT_NOTICE)+"""</p>
 <p class='warn'>请勿填写或提交他人的隐私资料。案例不会自动上传，只有你确认分享后才会提交。</p>""")
+        return _attach_login_proof(response,token)
 
     @app.post("/invite")
     async def invitation_login(request: Request):
         if not enabled():
             return RedirectResponse("/#choose",status_code=303)
-        if not _same_origin(request):
-            return _bad_request("请求来源验证失败，请从书院登录页重试。",403)
         form = await _form(request)
+        if not _valid_login_form(request,form):
+            return _bad_request("登录页面已过期或验证失败，请重新打开登录页并允许本站 Cookie。",403)
         code = form.get("code","").strip()
         label = next((name for key,name in _invites().items() if _safe_equal(key,code)),None)
         if label is None or not _secret():
@@ -357,23 +411,31 @@ def install_gateway(app: FastAPI):
 
     @app.get("/admin/login", response_class=HTMLResponse)
     async def admin_login_page(request: Request):
-        if not enabled():
-            return _page("管理未启用","<h1>后台尚未启用</h1>")
+        if not admin_enabled():
+            return _page("管理未启用","<h1>站长后台暂未启用</h1>"
+                "<p>公开书院仍可正常使用；请使用本机案例交换中心。</p>"
+                "<p><a href='/#cases'>返回案例交换中心 →</a></p>")
         claims=_decode(request)
         if claims and claims.get("role")=="admin":
             return RedirectResponse("/admin",status_code=303)
-        return _page("站长登录","""<h1>万象书院 · 站长后台</h1>
+        token=_login_proof()
+        response=_page("站长登录","""<h1>万象书院 · 站长后台</h1>
 <p>管理员密码只在服务器校验，不会发给体验者。</p>
-<form action='/admin/login' method='post'><label>管理员密码
+<form action='/admin/login' method='post'>"""+_form_token_input(token)+"""<label>管理员密码
 <input type='password' name='password' required autocomplete='current-password'></label>
-<button type='submit'>进入管理后台</button></form><p class='small'>不要把密码或这个登录过程录屏发给朋友。</p>""")
+<button type='submit'>进入管理后台</button></form>
+<p class='small'>如果显示登录页过期，请返回此页面刷新。请允许本站使用 Cookie。</p>
+<p class='small'>站长后台与书院公开体验独立，不会阻止朋友进入书院。</p>""")
+        return _attach_login_proof(response,token)
 
     @app.post("/admin/login")
     async def admin_login(request:Request):
-        if not _same_origin(request):
-            return _bad_request("请求来源验证失败，请从后台登录页重试。",403,back="/admin/login")
+        if not admin_enabled():
+            return _bad_request("站长后台暂未启用，普通书院仍可使用",503,back="/admin/login")
         form=await _form(request)
-        if not os.getenv("ADMIN_PASSWORD") or not _safe_equal(form.get("password",""),os.environ["ADMIN_PASSWORD"]):
+        if not _valid_login_form(request,form):
+            return _bad_request("登录页面已过期，请重新打开站长登录页并允许本站 Cookie。",403,back="/admin/login")
+        if not _safe_equal(form.get("password",""),os.environ["ADMIN_PASSWORD"]):
             # Failed credentials are rate-limited, but the proxy's shared internal
             # IP must never lock out someone who knows the correct password.
             if _limited(request,"admin-login",8):
@@ -381,13 +443,15 @@ def install_gateway(app: FastAPI):
             return _bad_request("管理员密码不正确",403,back="/admin/login")
         response=RedirectResponse("/admin",status_code=303)
         _cookie(response,{"role":"admin","id":"owner","label":"站长",
+                          "auth_version":_admin_version(),
                           "csrf":secrets.token_urlsafe(26),"iat":int(time.time())})
+        response.delete_cookie(_LOGIN_COOKIE,path="/")
         return _headers(response)
 
     @app.get("/admin", response_class=HTMLResponse)
     async def admin_dashboard(request:Request):
-        if not enabled():
-            return _page("后台未启用","<h1>请先启用体验模式</h1>")
+        if not admin_enabled():
+            return _page("后台未启用","<h1>站长后台尚未启用，普通书院可以正常使用。</h1>")
         claims=_decode(request)
         if not claims or claims.get("role")!="admin":
             return RedirectResponse("/admin/login",status_code=303)
@@ -428,7 +492,8 @@ def install_gateway(app: FastAPI):
                 blocks+="<button type='submit'>"+title+"</button></form>"
             blocks+="</div>"
         return _page("站长控制台","<h1>万象书院 · 站长控制台</h1>"
-           + "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>"
+           + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
+              "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
            + error + notice + cards
            + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/#choose'>返回书院</a></p>"
            + blocks + table)
@@ -439,8 +504,8 @@ def install_gateway(app: FastAPI):
         if not claims or claims.get("role")!="admin":
             return _bad_request("管理员身份无效",403)
         form=await _form(request)
-        if not _same_origin(request) or not _safe_equal(form.get("csrf",""),claims["csrf"]):
-            return _bad_request("请求验证失败",403)
+        if not _fetch_metadata_safe(request) or not _safe_equal(form.get("csrf",""),claims["csrf"]):
+            return _bad_request("审核请求验证失败",403,back="/admin")
         status=form.get("action")
         cid=form.get("case_id","")
         if status not in ("approved","rejected","deleted") or len(cid)!=32:
