@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import {parseSharedCase,importToInbox,markInboxCase,removeInboxCase,
-  readCaseInbox,INBOX_KEY,MAX_INBOX} from './case-exchange.js'
+  readCaseInbox,restoreInboxBackup,MAX_INBOX} from './case-exchange.js'
 
 function downloadJson(data,name){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'})
@@ -63,6 +63,19 @@ export default function CaseExchangeCenter({onClose}){
       setNotice('已导出本机完整收案簿备份，文件可能包含朋友的研究笔记，请妥善保管。')
     }catch{setError('备份下载失败，请检查浏览器下载权限。')}
   }
+  async function restoreBackup(e){
+    const file=e.target.files?.[0]
+    e.target.value=''
+    setError('');setNotice('')
+    if(!file)return
+    if(file.size>700000){setError('备份文件太大。');return}
+    if(!window.confirm('确认把备份中的案例合并到这台设备？已有相同编号的案例将保持不变。'))return
+    try{
+      const outcome=restoreInboxBackup(await file.text())
+      setEntries(outcome.entries)
+      setNotice('已从本机备份补回'+outcome.added+'份；跳过重复'+outcome.duplicates+'份。')
+    }catch(err){setError(err.message||'备份恢复失败，没有覆盖当前收案簿。')}
+  }
   const shown=entries.filter(x=>filter==='全部'||x.status===filter)
   const counts={total:entries.length,pending:entries.filter(x=>x.status==='待审核').length,
     approved:entries.filter(x=>x.status==='收录').length,
@@ -102,6 +115,9 @@ export default function CaseExchangeCenter({onClose}){
     <section className="case-exchange-cases">
       <div className="case-exchange-section-head"><h2>案例审核簿</h2>
         <button type="button" onClick={backup} disabled={!entries.length}>导出全部本机备份</button></div>
+      <label className="case-exchange-upload">从以前导出的收案簿备份恢复（不会覆盖已有案例）
+        <input aria-label="从收案簿备份恢复" type="file" accept=".json,application/json" onChange={restoreBackup}/>
+      </label>
       <div className="case-exchange-filters" role="group" aria-label="案例审核状态筛选">
         {['全部','待审核','收录','暂不收录'].map(status=>
           <button type="button" key={status} aria-pressed={filter===status}

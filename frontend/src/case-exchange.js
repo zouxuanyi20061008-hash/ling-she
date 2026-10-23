@@ -143,3 +143,36 @@ export function removeInboxCase(fingerprint,storage=window.localStorage){
   storage.setItem(INBOX_KEY,JSON.stringify(next))
   return next
 }
+
+/** Restore a previously exported inbox backup without replacing existing records. */
+export function restoreInboxBackup(raw,storage=window.localStorage){
+  if(typeof raw!=='string'||raw.length>700000)
+    throw new Error('备份文件过大或无效（最多700KB）')
+  let parsed
+  try{parsed=JSON.parse(raw)}catch{throw new Error('备份 JSON 格式无效')}
+  if(!parsed||parsed.format!=='wanxiang-case-inbox-backup-v1'||parsed.version!==1
+    ||!Array.isArray(parsed.records)||parsed.records.length>MAX_INBOX)
+    throw new Error('不属于万象书院 V27 本机收案簿备份')
+  const restored=[]
+  const seen=new Set()
+  for(const item of parsed.records){
+    if(!item||typeof item.fingerprint!=='string'
+       ||item.fingerprint.length<1||item.fingerprint.length>120)
+      throw new Error('备份中的案例编号无效')
+    if(seen.has(item.fingerprint))throw new Error('备份中出现重复案例')
+    seen.add(item.fingerprint)
+    if(!['待审核','收录','暂不收录'].includes(item.status))
+      throw new Error('备份中的审核状态无效')
+    const valid=sanitizeSharedCase(item.case,{includeResearch:true})
+    restored.push({fingerprint:item.fingerprint,
+      imported_at:scalar(item.imported_at,60),status:item.status,case:valid})
+  }
+  const old=readCaseInbox(storage)
+  const oldKeys=new Set(old.map(x=>x.fingerprint))
+  const added=restored.filter(x=>!oldKeys.has(x.fingerprint))
+  if(old.length+added.length>MAX_INBOX)
+    throw new Error('恢复后超过40份上限，请先导出备份并整理现有案例')
+  const next=[...old,...added]
+  storage.setItem(INBOX_KEY,JSON.stringify(next))
+  return {entries:next,added:added.length,duplicates:restored.length-added.length}
+}
