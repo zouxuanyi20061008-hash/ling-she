@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react'
 import './academy.css'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
+import {shareCaseFromArchive} from './case-exchange.js'
 import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
 
 const api=import.meta.env.VITE_API_URL ?? (import.meta.env.PROD?'':window.location.protocol+'//'+window.location.hostname+':8000')
@@ -1331,6 +1332,8 @@ export function ChineseLocalCaseArchive({chart,question}){
   const [message,setMessage]=useState('')
   const [shareAgree,setShareAgree]=useState(false)
   const [shareBusy,setShareBusy]=useState(false)
+  const [offlineConsent,setOfflineConsent]=useState(false)
+  const [includeResearch,setIncludeResearch]=useState(false)
   const report=chart.review_flow?.report
   const selected=cases.find(x=>x.id===selectedId)||cases[0]
   if(!report)return null
@@ -1401,6 +1404,22 @@ export function ChineseLocalCaseArchive({chart,question}){
   function removeCase(){
     if(!selected||!window.confirm('确定删除这份仅存于本机的案例吗？删除后无法从本站恢复。'))return
     if(persist(cases.filter(x=>x.id!==selected.id)))setSelectedId(null)
+  }
+  function exportSharedCase(){
+    if(!selected||!offlineConsent){
+      setMessage('请先核查并同意导出这份案例，再分享给朋友或站长。');return
+    }
+    try{
+      const bundle=shareCaseFromArchive(selected,{includeResearch})
+      const url=URL.createObjectURL(new Blob([JSON.stringify(bundle,null,2)],
+        {type:'application/json;charset=utf-8'}))
+      const a=document.createElement('a')
+      a.href=url;a.download='万象书院-自愿分享案例-'+selected.created_at.slice(0,10)+'.json'
+      document.body.appendChild(a);a.click();a.remove()
+      setTimeout(()=>URL.revokeObjectURL(url),1000)
+      setOfflineConsent(false)
+      setMessage('已导出仅含本份案例的分享包。请自行通过微信发送给收件人，不会自动上传服务器。')
+    }catch(err){setMessage(err.message||'分享包导出失败，请检查浏览器文件权限。')}
   }
   async function shareCase(){
     if(!selected||!shareAgree||shareBusy)return
@@ -1517,7 +1536,23 @@ export function ChineseLocalCaseArchive({chart,question}){
             <p>{f.observations}</p>
           </div>)}
         </div>
-        <div className="experience-submit-case">
+        <div className="case-exchange-export">
+          <h4>V27 · 离线案例分享（无需登录）</h4>
+          <p>分享文件仅包含本卦/变卦、六爻原数、日月、事前研判及已经追记的实际观察；
+            <strong>默认不包含原始私人提问，也不包含人工草稿和择用理由。</strong></p>
+          <label><input type="checkbox" checked={includeResearch}
+            onChange={e=>setIncludeResearch(e.target.checked)}/>
+            我还想附带完整人工研判与择用理由（可能包含个人背景，请先检查）。</label>
+          <label><input type="checkbox" checked={offlineConsent}
+            onChange={e=>setOfflineConsent(e.target.checked)}/>
+            我已检查事前研判及后续追记，确认没有不宜转发的个人信息，
+            同意生成这份仅由我自行发送的案例分享包。</label>
+          <button type="button" disabled={!offlineConsent} onClick={exportSharedCase}>
+            导出脱敏案例分享包 JSON ↗</button>
+          <p>朋友可以将此文件发给站长；站长在书院首页「案例交换中心」导入审核。
+             整个过程没有自动上传，不依赖当前暂停的管理员登录系统。</p>
+        </div>
+        {false&&<div className="experience-submit-case">
           <h4>自愿参与万象书院案例共建</h4>
           <p>仅上传该案例的卦名、六爻原数、日月、所选用神、事前研究、四栏草稿（如有）、取用理由（如有）和后续观察。<strong>不上传你填写的原始提问、AI 密钥及整个排盘对象。</strong></p>
           <p>请先检查事前研究与后续观察中是否包含姓名、电话、住址或其他隐私。提交后由站长审核，可能用于匿名化研究及软件改进。</p>
@@ -1529,7 +1564,7 @@ export function ChineseLocalCaseArchive({chart,question}){
           <button type="button" disabled={!shareAgree||shareBusy} onClick={shareCase}>
             {shareBusy?'正在提交…':'主动提交这份案例 ↗'}
           </button>
-        </div>
+        </div>}
         <div className="local-case-actions">
           <button type="button" onClick={exportCase}>导出该案例 JSON</button>
           <button type="button" onClick={removeCase}>删除本机案例</button>

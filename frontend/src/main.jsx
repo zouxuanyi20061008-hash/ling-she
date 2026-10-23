@@ -5,10 +5,11 @@ import ArtsHub,{ARTS} from './ArtsHub.jsx'
 import SixYaoStage from './SixYaoStage.jsx'
 import KnowledgeStage from './KnowledgeStage.jsx'
 import StudyHall from './StudyHall.jsx'
+import CaseExchangeCenter from './CaseExchangeCenter.jsx'
 import './style.css'
 import './theme-refresh.css'
 
-const VALID_ROUTES=new Set(['home','choose','library',...ARTS.map(a=>a.id)])
+const VALID_ROUTES=new Set(['home','choose','library','cases',...ARTS.map(a=>a.id)])
 function routeFromUrl(){
   const route=window.location.hash.slice(1)
   return VALID_ROUTES.has(route)?route:'home'
@@ -91,7 +92,11 @@ function Academy(){
       {experience.role==='admin'&&<a href="/admin">管理后台 ↗</a>}
       <button type="button" onClick={logoutExperience}>退出体验</button>
     </div>}
-    {(mode==='home'||mode==='choose')?
+    {(mode==='home'||mode==='choose')&&<div className="case-exchange-quick-entry">
+      <button type="button" onClick={()=>navigate('cases')}>案例交换中心 · 收集朋友案例 ↗</button>
+    </div>}
+    {mode==='cases'?<CaseExchangeCenter onClose={()=>navigate('choose')}/>:
+    (mode==='home'||mode==='choose')?
       <ArtsHub screen={mode}
         onStart={()=>navigate('choose')}
         onBack={()=>goBackTo('home')}

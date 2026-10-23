@@ -1005,3 +1005,49 @@ button:disabled{cursor:not-allowed}
 .experience-submit-case button{min-height:43px;padding:9px 14px;color:#fff8e9;background:#276244;border:1px solid #276244;font-size:12px}
 .experience-submit-case button:disabled{opacity:.46;cursor:not-allowed}
 @media(max-width:600px){.experience-visitor-banner{justify-content:space-between}.experience-submit-case{padding:11px}}
+
+/* V27 本机案例交换中心：移动端清晰可读，提示储存边界 */
+.case-exchange-quick-entry{text-align:center;background:#f1eadb;padding:9px}
+.case-exchange-quick-entry button{background:#275c42;border:1px solid #275c42;color:#fff8e7;padding:10px 17px;min-height:42px;font-size:13px}
+.academy-case-exchange{max-width:1000px;margin:20px auto;padding:clamp(13px,3vw,28px);background:#fbf6eb;border:1px solid #c3af91;color:#284636}
+.academy-case-exchange h1{font-size:26px;color:#28543d;margin:12px 0}
+.academy-case-exchange h2{font-size:18px;color:#305940}
+.academy-case-exchange h3{font-size:15px;color:#345841}
+.academy-case-exchange p{font-size:13px;line-height:1.75;overflow-wrap:anywhere}
+.case-exchange-top{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #d1c0a6;padding-bottom:12px;color:#825f40;font-size:12px}
+.academy-case-exchange button,.case-exchange-export button{border:1px solid #2e5f44;background:#2e5f44;color:#fff8e9;padding:9px 13px;min-height:42px;font-size:12px;cursor:pointer}
+.academy-case-exchange button.light{background:#f9f2e6;color:#72533b;border-color:#bdad94}
+.academy-case-exchange button:disabled,.case-exchange-export button:disabled{opacity:.47;cursor:not-allowed}
+.case-exchange-note{padding:12px;background:#f2e6cf;border-left:3px solid #976d44}
+.case-exchange-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:16px 0}
+.case-exchange-stats>div{background:#eae4d4;padding:13px;text-align:center;min-width:0}
+.case-exchange-stats strong{font-size:27px;display:block;color:#265741}
+.case-exchange-stats span{font-size:11px;color:#66553d}
+.case-exchange-import,.case-exchange-cases{border-top:1px solid #d2bfa4;padding-top:11px;margin-top:18px}
+.case-exchange-upload{display:block;font-weight:700;font-size:13px;color:#27543d;margin:12px 0}
+.case-exchange-upload input{display:block;margin-top:8px;max-width:100%;padding:10px;background:#fffdf6;border:1px solid #c6b99f;font-size:12px}
+.case-exchange-preview{border:1px solid #b4ae91;background:#f1eddf;padding:14px;margin:12px 0}
+.case-exchange-preview blockquote{white-space:pre-wrap;overflow-wrap:anywhere;background:#fffdf6;border-left:3px solid #879b78;margin:8px 0;padding:10px;font-size:13px}
+.case-exchange-preview button{margin-right:8px;margin-top:8px}
+.case-exchange-error{color:#8a352c;background:#f5e3dc;border-left:3px solid #9a4939;padding:10px}
+.case-exchange-success{color:#295e41;background:#e4eddf;border-left:3px solid #4e885e;padding:10px}
+.case-exchange-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.case-exchange-filters{display:flex;gap:7px;flex-wrap:wrap}
+.case-exchange-filters button{background:#f3e9d5;color:#45634d;border-color:#b8aa90}
+.case-exchange-filters button[aria-pressed=true]{background:#275a42;color:#fff8e7;border-color:#275a42}
+.case-exchange-counter{font-size:11px!important;color:#6a624c}
+.case-exchange-item{border:1px solid #c9b79a;background:#fffdf7;padding:13px;margin:10px 0}
+.case-exchange-item-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.case-exchange-item-head strong{font-size:14px;color:#31543c}
+.case-exchange-item-head small{display:block;color:#7c6147;margin-top:4px}
+.case-exchange-item-body{border-top:1px solid #ddcdb7;margin-top:10px;padding-top:10px}
+.case-exchange-item-body p{white-space:pre-wrap}
+.case-exchange-item-body details{padding:8px;background:#f4eee0;margin:9px 0}
+.case-exchange-caution{padding:10px;background:#f2e4ce;color:#785338}
+.case-exchange-review-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.case-exchange-export{border:1px solid #bbc6a9;background:#f0f5e8;padding:13px;margin:14px 0;color:#2b503b}
+.case-exchange-export h4{font-size:15px;color:#26533a;margin:0 0 7px}
+.case-exchange-export p{font-size:12px;line-height:1.8}
+.case-exchange-export label{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.75;margin:11px 0}
+.case-exchange-export input{width:17px;height:17px;flex:none;accent-color:#2d6344;margin-top:3px}
+@media(max-width:600px){.academy-case-exchange{margin:8px;padding:12px}.academy-case-exchange h1{font-size:22px}.case-exchange-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.case-exchange-item{padding:10px}.case-exchange-item-head{align-items:start}}
