@@ -231,12 +231,16 @@ def install_gateway(app: FastAPI):
     async def invitation_login(request: Request):
         if not enabled():
             return RedirectResponse("/#choose",status_code=303)
-        if _limited(request,"guest-login",10) or not _same_origin(request):
-            return _bad_request("登录太频繁，请稍后再试",429)
+        if not _same_origin(request):
+            return _bad_request("请求来源验证失败，请从书院登录页重试。",403)
         form = await _form(request)
         code = form.get("code","").strip()
         label = next((name for key,name in _invites().items() if _safe_equal(key,code)),None)
         if label is None or not _secret():
+            # Render's reverse proxy can share an internal client IP among visitors.
+            # Count invalid attempts only: bots cannot lock legitimate code holders out.
+            if _limited(request,"guest-login",10):
+                return _bad_request("体验码尝试次数过多，请稍后再试",429)
             return _bad_request("体验码无效，请向站长领取专属体验码。",403)
         claims = {"role":"guest","id":hashlib.sha256(code.encode()).hexdigest(),
                   "label":label,"analytics":form.get("analytics")=="yes",
@@ -348,10 +352,14 @@ def install_gateway(app: FastAPI):
 
     @app.post("/admin/login")
     async def admin_login(request:Request):
-        if _limited(request,"admin-login",8) or not _same_origin(request):
-            return _bad_request("尝试次数过多，请稍后再试",429)
+        if not _same_origin(request):
+            return _bad_request("请求来源验证失败，请从后台登录页重试。",403)
         form=await _form(request)
         if not os.getenv("ADMIN_PASSWORD") or not _safe_equal(form.get("password",""),os.environ["ADMIN_PASSWORD"]):
+            # Failed credentials are rate-limited, but the proxy's shared internal
+            # IP must never lock out someone who knows the correct password.
+            if _limited(request,"admin-login",8):
+                return _bad_request("错误密码尝试次数过多，请稍后再试",429)
             return _bad_request("管理员密码不正确",403)
         response=RedirectResponse("/admin",status_code=303)
         _cookie(response,{"role":"admin","id":"owner","label":"站长",
