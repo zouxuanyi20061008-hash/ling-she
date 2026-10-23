@@ -21,8 +21,32 @@ function Academy(){
   const [aiAccessCode,setAiAccessCode]=useState('')
   const [activeGroup,setActiveGroup]=useState('全部')
   const [choosePage,setChoosePage]=useState(0)
+  const [experience,setExperience]=useState(null)
   const config={personalApiKey,setPersonalApiKey,aiModel,setAiModel,aiAccessCode,setAiAccessCode}
 
+  useEffect(()=>{
+    fetch('/api/experience/session',{credentials:'same-origin'})
+      .then(r=>r.ok?r.json():null)
+      .then(data=>setExperience(data?.authenticated?data:null))
+      .catch(()=>setExperience(null))
+  },[])
+  useEffect(()=>{
+    if(experience?.role!=='guest'||!experience.analytics)return
+    const module=['home','choose','library','meihua','liuyao'].includes(mode)?mode:'other'
+    fetch('/api/experience/event',{
+      method:'POST',credentials:'same-origin',
+      headers:{'Content-Type':'application/json','X-Experience-Csrf':experience.csrf},
+      body:JSON.stringify({module})
+    }).catch(()=>{})
+  },[experience,mode])
+  async function logoutExperience(){
+    if(!experience)return
+    try{await fetch('/api/experience/logout',{
+      method:'POST',credentials:'same-origin',
+      headers:{'X-Experience-Csrf':experience.csrf}
+    })}catch{}
+    window.location.assign('/invite')
+  }
   useEffect(()=>{
     function syncBrowserHistory(){
       setMode(routeFromUrl())
@@ -61,6 +85,12 @@ function Academy(){
   }
 
   return <>
+    {experience&&<div className="experience-visitor-banner">
+      <span>{experience.role==='admin'?'站长管理模式':'受邀体验 · '+experience.label}</span>
+      <small>{experience.role==='guest'?'体验记录仅用于书院改进，案例须自愿提交':'可进入后台审核案例'}</small>
+      {experience.role==='admin'&&<a href="/admin">管理后台 ↗</a>}
+      <button type="button" onClick={logoutExperience}>退出体验</button>
+    </div>}
     {(mode==='home'||mode==='choose')?
       <ArtsHub screen={mode}
         onStart={()=>navigate('choose')}

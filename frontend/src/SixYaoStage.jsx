@@ -1329,6 +1329,8 @@ export function ChineseLocalCaseArchive({chart,question}){
   const [actual,setActual]=useState('')
   const [resultType,setResultType]=useState('部分吻合')
   const [message,setMessage]=useState('')
+  const [shareAgree,setShareAgree]=useState(false)
+  const [shareBusy,setShareBusy]=useState(false)
   const report=chart.review_flow?.report
   const selected=cases.find(x=>x.id===selectedId)||cases[0]
   if(!report)return null
@@ -1400,6 +1402,42 @@ export function ChineseLocalCaseArchive({chart,question}){
     if(!selected||!window.confirm('确定删除这份仅存于本机的案例吗？删除后无法从本站恢复。'))return
     if(persist(cases.filter(x=>x.id!==selected.id)))setSelectedId(null)
   }
+  async function shareCase(){
+    if(!selected||!shareAgree||shareBusy)return
+    setShareBusy(true)
+    setMessage('')
+    try{
+      const authRes=await fetch('/api/experience/session',{credentials:'same-origin'})
+      if(!authRes.ok)throw new Error('请先通过体验码登录。')
+      const auth=await authRes.json()
+      if(auth.role!=='guest')throw new Error('该功能仅供受邀体验者自愿提交。')
+      const snapshot=selected.snapshot||{}
+      const entry={
+        ben_gua:snapshot.ben_gua||'',
+        bian_gua:snapshot.bian_gua||'',
+        original_numbers:snapshot.original_numbers||[],
+        day_ganzhi:snapshot.day_ganzhi||'',
+        month_branch:snapshot.month_branch||'',
+        chosen_category:snapshot.chosen_category||'',
+        selected_position:snapshot.selected_position,
+        created_at:selected.created_at,
+        before:selected.before,
+        feedback:selected.feedback||[],
+        human_review:snapshot.human_review?.fields||null,
+        focus_selection:snapshot.focus_selection||null
+      }
+      const response=await fetch('/api/experience/cases',{
+        method:'POST',credentials:'same-origin',
+        headers:{'Content-Type':'application/json','X-Experience-Csrf':auth.csrf},
+        body:JSON.stringify({share_consent:true,case:entry})
+      })
+      const result=await response.json()
+      if(!response.ok)throw new Error(result.detail||'提交失败')
+      setShareAgree(false)
+      setMessage('已自愿提交给站长审核，编号：'+result.case_id.slice(0,8)+'。提交后的版本不随本机修改变化。')
+    }catch(e){setMessage('尚未成功上传：'+(e.message||'网络错误')+'。原案例仍保留在本机，可导出备份。')}
+    finally{setShareBusy(false)}
+  }
   function exportCase(){
     if(!selected)return
     try{
@@ -1430,7 +1468,7 @@ export function ChineseLocalCaseArchive({chart,question}){
       <div className="local-case-buttons">
         {cases.map((entry,i)=><button key={entry.id} type="button"
           aria-pressed={selected?.id===entry.id}
-          onClick={()=>{setSelectedId(entry.id);setActual('')}}>
+          onClick={()=>{setSelectedId(entry.id);setActual('');setShareAgree(false)}}>
           {entry.snapshot.ben_gua} · {entry.created_at.slice(0,10)} · #{i+1}
         </button>)}
       </div>
@@ -1478,6 +1516,19 @@ export function ChineseLocalCaseArchive({chart,question}){
             <small>{cdate(f.recorded_at)} · {f.result_type}</small>
             <p>{f.observations}</p>
           </div>)}
+        </div>
+        <div className="experience-submit-case">
+          <h4>自愿参与万象书院案例共建</h4>
+          <p>仅上传该案例的卦名、六爻原数、日月、所选用神、事前研究、四栏草稿（如有）、取用理由（如有）和后续观察。<strong>不上传你填写的原始提问、AI 密钥及整个排盘对象。</strong></p>
+          <p>请先检查事前研究与后续观察中是否包含姓名、电话、住址或其他隐私。提交后由站长审核，可能用于匿名化研究及软件改进。</p>
+          {selected.feedback.length===0&&<p>这份案例暂无事后观察。可以先提交为待补案例，但有实际结果的案例更利于复盘。</p>}
+          <label><input type="checkbox" checked={shareAgree}
+            onChange={e=>setShareAgree(e.target.checked)}/>
+            我已检查和删除不宜分享的个人信息，明确同意把上述内容发给站长审核。
+          </label>
+          <button type="button" disabled={!shareAgree||shareBusy} onClick={shareCase}>
+            {shareBusy?'正在提交…':'主动提交这份案例 ↗'}
+          </button>
         </div>
         <div className="local-case-actions">
           <button type="button" onClick={exportCase}>导出该案例 JSON</button>

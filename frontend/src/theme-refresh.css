@@ -990,3 +990,18 @@ button:disabled{cursor:not-allowed}
 .focus-choice-sealed h4{font-size:13px;color:#28583f}
 .focus-choice-sealed p{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}
 @media(max-width:650px){.focus-comparison-study{padding:11px}.focus-compare-head,.focus-compare-row{grid-template-columns:1.1fr 1fr 1fr;gap:4px;padding:7px 5px;font-size:11px}.focus-compare-row strong{font-size:11px}}
+
+/* 体验邀请模式：精简、清楚、不遮挡书院主内容 */
+.experience-visitor-banner{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px 14px;background:#224f3d;color:#f9efd9;padding:9px 15px;font-size:12px}
+.experience-visitor-banner span{font-weight:700;letter-spacing:.05em}
+.experience-visitor-banner small{font-size:11px;color:#e0e8d8}
+.experience-visitor-banner a{color:#fff0b3;text-decoration:underline}
+.experience-visitor-banner button{border:1px solid #d4c49c;background:transparent;color:#fff1d8;min-height:35px;padding:5px 11px;font-size:12px}
+.experience-submit-case{border:1px solid #b3baaa;background:#f0f5eb;color:#28513a;padding:13px;margin:14px 0}
+.experience-submit-case h4{font-size:15px;color:#24583d;margin:0 0 7px}
+.experience-submit-case p{font-size:12px;line-height:1.8;margin:9px 0;color:#455943}
+.experience-submit-case label{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.7;margin:11px 0}
+.experience-submit-case input{width:17px;height:17px;flex:none;accent-color:#2d6344;margin-top:3px}
+.experience-submit-case button{min-height:43px;padding:9px 14px;color:#fff8e9;background:#276244;border:1px solid #276244;font-size:12px}
+.experience-submit-case button:disabled{opacity:.46;cursor:not-allowed}
+@media(max-width:600px){.experience-visitor-banner{justify-content:space-between}.experience-submit-case{padding:11px}}
