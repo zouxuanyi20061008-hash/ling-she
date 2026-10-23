@@ -138,6 +138,11 @@ def test_valid_password_not_locked_out_by_other_invalid_attempts(setup_beta):
     good=c.post("/admin/login",data={"login_proof":proof,
                  "password":"private-owner-password-not-for-guests"})
     assert good.status_code==303
+    # Logout before switching role; authenticated users are redirected away
+    # from both login forms by design.
+    owner=c.get("/api/experience/session").json()
+    assert c.post("/api/experience/logout",
+                  headers={"X-Experience-Csrf":owner["csrf"]}).status_code==200
     proof=_proof(c,"/invite")
     for _ in range(13):
         wrong=c.post("/invite",data={"login_proof":proof,"code":"BAD-CODE-0000"})
