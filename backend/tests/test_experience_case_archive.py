@@ -165,3 +165,82 @@ def test_guest_cannot_import_and_bad_shares_reject_without_db_edit(admin_client,
         "csrf":csrf,"share_json":json.dumps(sample_case()),"reviewed":"yes"
     }).status_code==303
     assert gate._exec("SELECT import_id FROM experience_imported_cases",get=True)==[]
+
+
+def test_v31_storage_status_is_admin_only_and_unconfigured(admin_client):
+    client,csrf=admin_client
+    status=client.get("/admin/storage-status")
+    assert status.status_code==200
+    assert status.json()["state"]=="unconfigured"
+    assert status.json()["connected"] is False
+    assert status.json()["store"]=="temporary_sqlite"
+    dashboard=client.get("/admin")
+    assert "数据库自检：未配置" in dashboard.text
+    assert "查看数据库自检结果" in dashboard.text
+    client.post("/admin/logout",data={"csrf":csrf})
+    assert client.get("/admin/storage-status").status_code==303
+
+
+def test_v31_unreachable_postgres_fails_closed_without_leaking_connection(admin_client,monkeypatch):
+    client,csrf=admin_client
+    monkeypatch.setenv("DATABASE_URL","postgresql://secret-username:private-password@bad-host/test")
+    def no_connect():
+        raise OSError("postgresql://secret-username:private-password@bad-host/test")
+    monkeypatch.setattr(gate,"_connect",no_connect)
+    diagnostic=client.get("/admin/storage-status")
+    assert diagnostic.status_code==200
+    assert diagnostic.json()["state"]=="unreachable"
+    assert diagnostic.json()["connected"] is False
+    assert "private-password" not in diagnostic.text
+    dashboard=client.get("/admin")
+    assert dashboard.status_code==200
+    assert "数据库自检：连接失败" in dashboard.text
+    assert "private-password" not in dashboard.text
+    assert "正式云端写入已暂停" in dashboard.text
+    response=post_import(client,csrf,sample_case())
+    assert response.status_code==503
+    assert "private-password" not in response.text
+
+
+def test_v31_pg_ready_requires_real_query_response(admin_client,monkeypatch):
+    class Connection:
+        def __init__(self, result):
+            self.result=result
+            self.closed=False
+        def execute(self, query):
+            assert query=="SELECT 1"
+            return self
+        def fetchone(self):
+            return self.result
+        def close(self):
+            self.closed=True
+    monkeypatch.setenv("DATABASE_URL","postgresql://not-real")
+    good=Connection((1,))
+    monkeypatch.setattr(gate,"_connect",lambda:good)
+    state=gate._storage_status()
+    assert state["state"]=="ready" and state["connected"]
+    assert good.closed
+    fail=Connection((0,))
+    monkeypatch.setattr(gate,"_connect",lambda:fail)
+    state=gate._storage_status()
+    assert state["state"]=="unreachable" and not state["connected"]
+    assert fail.closed
+
+
+def test_v31_duplicate_import_cannot_overwrite_reviewer_decision(admin_client):
+    from concurrent.futures import ThreadPoolExecutor
+    client,csrf=admin_client
+    row=parse_shared_case(json.dumps(sample_case(),ensure_ascii=False))
+    entry=json.dumps(row,ensure_ascii=False)
+    def insert(_):
+        return gate._insert_imported_once(row["id"],row["source_key"],gate._now(),entry)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        saved=list(pool.map(insert,range(8)))
+    assert saved.count(True)==1
+    assert saved.count(False)==7
+    gate._exec("UPDATE experience_imported_cases SET reviewer_note=? WHERE import_id=?",
+               ("重要人工复核结论",row["id"]))
+    assert gate._insert_imported_once(row["id"],row["source_key"],gate._now(),entry) is False
+    stored=gate._exec("SELECT reviewer_note FROM experience_imported_cases WHERE import_id=?",
+                     (row["id"],),get=True)
+    assert stored==[("重要人工复核结论",)]
