@@ -148,5 +148,5 @@ def test_research_html_and_batch_review_are_owner_only_and_safe(owner,monkeypatc
     owner.post("/admin/logout",data={"csrf":csrf})
     assert owner.get("/admin/research").status_code==303
     assert owner.post("/admin/batch-review",data={"csrf":csrf,"action":"rejected",
-        "items":["visitor:"+first]}).status_code==303
+        "items":["visitor:"+first]}).status_code==403
 

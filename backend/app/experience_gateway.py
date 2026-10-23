@@ -762,7 +762,7 @@ def install_gateway(app: FastAPI):
            + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
               "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
            + error + notice + cards + batch_notice + batch_form
-           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/research'>案例统计与复盘</a> · <a href='/admin/research-summary'>查看统计 JSON</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
+           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/research'>案例统计与复盘</a> · <a href='/admin/research-summary'>查看站长导入案例统计（JSON）</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
            + "<form method='post' action='/admin/logout'><input type='hidden' name='csrf' value='"+html.escape(claims["csrf"])+"'><button type='submit'>安全退出站长后台</button></form>"
            + intake + archive + blocks + table)
 
