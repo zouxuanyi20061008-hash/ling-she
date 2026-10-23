@@ -97,8 +97,26 @@ def _headers(response):
     response.headers["Referrer-Policy"] = "no-referrer"
     return response
 
-def _bad_request(message, status=400):
-    return _headers(HTMLResponse("<h3>"+html.escape(message)+"</h3><a href='/invite'>返回登录</a>", status_code=status))
+def _bad_request(message, status=400, back="/invite"):
+    # Authentication failures must return to their own entry point.
+    if back not in ("/invite", "/admin/login", "/admin"):
+        back = "/invite"
+    title = "返回站长登录" if back == "/admin/login" else "返回登录"
+    return _page_error(message, status, back, title)
+
+
+def _page_error(message, status, back, title):
+    response = HTMLResponse(
+        "<!doctype html><html lang='zh-CN'><meta charset='utf-8'>"
+        "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+        "<title>万象书院 · 登录提示</title>"
+        "<main style='max-width:490px;margin:8vh auto;padding:24px;"
+        "background:#faf6eb;color:#28503c;font:16px/1.9 system-ui'>"
+        "<h2>登录提示</h2><p>"+html.escape(message)+"</p>"
+        "<a href='"+back+"'>"+title+" →</a></main></html>",
+        status_code=status,
+    )
+    return _headers(response)
 
 def _limited(request: Request, scope: str, limit=12):
     ip = request.client.host if request.client else "unknown"
@@ -353,14 +371,14 @@ def install_gateway(app: FastAPI):
     @app.post("/admin/login")
     async def admin_login(request:Request):
         if not _same_origin(request):
-            return _bad_request("请求来源验证失败，请从后台登录页重试。",403)
+            return _bad_request("请求来源验证失败，请从后台登录页重试。",403,back="/admin/login")
         form=await _form(request)
         if not os.getenv("ADMIN_PASSWORD") or not _safe_equal(form.get("password",""),os.environ["ADMIN_PASSWORD"]):
             # Failed credentials are rate-limited, but the proxy's shared internal
             # IP must never lock out someone who knows the correct password.
             if _limited(request,"admin-login",8):
-                return _bad_request("错误密码尝试次数过多，请稍后再试",429)
-            return _bad_request("管理员密码不正确",403)
+                return _bad_request("错误密码尝试次数过多，请稍后再试",429,back="/admin/login")
+            return _bad_request("管理员密码不正确",403,back="/admin/login")
         response=RedirectResponse("/admin",status_code=303)
         _cookie(response,{"role":"admin","id":"owner","label":"站长",
                           "csrf":secrets.token_urlsafe(26),"iat":int(time.time())})
