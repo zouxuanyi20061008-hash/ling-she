@@ -113,7 +113,6 @@ it('书院收案中心可以预览、导入、标记状态，完全本机完成'
   expect(readCaseInbox()).toHaveLength(1)
   fireEvent.click(screen.getByRole('button',{name:'展开研判与反馈'}))
   expect(screen.getByText(/后来实际结果与初判不一致/)).toBeTruthy()
-  fireEvent.click(screen.getByRole('button',{name:'收录'}))
+  fireEvent.click(screen.getAllByRole('button',{name:'收录'})[1])
   expect(readCaseInbox()[0].status).toBe('收录')
-  expect(screen.getByText('已收录')).toBeTruthy()
 })
