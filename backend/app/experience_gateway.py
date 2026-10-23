@@ -139,7 +139,7 @@ def _connect():
         import psycopg
         db = psycopg.connect(os.environ["DATABASE_URL"], connect_timeout=6)
     else:
-        db = sqlite3.connect("/tmp/wanxiang_experience.db", timeout=8)
+        db = sqlite3.connect(os.getenv("EXPERIENCE_SQLITE_PATH", "/tmp/wanxiang_experience.db"), timeout=8)
     if not _SCHEMA_READY:
         with _DB_LOCK:
             if not _SCHEMA_READY:
