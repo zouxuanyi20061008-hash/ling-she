@@ -266,6 +266,7 @@ def _case_research_report():
         visitor_status_rows=visitor_status,imported_status_rows=imported_status)
     summary["max_scanned_per_source"]=1000
     summary["max_scanned"]=1000
+    summary["unreadable_records_in_sample"]=(len(visitor_raw)-len(visitor_cases))+(len(imported_raw)-len(imported_cases))
     summary["partial_scan"]=summary["source_counts"]["visitor_submissions"]>len(visitor_raw) or summary["source_counts"]["owner_uploaded_case_files"]>len(imported_raw)
     summary["database_state"]=_storage_status()["state"]
     return summary
@@ -341,6 +342,12 @@ def _research_summary_html(summary):
     labels={"pending":"待审核","approved":"已收录","rejected":"暂不收录"}
     out="<h1>万象书院 · 案例统计与复盘</h1>"
     out+="<p>范围：书院服务器里的访客自愿提交和站长导入案例；不包含浏览器本机收案簿。</p>"
+    if summary.get("database_state")=="ready":
+        out+="<p class='card'>数据库状态：PostgreSQL 已连通。仍请定期导出备份。</p>"
+    elif summary.get("database_state")=="unconfigured":
+        out+="<p class='warn'>数据库状态：未配置持久数据库。当前统计来自临时 SQLite，重启或重新部署可能丢失；请勿将其视为永久案例库。</p>"
+    else:
+        out+="<p class='warn'>数据库状态：连接失败。当前统计可能不完整，请先检查数据库自检状态。</p>"
     out+="<div class='cards'>"
     for label,key in (("云端案例总数","all"),("访客提交","visitor_submissions"),("站长导入","owner_uploaded_case_files")):
         out+="<div class='card'><b>"+label+"</b><h2>"+str(summary["source_counts"][key])+"</h2></div>"
@@ -352,8 +359,8 @@ def _research_summary_html(summary):
             out+="<td>"+str(counts[key])+"</td>"
         out+="<td>"+str(summary["other_status_counts"][source])+"</td></tr>"
     out+="</table><h2>案例完整度与复盘线索（最多每类1000份）</h2><table><tr><th>指标</th><th>数量</th></tr>"
-    for label,key in (("样本内案例","sampled_cases"),("缺少事前记录","missing_before"),
-        ("六爻原数格式不完整","invalid_original_numbers"),("缺少日月历法信息","missing_calendar"),
+    for label,key in (("样本内案例","sampled_cases"),("样本中无法读取的记录","unreadable_records_in_sample"),
+        ("缺少事前记录","missing_before"),("六爻原数格式不完整","invalid_original_numbers"),("缺少日月历法信息","missing_calendar"),
         ("缺少起卦时间","missing_created_at"),("有有效后续追记","with_followup"),
         ("尚无有效后续追记","missing_followup"),("时间顺序需人工检查","time_order_needs_review"),
         ("包含未有结论的自述","unresolved_self_reports")):
