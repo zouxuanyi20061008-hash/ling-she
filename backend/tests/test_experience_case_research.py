@@ -96,3 +96,57 @@ def test_visitor_cannot_see_summary_after_logout(owner):
     assert res.status_code==303
     assert res.headers["location"]=="/admin/login"
     assert owner.get("/").status_code in (200,404)
+
+def test_research_summary_combines_both_server_sources_and_keeps_counts_private(owner):
+    visitor={"before":"访客事前","chosen_category":"父母","original_numbers":[7,8,9,6,7,8],
+             "day_ganzhi":"甲子","month_branch":"辰",
+             "feedback":[{"result_type":"基本吻合","observations":"不应出现在统计里",
+                          "recorded_at":"2026-10-24T12:00:00Z"}]}
+    gate._exec("INSERT INTO experience_cases VALUES (?,?,?,?,?,?)",
+               ("d"*32,"friend","2026-10-24T12:00:00Z","pending",
+                json.dumps(visitor,ensure_ascii=False)))
+    imported={"case":{"before":"导入事前","chosen_category":"官鬼",
+             "original_numbers":[7,8,9,6,7,8],"day_ganzhi":"甲子","month_branch":"辰",
+             "feedback":[{"result_type":"部分吻合","observations":"隐私内容",
+                          "recorded_at":"2026-10-24T12:00:00Z"}]}}
+    gate._exec("INSERT INTO experience_imported_cases VALUES (?,?,?,?,?,?)",
+               ("e"*64,"source","2026-10-24T12:00:00Z","approved",
+                json.dumps(imported,ensure_ascii=False),"private reviewer note"))
+    result=owner.get("/admin/research-summary")
+    assert result.status_code==200
+    data=result.json()
+    assert data["total_cases"]==2
+    assert data["source_counts"]=={"visitor_submissions":1,"owner_uploaded_case_files":1,"all":2}
+    assert data["status_counts"]=={"pending":1,"approved":1,"rejected":0}
+    assert data["self_report_feedback_entries"]["基本吻合"]==1
+    assert data["self_report_feedback_entries"]["部分吻合"]==1
+    assert "不应出现在统计里" not in result.text
+    assert "private reviewer note" not in result.text
+
+
+def test_research_html_and_batch_review_are_owner_only_and_safe(owner,monkeypatch):
+    html=owner.get("/admin/research")
+    assert html.status_code==200
+    assert "案例统计与复盘" in html.text
+    assert "不代表独立核验或预测准确率" in html.text
+    csrf=owner.get("/api/experience/session").json()["csrf"]
+    monkeypatch.setattr(gate,"_persistent_case_store",lambda:True)
+    payload=json.dumps({"before":"事前","original_numbers":[7,8,9,6,7,8]},ensure_ascii=False)
+    first="f"*32
+    second="a"*64
+    gate._exec("INSERT INTO experience_cases VALUES (?,?,?,?,?,?)",
+        (first,"guest",gate._now(),"pending",payload))
+    gate._insert_imported_once(second,"src-batch",gate._now(),
+        json.dumps({"case":{"before":"导入","original_numbers":[7,8,9,6,7,8]}},ensure_ascii=False))
+    response=owner.post("/admin/batch-review",data={
+        "csrf":csrf,"action":"approved",
+        "items":["visitor:"+first,"imported:"+second]})
+    assert response.status_code==303
+    assert response.headers["location"]=="/admin?batch_done=approved&count=2"
+    assert gate._exec("SELECT status FROM experience_cases WHERE case_id=?",(first,),get=True)==[("approved",)]
+    assert gate._exec("SELECT status FROM experience_imported_cases WHERE import_id=?",(second,),get=True)==[("approved",)]
+    owner.post("/admin/logout",data={"csrf":csrf})
+    assert owner.get("/admin/research").status_code==303
+    assert owner.post("/admin/batch-review",data={"csrf":csrf,"action":"rejected",
+        "items":["visitor:"+first]}).status_code==303
+

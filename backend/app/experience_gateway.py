@@ -25,7 +25,7 @@ from urllib.parse import parse_qs
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from .experience_case_archive import parse_shared_case, CaseImportError
-from .experience_case_research import summarize_imported_cases
+from .experience_case_research import summarize_imported_cases, summarize_case_archive
 
 _COOKIE = "wanxiang_session"
 _LOGIN_COOKIE = "wanxiang_login_proof"
@@ -229,6 +229,115 @@ async def _import_form(request):
             body.decode("utf-8"),max_num_fields=12).items()}
     except (UnicodeDecodeError,ValueError):
         return {}
+
+async def _multi_form(request):
+    body=await request.body()
+    if len(body)>260000:
+        return {}
+    try:
+        return parse_qs(body.decode("utf-8"),max_num_fields=110)
+    except (UnicodeDecodeError,ValueError):
+        return {}
+
+def _case_research_report():
+    visitor_status=_exec("SELECT status,COUNT(*) FROM experience_cases GROUP BY status",get=True)
+    imported_status=_exec("SELECT status,COUNT(*) FROM experience_imported_cases GROUP BY status",get=True)
+    visitor_raw=_exec("SELECT status,payload FROM experience_cases ORDER BY submitted_at DESC LIMIT 1000",get=True)
+    imported_raw=_exec("SELECT status,payload FROM experience_imported_cases ORDER BY imported_at DESC LIMIT 1000",get=True)
+    visitor_cases=[]
+    imported_cases=[]
+    for status,payload in visitor_raw:
+        try:
+            case=json.loads(payload)
+            if isinstance(case,dict):
+                visitor_cases.append((status,case))
+        except (ValueError,TypeError):
+            continue
+    for status,payload in imported_raw:
+        try:
+            record=json.loads(payload)
+            case=record.get("case",{}) if isinstance(record,dict) else None
+            if isinstance(case,dict):
+                imported_cases.append((status,case))
+        except (ValueError,TypeError):
+            continue
+    summary=summarize_case_archive(visitor_cases,imported_cases,
+        visitor_status_rows=visitor_status,imported_status_rows=imported_status)
+    summary["max_scanned_per_source"]=1000
+    summary["partial_scan"]=summary["source_counts"]["visitor_submissions"]>len(visitor_raw) or summary["source_counts"]["owner_uploaded_case_files"]>len(imported_raw)
+    summary["database_state"]=_storage_status()["state"]
+    return summary
+
+def _batch_review_items(items,status):
+    if status not in ("pending","approved","rejected"):
+        raise ValueError("审核状态无效")
+    with _DB_LOCK:
+        db=_connect()
+        try:
+            for source,ident in items:
+                if source=="visitor":
+                    table,column="experience_cases","case_id"
+                elif source=="imported":
+                    table,column="experience_imported_cases","import_id"
+                else:
+                    raise ValueError("案例来源无效")
+                query=f"SELECT {column} FROM {table} WHERE {column}=?"
+                if _pg():
+                    query=query.replace("?","%s")
+                if not db.execute(query,(ident,)).fetchone():
+                    raise LookupError("所选案例中有记录已不存在；未修改任何记录")
+            for source,ident in items:
+                if source=="visitor":
+                    table,column="experience_cases","case_id"
+                else:
+                    table,column="experience_imported_cases","import_id"
+                query=f"UPDATE {table} SET status=? WHERE {column}=?"
+                if _pg():
+                    query=query.replace("?","%s")
+                cursor=db.execute(query,(status,ident))
+                if cursor.rowcount!=1:
+                    raise LookupError("批量审核未完整完成；本次更改已回滚")
+            db.commit()
+            return len(items)
+        except Exception:
+            db.rollback()
+            raise
+        finally:
+            db.close()
+
+def _research_summary_html(summary):
+    labels={"pending":"待审核","approved":"已收录","rejected":"暂不收录"}
+    out="<h1>万象书院 · 案例统计与复盘</h1>"
+    out+="<p>范围：书院服务器里的访客自愿提交和站长导入案例；不包含浏览器本机收案簿。</p>"
+    out+="<div class='cards'>"
+    for label,key in (("云端案例总数","all"),("访客提交","visitor_submissions"),("站长导入","owner_uploaded_case_files")):
+        out+="<div class='card'><b>"+label+"</b><h2>"+str(summary["source_counts"][key])+"</h2></div>"
+    out+="</div><h2>审核状态（全量数据库记录）</h2><table><tr><th>来源</th><th>总数</th><th>待审核</th><th>已收录</th><th>暂不收录</th><th>其他</th></tr>"
+    for source,label in (("visitor_submissions","访客提交"),("owner_uploaded_case_files","站长导入")):
+        counts=summary["source_status_counts"][source]
+        out+="<tr><td>"+label+"</td><td>"+str(summary["source_counts"][source])+"</td>"
+        for key in ("pending","approved","rejected"):
+            out+="<td>"+str(counts[key])+"</td>"
+        out+="<td>"+str(summary["other_status_counts"][source])+"</td></tr>"
+    out+="</table><h2>案例完整度与复盘线索（最多每类1000份）</h2><table><tr><th>指标</th><th>数量</th></tr>"
+    for label,key in (("样本内案例","sampled_cases"),("缺少事前记录","missing_before"),
+        ("六爻原数格式不完整","invalid_original_numbers"),("缺少日月历法信息","missing_calendar"),
+        ("缺少起卦时间","missing_created_at"),("有有效后续追记","with_followup"),
+        ("尚无有效后续追记","missing_followup"),("时间顺序需人工检查","time_order_needs_review"),
+        ("包含未有结论的自述","unresolved_self_reports")):
+        out+="<tr><td>"+label+"</td><td>"+str(summary[key])+"</td></tr>"
+    out+="</table><h2>反馈分类（自述条数）</h2><table><tr><th>分类</th><th>反馈条数</th><th>涉及案例数</th></tr>"
+    for label,count in summary["self_report_feedback_entries"].items():
+        out+="<tr><td>"+_html_escape(label)+"</td><td>"+str(count)+"</td><td>"+str(summary["self_report_tags"][label])+"</td></tr>"
+    out+="</table><h2>常见用神/分类标签</h2><ul>"
+    for item in summary["top_categories"]:
+        out+="<li>"+_html_escape(item["name"])+"： "+str(item["count"])+" 份</li>"
+    out+="</ul><p class='small'>统计读取每个来源最近最多1000份；状态总数为全量。"
+    if summary["partial_scan"]:
+        out+="由于记录超过样本上限，内容完整度与反馈分布不包含较早的全部案例。"
+    out+="</p><p class='warn'>"+_html_escape(summary["notice"])+"</p>"
+    out+="<p><a href='/admin'>返回站长后台</a> · <a href='/admin/research-summary'>查看 JSON</a> · <a href='/admin/export'>导出备份</a></p>"
+    return out
 
 def _owner_csrf_ok(request,form,claims):
     return (_fetch_metadata_safe(request) and
@@ -521,24 +630,21 @@ def install_gateway(app: FastAPI):
         if not claims or claims.get("role")!="admin":
             return _headers(JSONResponse({"detail":"需要站长身份验证"},status_code=401))
         try:
-            rows=_exec("SELECT status,payload FROM experience_imported_cases "
-                       "ORDER BY imported_at DESC LIMIT 1000",get=True)
-            cases=[]
-            for status,payload in rows:
-                try:
-                    record=json.loads(payload)
-                    cases.append((status,record.get("case",{})))
-                except (ValueError,TypeError,AttributeError):
-                    continue
-            summary=summarize_imported_cases(cases)
-            summary["max_scanned"]=1000
-            summary["partial_scan"]=len(rows)>=1000
-            summary["database_state"]=_storage_status()["state"]
-            return _headers(JSONResponse(summary))
+            return _headers(JSONResponse(_case_research_report()))
         except Exception:
             return _headers(JSONResponse(
                 {"detail":"案例研究统计暂不可用，请检查数据库连接；不会据此认定记录被删除"},
                 status_code=503))
+
+    @app.get("/admin/research",response_class=HTMLResponse)
+    async def admin_research_page(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return RedirectResponse("/admin/login",status_code=303)
+        try:
+            return _page("案例统计与复盘",_research_summary_html(_case_research_report()))
+        except Exception:
+            return _page("案例统计暂不可用","<h1>案例统计暂不可用</h1><p>数据库查询失败；这不代表案例已被清空。</p><p><a href='/admin'>返回站长后台</a></p>")
 
     @app.get("/admin/storage-status")
     async def admin_storage_status(request:Request):
@@ -597,6 +703,13 @@ def install_gateway(app: FastAPI):
         for label,kind,module,date in events:
             table+="<tr><td>"+html.escape(label)+"</td><td>"+html.escape(kind)+"</td><td>"+html.escape(module)+"</td><td>"+html.escape(date)+"</td></tr>"
         table+="</table>"
+        batch_form="<section class='card'><h2>批量审核</h2>"
+        batch_form+="<p>勾选下面的案例卡片后，一次性更新审核状态。只修改状态、不删除内容；最多100份。选中记录有一份已不存在时，整批操作会回滚。</p>"
+        batch_form+="<form id='batch-review-form' method='post' action='/admin/batch-review'>"
+        batch_form+="<input type='hidden' name='csrf' value='"+_html_escape(claims["csrf"])+"'>"
+        batch_form+="<button type='submit' name='action' value='pending'>批量标记待审核</button> "
+        batch_form+="<button type='submit' name='action' value='approved'>批量收录</button> "
+        batch_form+="<button type='submit' name='action' value='rejected'>批量暂不收录</button></form></section>"
         blocks="<h2>案例审核（最近80份）</h2>"
         for cid,label,stamp,status,payload in cases:
             try:
@@ -606,6 +719,7 @@ def install_gateway(app: FastAPI):
                 description="格式无法读取"
             blocks+="<div class='case'><b>"+html.escape(label)+" · "+html.escape(status)+"</b>"
             blocks+="<p class='small'>"+html.escape(stamp)+" · ID："+html.escape(cid)+"</p>"
+            blocks+="<label><input type='checkbox' form='batch-review-form' name='items' value='visitor:"+html.escape(cid,quote=True)+"'>加入批量审核</label>"
             blocks+="<p>"+html.escape(description)+"</p>"
             blocks+="<details><summary>查看完整提交内容</summary><pre>"+html.escape(payload)+"</pre></details>"
             for action,title in (("approved","收录"),("rejected","拒绝"),("deleted","删除")):
@@ -624,6 +738,7 @@ def install_gateway(app: FastAPI):
                 c={}
             archive+="<div class='case'><b>文件导入 · "+_html_escape(status)+"</b>"
             archive+="<p class='small'>接收时间（UTC）："+_html_escape(stamp)+" · 来源编号："+_html_escape(source_key[:42])+"</p>"
+            archive+="<label><input type='checkbox' form='batch-review-form' name='items' value='imported:"+_html_escape(import_id)+"'>加入批量审核</label>"
             archive+="<p><b>"+_html_escape(c.get("ben_gua",""))+" → "+_html_escape(c.get("bian_gua",""))+"</b></p>"
             archive+="<details><summary>查看事前研判与后续追记</summary>"
             archive+="<p>事前："+_html_escape(c.get("before",""))+"</p>"
@@ -637,11 +752,17 @@ def install_gateway(app: FastAPI):
             for action,title in (("pending","待审核"),("approved","收录"),("rejected","暂不收录"),("deleted","删除")):
                 archive+="<button style='margin:3px' type='submit' name='action' value='"+action+"'>"+title+"</button>"
             archive+="</form></div>"
+        batch_labels={"pending":"待审核","approved":"已收录","rejected":"暂不收录"}
+        batch_notice=""
+        batch_action=request.query_params.get("batch_done","")
+        batch_count=request.query_params.get("count","")
+        if batch_action in batch_labels and batch_count.isdigit() and int(batch_count)<=100:
+            batch_notice="<p class='card'>批量审核完成："+str(int(batch_count))+" 份，状态已更新为："+batch_labels[batch_action]+"。</p>"
         return _page("站长控制台","<h1>万象书院 · 站长控制台</h1>"
            + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
               "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
-           + error + notice + cards
-           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/research-summary'>查看站长导入案例统计（JSON）</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
+           + error + notice + cards + batch_notice + batch_form
+           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/research'>案例统计与复盘</a> · <a href='/admin/research-summary'>查看统计 JSON</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
            + "<form method='post' action='/admin/logout'><input type='hidden' name='csrf' value='"+html.escape(claims["csrf"])+"'><button type='submit'>安全退出站长后台</button></form>"
            + intake + archive + blocks + table)
 
@@ -711,6 +832,44 @@ def install_gateway(app: FastAPI):
             return RedirectResponse("/admin",status_code=303)
         except Exception:
             return _bad_request("审核记录保存失败",503,back="/admin")
+
+    @app.post("/admin/batch-review")
+    async def admin_batch_review(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _bad_request("管理员身份无效",403,back="/admin/login")
+        form=await _multi_form(request)
+        scalar_form={key:values[0] for key,values in form.items() if values}
+        if not _owner_csrf_ok(request,scalar_form,claims):
+            return _bad_request("批量审核请求验证失败",403,back="/admin")
+        action=scalar_form.get("action","")
+        raw_items=form.get("items",[])
+        if action not in ("pending","approved","rejected"):
+            return _bad_request("批量审核状态无效",422,back="/admin")
+        if not raw_items or len(raw_items)>100:
+            return _bad_request("请勾选1至100份案例",422,back="/admin")
+        if len(set(raw_items))!=len(raw_items):
+            return _bad_request("选中案例出现重复编号；未进行修改",422,back="/admin")
+        items=[]
+        for value in raw_items:
+            if not isinstance(value,str) or ":" not in value:
+                return _bad_request("案例选择格式无效",422,back="/admin")
+            source,ident=value.split(":",1)
+            if source=="visitor" and len(ident)==32 and all(c in "0123456789abcdef" for c in ident):
+                items.append((source,ident))
+            elif source=="imported" and len(ident)==64 and all(c in "0123456789abcdef" for c in ident):
+                items.append((source,ident))
+            else:
+                return _bad_request("案例选择编号无效；未进行修改",422,back="/admin")
+        if any(source=="imported" for source,_ in items) and not _persistent_case_store():
+            return _bad_request("站长导入案例需要已连通的持久数据库；本次未修改任何记录",503,back="/admin")
+        try:
+            changed=_batch_review_items(items,action)
+            return RedirectResponse("/admin?batch_done="+action+"&count="+str(changed),status_code=303)
+        except LookupError as error:
+            return _bad_request(str(error),409,back="/admin")
+        except Exception:
+            return _bad_request("批量审核未能完成，本次操作已回滚；请检查数据库连接",503,back="/admin")
 
     @app.post("/admin/review")
     async def admin_review(request:Request):
