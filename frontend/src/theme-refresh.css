@@ -1063,3 +1063,31 @@ button:disabled{cursor:not-allowed}
 .case-review-note-label textarea{display:block;margin:7px 0;min-height:88px;width:100%;padding:11px;border:1px solid #b6a78c;background:#fffdf7;color:#254a3a;font-size:13px;line-height:1.7;resize:vertical}
 .case-review-note-label textarea:focus{outline:2px solid #327352;outline-offset:2px}
 .case-exchange-downloads{display:flex;flex-wrap:wrap;gap:8px}
+
+/* V32: clear batch-review dashboard and mobile-friendly checkbox targets */
+.case-batch-research{border-top:1px solid #cbb89a;margin-top:18px;padding-top:15px}
+.case-batch-research h2{font-size:18px;color:#28543d;margin:0 0 9px}
+.case-batch-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.case-batch-stats>div{background:#e7ecde;padding:11px;text-align:center}
+.case-batch-stats strong{font-size:25px;display:block;color:#325d41}
+.case-batch-stats span{font-size:11px;color:#4d5a49}
+.case-batch-panels{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.case-batch-panels>div{border:1px solid #c9b59a;background:#fffdf5;padding:13px}
+.case-batch-panels h3{margin:0 0 10px;color:#315741}
+.case-batch-panels ul{list-style:none;padding:0;margin:0}
+.case-batch-panels li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #e5ddcc;font-size:12px}
+.case-batch-panels li strong{white-space:nowrap;color:#325b43}
+.case-batch-footnote{font-size:11px!important;color:#765f47}
+.case-batch-search label{display:block;font-size:12px;color:#34533e;font-weight:700;margin-top:13px}
+.case-batch-search input{width:100%;padding:10px;min-height:43px;font-size:13px;color:#2e4a3e;background:#fffdf7;border:1px solid #c3b59b;margin:8px 0}
+.case-batch-queues{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}
+.case-batch-queues button{background:#f5ead7;color:#355c47;border-color:#baa88d}
+.case-batch-queues button[aria-pressed=true]{background:#315941;color:#fff8e7}
+.case-batch-selection{background:#f4efe1;border:1px solid #bdaf92;padding:13px;margin:12px 0}
+.case-batch-selection label,.case-batch-item-select{display:flex;align-items:center;gap:8px;color:#3c5a41;font-size:12px;font-weight:700}
+.case-batch-selection input,.case-batch-item-select input{width:18px;height:18px;flex:none;accent-color:#316448}
+.case-batch-selection small{display:block;line-height:1.65;margin:7px 0;color:#755c42}
+.case-batch-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.case-batch-item-select{margin-bottom:8px!important}
+@media(max-width:600px){.case-batch-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.case-batch-panels{grid-template-columns:1fr}.case-batch-actions button{flex:1 1 130px}}

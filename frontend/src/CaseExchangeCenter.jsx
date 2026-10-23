@@ -1,7 +1,9 @@
 import React,{useState} from 'react'
 import {parseSharedCase,importToInbox,markInboxCase,removeInboxCase,
-  readCaseInbox,restoreInboxBackup,updateInboxReviewNote,MAX_INBOX} from './case-exchange.js'
+  readCaseInbox,restoreInboxBackup,updateInboxReviewNote,markInboxCases,MAX_INBOX} from './case-exchange.js'
 import {inspectCaseEvidence,exportCaseReviewCsv} from './case-review.js'
+import {summarizeCaseInbox,reviewQueueMatch,REVIEW_QUEUES,
+  exportSelectedReviewCsv,selectedReport} from './case-batch.js'
 
 function downloadJson(data,name){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'})
@@ -23,6 +25,9 @@ export default function CaseExchangeCenter({onClose}){
   const [notice,setNotice]=useState('')
   const [filter,setFilter]=useState('全部')
   const [expanded,setExpanded]=useState('')
+  const [queue,setQueue]=useState('all')
+  const [search,setSearch]=useState('')
+  const [selectedIds,setSelectedIds]=useState([])
   async function chooseFile(e){
     const file=e.target.files?.[0]
     e.target.value=''
@@ -44,6 +49,7 @@ export default function CaseExchangeCenter({onClose}){
     try{
       const next=importToInbox(candidate.raw)
       setEntries(next);setCandidate(null);setError('')
+      setSelectedIds([])
       setNotice('已收入本机待审核列表，未发送到任何服务器。')
     }catch(err){setError(err.message||'无法写入本机存储，请检查浏览器权限。')}
   }
@@ -69,7 +75,7 @@ export default function CaseExchangeCenter({onClose}){
   }
   function remove(id){
     if(!window.confirm('确认从本机收案簿删除这份案例？删除后无法在本站恢复。'))return
-    try{setEntries(removeInboxCase(id));setNotice('已从本机收案簿删除。')}
+    try{setEntries(removeInboxCase(id));setSelectedIds(ids=>ids.filter(x=>x!==id));setNotice('已从本机收案簿删除。')}
     catch(err){setError(err.message||'删除失败')}
   }
   function backup(){
@@ -90,16 +96,50 @@ export default function CaseExchangeCenter({onClose}){
     try{
       const outcome=restoreInboxBackup(await file.text())
       setEntries(outcome.entries)
+      setSelectedIds([])
       setNotice('已从本机备份补回'+outcome.added+'份；跳过重复'+outcome.duplicates+'份。')
     }catch(err){setError(err.message||'备份恢复失败，没有覆盖当前收案簿。')}
   }
-  const shown=entries.filter(x=>filter==='全部'||x.status===filter)
+  function toggleSelected(id){
+    setSelectedIds(current=>current.includes(id)
+      ?current.filter(x=>x!==id):[...current,id])
+  }
+  function exportChosen(){
+    try{
+      const csv=exportSelectedReviewCsv(entries,selectedIds)
+      const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}))
+      const a=document.createElement('a');a.href=url;a.download='万象书院-选中案例复盘.csv'
+      document.body.appendChild(a);a.click();a.remove()
+      setTimeout(()=>URL.revokeObjectURL(url),1000)
+      setNotice('已导出'+selectedIds.length+'份选中案例的研究摘要，仍可能包含私密研判内容，请安全保管。')
+    }catch(err){setError(err.message||'批量导出失败')}
+  }
+  function batchSet(status){
+    if(!selectedIds.length)return
+    const label=status==='待审核'?'重置为待审核':'标记暂不收录'
+    if(!window.confirm('确认将'+selectedIds.length+'份所选案例'+label+'？原始卦例和复盘备注保持不变。'))return
+    try{
+      const next=markInboxCases(selectedIds,status)
+      setEntries(next);setSelectedIds([])
+      setNotice('已批量更新'+label+'，请逐条人工复核。')
+      setError('')
+    }catch(err){setError(err.message||'批量审核失败')}
+  }
+  const summary=summarizeCaseInbox(entries)
+  const shown=entries.filter(x=>(filter==='全部'||x.status===filter)
+    &&reviewQueueMatch(x,queue)
+    &&(!search.trim()||[x.case.ben_gua,x.case.bian_gua,
+       x.case.chosen_category,x.case.before,x.review_note]
+      .some(y=>String(y||'').toLowerCase().includes(search.trim().toLowerCase()))))
+  const shownIds=shown.map(x=>x.fingerprint)
+  const allShownSelected=shownIds.length>0&&shownIds.every(id=>selectedIds.includes(id))
+  const selectedStats=selectedReport(entries,selectedIds)
   const counts={total:entries.length,pending:entries.filter(x=>x.status==='待审核').length,
     approved:entries.filter(x=>x.status==='收录').length,
     unfinished:entries.filter(x=>!inspectCaseEvidence(x.case).has_followup).length,
     needsReview:entries.filter(x=>inspectCaseEvidence(x.case).needs_time_review).length}
   return <main className="academy-case-exchange" aria-label="万象书院本机案例收集与研究">
-    <div className="case-exchange-top"><span>万象书院 · V27 案例共建</span>
+    <div className="case-exchange-top"><span>万象书院 · V32 案例共建与批量复盘</span>
       <button type="button" onClick={onClose}>返回书院</button></div>
     <h1>本机案例交换中心</h1>
     <p>朋友从六爻「案例复盘」导出匿名化分享包，再通过微信等方式把 <b>JSON 文件</b>发给你。你在这里导入、审核和备份，不需要体验码或管理员后台。</p>
@@ -111,6 +151,28 @@ export default function CaseExchangeCenter({onClose}){
       <div><strong>{counts.approved}</strong><span>已收录</span></div>
       <div><strong>{counts.unfinished}</strong><span>后续事实待补</span></div>
     </div>
+    <section className="case-batch-research" aria-label="V32 案例研究概览">
+      <h2>V32 · 案例研究概览</h2>
+      <p>以下是这台设备已收案例的<b>资料完整性和自行反馈分布</b>，并非预测准确率，也不是云端全部访客的数据。</p>
+      <div className="case-batch-stats">
+        <div><strong>{summary.with_followup}</strong><span>已有具体事后自述</span></div>
+        <div><strong>{summary.missing_followup}</strong><span>事实仍待补充</span></div>
+        <div><strong>{summary.needs_time_review}</strong><span>时间顺序待核</span></div>
+        <div><strong>{summary.missing_calendar}</strong><span>日月资料缺项</span></div>
+      </div>
+      <div className="case-batch-panels">
+        <div><h3>研究关注类别（按案例数）</h3>
+          {summary.categories.length===0?<p>暂无可统计的案例。</p>:
+          <ul>{summary.categories.map(x=>
+            <li key={x.name}><span>{x.name}</span><strong>{x.count} 份</strong></li>)}</ul>}
+        </div>
+        <div><h3>事后自述标签（按涉及案例数）</h3>
+          <ul>{Object.entries(summary.reported_outcomes).map(([label,count])=>
+            <li key={label}><span>{label}</span><strong>{count} 份</strong></li>)}</ul>
+          <p className="case-batch-footnote">一份案例可能有多次、不同类型的追记，因此标签数量不可相加求“应验率”。尚无任何案例被独立验证。</p>
+        </div>
+      </div>
+    </section>
     <section className="case-exchange-import">
       <h2>导入朋友自愿分享的案例</h2>
       <p>只接受书院新版「导出匿名化分享包」生成的单份 JSON；导入前会预览内容，防止未经检查直接收录。</p>
@@ -144,9 +206,42 @@ export default function CaseExchangeCenter({onClose}){
           <button type="button" key={status} aria-pressed={filter===status}
             onClick={()=>setFilter(status)}>{status}</button>)}
       </div>
+      <div className="case-batch-search">
+        <label>按卦名、研究类别、事前研判或审核备注搜索
+          <input aria-label="搜索本机案例" type="search" value={search}
+            onChange={event=>setSearch(event.target.value)} placeholder="输入关键词筛选"/>
+        </label>
+      </div>
+      <div className="case-batch-queues" role="group" aria-label="证据复核队列">
+        {REVIEW_QUEUES.map(q=><button type="button" key={q.id}
+          aria-pressed={queue===q.id} onClick={()=>{setQueue(q.id);setSelectedIds([])}}>
+          {q.label}</button>)}
+      </div>
       <p className="case-exchange-counter">显示 {shown.length} / {entries.length} 份，当前最多保留 {MAX_INBOX} 份。</p>
+      {shown.length>0&&<div className="case-batch-selection">
+        <label><input type="checkbox" aria-label="全选当前可见案例" checked={allShownSelected}
+          onChange={event=>setSelectedIds(current=>event.target.checked
+            ?Array.from(new Set([...current,...shownIds]))
+            :current.filter(id=>!shownIds.includes(id)))}/>
+          全选当前可见 {shown.length} 份</label>
+        <small>已选 {selectedIds.length} 份，其中 {selectedStats.missing_followup} 份待补事实、
+          {selectedStats.needs_time_review} 份时间待核。</small>
+        <div className="case-batch-actions">
+          <button type="button" disabled={!selectedIds.length} onClick={exportChosen}>导出选中案例 CSV</button>
+          <button type="button" disabled={!selectedIds.length} onClick={()=>batchSet('待审核')}>批量退回待审核</button>
+          <button type="button" className="light" disabled={!selectedIds.length}
+            onClick={()=>batchSet('暂不收录')}>批量暂不收录</button>
+        </div>
+        <small>为防止误判，不能批量标记“收录”；重要案例须逐份查看、审核后才能收录。所有操作仅保存于本机。</small>
+      </div>}
       {shown.length===0?<p>暂无对应案例。你可以把分享入口发给朋友，请他们先封存事前研究，再自行导出分享包。</p>:
       shown.map((x,i)=><article className="case-exchange-item" key={x.fingerprint}>
+        <label className="case-batch-item-select">
+          <input type="checkbox" aria-label={'选择案例 '+x.fingerprint}
+            checked={selectedIds.includes(x.fingerprint)}
+            onChange={()=>toggleSelected(x.fingerprint)}/>
+          选择此案例以批量复盘
+        </label>
         <div className="case-exchange-item-head">
           <div><strong>{x.case.ben_gua||'未知本卦'} → {x.case.bian_gua||'未知变卦'}</strong>
             <small>{formatTime(x.case.created_at)} · {x.status}</small>
