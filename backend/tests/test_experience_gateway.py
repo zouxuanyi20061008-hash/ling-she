@@ -198,3 +198,18 @@ def test_no_cross_site_case_submit_without_signed_session(setup_beta):
     assert c.post("/api/experience/logout",
              headers={"X-Experience-Csrf":guest["csrf"]}).status_code==200
     assert c.get("/api/experience/session").status_code==401
+
+
+def test_standalone_owner_can_log_out_without_closing_public_academy(setup_beta,monkeypatch):
+    c=setup_beta
+    monkeypatch.setenv("ACCESS_GATE_ENABLED","0")
+    monkeypatch.setenv("ADMIN_PORTAL_ENABLED","1")
+    owner=login_owner(c)
+    assert "安全退出站长后台" in c.get("/admin").text
+    assert c.post("/admin/logout",data={"csrf":"bad"}).status_code==403
+    result=c.post("/admin/logout",data={"csrf":owner["csrf"]},
+                  headers={"Origin":"null"})
+    assert result.status_code==303
+    assert result.headers["location"]=="/admin/login"
+    assert c.get("/admin").headers["location"]=="/admin/login"
+    assert c.get("/").status_code in (200,404)

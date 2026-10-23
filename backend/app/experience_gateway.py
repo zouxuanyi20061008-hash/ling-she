@@ -495,8 +495,22 @@ def install_gateway(app: FastAPI):
            + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
               "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
            + error + notice + cards
-           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/#choose'>返回书院</a></p>"
+           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/#cases'>本机案例交换中心</a></p>"
+           + "<form method='post' action='/admin/logout'><input type='hidden' name='csrf' value='"+html.escape(claims["csrf"])+"'><button type='submit'>安全退出站长后台</button></form>"
            + blocks + table)
+
+    @app.post("/admin/logout")
+    async def admin_logout(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _bad_request("请先登录管理员后台",403,back="/admin/login")
+        form=await _form(request)
+        if not _fetch_metadata_safe(request) or not _safe_equal(
+                form.get("csrf",""),claims["csrf"]):
+            return _bad_request("退出请求校验失败",403,back="/admin")
+        response=RedirectResponse("/admin/login",status_code=303)
+        response.delete_cookie(_COOKIE,path="/")
+        return _headers(response)
 
     @app.post("/admin/review")
     async def admin_review(request:Request):
