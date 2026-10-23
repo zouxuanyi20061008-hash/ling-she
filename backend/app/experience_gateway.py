@@ -195,9 +195,29 @@ async def _form(request):
 def _pg():
     return bool(os.getenv("DATABASE_URL"))
 
+def _storage_status():
+    """Server-side real connection check; never reveal connection strings or passwords."""
+    if not _pg():
+        return {"state":"unconfigured","connected":False,"store":"temporary_sqlite",
+                "description":"尚未设置 DATABASE_URL，服务器使用易失的临时存储。"}
+    try:
+        db=_connect()
+        try:
+            check=db.execute("SELECT 1").fetchone()
+            if not check or check[0]!=1:
+                raise RuntimeError("database query did not return expected result")
+        finally:
+            db.close()
+        return {"state":"ready","connected":True,"store":"postgresql",
+                "description":"服务器已经成功连接 PostgreSQL 并能执行查询；请继续定期导出备份。"}
+    except Exception:
+        return {"state":"unreachable","connected":False,"store":"postgresql",
+                "description":"已配置 DATABASE_URL，但连接、权限或数据库初始化失败；已暂停正式入库，请检查 Render 服务日志。"}
+
+
 def _persistent_case_store():
-    # Fail closed for intake if Render has not been connected to PostgreSQL.
-    return _pg()
+    # Never mistake an environment-variable string for verified durable storage.
+    return _storage_status()["connected"]
 
 async def _import_form(request):
     body=await request.body()
@@ -255,6 +275,25 @@ def _exec(query, params=(), *, get=False):
             return results
         finally:
             db.close()
+
+def _insert_imported_once(case_id,source,created,payload,note="",status="pending"):
+    """One atomic insert; concurrent imports cannot overwrite earlier reviewer work."""
+    with _DB_LOCK:
+        db=_connect()
+        try:
+            command=("INSERT INTO experience_imported_cases VALUES (?,?,?,?,?,?) "
+                     "ON CONFLICT(import_id) DO NOTHING")
+            args=(case_id,source,created,status,payload,note)
+            result=db.execute(command.replace("?","%s") if _pg() else command,args)
+            inserted=result.rowcount==1
+            db.commit()
+            return inserted
+        except Exception:
+            db.rollback()
+            raise
+        finally:
+            db.close()
+
 
 def _record(claims, kind, module="other"):
     _exec("INSERT INTO experience_events VALUES (?,?,?,?,?,?)",
@@ -475,6 +514,14 @@ def install_gateway(app: FastAPI):
         response.delete_cookie(_LOGIN_COOKIE,path="/")
         return _headers(response)
 
+    @app.get("/admin/storage-status")
+    async def admin_storage_status(request:Request):
+        # This endpoint is admin-only (also guarded by middleware).
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _headers(JSONResponse({"detail":"需要站长身份验证"},status_code=401))
+        return _headers(JSONResponse(_storage_status()))
+
     @app.get("/admin", response_class=HTMLResponse)
     async def admin_dashboard(request:Request):
         if not admin_enabled():
@@ -496,11 +543,19 @@ def install_gateway(app: FastAPI):
             ("近期登录记录",len(logins)),("自愿统计的模块访问",len(modules)),
             ("访客主动提交",len(cases)),("站长导入案例",len(imported)),
             ("待审核案例",pending+sum(1 for c in imported if c[3]=="pending"))])+"</div>"
-        notice=("<p class='warn'>当前为 Render 免费服务临时 SQLite：重启或重新部署可能清空记录，请立即改用持久数据库并导出备份！</p>" if not _pg() else
-                "<p class='small'>已连接 DATABASE_URL；仍需定期导出案例。免费 Render Postgres 30 天后过期且无自动备份。</p>")
-        if not _persistent_case_store():
+        storage=_storage_status()
+        if storage["state"]=="ready":
+            notice="<div class='card'><h2>数据库自检：已连通</h2><p>"+_html_escape(storage["description"])+"</p>"
+            notice+="<p class='warn'>此免费数据库计划在 2026-11-22 到期，且没有自动备份。重要资料请定期导出、升级或迁移。</p></div>"
+        elif storage["state"]=="unreachable":
+            notice="<div class='warn'><h2>数据库自检：连接失败</h2><p>"+_html_escape(storage["description"])+"</p>"
+            notice+="<p>为保护案例，正式云端写入已暂停。请不要把这里显示的 0 条当作资料已被清空。</p></div>"
+        else:
+            notice="<div class='warn'><h2>数据库自检：未配置</h2><p>"+_html_escape(storage["description"])+"</p>"
+            notice+="<p>临时 SQLite 在重新部署或休眠后可能丢失，请使用本机案例交换中心和本机备份。</p></div>"
+        if not storage["connected"]:
             intake="<section class='warn'><h2>云端正式收案尚未启用</h2>"
-            intake+="<p>尚未连接持久数据库（DATABASE_URL）。为防止资料在部署或重启时丢失，服务端案例导入暂时禁止。朋友仍可使用本机案例交换中心，并导出备份。</p></section>"
+            intake+="<p>只有书院服务器成功连接 PostgreSQL 后才能正式入库；无法连接时会拒绝上传，避免造成资料已永久保存的错觉。</p></section>"
         else:
             intake="<section class='card'><h2>导入朋友自愿分享的案例</h2>"
             intake+="<p>仅接受 V27 单份 JSON 分享文件；导入前需检查姓名等隐私。提交后保存到已连接的 PostgreSQL 数据库，状态为待审核。相同来源编号不会重复覆盖。</p>"
@@ -560,7 +615,7 @@ def install_gateway(app: FastAPI):
            + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
               "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
            + error + notice + cards
-           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/#cases'>本机案例交换中心</a></p>"
+           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
            + "<form method='post' action='/admin/logout'><input type='hidden' name='csrf' value='"+html.escape(claims["csrf"])+"'><button type='submit'>安全退出站长后台</button></form>"
            + intake + archive + blocks + table)
 
@@ -593,12 +648,9 @@ def install_gateway(app: FastAPI):
             imported_case=parse_shared_case(form.get("share_json",""))
             raw=json.dumps(imported_case,ensure_ascii=False)
             case_id=imported_case["id"]
-            existing=_exec("SELECT import_id FROM experience_imported_cases WHERE import_id=?",
-                           (case_id,),get=True)
-            if existing:
+            inserted=_insert_imported_once(case_id,imported_case["source_key"],_now(),raw)
+            if not inserted:
                 return _bad_request("这份案例已在云端收案簿，未覆盖既有审核资料",409,back="/admin")
-            _exec("INSERT INTO experience_imported_cases VALUES (?,?,?,?,?,?)",
-                  (case_id,imported_case["source_key"],_now(),"pending",raw,""))
             return RedirectResponse("/admin",status_code=303)
         except CaseImportError as error:
             return _bad_request(str(error),422,back="/admin")
