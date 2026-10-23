@@ -24,6 +24,7 @@ from urllib.parse import parse_qs
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
+from .experience_case_archive import parse_shared_case, CaseImportError
 
 _COOKIE = "wanxiang_session"
 _LOGIN_COOKIE = "wanxiang_login_proof"
@@ -194,6 +195,28 @@ async def _form(request):
 def _pg():
     return bool(os.getenv("DATABASE_URL"))
 
+def _persistent_case_store():
+    # Fail closed for intake if Render has not been connected to PostgreSQL.
+    return _pg()
+
+async def _import_form(request):
+    body=await request.body()
+    if len(body)>250000:
+        return {}
+    try:
+        return {key:values[0] for key,values in parse_qs(
+            body.decode("utf-8"),max_num_fields=12).items()}
+    except (UnicodeDecodeError,ValueError):
+        return {}
+
+def _owner_csrf_ok(request,form,claims):
+    return (_fetch_metadata_safe(request) and
+            _safe_equal(form.get("csrf",""),claims.get("csrf","")) and
+            len(str(form.get("csrf","")))>=16)
+
+def _html_escape(value):
+    return html.escape(str(value),quote=True)
+
 def _connect():
     global _SCHEMA_READY
     if _pg():
@@ -212,6 +235,10 @@ def _connect():
                     case_id TEXT PRIMARY KEY, invite_id TEXT NOT NULL,
                     label TEXT NOT NULL, submitted_at TEXT NOT NULL,
                     status TEXT NOT NULL, payload TEXT NOT NULL)""")
+                db.execute("""CREATE TABLE IF NOT EXISTS experience_imported_cases (
+                    import_id TEXT PRIMARY KEY, source_key TEXT NOT NULL,
+                    imported_at TEXT NOT NULL, status TEXT NOT NULL,
+                    payload TEXT NOT NULL, reviewer_note TEXT NOT NULL)""")
                 db.commit()
                 _SCHEMA_READY = True
     return db
@@ -458,17 +485,33 @@ def install_gateway(app: FastAPI):
         try:
             events=_exec("SELECT label,kind,module,created_at FROM experience_events ORDER BY created_at DESC LIMIT 120",get=True)
             cases=_exec("SELECT case_id,label,submitted_at,status,payload FROM experience_cases ORDER BY submitted_at DESC LIMIT 80",get=True)
+            imported=_exec("SELECT import_id,source_key,imported_at,status,payload,reviewer_note FROM experience_imported_cases ORDER BY imported_at DESC LIMIT 80",get=True)
             error=""
         except Exception:
-            events=[];cases=[];error="<p class='warn'>数据库暂时不可用，无法显示使用记录和案例。请检查 DATABASE_URL。</p>"
+            events=[];cases=[];imported=[];error="<p class='warn'>数据库暂时不可用，无法显示使用记录和案例。请检查 DATABASE_URL。</p>"
         logins=[e for e in events if e[1]=="login"]
         modules=[e for e in events if e[1]=="module"]
         pending=sum(1 for c in cases if c[3]=="pending")
         cards="<div class='cards'>"+ "".join("<div class='card'><b>"+title+"</b><h2>"+str(val)+"</h2></div>" for title,val in [
             ("近期登录记录",len(logins)),("自愿统计的模块访问",len(modules)),
-            ("案例总数",len(cases)),("待审核案例",pending)])+"</div>"
+            ("访客主动提交",len(cases)),("站长导入案例",len(imported)),
+            ("待审核案例",pending+sum(1 for c in imported if c[3]=="pending"))])+"</div>"
         notice=("<p class='warn'>当前为 Render 免费服务临时 SQLite：重启或重新部署可能清空记录，请立即改用持久数据库并导出备份！</p>" if not _pg() else
                 "<p class='small'>已连接 DATABASE_URL；仍需定期导出案例。免费 Render Postgres 30 天后过期且无自动备份。</p>")
+        if not _persistent_case_store():
+            intake="<section class='warn'><h2>云端正式收案尚未启用</h2>"
+            intake+="<p>尚未连接持久数据库（DATABASE_URL）。为防止资料在部署或重启时丢失，服务端案例导入暂时禁止。朋友仍可使用本机案例交换中心，并导出备份。</p></section>"
+        else:
+            intake="<section class='card'><h2>导入朋友自愿分享的案例</h2>"
+            intake+="<p>仅接受 V27 单份 JSON 分享文件；导入前需检查姓名等隐私。提交后保存到已连接的 PostgreSQL 数据库，状态为待审核。相同来源编号不会重复覆盖。</p>"
+            intake+="<form method='post' action='/admin/import-case' id='case-import-form'>"
+            intake+="<input type='hidden' name='csrf' value='"+_html_escape(claims["csrf"])+"'>"
+            intake+="<label>选择朋友发来的 JSON 文件<input type='file' id='case-import-file' accept='.json,application/json'></label>"
+            intake+="<textarea id='case-import-json' name='share_json' hidden required></textarea>"
+            intake+="<p id='case-import-preview' class='small'>尚未选择文件</p>"
+            intake+="<label><input type='checkbox' name='reviewed' value='yes' required>我已检查朋友自愿分享的资料和隐私内容，确认导入待审核库。</label>"
+            intake+="<button type='submit' id='case-import-submit' disabled>确认导入并待审</button></form>"
+            intake+="<script>(function(){var f=document.getElementById('case-import-file'), t=document.getElementById('case-import-json'), p=document.getElementById('case-import-preview'), b=document.getElementById('case-import-submit');f.addEventListener('change',async function(){t.value='';b.disabled=true;p.textContent='尚未读取文件';var file=f.files[0];if(!file)return;if(file.size>60000){p.textContent='超过60KB，拒绝导入';return;}try{var raw=await file.text();var obj=JSON.parse(raw);if(obj.format!=='wanxiang-sixyao-case-v1'||obj.version!==1)throw Error('不是V27单份分享包');p.textContent='预览：'+String(obj.case?.ben_gua||'未知卦名')+' → '+String(obj.case?.bian_gua||'未知变卦')+'；事前：'+String(obj.case?.before||'').slice(0,120);t.value=raw;b.disabled=false;}catch(e){p.textContent='文件格式错误：'+e.message;}})})();</script></section>"
         table="<h2>最近使用记录（最多120项）</h2><table><tr><th>邀请码备注</th><th>活动</th><th>模块</th><th>时间 UTC</th></tr>"
         for label,kind,module,date in events:
             table+="<tr><td>"+html.escape(label)+"</td><td>"+html.escape(kind)+"</td><td>"+html.escape(module)+"</td><td>"+html.escape(date)+"</td></tr>"
@@ -491,13 +534,35 @@ def install_gateway(app: FastAPI):
                 blocks+="<input type='hidden' name='action' value='"+action+"'>"
                 blocks+="<button type='submit'>"+title+"</button></form>"
             blocks+="</div>"
+        archive="<h2>站长导入案例（最多展示80份）</h2>"
+        for import_id,source_key,stamp,status,payload,reviewer_note in imported:
+            try:
+                entry=json.loads(payload)
+                c=entry.get("case",{})
+            except (ValueError,TypeError):
+                c={}
+            archive+="<div class='case'><b>文件导入 · "+_html_escape(status)+"</b>"
+            archive+="<p class='small'>接收时间（UTC）："+_html_escape(stamp)+" · 来源编号："+_html_escape(source_key[:42])+"</p>"
+            archive+="<p><b>"+_html_escape(c.get("ben_gua",""))+" → "+_html_escape(c.get("bian_gua",""))+"</b></p>"
+            archive+="<details><summary>查看事前研判与后续追记</summary>"
+            archive+="<p>事前："+_html_escape(c.get("before",""))+"</p>"
+            for note in c.get("feedback",[]):
+                archive+="<p>后续 "+_html_escape(note.get("recorded_at",""))+" · "+_html_escape(note.get("result_type",""))+"："+_html_escape(note.get("observations",""))+"</p>"
+            archive+="<p class='small'>这些内容仅为分享者自述，不代表验证过预测有效性。</p></details>"
+            archive+="<form method='post' action='/admin/imported/review'>"
+            archive+="<input type='hidden' name='csrf' value='"+_html_escape(claims["csrf"])+"'>"
+            archive+="<input type='hidden' name='import_id' value='"+_html_escape(import_id)+"'>"
+            archive+="<label>你的审核备注（最多600字）<input type='text' name='reviewer_note' maxlength='600' value='"+_html_escape(reviewer_note)+"'></label>"
+            for action,title in (("pending","待审核"),("approved","收录"),("rejected","暂不收录"),("deleted","删除")):
+                archive+="<button style='margin:3px' type='submit' name='action' value='"+action+"'>"+title+"</button>"
+            archive+="</form></div>"
         return _page("站长控制台","<h1>万象书院 · 站长控制台</h1>"
            + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
               "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
            + error + notice + cards
            + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/#cases'>本机案例交换中心</a></p>"
            + "<form method='post' action='/admin/logout'><input type='hidden' name='csrf' value='"+html.escape(claims["csrf"])+"'><button type='submit'>安全退出站长后台</button></form>"
-           + blocks + table)
+           + intake + archive + blocks + table)
 
     @app.post("/admin/logout")
     async def admin_logout(request:Request):
@@ -511,6 +576,63 @@ def install_gateway(app: FastAPI):
         response=RedirectResponse("/admin/login",status_code=303)
         response.delete_cookie(_COOKIE,path="/")
         return _headers(response)
+
+    @app.post("/admin/import-case")
+    async def owner_import_case(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _bad_request("管理员身份无效",403,back="/admin/login")
+        form=await _import_form(request)
+        if not _owner_csrf_ok(request,form,claims):
+            return _bad_request("导入请求验证失败",403,back="/admin")
+        if not _persistent_case_store():
+            return _bad_request("未连接持久数据库，云端案例导入暂未开放。请先使用本机收案簿。",503,back="/admin")
+        if form.get("reviewed")!="yes":
+            return _bad_request("请先确认已检查隐私与分享同意",422,back="/admin")
+        try:
+            imported_case=parse_shared_case(form.get("share_json",""))
+            raw=json.dumps(imported_case,ensure_ascii=False)
+            case_id=imported_case["id"]
+            existing=_exec("SELECT import_id FROM experience_imported_cases WHERE import_id=?",
+                           (case_id,),get=True)
+            if existing:
+                return _bad_request("这份案例已在云端收案簿，未覆盖既有审核资料",409,back="/admin")
+            _exec("INSERT INTO experience_imported_cases VALUES (?,?,?,?,?,?)",
+                  (case_id,imported_case["source_key"],_now(),"pending",raw,""))
+            return RedirectResponse("/admin",status_code=303)
+        except CaseImportError as error:
+            return _bad_request(str(error),422,back="/admin")
+        except Exception:
+            return _bad_request("云端数据库当前无法写入，案例尚未成功导入",503,back="/admin")
+
+    @app.post("/admin/imported/review")
+    async def owner_review_imported(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _bad_request("管理员身份无效",403,back="/admin/login")
+        form=await _form(request)
+        if not _owner_csrf_ok(request,form,claims):
+            return _bad_request("审核请求验证失败",403,back="/admin")
+        if not _persistent_case_store():
+            return _bad_request("持久数据库尚未连接",503,back="/admin")
+        ident=form.get("import_id","")
+        action=form.get("action","")
+        note=form.get("reviewer_note","")
+        if len(ident)!=64 or any(c not in "0123456789abcdef" for c in ident):
+            return _bad_request("案例编号无效",422,back="/admin")
+        if action not in ("pending","approved","rejected","deleted"):
+            return _bad_request("审核动作无效",422,back="/admin")
+        if not isinstance(note,str) or len(note)>600:
+            return _bad_request("审核备注最多600字",422,back="/admin")
+        try:
+            if action=="deleted":
+                _exec("DELETE FROM experience_imported_cases WHERE import_id=?",(ident,))
+            else:
+                _exec("UPDATE experience_imported_cases SET status=?,reviewer_note=? WHERE import_id=?",
+                      (action,note,ident))
+            return RedirectResponse("/admin",status_code=303)
+        except Exception:
+            return _bad_request("审核记录保存失败",503,back="/admin")
 
     @app.post("/admin/review")
     async def admin_review(request:Request):
@@ -541,11 +663,16 @@ def install_gateway(app: FastAPI):
         try:
             events=_exec("SELECT label,kind,module,created_at FROM experience_events ORDER BY created_at",get=True)
             cases=_exec("SELECT case_id,label,submitted_at,status,payload FROM experience_cases ORDER BY submitted_at",get=True)
+            imported=_exec("SELECT import_id,source_key,imported_at,status,payload,reviewer_note FROM experience_imported_cases ORDER BY imported_at",get=True)
         except Exception:
             return _bad_request("数据库无法导出",503)
         content=json.dumps({"exported_at":_now(),"cases":[{"id":cid,"label":label,"submitted_at":dt,
             "status":status,"case":json.loads(raw)} for cid,label,dt,status,raw in cases],
-            "events":[{"label":a,"kind":b,"module":c,"at":d} for a,b,c,d in events]},
+            "events":[{"label":a,"kind":b,"module":c,"at":d} for a,b,c,d in events],
+            "owner_imported_cases":[{"id":cid,"source_key":source,"imported_at":stamp,
+                 "status":status,"case":json.loads(payload).get("case",{}),
+                 "reviewer_note":note,"independently_verified":False}
+                for cid,source,stamp,status,payload,note in imported]},
             ensure_ascii=False,indent=2)
         return _headers(Response(content=content,media_type="application/json",
             headers={"Content-Disposition":"attachment; filename=wanxiang-experience-backup.json"}))
