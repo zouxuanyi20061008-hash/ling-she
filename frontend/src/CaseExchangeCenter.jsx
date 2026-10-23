@@ -4,6 +4,8 @@ import {parseSharedCase,importToInbox,markInboxCase,removeInboxCase,
 import {inspectCaseEvidence,exportCaseReviewCsv} from './case-review.js'
 import {summarizeCaseInbox,reviewQueueMatch,REVIEW_QUEUES,
   exportSelectedReviewCsv,selectedReport} from './case-batch.js'
+import {COMPARE_DIMENSIONS,conditionGroups,conditionContrast,conditionValue,
+  compareCasePair} from './case-compare.js'
 
 function downloadJson(data,name){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'})
@@ -28,6 +30,10 @@ export default function CaseExchangeCenter({onClose}){
   const [queue,setQueue]=useState('all')
   const [search,setSearch]=useState('')
   const [selectedIds,setSelectedIds]=useState([])
+  const [conditionDimension,setConditionDimension]=useState('ben_gua')
+  const [conditionTarget,setConditionTarget]=useState('')
+  const [cohortOnly,setCohortOnly]=useState(false)
+  const [pairOpen,setPairOpen]=useState(false)
   async function chooseFile(e){
     const file=e.target.files?.[0]
     e.target.value=''
@@ -126,7 +132,14 @@ export default function CaseExchangeCenter({onClose}){
     }catch(err){setError(err.message||'批量审核失败')}
   }
   const summary=summarizeCaseInbox(entries)
+  const groups=conditionGroups(entries,conditionDimension)
+  const activeTarget=groups.some(x=>x.value===conditionTarget)
+    ?conditionTarget:(groups[0]?.value||'')
+  const contrast=activeTarget?conditionContrast(entries,conditionDimension,activeTarget):null
+  const pair=pairOpen&&selectedIds.length===2
+    ?compareCasePair(entries,selectedIds):null
   const shown=entries.filter(x=>(filter==='全部'||x.status===filter)
+    &&(!cohortOnly||conditionValue(x.case,conditionDimension)===activeTarget)
     &&reviewQueueMatch(x,queue)
     &&(!search.trim()||[x.case.ben_gua,x.case.bian_gua,
        x.case.chosen_category,x.case.before,x.review_note]
@@ -139,7 +152,7 @@ export default function CaseExchangeCenter({onClose}){
     unfinished:entries.filter(x=>!inspectCaseEvidence(x.case).has_followup).length,
     needsReview:entries.filter(x=>inspectCaseEvidence(x.case).needs_time_review).length}
   return <main className="academy-case-exchange" aria-label="万象书院本机案例收集与研究">
-    <div className="case-exchange-top"><span>万象书院 · V32 案例共建与批量复盘</span>
+    <div className="case-exchange-top"><span>万象书院 · V33 案例共建与研究对照</span>
       <button type="button" onClick={onClose}>返回书院</button></div>
     <h1>本机案例交换中心</h1>
     <p>朋友从六爻「案例复盘」导出匿名化分享包，再通过微信等方式把 <b>JSON 文件</b>发给你。你在这里导入、审核和备份，不需要体验码或管理员后台。</p>
@@ -172,6 +185,75 @@ export default function CaseExchangeCenter({onClose}){
           <p className="case-batch-footnote">一份案例可能有多次、不同类型的追记，因此标签数量不可相加求“应验率”。尚无任何案例被独立验证。</p>
         </div>
       </div>
+    </section>
+    <section className="case-v33-compare" aria-label="V33 条件对照研究">
+      <h2>V33 · 卦象条件与反例对照</h2>
+      <p>选一个卦象条件，将本机案例分为「符合此条件」与「其他条件」。<strong>两组都会保留未吻合、未决及事实不足的案例。</strong>
+        本功能用于制定后续核验问题，不是自动验证预测规则。</p>
+      <div className="case-v33-controls">
+        <label>研究条件
+          <select aria-label="研究条件" value={conditionDimension} onChange={e=>{
+            setConditionDimension(e.target.value);setConditionTarget('')
+            setCohortOnly(false);setSelectedIds([]);setPairOpen(false)
+          }}>
+            {COMPARE_DIMENSIONS.map(dim=><option value={dim.id} key={dim.id}>{dim.label}</option>)}
+          </select>
+        </label>
+        <label>目标条件值
+          <select aria-label="目标条件值" value={activeTarget} disabled={!groups.length}
+            onChange={e=>{setConditionTarget(e.target.value);setCohortOnly(false)}}>
+            {groups.map(group=><option value={group.value} key={group.value}>{group.value}（{group.total}份）</option>)}
+          </select>
+        </label>
+      </div>
+      {!contrast?<p className="case-v33-empty">收案簿还没有案例。收集案例后，就会在这里显示条件分组与反例。</p>:
+      <>
+        <div className="case-v33-cohorts">
+          {[[('符合：'+activeTarget),contrast.matching],['其他条件',contrast.other]].map(([title,stats])=>
+          <div className="case-v33-cohort" key={title}>
+            <h3>{title}</h3>
+            <strong className="case-v33-big">{stats.total} 份案例</strong>
+            <div className="case-v33-mini"><span>有具体事后自述 <b>{stats.with_followup}</b></span>
+              <span>待补事实 <b>{stats.missing_followup}</b></span>
+              <span>时间待核 <b>{stats.time_needs_review}</b></span>
+              <span>未决自述 <b>{stats.unresolved_cases}</b></span></div>
+            <h4>分享者自述标签（按涉及案例数，可重叠）</h4>
+            <div className="case-v33-labels">
+              {Object.entries(stats.self_reports).map(([label,count])=>
+                <span key={label}>{label}：<b>{count}</b></span>)}
+            </div>
+          </div>)}
+        </div>
+        <p className="case-v33-caution">{contrast.caution} {contrast.description}</p>
+        <div className="case-v33-actions">
+          <button type="button" aria-pressed={cohortOnly} onClick={()=>{
+            setCohortOnly(v=>!v);setFilter('全部');setQueue('all');setSearch('');setSelectedIds([])
+          }}>{cohortOnly?'显示全部条件案例':'在下方只看符合条件的案例'}</button>
+        </div>
+      </>}
+      <div className="case-v33-pair" aria-label="两份案例逐项对照">
+        <h3>两份卦例逐项对照</h3>
+        <p>在下方案例审核簿里勾选恰好两份，再回到这里展开。逐项核对本卦、动爻、日月、事前记录与后续自述。</p>
+        <button type="button" disabled={selectedIds.length!==2}
+          onClick={()=>setPairOpen(open=>!open)}>
+          {pairOpen&&pair?'收起两案对照':'对照已选的两份案例'}（已选 {selectedIds.length} 份）
+        </button>
+        {pair&&<div className="case-v33-pair-detail">
+          <p className="case-v33-caution">{pair.warning}</p>
+          <table><thead><tr><th>观察项</th><th>案例一</th><th>案例二</th></tr></thead>
+          <tbody>{pair.rows.map(row=><tr key={row.label}>
+            <th scope="row">{row.label}</th><td>{row.a}</td><td>{row.b}</td>
+          </tr>)}</tbody></table>
+          {pair.cases.map((item,i)=><details key={item.id}>
+            <summary>查看案例 {i+1} 的原始事前研判和事后自述</summary>
+            <p>事前研判：{item.before||'未提供'}</p>
+            <p>站长备注：{item.notes||'尚未填写'}</p>
+            {(Array.isArray(item.feedback)?item.feedback:[]).map((f,j)=>
+              <p key={j}>{f.result_type||'未标记'}：{f.observations||'未提供后续内容'}</p>)}
+          </details>)}
+        </div>}
+      </div>
+      <p className="case-v33-privacy">所有分组、比较、表格都在本机浏览器计算，不会自动发送私人案例给服务器。样本来自自愿分享，可能存在选择偏差。</p>
     </section>
     <section className="case-exchange-import">
       <h2>导入朋友自愿分享的案例</h2>
@@ -217,7 +299,7 @@ export default function CaseExchangeCenter({onClose}){
           aria-pressed={queue===q.id} onClick={()=>{setQueue(q.id);setSelectedIds([])}}>
           {q.label}</button>)}
       </div>
-      <p className="case-exchange-counter">显示 {shown.length} / {entries.length} 份，当前最多保留 {MAX_INBOX} 份。</p>
+      <p className="case-exchange-counter">显示 {shown.length} / {entries.length} 份，当前最多保留 {MAX_INBOX} 份。{cohortOnly?'（V33 条件筛选已开启）':''}</p>
       {shown.length>0&&<div className="case-batch-selection">
         <label><input type="checkbox" aria-label="全选当前可见案例" checked={allShownSelected}
           onChange={event=>setSelectedIds(current=>event.target.checked

@@ -1091,3 +1091,35 @@ button:disabled{cursor:not-allowed}
 .case-batch-item-select{margin-bottom:8px!important}
 @media(max-width:600px){.case-batch-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 .case-batch-panels{grid-template-columns:1fr}.case-batch-actions button{flex:1 1 130px}}
+
+/* V33: equal-height cohorts, contrast caveats and mobile comparison table */
+.case-v33-compare{border-top:1px solid #c9b799;padding-top:16px;margin-top:23px}
+.case-v33-compare h2{color:#2a563c;font-size:19px}
+.case-v33-compare h3{color:#31533f;font-size:15px;margin:0 0 10px}
+.case-v33-compare h4{color:#4b614d;font-size:12px}
+.case-v33-compare p{line-height:1.8}
+.case-v33-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:13px 0}
+.case-v33-controls label{font-size:12px;font-weight:700;color:#395a42}
+.case-v33-controls select{display:block;width:100%;min-width:0;margin-top:6px;padding:10px;min-height:44px;font-size:13px;color:#254b39;background:#fffdf6;border:1px solid #baa98a}
+.case-v33-cohorts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.case-v33-cohort{padding:14px;border:1px solid #bdac92;background:#fffdf6;min-width:0}
+.case-v33-big{font-size:24px;color:#315942}
+.case-v33-mini{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:9px 0}
+.case-v33-mini span{font-size:11px;color:#624e3c;background:#eee8d9;padding:6px}
+.case-v33-mini b{color:#2e624a}
+.case-v33-labels{display:flex;flex-wrap:wrap;gap:6px}
+.case-v33-labels span{background:#edf1e7;border:1px solid #b9c4ad;padding:4px 7px;font-size:11px;color:#35543d}
+.case-v33-caution{border-left:3px solid #9b7f4f;background:#f5ead8;color:#705534;padding:10px;font-size:12px}
+.case-v33-privacy{font-size:11px!important;color:#6f634c;margin-top:12px}
+.case-v33-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.case-v33-actions button[aria-pressed=true]{background:#735739;border-color:#735739}
+.case-v33-pair{margin-top:16px;padding:13px;background:#f2ede0;border:1px solid #cfbfa6}
+.case-v33-pair button:disabled{opacity:.47}
+.case-v33-pair-detail{margin-top:12px}
+.case-v33-pair-detail table{background:#fffdf7;table-layout:fixed;width:100%}
+.case-v33-pair-detail th,.case-v33-pair-detail td{overflow-wrap:anywhere;font-size:12px;border:1px solid #d3c5ad;padding:8px}
+.case-v33-pair-detail details{margin:10px 0;padding:10px;background:#fffdf7}
+.case-v33-pair-detail details p{white-space:pre-wrap;overflow-wrap:anywhere}
+.case-v33-empty{padding:10px;background:#ece6d8}
+@media(max-width:640px){.case-v33-controls,.case-v33-cohorts{grid-template-columns:1fr}
+.case-v33-cohort{padding:11px}.case-v33-mini{grid-template-columns:1fr 1fr}}
