@@ -263,6 +263,9 @@ def six_yao_interpret(req: SixYaoReadRequest, request: Request):
     ]
     return {"chart":chart, "interpretation":_call_llm(request,req.ai_model,messages)}
 
+from .experience_gateway import install_gateway
+install_gateway(app)
+
 WEB_DIR = Path(__file__).resolve().parent / "web"
 if WEB_DIR.is_dir() and (WEB_DIR/"index.html").is_file():
     app.mount("/",StaticFiles(directory=WEB_DIR,html=True),name="web")
