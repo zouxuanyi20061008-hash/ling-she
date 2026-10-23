@@ -25,6 +25,7 @@ from urllib.parse import parse_qs
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from .experience_case_archive import parse_shared_case, CaseImportError
+from .experience_case_research import summarize_imported_cases
 
 _COOKIE = "wanxiang_session"
 _LOGIN_COOKIE = "wanxiang_login_proof"
@@ -514,6 +515,31 @@ def install_gateway(app: FastAPI):
         response.delete_cookie(_LOGIN_COOKIE,path="/")
         return _headers(response)
 
+    @app.get("/admin/research-summary")
+    async def admin_research_summary(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _headers(JSONResponse({"detail":"需要站长身份验证"},status_code=401))
+        try:
+            rows=_exec("SELECT status,payload FROM experience_imported_cases "
+                       "ORDER BY imported_at DESC LIMIT 1000",get=True)
+            cases=[]
+            for status,payload in rows:
+                try:
+                    record=json.loads(payload)
+                    cases.append((status,record.get("case",{})))
+                except (ValueError,TypeError,AttributeError):
+                    continue
+            summary=summarize_imported_cases(cases)
+            summary["max_scanned"]=1000
+            summary["partial_scan"]=len(rows)>=1000
+            summary["database_state"]=_storage_status()["state"]
+            return _headers(JSONResponse(summary))
+        except Exception:
+            return _headers(JSONResponse(
+                {"detail":"案例研究统计暂不可用，请检查数据库连接；不会据此认定记录被删除"},
+                status_code=503))
+
     @app.get("/admin/storage-status")
     async def admin_storage_status(request:Request):
         # This endpoint is admin-only (also guarded by middleware).
@@ -615,7 +641,7 @@ def install_gateway(app: FastAPI):
            + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
               "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
            + error + notice + cards
-           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
+           + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/research-summary'>查看站长导入案例统计（JSON）</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
            + "<form method='post' action='/admin/logout'><input type='hidden' name='csrf' value='"+html.escape(claims["csrf"])+"'><button type='submit'>安全退出站长后台</button></form>"
            + intake + archive + blocks + table)
 
