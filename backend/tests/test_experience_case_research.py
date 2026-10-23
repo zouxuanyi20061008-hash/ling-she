@@ -128,6 +128,7 @@ def test_research_html_and_batch_review_are_owner_only_and_safe(owner,monkeypatc
     html=owner.get("/admin/research")
     assert html.status_code==200
     assert "案例统计与复盘" in html.text
+    assert "临时 SQLite" in html.text
     assert "不代表独立核验或预测准确率" in html.text
     csrf=owner.get("/api/experience/session").json()["csrf"]
     monkeypatch.setattr(gate,"_persistent_case_store",lambda:True)
