@@ -264,6 +264,7 @@ def _case_research_report():
     summary=summarize_case_archive(visitor_cases,imported_cases,
         visitor_status_rows=visitor_status,imported_status_rows=imported_status)
     summary["max_scanned_per_source"]=1000
+    summary["max_scanned"]=1000
     summary["partial_scan"]=summary["source_counts"]["visitor_submissions"]>len(visitor_raw) or summary["source_counts"]["owner_uploaded_case_files"]>len(imported_raw)
     summary["database_state"]=_storage_status()["state"]
     return summary
