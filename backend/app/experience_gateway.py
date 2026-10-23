@@ -26,6 +26,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from .experience_case_archive import parse_shared_case, CaseImportError
 from .experience_case_research import summarize_imported_cases, summarize_case_archive
+from .experience_case_comparison import research_contrast
 
 _COOKIE = "wanxiang_session"
 _LOGIN_COOKIE = "wanxiang_login_proof"
@@ -269,6 +270,36 @@ def _case_research_report():
     summary["database_state"]=_storage_status()["state"]
     return summary
 
+def _case_contrast_report(dimension,value):
+    # Read-only aggregated report; exclude raw questions, case ids and reviewer text.
+    import_rows=_exec("SELECT status,payload FROM experience_imported_cases "
+                      "ORDER BY imported_at DESC LIMIT 1000",get=True)
+    visitor_rows=_exec("SELECT status,payload FROM experience_cases "
+                       "ORDER BY submitted_at DESC LIMIT 1000",get=True)
+    rows=[]
+    for status,payload in visitor_rows:
+        try:
+            case=json.loads(payload)
+            if isinstance(case,dict):
+                rows.append((status,case))
+        except (TypeError,ValueError):
+            pass
+    for status,payload in import_rows:
+        try:
+            imported=json.loads(payload)
+            case=imported.get("case") if isinstance(imported,dict) else None
+            if isinstance(case,dict):
+                rows.append((status,case))
+        except (TypeError,ValueError):
+            pass
+    result=research_contrast(rows,dimension,value)
+    result["source_scope"]="server visitor submissions + owner-imported cases only"
+    result["max_scanned_per_source"]=1000
+    result["partial_scan"]=(len(visitor_rows)>=1000 or len(import_rows)>=1000)
+    result["database_state"]=_storage_status()["state"]
+    return result
+
+
 def _batch_review_items(items,status):
     if status not in ("pending","approved","rejected"):
         raise ValueError("审核状态无效")
@@ -337,6 +368,17 @@ def _research_summary_html(summary):
     if summary["partial_scan"]:
         out+="由于记录超过样本上限，内容完整度与反馈分布不包含较早的全部案例。"
     out+="</p><p class='warn'>"+_html_escape(summary["notice"])+"</p>"
+    out+="<section class='card'><h2>V33 · 条件对照研究（只读汇总）</h2>"
+    out+="<p>只对照两组案例的数量和自述类别，不读取或展示朋友的完整私人卦问。</p>"
+    out+="<form method='get' action='/admin/research-contrast'>"
+    out+="<label>比较条件<select name='dimension'>"
+    for key,label in (("ben_gua","本卦"),("bian_gua","变卦"),
+        ("month_branch","月建"),("day_ganzhi","日辰"),
+        ("moving_count","动爻数量"),("moving_lines","动爻位置组合"),
+        ("selected_position","研习主爻"),("chosen_category","研习类别")):
+        out+="<option value='"+key+"'>"+label+"</option>"
+    out+="</select></label><label>条件值<input type='text' name='value' maxlength='100' required placeholder='例：水天需 或 2爻'></label>"
+    out+="<button type='submit'>查看两组汇总（JSON）</button></form></section>"
     out+="<p><a href='/admin'>返回站长后台</a> · <a href='/admin/research-summary'>查看 JSON</a> · <a href='/admin/export'>导出备份</a></p>"
     return out
 
@@ -624,6 +666,22 @@ def install_gateway(app: FastAPI):
                           "csrf":secrets.token_urlsafe(26),"iat":int(time.time())})
         response.delete_cookie(_LOGIN_COOKIE,path="/")
         return _headers(response)
+
+    @app.get("/admin/research-contrast")
+    async def admin_research_contrast(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _headers(JSONResponse({"detail":"需要站长身份验证"},status_code=401))
+        dimension=request.query_params.get("dimension","")
+        value=request.query_params.get("value","")
+        try:
+            return _headers(JSONResponse(_case_contrast_report(dimension,value)))
+        except ValueError:
+            return _headers(JSONResponse({"detail":"对照条件无效"},status_code=422))
+        except Exception:
+            return _headers(JSONResponse(
+                {"detail":"对照统计暂不可用，请检查数据库；这不代表案例被删除"},
+                status_code=503))
 
     @app.get("/admin/research-summary")
     async def admin_research_summary(request:Request):
