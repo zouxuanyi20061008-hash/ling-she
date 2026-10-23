@@ -95,7 +95,7 @@ it('移动端收案台可按证据队列筛选、选择、批量退回待审核'
   fireEvent.click(screen.getByRole('button',{name:'时间需核'}))
   expect(screen.getByText('显示 1 / 4 份，当前最多保留 40 份。')).toBeTruthy()
   fireEvent.click(screen.getByLabelText('全选当前可见案例'))
-  expect(screen.getByText(/已选 1 份/)).toBeTruthy()
+  expect(screen.getByText(/已选 1 份，其中/)).toBeTruthy()
   fireEvent.click(screen.getByRole('button',{name:'批量暂不收录'}))
   expect(readCaseInbox().find(x=>x.fingerprint==='time-error').status).toBe('暂不收录')
   expect(readCaseInbox()).toHaveLength(4)
