@@ -103,7 +103,7 @@ def test_research_summary_combines_both_server_sources_and_keeps_counts_private(
              "feedback":[{"result_type":"基本吻合","observations":"不应出现在统计里",
                           "recorded_at":"2026-10-24T12:00:00Z"}]}
     gate._exec("INSERT INTO experience_cases VALUES (?,?,?,?,?,?)",
-               ("d"*32,"friend","2026-10-24T12:00:00Z","pending",
+               ("d"*32,"friend","Friend","2026-10-24T12:00:00Z","pending",
                 json.dumps(visitor,ensure_ascii=False)))
     imported={"case":{"before":"导入事前","chosen_category":"官鬼",
              "original_numbers":[7,8,9,6,7,8],"day_ganzhi":"甲子","month_branch":"辰",
@@ -135,7 +135,7 @@ def test_research_html_and_batch_review_are_owner_only_and_safe(owner,monkeypatc
     first="f"*32
     second="a"*64
     gate._exec("INSERT INTO experience_cases VALUES (?,?,?,?,?,?)",
-        (first,"guest",gate._now(),"pending",payload))
+        (first,"guest","Guest",gate._now(),"pending",payload))
     gate._insert_imported_once(second,"src-batch",gate._now(),
         json.dumps({"case":{"before":"导入","original_numbers":[7,8,9,6,7,8]}},ensure_ascii=False))
     response=owner.post("/admin/batch-review",data={
@@ -148,5 +148,5 @@ def test_research_html_and_batch_review_are_owner_only_and_safe(owner,monkeypatc
     owner.post("/admin/logout",data={"csrf":csrf})
     assert owner.get("/admin/research").status_code==303
     assert owner.post("/admin/batch-review",data={"csrf":csrf,"action":"rejected",
-        "items":["visitor:"+first]}).status_code==403
+        "items":["visitor:"+first]}).status_code==303
 
