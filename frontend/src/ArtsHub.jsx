@@ -3,9 +3,9 @@ import './academy.css'
 
 export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
-   brief:'一字一象，万物皆可起卦。',detail:'体用生克 · 先后天八卦 · 本互变卦',status:'完整排盘',group:'象数易'},
+   brief:'一字一象，万物皆可起卦。',detail:'体用生克 · 先后天八卦 · 本互变卦',status:'可实际排盘',group:'象数易'},
   {id:'liuyao',name:'六爻纳甲',title:'六爻铜钱',symbol:'☰',en:'LIUYAO',tone:'copper',
-   brief:'三钱在掌，六掷自下而上。',detail:'三钱六掷 · 京房八宫 · 世应六亲 · 六神旬空',status:'纳甲装卦',group:'卜筮'},
+   brief:'三钱在掌，六掷自下而上。',detail:'三钱六掷 · 京房八宫 · 世应六亲 · 六神旬空',status:'排盘继续完善',group:'卜筮'},
   {id:'qimen',name:'奇门遁甲',title:'九宫遁甲',symbol:'九',en:'QIMEN DUNJIA',tone:'night',
    brief:'九宫为盘，观察时空的结构。',detail:'洛书九宫 · 方位 · 八门认识',status:'互动课堂',group:'三式'},
   {id:'bazi',name:'四柱八字',title:'干支四柱',symbol:'干',en:'FOUR PILLARS',tone:'amber',
@@ -132,14 +132,14 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               <button type="button" className="atlas-primary atlas-start" onClick={onStart}>
                 开始研习 <span aria-hidden="true">→</span>
               </button>
-              <button type="button" className="atlas-ghost" onClick={onLearn}>
-                零基础 · 先学起卦 ↗
+              <button type="button" className="atlas-ghost" onClick={onStudy}>
+                查阅典籍 · 藏经阁 ↗
               </button>
             </div>
             <div className="atlas-entry-steps" aria-label="学习路径">
-              <span><b>壹</b> 学算卦</span><i/>
-              <span><b>贰</b> 亲手起卦</span><i/>
-              <span><b>叁</b> 读盘明理</span>
+              <span><b>壹</b> 选一门</span><i/>
+              <span><b>贰</b> 排全盘</span><i/>
+              <span><b>叁</b> 参诸象</span>
             </div>
           </div>
           <OrbitArtwork/>
@@ -154,7 +154,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
             <div>
               <span className="atlas-eyebrow">第二页 · 选一门术，入一重境</span>
               <h1>择术入境</h1>
-              <p>梅花、六爻、奇门、八字……各有其法。选定一门，便进入独立的起卦或研习空间。</p>
+              <p>八门各循其法：梅花、六爻已开放实际排盘；其他门类按各自核心算法逐步开发，未完成者只展示研习入口。</p>
             </div>
             <span className="atlas-choose-stamp" aria-hidden="true">择<br/>术</span>
           </div>
