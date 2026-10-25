@@ -1,0 +1,33 @@
+/* Functional full-palace six-line chart. Mobile horizontal scroll does not obscure underlying data. */
+.six-full-chart{background:#fcf8ed;border:1px solid #cbbca0;margin:15px 0 20px;padding:clamp(10px,2.5vw,19px);color:#355743}
+.six-full-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #d6c8ad;padding-bottom:12px}
+.six-full-head small{font-size:11px;color:#866d4d;letter-spacing:.08em}
+.six-full-head h3{font-size:19px;color:#29513c;margin:4px 0;font-family:serif}
+.six-full-seal{font-size:12px;font-weight:700;background:#dbe9d9;color:#36654c;padding:8px 12px}
+.six-full-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:13px 0}
+.six-full-summary div{min-width:0;background:#ece7d9;border:1px solid #d8ccb5;padding:9px 10px}
+.six-full-summary small{font-size:10px;color:#837457;display:block}
+.six-full-summary strong{font-size:13px;color:#315a43;display:block;margin-top:5px;overflow-wrap:anywhere}
+.six-full-calendar{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.six-full-calendar span{font-size:11px;color:#41604b;background:#eaf0e7;border:1px solid #ccd8c8;padding:6px 8px}
+.six-full-scrollhint{font-size:11px;color:#8a755c;margin:10px 0 8px;line-height:1.65}
+.six-full-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.six-full-scroll table{width:100%;min-width:855px;border-collapse:collapse;font-size:11px;color:#3a5745}
+.six-full-scroll th,.six-full-scroll td{text-align:left;vertical-align:middle;padding:11px 9px;border-bottom:1px solid #ded4c1;white-space:nowrap}
+.six-full-scroll thead{background:#315d47;color:#fff5dc}
+.six-full-scroll thead th{color:inherit}
+.six-full-scroll tbody th{color:#375d45}
+.six-full-scroll tbody tr:nth-child(even){background:#f0eddf}
+.six-full-scroll tbody tr.six-full-moving{background:#f7e9d9}
+.six-full-scroll tbody tr.six-full-moving th small{font-size:10px;color:#a15132}
+.six-full-scroll td strong{font-weight:700;color:#376a4d}
+.six-full-scroll td small{display:block;font-size:10px;color:#896f50}
+.six-full-stroke{display:flex;align-items:center;width:70px;height:9px;gap:10px;margin:0 0 5px}
+.six-full-stroke i{display:block;background:#305d45;flex:1;height:8px}
+.six-full-stroke.is-moving i{background:#a96740}
+.six-full-caution{font-size:11px;color:#765f43;line-height:1.75;margin:13px 0 0;padding:8px 10px;background:#f1e5d2;border-left:3px solid #a98b5b}
+.six-full-missing{font-size:12px;color:#955940;background:#fae9dd;border-left:3px solid #a96945;padding:11px}
+@media(max-width:620px){.six-full-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.six-full-head h3{font-size:17px}
+.six-full-scroll{box-shadow:inset -5px 0 6px -7px #7c624e}
+}
