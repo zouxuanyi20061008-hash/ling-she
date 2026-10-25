@@ -23,8 +23,8 @@ function TrigramBits({bits}){
   </span>
 }
 
-export default function LearnCastingStage({onBack,onPractice}){
-  const [method,setMethod]=useState('liuyao')
+export default function LearnCastingStage({onBack,onPractice,initialMethod='liuyao'}){
+  const [method,setMethod]=useState(initialMethod==='meihua'?'meihua':'liuyao')
   const [faces,setFaces]=useState([2,3,2])
   const [numbers,setNumbers]=useState([])
   const [upper,setUpper]=useState('3')
