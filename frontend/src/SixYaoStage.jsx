@@ -1,5 +1,6 @@
 import {useEffect,useRef,useState} from 'react'
 import './academy.css'
+import SixYaoFullChart from './SixYaoFullChart.jsx'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 import {shareCaseFromArchive} from './case-exchange.js'
 import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
@@ -1888,6 +1889,17 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
       setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
     },800)
   }
+  function undoLastLine(){
+    if(!lines.length||busy||isSpinning)return
+    clearTimeout(timer.current)
+    requestNumber.current+=1
+    setCalendarBusy(false)
+    setIsSpinning(false)
+    setLines(old=>old.slice(0,-1))
+    setChart(null);setAnswer('');setError('')
+    setFocusLiugin('');setStudyPosition(null);setRoleView('用神')
+    setReviewStage('calendar');setStudioView('casting')
+  }
   function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar');setStudioView('casting')}
   function goReviewStep(target){
     if(calendarBusy)return
@@ -1958,7 +1970,9 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
           <p className="academy-subtitle">也可手动输入自己掷出的爻态</p>
           <div className="academy-manual">{[6,7,8,9].map(n=><button key={n} onClick={()=>addLine(n)} disabled={lines.length===6||isSpinning}><b>{n}</b><small>{K[n].name}</small></button>)}</div>
           <p className="academy-help">三字为老阴6；一背两字为少阳7；两背一字为少阴8；三背为老阳9。老阴、老阳为动爻。</p>
-          <div className="academy-under-actions"><button type="button" onClick={restart}>重新起卦 ↻</button>
+          <div className="academy-under-actions">
+            <button type="button" onClick={undoLastLine} disabled={!lines.length||busy||isSpinning}>撤回最后一爻 ↶</button>
+            <button type="button" onClick={restart}>重新起卦 ↻</button>
             <button type="button" onClick={onLearn}>零基础三钱六掷教学 ↗</button>
             <button type="button" onClick={onStudy}>六爻典籍与进阶课 ↗</button></div>
           {calendarBusy&&<p className="liuyao-cast-status" role="status">六爻已齐，正在排盘。原始爻数已保留，请勿重复起卦。</p>}
@@ -1984,6 +1998,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             <p className="liuyao-workbench-lead">研判台 · 先看本卦与之卦，再选下方一个步骤。想修改六爻，可返回「起卦台」。</p>
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
+            <SixYaoFullChart chart={chart}/>
             <nav className="review-flow-nav" ref={reviewNavRef} aria-label="六爻五步研判页面">
               {REVIEW_STEPS.map((step,i)=>{
                 const state=chart.review_flow?.stages?.[i]?.status
