@@ -1,0 +1,87 @@
+/* Beginner casting workshop: clear instructional hierarchy and mobile-first interactions. */
+.learn-casting-page{min-height:100vh;background:#eee8d9;color:#284635;padding:12px}
+.learn-casting-shell{max-width:1100px;margin:0 auto}
+.learn-casting-page button{font:inherit;cursor:pointer}
+.learn-casting-page button:disabled{opacity:.46;cursor:not-allowed}
+.learn-casting-page h1,.learn-casting-page h2,.learn-casting-page h3{color:#294d39}
+.learn-casting-page p{line-height:1.76}
+.learn-casting-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:#e2dccb;border:1px solid #c3b496;font-size:12px}
+.learn-casting-nav span{font-weight:700;color:#5a563b}
+.learn-casting-nav button,.learn-casting-footer button{padding:9px 12px;border:1px solid #486b51;background:#fffaf0;color:#2c5a42;min-height:42px}
+.learn-casting-hero{margin:13px 0;padding:clamp(20px,4vw,42px);background:linear-gradient(125deg,#224e3d,#3a7159);color:#f9f0d9;border:1px solid #436b57}
+.learn-casting-hero small{display:block;color:#ead9ac;letter-spacing:2px}
+.learn-casting-hero h1{font-family:serif;font-size:clamp(27px,5vw,42px);margin:12px 0;color:#fff4db}
+.learn-casting-hero p{font-size:14px;max-width:730px;color:#f1e8d5}
+.learn-casting-basics,.learn-casting-course,.learn-casting-trigrams{padding:clamp(16px,3vw,30px);background:#faf6eb;border:1px solid #cfc0a7;margin:12px 0}
+.learn-casting-page h2{font-family:serif;font-size:clamp(20px,3vw,27px);margin:0 0 13px}
+.learn-casting-page h3{font-size:17px;margin:0 0 8px}
+.learn-casting-foundations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.learn-casting-foundations article{background:#eee9dc;border:1px solid #d3c5aa;padding:15px}
+.learn-casting-foundations h3{margin:8px 0}
+.learn-casting-foundations p,.learn-casting-source{font-size:12px;color:#645742}
+.learn-basic-glyph{font-size:25px;color:#37674d;font-weight:800;white-space:nowrap}
+.learn-casting-source{background:#f0e5d2;border-left:3px solid #8f734c;padding:11px;margin-top:14px}
+.learn-casting-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.learn-casting-tabs button{padding:11px 15px;min-height:44px;background:#f3ead8;border:1px solid #bdac8f;color:#365940}
+.learn-casting-tabs button[aria-selected=true]{background:#2b5e43;color:white;border-color:#2b5e43}
+.learn-casting-practice{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px}
+.learn-casting-instructions,.learn-casting-worked{padding:17px;background:#f3eee2;border:1px solid #d1c1a5;min-width:0}
+.learn-casting-instructions>p,.learn-casting-worked>p{font-size:13px}
+.learn-three-coins{display:flex;gap:11px;flex-wrap:wrap;margin:15px 0}
+.learn-three-coins button{background:#fffbf1;border:1px solid #bfa882;padding:12px;min-width:80px;display:grid;justify-items:center;gap:7px;color:#4c4a32}
+.learn-three-coins button[aria-pressed=true]{border-color:#a45d2d;background:#fae5d0}
+.learn-coin-round{display:grid;place-items:center;width:48px;height:48px;border:3px double #98653e;border-radius:50%;background:#efd6a9;color:#684622;font-size:19px;font-weight:800}
+.learn-three-coins small{font-size:11px}
+.learn-line-result{background:#e0eadd;padding:13px;border-left:3px solid #4a7a57}
+.learn-line-result b{font-size:17px;color:#28573d}
+.learn-line-result p{font-size:12px;margin:6px 0 0}
+.learn-casting-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.learn-casting-actions button,.learn-casting-finished button,.learn-plum-steps button{border:1px solid #2d5f43;background:#2d5f43;color:#fff6e8;min-height:44px;padding:10px 13px;font-size:12px}
+.learn-casting-actions button.quiet,.learn-casting-prompt button.quiet{background:#fdf8ed;color:#315b44;border:1px solid #aab6a1;padding:10px 12px}
+.learn-casting-tip{font-size:12px;color:#6f5d42}
+.learn-recorded-lines{display:grid;gap:5px}
+.learn-recorded-line{display:grid;grid-template-columns:44px 42px 1fr;align-items:center;gap:9px;font-size:12px;padding:7px;background:#fffaf0;border:1px solid #dacbb2}
+.learn-recorded-line strong{font-size:16px;color:#315c42}
+.learn-casting-finished{margin-top:15px;border-top:1px solid #b9af9b;padding-top:12px}
+.learn-casting-finished h4{margin:0 0 10px;font-size:15px}
+.learn-two-hex{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.learn-two-hex>div{background:#fffcf2;border:1px solid #cfc1a7;padding:12px;min-width:0}
+.learn-two-hex b{display:block;font-size:13px;color:#315b41}
+.learn-two-hex p{font-size:11px;color:#64543f}
+.learn-line-stack{margin:12px 0;display:grid;gap:6px}
+.learn-line-row{display:grid;grid-template-columns:25px minmax(60px,1fr) 27px;align-items:center;gap:7px}
+.learn-line-pos,.learn-line-row small{font-size:10px;color:#7e6b4b}
+.learn-line-symbol{display:flex;height:8px;gap:12px;align-items:stretch}
+.learn-line-symbol i,.learn-tri-row i{display:block;background:#355f47;flex:1;min-width:0}
+.learn-line-row.is-moving .learn-line-symbol i{background:#ab613e}
+.learn-line-row.is-moving small{color:#9a4a28;font-weight:700}
+.learn-plum-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:13px 0}
+.learn-plum-inputs label{font-size:12px;font-weight:700;color:#37553e}
+.learn-plum-inputs input{display:block;width:100%;margin-top:6px;min-height:44px;padding:9px;font-size:16px;background:#fffaf1;color:#304b37;border:1px solid #ab9d83}
+.learn-plum-steps>p{padding:8px 10px;background:#fffaf1;border-left:2px solid #85a089;font-size:12px;margin:7px 0}
+.learn-casting-error{color:#8b3829;font-size:12px;background:#f5ded7;padding:9px}
+.learn-casting-prompt{padding:14px;background:#fffcf2;font-size:13px}
+.learn-casting-trigrams>p{font-size:13px}
+.learn-trigram-layout{display:grid;grid-template-columns:1.15fr 1fr;gap:15px}
+.learn-trigram-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.learn-trigram-options button{background:#eee8d9;border:1px solid #bdaf94;display:grid;gap:6px;place-items:center;padding:10px;color:#34553d;min-height:80px}
+.learn-trigram-options button strong{font-size:29px}
+.learn-trigram-options button span{font-size:12px}
+.learn-trigram-options button[aria-pressed=true]{background:#d6e3d4;border-color:#396c4c}
+.learn-trigram-detail{background:#f2ead9;border:1px solid #c4b497;padding:18px}
+.learn-trigram-detail>span{font-size:12px;color:#846b46}
+.learn-trigram-detail h3{margin:10px 0 4px}
+.learn-trigram-detail p{font-size:12px;margin:6px 0}
+.learn-trigram-art{display:flex;align-items:center;gap:15px;margin:10px 0}
+.learn-trigram-art>strong{font-size:45px;color:#37644a}
+.learn-tri-bits{display:grid;gap:6px;width:95px}
+.learn-tri-row{display:flex;gap:11px;height:9px}
+.learn-casting-footer{padding:18px;margin:12px 0;background:#e6e0ce;text-align:center}
+.learn-casting-footer p{max-width:780px;margin:0 auto 13px;font-size:12px}
+@media(max-width:720px){.learn-casting-page{padding:6px}.learn-casting-practice,.learn-trigram-layout{grid-template-columns:1fr}
+.learn-casting-foundations{grid-template-columns:1fr}.learn-casting-nav{flex-wrap:wrap}.learn-casting-nav span{order:-1;flex-basis:100%;text-align:center}
+.learn-trigram-options button{min-height:70px}.learn-trigram-options button strong{font-size:25px}
+.learn-two-hex{gap:7px}.learn-two-hex>div{padding:8px}
+.learn-line-row{grid-template-columns:22px minmax(35px,1fr) 25px;gap:4px}
+.learn-line-symbol{gap:6px}
+}
