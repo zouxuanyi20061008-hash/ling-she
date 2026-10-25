@@ -93,7 +93,7 @@ function MethodCard({method,onSelect}) {
   </button>
 }
 
-export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,
+export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onLearn,
   activeGroup='全部',setActiveGroup,page=0,setPage}) {
   const startTouch=useRef(null)
   const visible=useMemo(
@@ -132,14 +132,14 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,
               <button type="button" className="atlas-primary atlas-start" onClick={onStart}>
                 开始研习 <span aria-hidden="true">→</span>
               </button>
-              <button type="button" className="atlas-ghost" onClick={onStudy}>
-                进入藏经阁 ↗
+              <button type="button" className="atlas-ghost" onClick={onLearn}>
+                零基础 · 先学起卦 ↗
               </button>
             </div>
             <div className="atlas-entry-steps" aria-label="学习路径">
-              <span><b>壹</b> 择术</span><i/>
-              <span><b>贰</b> 动手</span><i/>
-              <span><b>叁</b> 读典</span>
+              <span><b>壹</b> 学算卦</span><i/>
+              <span><b>贰</b> 亲手起卦</span><i/>
+              <span><b>叁</b> 读盘明理</span>
             </div>
           </div>
           <OrbitArtwork/>
@@ -192,7 +192,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,
           </nav>
           <div className="atlas-choice-help">
             <span>梅花与六爻可实际排盘，其余门类逐步开放。尚未完成的算法不冒充已实现。</span>
-            <button type="button" onClick={onStudy}>不知从何学起？先入藏经阁 ↗</button>
+            <button type="button" onClick={onLearn}>第一次算卦？先学六爻与梅花基本操作 ↗</button>
           </div>
         </section>
       }

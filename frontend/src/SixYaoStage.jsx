@@ -1807,7 +1807,7 @@ function ReviewReport({chart,question}) {
   </section>
 }
 
-export default function SixYaoStage({onBack,onStudy,apiConfig}) {
+export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   const [coins,setCoins]=useState([2,3,2])
   const [lines,setLines]=useState([])
   const [isSpinning,setIsSpinning]=useState(false)
@@ -1958,7 +1958,9 @@ export default function SixYaoStage({onBack,onStudy,apiConfig}) {
           <p className="academy-subtitle">也可手动输入自己掷出的爻态</p>
           <div className="academy-manual">{[6,7,8,9].map(n=><button key={n} onClick={()=>addLine(n)} disabled={lines.length===6||isSpinning}><b>{n}</b><small>{K[n].name}</small></button>)}</div>
           <p className="academy-help">三字为老阴6；一背两字为少阳7；两背一字为少阴8；三背为老阳9。老阴、老阳为动爻。</p>
-          <div className="academy-under-actions"><button type="button" onClick={restart}>重新起卦 ↻</button><button type="button" onClick={onStudy}>学六爻原理 ↗</button></div>
+          <div className="academy-under-actions"><button type="button" onClick={restart}>重新起卦 ↻</button>
+            <button type="button" onClick={onLearn}>零基础三钱六掷教学 ↗</button>
+            <button type="button" onClick={onStudy}>六爻典籍与进阶课 ↗</button></div>
           {calendarBusy&&<p className="liuyao-cast-status" role="status">六爻已齐，正在排盘。原始爻数已保留，请勿重复起卦。</p>}
           {error&&<div className="liuyao-cast-error" role="alert">
             <p>{error}</p>

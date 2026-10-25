@@ -6,10 +6,11 @@ import SixYaoStage from './SixYaoStage.jsx'
 import KnowledgeStage from './KnowledgeStage.jsx'
 import StudyHall from './StudyHall.jsx'
 import CaseExchangeCenter from './CaseExchangeCenter.jsx'
+import LearnCastingStage from './LearnCastingStage.jsx'
 import './style.css'
 import './theme-refresh.css'
 
-const VALID_ROUTES=new Set(['home','choose','library','cases',...ARTS.map(a=>a.id)])
+const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...ARTS.map(a=>a.id)])
 function routeFromUrl(){
   const route=window.location.hash.slice(1)
   return VALID_ROUTES.has(route)?route:'home'
@@ -92,27 +93,29 @@ function Academy(){
       {experience.role==='admin'&&<a href="/admin">管理后台 ↗</a>}
       <button type="button" onClick={logoutExperience}>退出体验</button>
     </div>}
-    {(mode==='home'||mode==='choose')&&<div className="case-exchange-quick-entry">
-      <button type="button" onClick={()=>navigate('cases')}>案例交换中心 · 收集朋友案例 ↗</button>
+    {mode==='choose'&&<div className="case-exchange-quick-entry">
+      <button type="button" onClick={()=>navigate('cases')}>已有研究案例？进入案例交换中心 ↗</button>
     </div>}
-    {mode==='cases'?<CaseExchangeCenter onClose={()=>navigate('choose')}/>:
+    {mode==='learn'?<LearnCastingStage onBack={()=>goBackTo('choose')}
+      onPractice={next=>navigate(next)}/>:
+    mode==='cases'?<CaseExchangeCenter onClose={()=>navigate('choose')}/>:
     (mode==='home'||mode==='choose')?
       <ArtsHub screen={mode}
         onStart={()=>navigate('choose')}
         onBack={()=>goBackTo('home')}
         onSelect={next=>navigate(next)}
-        onStudy={()=>navigate('library')}
+        onStudy={()=>navigate('library')} onLearn={()=>navigate('learn')}
         activeGroup={activeGroup} setActiveGroup={setActiveGroup}
         page={choosePage} setPage={setChoosePage}/>:
       mode==='library'?
-      <StudyHall onClose={closeLibrary}
+      <StudyHall onClose={closeLibrary} onPractice={()=>navigate('learn')}
         apiKey={personalApiKey} setApiKey={setPersonalApiKey}
         aiModel={aiModel} setAiModel={setAiModel}
         accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>:
       mode==='meihua'?
-      <App onBack={()=>goBackTo('choose')} onOpenStudy={()=>navigate('library')} apiConfig={config}/>:
+      <App onBack={()=>goBackTo('choose')} onOpenStudy={()=>navigate('library')} onLearn={()=>navigate('learn')} apiConfig={config}/>:
       mode==='liuyao'?
-      <SixYaoStage onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')} apiConfig={config}/>:
+      <SixYaoStage onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')} onLearn={()=>navigate('learn')} apiConfig={config}/>:
       <KnowledgeStage mode={mode} onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')}/>}
   </>
 }

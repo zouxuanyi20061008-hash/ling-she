@@ -104,7 +104,7 @@ function Locus({view,method,index,onClose,onLobby,onSection}){
   </header>
 }
 
-export default function StudyHall({onClose,apiKey,setApiKey,aiModel,setAiModel,accessCode,setAccessCode}){
+export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,setAiModel,accessCode,setAccessCode}){
   const [view,setView]=useState('lobby')
   const [method,setMethod]=useState('meihua')
   const [index,setIndex]=useState(0)
@@ -215,6 +215,7 @@ export default function StudyHall({onClose,apiKey,setApiKey,aiModel,setAiModel,a
               </button>)}
             </div>
             <p className="library-lobby-foot">点选一阁进入专属页面；每一章节、每一节课和每一道练习都能独立翻页。</p>
+            <button className="library-action" type="button" onClick={onPractice}>先动手练起卦：六爻与梅花零基础课 →</button>
           </section>}
 
           {['bookshelf','courses','quizmenu'].includes(view)&&<section className="library-directory">

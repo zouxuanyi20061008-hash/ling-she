@@ -280,7 +280,7 @@ function ManualDialog({ problem, draft, setDraft, error, onClose, onConfirm, bus
   </div>
 }
 
-export default function App({onBack,onOpenStudy,apiConfig}) {
+export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
   const [question, setQuestion] = useState('')
   const [value, setValue] = useState('')
   const [dateValue, setDateValue] = useState(() => localInput(new Date()))
@@ -532,7 +532,8 @@ export default function App({onBack,onOpenStudy,apiConfig}) {
           </label>
         </div>
         <div className="book-settings-hint">
-          <span>初学梅花？可到藏经阁读原典、上入门课。</span>
+          <span>第一次起卦？先学会两数取卦、八卦与动爻的计算步骤。</span>
+          <button type="button" onClick={onLearn}>零基础起卦实操 ↗</button>
           <button type="button" onClick={onOpenStudy}>古籍 · 教程 · API 设置 ↗</button>
         </div>
         <div className="book-aux mt-6">
