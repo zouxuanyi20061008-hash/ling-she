@@ -18,6 +18,7 @@ function routeFromUrl(){
 
 function Academy(){
   const [mode,setMode]=useState(routeFromUrl)
+  const [learnFrom,setLearnFrom]=useState('liuyao')
   const [personalApiKey,setPersonalApiKey]=useState('')
   const [aiModel,setAiModel]=useState('deepseek-chat')
   const [aiAccessCode,setAiAccessCode]=useState('')
@@ -96,7 +97,7 @@ function Academy(){
     {mode==='choose'&&<div className="case-exchange-quick-entry">
       <button type="button" onClick={()=>navigate('cases')}>已有研究案例？进入案例交换中心 ↗</button>
     </div>}
-    {mode==='learn'?<LearnCastingStage onBack={()=>goBackTo('choose')}
+    {mode==='learn'?<LearnCastingStage initialMethod={learnFrom} onBack={()=>goBackTo('choose')}
       onPractice={next=>navigate(next)}/>:
     mode==='cases'?<CaseExchangeCenter onClose={()=>navigate('choose')}/>:
     (mode==='home'||mode==='choose')?
@@ -104,18 +105,18 @@ function Academy(){
         onStart={()=>navigate('choose')}
         onBack={()=>goBackTo('home')}
         onSelect={next=>navigate(next)}
-        onStudy={()=>navigate('library')} onLearn={()=>navigate('learn')}
+        onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}}
         activeGroup={activeGroup} setActiveGroup={setActiveGroup}
         page={choosePage} setPage={setChoosePage}/>:
       mode==='library'?
-      <StudyHall onClose={closeLibrary} onPractice={()=>navigate('learn')}
+      <StudyHall onClose={closeLibrary} onPractice={()=>{setLearnFrom('liuyao');navigate('learn')}}
         apiKey={personalApiKey} setApiKey={setPersonalApiKey}
         aiModel={aiModel} setAiModel={setAiModel}
         accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>:
       mode==='meihua'?
-      <App onBack={()=>goBackTo('choose')} onOpenStudy={()=>navigate('library')} onLearn={()=>navigate('learn')} apiConfig={config}/>:
+      <App onBack={()=>goBackTo('choose')} onOpenStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('meihua');navigate('learn')}} apiConfig={config}/>:
       mode==='liuyao'?
-      <SixYaoStage onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')} onLearn={()=>navigate('learn')} apiConfig={config}/>:
+      <SixYaoStage onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}} apiConfig={config}/>:
       <KnowledgeStage mode={mode} onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')}/>}
   </>
 }
