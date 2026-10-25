@@ -120,3 +120,9 @@ it('八卦速查可点选并解释阴阳与方位，不把类象冒充预测结�
   expect(screen.getByText(/爻形由下到上：阳、阳、阴/)).toBeTruthy()
   expect(screen.getByText(/后天方位：/)).toBeTruthy()
 })
+
+it('从梅花工坊进入教学时应直接展示梅花起卦，不误跳六爻',()=>{
+  render(<LearnCastingStage initialMethod="meihua" onBack={()=>{}} onPractice={()=>{}}/>)
+  expect(screen.getByRole('tab',{name:/梅花 · 两数起卦/}).getAttribute('aria-selected')).toBe('true')
+  expect(screen.getByText(/梅花数字法：两组数字取上下卦/)).toBeTruthy()
+})
