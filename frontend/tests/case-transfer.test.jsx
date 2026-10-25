@@ -102,7 +102,7 @@ it('V34 合并后超过40份会阻止写入，不静默截断文件',()=>{
 
 it('当前设备已有损坏的本机记录时拒绝覆盖，避免把损坏数据过滤后重写',()=>{
   window.localStorage.setItem(INBOX_KEY,'{broken-local')
-  expect(()=>previewInboxBackup(v1([entry('new')]))).toThrow('本机')
+  expect(()=>previewInboxBackup(v1([entry('new')]))).toThrow('案例簿损坏')
   expect(()=>restoreInboxBackup(v1([entry('new')]))).toThrow()
   expect(window.localStorage.getItem(INBOX_KEY)).toBe('{broken-local')
 })
