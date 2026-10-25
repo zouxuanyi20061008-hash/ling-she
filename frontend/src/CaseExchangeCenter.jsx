@@ -1,6 +1,7 @@
 import React,{useState} from 'react'
 import {parseSharedCase,importToInbox,markInboxCase,removeInboxCase,
-  readCaseInbox,restoreInboxBackup,updateInboxReviewNote,markInboxCases,MAX_INBOX} from './case-exchange.js'
+  readCaseInbox,restoreInboxBackup,previewInboxBackup,createInboxBackup,
+  BACKUP_MAX_CHARS,updateInboxReviewNote,markInboxCases,MAX_INBOX} from './case-exchange.js'
 import {inspectCaseEvidence,exportCaseReviewCsv} from './case-review.js'
 import {summarizeCaseInbox,reviewQueueMatch,REVIEW_QUEUES,
   exportSelectedReviewCsv,selectedReport} from './case-batch.js'
@@ -34,6 +35,8 @@ export default function CaseExchangeCenter({onClose}){
   const [conditionTarget,setConditionTarget]=useState('')
   const [cohortOnly,setCohortOnly]=useState(false)
   const [pairOpen,setPairOpen]=useState(false)
+  const [backupCandidate,setBackupCandidate]=useState(null)
+  const [backupConsent,setBackupConsent]=useState(false)
   async function chooseFile(e){
     const file=e.target.files?.[0]
     e.target.value=''
@@ -86,25 +89,32 @@ export default function CaseExchangeCenter({onClose}){
   }
   function backup(){
     try{
-      downloadJson({format:'wanxiang-case-inbox-backup-v1',version:1,
-          exported_at:new Date().toISOString(),records:entries},
-        '万象书院-本机收案簿备份.json')
-      setNotice('已导出本机完整收案簿备份，文件可能包含朋友的研究笔记，请妥善保管。')
+      downloadJson(createInboxBackup(entries),'万象书院-V34-可迁移本机收案簿.json')
+      setNotice('已导出 V34 本机备份。文件未加密且可能包含私人研判，请只通过可信渠道发送给自己的设备。')
     }catch{setError('备份下载失败，请检查浏览器下载权限。')}
   }
   async function restoreBackup(e){
     const file=e.target.files?.[0]
     e.target.value=''
-    setError('');setNotice('')
+    setBackupCandidate(null);setBackupConsent(false);setError('');setNotice('')
     if(!file)return
-    if(file.size>700000){setError('备份文件太大。');return}
-    if(!window.confirm('确认把备份中的案例合并到这台设备？已有相同编号的案例将保持不变。'))return
+    if(file.size>BACKUP_MAX_CHARS){setError('备份文件超过2MB，未导入。');return}
     try{
-      const outcome=restoreInboxBackup(await file.text())
+      const raw=await file.text()
+      const preview=previewInboxBackup(raw)
+      setBackupCandidate({raw,preview,name:file.name})
+    }catch(err){setError(err.message||'备份检查失败，本机内容没有变更。')}
+  }
+  function confirmRestore(){
+    if(!backupCandidate||!backupConsent)return
+    try{
+      const outcome=restoreInboxBackup(backupCandidate.raw)
       setEntries(outcome.entries)
-      setSelectedIds([])
-      setNotice('已从本机备份补回'+outcome.added+'份；跳过重复'+outcome.duplicates+'份。')
-    }catch(err){setError(err.message||'备份恢复失败，没有覆盖当前收案簿。')}
+      setSelectedIds([]);setPairOpen(false);setBackupCandidate(null)
+      setBackupConsent(false);setError('')
+      setNotice('V34 恢复完成：新增'+outcome.added+'份，保留已有'+outcome.duplicates+
+        '份（其中内容不同的同编号案例'+outcome.conflicts+'份，原有资料未被覆盖）。')
+    }catch(err){setError(err.message||'恢复失败：没有替换已有本机数据。')}
   }
   function toggleSelected(id){
     setSelectedIds(current=>current.includes(id)
@@ -152,7 +162,7 @@ export default function CaseExchangeCenter({onClose}){
     unfinished:entries.filter(x=>!inspectCaseEvidence(x.case).has_followup).length,
     needsReview:entries.filter(x=>inspectCaseEvidence(x.case).needs_time_review).length}
   return <main className="academy-case-exchange" aria-label="万象书院本机案例收集与研究">
-    <div className="case-exchange-top"><span>万象书院 · V33 案例共建与研究对照</span>
+    <div className="case-exchange-top"><span>万象书院 · V34 案例共建与迁移</span>
       <button type="button" onClick={onClose}>返回书院</button></div>
     <h1>本机案例交换中心</h1>
     <p>朋友从六爻「案例复盘」导出匿名化分享包，再通过微信等方式把 <b>JSON 文件</b>发给你。你在这里导入、审核和备份，不需要体验码或管理员后台。</p>
@@ -280,9 +290,39 @@ export default function CaseExchangeCenter({onClose}){
           <button type="button" onClick={exportSummary} disabled={!entries.length}>导出研究摘要 CSV</button>
           <button type="button" onClick={backup} disabled={!entries.length}>导出全部本机备份</button>
         </div></div>
-      <label className="case-exchange-upload">从以前导出的收案簿备份恢复（不会覆盖已有案例）
-        <input aria-label="从收案簿备份恢复" type="file" accept=".json,application/json" onChange={restoreBackup}/>
-      </label>
+      <section className="case-v34-transfer" aria-label="V34 跨设备收案簿迁移">
+        <h3>V34 · 换手机与跨设备安全恢复</h3>
+        <p>在旧设备点击上方「导出全部本机备份」，只把 JSON 文件传到你自己的新设备；
+          在新设备选择文件后会先预览，<strong>不会立刻写入，也不会上传云端</strong>。
+          支持旧版 V27 和新版 V34 文件。</p>
+        <p className="case-v34-warning">备份含朋友自愿分享的研究笔记及站长审核备注，文件未加密。请勿发到群聊、公开网盘或转发给无关人员。先确认新设备是你的私人设备。</p>
+        <label className="case-exchange-upload">选择本机收案簿备份（V27 / V34）
+          <input aria-label="从收案簿备份恢复" type="file" accept=".json,application/json" onChange={restoreBackup}/>
+        </label>
+        {backupCandidate&&<div className="case-v34-preview">
+          <h4>合并预览：尚未保存</h4>
+          <p>所选文件：{backupCandidate.name}；版本：V{backupCandidate.preview.version===1?'27':'34'}</p>
+          <div className="case-v34-preview-grid">
+            <div><strong>{backupCandidate.preview.total}</strong><span>备份内案例</span></div>
+            <div><strong>{backupCandidate.preview.added}</strong><span>本机将新增</span></div>
+            <div><strong>{backupCandidate.preview.duplicates}</strong><span>同编号保留原记录</span></div>
+            <div><strong>{backupCandidate.preview.conflicts}</strong><span>同编号内容不同</span></div>
+          </div>
+          <p>备份审核状态：待审核 {backupCandidate.preview.pending}、已收录 {backupCandidate.preview.approved}、暂不收录 {backupCandidate.preview.excluded}。当前设备已有 {backupCandidate.preview.existing} 份。</p>
+          {backupCandidate.preview.conflicts>0&&<p className="case-v34-warning">
+            检测到 {backupCandidate.preview.conflicts} 份同编号但封存内容不同的记录。为避免覆盖原始事前材料和审核备注，<strong>这些冲突项全部跳过，保留本机版本</strong>；可在旧设备单独核对。
+          </p>}
+          {backupCandidate.preview.overLimit&&<p className="case-exchange-error" role="alert">合并后超过 40 份容量上限，已禁止恢复；请先在两个设备分别备份后整理。</p>}
+          <label className="case-v34-consent"><input type="checkbox" checked={backupConsent}
+             onChange={e=>setBackupConsent(e.target.checked)}/>
+             我已确认这是自己的备份，了解文件未加密、同编号不会覆盖，并同意仅合并到当前浏览器。</label>
+          <div className="case-v34-actions">
+            <button type="button" disabled={!backupConsent||backupCandidate.preview.overLimit}
+              onClick={confirmRestore}>确认合并 {backupCandidate.preview.added} 份到本机</button>
+            <button type="button" className="light" onClick={()=>{setBackupCandidate(null);setBackupConsent(false)}}>取消恢复</button>
+          </div>
+        </div>}
+      </section>
       <div className="case-exchange-filters" role="group" aria-label="案例审核状态筛选">
         {['全部','待审核','收录','暂不收录'].map(status=>
           <button type="button" key={status} aria-pressed={filter===status}

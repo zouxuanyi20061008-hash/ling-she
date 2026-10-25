@@ -172,37 +172,106 @@ export function removeInboxCase(fingerprint,storage=window.localStorage){
   return next
 }
 
-/** Restore a previously exported inbox backup without replacing existing records. */
-export function restoreInboxBackup(raw,storage=window.localStorage){
-  if(typeof raw!=='string'||raw.length>700000)
-    throw new Error('备份文件过大或无效（最多700KB）')
-  let parsed
-  try{parsed=JSON.parse(raw)}catch{throw new Error('备份 JSON 格式无效')}
-  if(!parsed||parsed.format!=='wanxiang-case-inbox-backup-v1'||parsed.version!==1
-    ||!Array.isArray(parsed.records)||parsed.records.length>MAX_INBOX)
-    throw new Error('不属于万象书院 V27 本机收案簿备份')
-  const restored=[]
-  const seen=new Set()
-  for(const item of parsed.records){
-    if(!item||typeof item.fingerprint!=='string'
-       ||item.fingerprint.length<1||item.fingerprint.length>120)
-      throw new Error('备份中的案例编号无效')
-    if(seen.has(item.fingerprint))throw new Error('备份中出现重复案例')
-    seen.add(item.fingerprint)
-    if(!['待审核','收录','暂不收录'].includes(item.status))
-      throw new Error('备份中的审核状态无效')
-    const valid=sanitizeSharedCase(item.case,{includeResearch:true})
-    restored.push({fingerprint:item.fingerprint,
-      imported_at:scalar(item.imported_at,60),status:item.status,
-      review_note:typeof item.review_note==='string'?item.review_note.slice(0,600):'',
-      case:valid})
+/** V34: portable, private, versioned backups. No implicit cloud upload. */
+export const BACKUP_FORMAT_V2='wanxiang-case-inbox-backup-v2'
+export const BACKUP_MAX_CHARS=2000000
+
+function normalizeInboxBackupRecord(item){
+  if(!item||typeof item!=='object'||Array.isArray(item)||
+     typeof item.fingerprint!=='string'||!item.fingerprint||
+     item.fingerprint.length>120)throw new Error('备份中有无效案例编号')
+  if(!['待审核','收录','暂不收录'].includes(item.status))
+    throw new Error('备份中有非法审核状态')
+  if(item.review_note!=null&&(typeof item.review_note!=='string'||item.review_note.length>600))
+    throw new Error('备份中的审核备注不合法或超过600字')
+  return {
+    fingerprint:item.fingerprint,
+    imported_at:scalar(item.imported_at,60),
+    status:item.status,
+    review_note:item.review_note||'',
+    case:sanitizeSharedCase(item.case,{includeResearch:true})
   }
-  const old=readCaseInbox(storage)
-  const oldKeys=new Set(old.map(x=>x.fingerprint))
-  const added=restored.filter(x=>!oldKeys.has(x.fingerprint))
-  if(old.length+added.length>MAX_INBOX)
-    throw new Error('恢复后超过40份上限，请先导出备份并整理现有案例')
-  const next=[...old,...added]
+}
+function validateBackupRecords(items){
+  if(!Array.isArray(items)||items.length>MAX_INBOX)
+    throw new Error('收案簿备份数量无效：每份最多40个案例')
+  const seen=new Set()
+  return items.map(item=>{
+    const normalized=normalizeInboxBackupRecord(item)
+    if(seen.has(normalized.fingerprint))throw new Error('备份中有重复案例编号')
+    seen.add(normalized.fingerprint)
+    return normalized
+  })
+}
+export function createInboxBackup(entries,exportedAt=new Date().toISOString()){
+  const records=validateBackupRecords(entries)
+  return {format:BACKUP_FORMAT_V2,version:2,
+    exported_at:scalar(exportedAt,60),
+    manifest:{total:records.length,
+      pending:records.filter(x=>x.status==='待审核').length,
+      approved:records.filter(x=>x.status==='收录').length,
+      excluded:records.filter(x=>x.status==='暂不收录').length,
+      note:'私人案例文件，未加密；仅可在本人设备间手动传递。'},
+    records}
+}
+function decodeInboxBackup(raw){
+  if(typeof raw!=='string'||raw.length>BACKUP_MAX_CHARS)
+    throw new Error('备份文件过大或无效（最多2MB）')
+  let backup
+  try{backup=JSON.parse(raw)}catch{throw new Error('无法解析备份 JSON 文件')}
+  if(!backup||typeof backup!=='object'||Array.isArray(backup)||
+     !((backup.format==='wanxiang-case-inbox-backup-v1'&&backup.version===1)||
+       (backup.format===BACKUP_FORMAT_V2&&backup.version===2)))
+    throw new Error('不是支持的万象书院本机案例簿备份（V27 或 V34）')
+  const records=validateBackupRecords(backup.records)
+  // Displayed manifest is always derived from validated records; never trust file counts.
+  return {version:backup.version,exported_at:scalar(backup.exported_at,60),records}
+}
+function readExistingForMerge(storage){
+  const raw=storage.getItem(INBOX_KEY)
+  if(raw==null)return []
+  let obj
+  try{obj=JSON.parse(raw)}catch{throw new Error('当前设备的案例簿损坏，已暂停合并以保护原始数据')}
+  if(!Array.isArray(obj)||obj.length>MAX_INBOX)
+    throw new Error('当前设备收案簿格式异常，已暂停合并')
+  // Refuse to rewrite existing records if the stored list contains malformed data.
+  return validateBackupRecords(obj)
+}
+function compareBackup(raw,storage){
+  const backup=decodeInboxBackup(raw)
+  const existing=readExistingForMerge(storage)
+  const current=new Map(existing.map(x=>[x.fingerprint,x]))
+  const fresh=[],conflicts=[]
+  let duplicates=0
+  for(const record of backup.records){
+    const old=current.get(record.fingerprint)
+    if(!old){fresh.push(record);continue}
+    duplicates++
+    if(JSON.stringify(old.case)!==JSON.stringify(record.case))
+      conflicts.push(record.fingerprint)
+  }
+  return {backup,existing,fresh,conflicts,duplicates}
+}
+/** Check compatibility, conflict and capacity without writing to localStorage. */
+export function previewInboxBackup(raw,storage=window.localStorage){
+  const {backup,existing,fresh,conflicts,duplicates}=compareBackup(raw,storage)
+  const overLimit=existing.length+fresh.length>MAX_INBOX
+  return {version:backup.version,exported_at:backup.exported_at,
+    total:backup.records.length,existing:existing.length,
+    added:fresh.length,duplicates,conflicts:conflicts.length,
+    conflicted_ids:conflicts.slice(0,10),overLimit,canRestore:!overLimit,
+    pending:backup.records.filter(x=>x.status==='待审核').length,
+    approved:backup.records.filter(x=>x.status==='收录').length,
+    excluded:backup.records.filter(x=>x.status==='暂不收录').length}
+}
+/** Merge missing records only, preserving every existing case and review decision.
+ * All file and capacity checks finish before one localStorage write. */
+export function restoreInboxBackup(raw,storage=window.localStorage){
+  const {backup,existing,fresh,conflicts,duplicates}=compareBackup(raw,storage)
+  if(existing.length+fresh.length>MAX_INBOX)
+    throw new Error('合并后超过40份限制，未修改本机收案簿；请先导出备份并整理')
+  const next=[...existing,...fresh]
   storage.setItem(INBOX_KEY,JSON.stringify(next))
-  return {entries:next,added:added.length,duplicates:restored.length-added.length}
+  return {entries:next,added:fresh.length,duplicates,conflicts:conflicts.length,
+    original_version:backup.version}
 }
