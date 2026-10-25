@@ -47,11 +47,11 @@ it('完整六爻盘一屏按上至下列出六亲、六神、世应、纳甲及�
   render(<SixYaoFullChart chart={chart()}/>)
   expect(screen.getByRole('region',{name:/六爻纳甲全表/})).toBeTruthy()
   expect(screen.getByText('乾宫 · 本宫')).toBeTruthy()
-  expect(screen.getByText('上爻 / 二爻')).toBeNull() // palace 应为三爻
+  expect(screen.queryByText('上爻 / 二爻')).toBeNull() // palace 应为三爻
   expect(screen.getByText('上爻 / 三爻')).toBeTruthy()
   expect(screen.getByText('青龙')).toBeTruthy()
-  expect(screen.getByText('旬空')).toBeTruthy()
-  expect(screen.getByText('临月建')).toBeTruthy()
+  expect(screen.getByText(/旬空 ·/)).toBeTruthy()
+  expect(screen.getByText(/临月建 ·/)).toBeTruthy()
   expect(screen.getByText(/本位动变/)).toBeTruthy()
   const rows=screen.getAllByRole('row')
   expect(rows).toHaveLength(7)
