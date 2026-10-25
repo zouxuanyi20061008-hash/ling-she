@@ -25,6 +25,7 @@ from urllib.parse import parse_qs
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from .experience_case_archive import parse_shared_case, CaseImportError
+from .experience_backup_restore import parse_owner_imported_backup, CLOUD_BACKUP_FORMAT
 from .experience_case_research import summarize_imported_cases, summarize_case_archive
 from .experience_case_comparison import research_contrast
 
@@ -436,6 +437,27 @@ def _exec(query, params=(), *, get=False):
         finally:
             db.close()
 
+def _restore_owner_imports(rows):
+    """Atomic recovery of owner-imported rows; never overwrites existing review."""
+    with _DB_LOCK:
+        db=_connect()
+        try:
+            command=("INSERT INTO experience_imported_cases VALUES (?,?,?,?,?,?) "
+                     "ON CONFLICT(import_id) DO NOTHING")
+            command=command.replace("?","%s") if _pg() else command
+            added=0
+            for item in rows:
+                cursor=db.execute(command,item)
+                added+=int(cursor.rowcount==1)
+            db.commit()
+            return {"added":added,"duplicates":len(rows)-added}
+        except Exception:
+            db.rollback()
+            raise
+        finally:
+            db.close()
+
+
 def _insert_imported_once(case_id,source,created,payload,note="",status="pending"):
     """One atomic insert; concurrent imports cannot overwrite earlier reviewer work."""
     with _DB_LOCK:
@@ -765,6 +787,21 @@ def install_gateway(app: FastAPI):
             intake+="<label><input type='checkbox' name='reviewed' value='yes' required>我已检查朋友自愿分享的资料和隐私内容，确认导入待审核库。</label>"
             intake+="<button type='submit' id='case-import-submit' disabled>确认导入并待审</button></form>"
             intake+="<script>(function(){var f=document.getElementById('case-import-file'), t=document.getElementById('case-import-json'), p=document.getElementById('case-import-preview'), b=document.getElementById('case-import-submit');f.addEventListener('change',async function(){t.value='';b.disabled=true;p.textContent='尚未读取文件';var file=f.files[0];if(!file)return;if(file.size>60000){p.textContent='超过60KB，拒绝导入';return;}try{var raw=await file.text();var obj=JSON.parse(raw);if(obj.format!=='wanxiang-sixyao-case-v1'||obj.version!==1)throw Error('不是V27单份分享包');p.textContent='预览：'+String(obj.case?.ben_gua||'未知卦名')+' → '+String(obj.case?.bian_gua||'未知变卦')+'；事前：'+String(obj.case?.before||'').slice(0,120);t.value=raw;b.disabled=false;}catch(e){p.textContent='文件格式错误：'+e.message;}})})();</script></section>"
+        restore_form=""
+        if storage["connected"]:
+            restore_form="<section class='card'><h2>V34 · 恢复以前的云端案例备份</h2>"
+            restore_form+="<p>仅接受本站站长后台「导出完整案例与使用记录 JSON」保存的备份文件。<b>只恢复其中的站长导入案例及审核状态</b>，不恢复访客活动日志或访客提交的在线案例。</p>"
+            restore_form+="<p class='warn'>恢复前请核实文件来源。文件可能包含私密研究，只有确认连接到 PostgreSQL 后才能写入。"
+            restore_form+="同编号内容不同也不会覆盖现有记录；恢复过程中发生任何错误，将整批回滚。</p>"
+            restore_form+="<form method='post' action='/admin/restore-imported' id='owner-restore-form'>"
+            restore_form+="<input type='hidden' name='csrf' value='"+_html_escape(claims["csrf"])+"'>"
+            restore_form+="<label>选择站长云端备份 JSON<input type='file' id='owner-restore-file' accept='.json,application/json'></label>"
+            restore_form+="<textarea id='owner-restore-json' name='backup_json' hidden required></textarea>"
+            restore_form+="<p id='owner-restore-preview' class='small'>未选择文件，尚未提交。</p>"
+            restore_form+="<label><input type='checkbox' name='restore_confirm' value='yes' required>"
+            restore_form+="我已核查这是自己导出的备份，了解只恢复站长导入案例、跳过同编号和保留原审核状态。</label>"
+            restore_form+="<button type='submit' id='owner-restore-submit' disabled>确认恢复到 PostgreSQL</button></form>"
+            restore_form+="<script>(function(){var f=document.getElementById('owner-restore-file'),t=document.getElementById('owner-restore-json'),p=document.getElementById('owner-restore-preview'),b=document.getElementById('owner-restore-submit');f.addEventListener('change',async function(){b.disabled=true;t.value='';p.textContent='尚未读取文件';var file=f.files[0];if(!file)return;if(file.size>2000000){p.textContent='文件超过2MB，本次不能恢复';return;}try{var raw=await file.text(),obj=JSON.parse(raw),rows=obj.owner_imported_cases;if(!Array.isArray(rows)||rows.length>100)throw Error('最多100份站长导入案例');if(!((obj.format==='wanxiang-owner-cloud-backup-v2'&&obj.version===2)||(!('format' in obj)&&Array.isArray(obj.cases)&&Array.isArray(obj.events))))throw Error('不是本站站长备份');var status={pending:0,approved:0,rejected:0};rows.forEach(function(row){if(!row||!(row.status in status))throw Error('审核状态不合法');status[row.status]++;});p.textContent='预览（暂未恢复）：站长导入案例 '+rows.length+' 份；待审核 '+status.pending+'、已收录 '+status.approved+'、暂不收录 '+status.rejected+'。如云端已有同编号则保留旧内容。';t.value=raw;b.disabled=rows.length===0;}catch(e){p.textContent='备份识别失败：'+e.message;}})})();</script></section>"
         table="<h2>最近使用记录（最多120项）</h2><table><tr><th>邀请码备注</th><th>活动</th><th>模块</th><th>时间 UTC</th></tr>"
         for label,kind,module,date in events:
             table+="<tr><td>"+html.escape(label)+"</td><td>"+html.escape(kind)+"</td><td>"+html.escape(module)+"</td><td>"+html.escape(date)+"</td></tr>"
@@ -824,13 +861,17 @@ def install_gateway(app: FastAPI):
         batch_count=request.query_params.get("count","")
         if batch_action in batch_labels and batch_count.isdigit() and int(batch_count)<=100:
             batch_notice="<p class='card'>批量审核完成："+str(int(batch_count))+" 份，状态已更新为："+batch_labels[batch_action]+"。</p>"
+        restored_added=request.query_params.get("restore_added","")
+        restored_skipped=request.query_params.get("restore_skipped","")
+        if restored_added.isdigit() and restored_skipped.isdigit() and int(restored_added)+int(restored_skipped)<=100:
+            batch_notice+="<p class='card'>云端备份恢复完成：新增 "+str(int(restored_added))+" 份；跳过已有编号 "+str(int(restored_skipped))+" 份。未覆盖任何已有记录。</p>"
         return _page("站长控制台","<h1>万象书院 · 站长控制台</h1>"
            + ("<p class='warn'>普通书院目前公开访问，不自动记录匿名访客身份、访问次数，也不自动收集案例。这里仅显示曾经通过体验码产生的记录；案例交换中心里的本机收案数据不会自动出现在这里。</p>" if not enabled() else
               "<p>邀请码备注只代表所用的体验码，不证明使用者的真实身份。</p>")
            + error + notice + cards + batch_notice + batch_form
            + "<p><a href='/admin/export'>导出完整案例与使用记录 JSON 备份</a> · <a href='/admin/research'>案例统计与复盘</a> · <a href='/admin/research-summary'>查看站长导入案例统计（JSON）</a> · <a href='/admin/storage-status'>查看数据库自检结果（JSON）</a> · <a href='/#cases'>本机案例交换中心</a></p>"
            + "<form method='post' action='/admin/logout'><input type='hidden' name='csrf' value='"+html.escape(claims["csrf"])+"'><button type='submit'>安全退出站长后台</button></form>"
-           + intake + archive + blocks + table)
+           + intake + restore_form + archive + blocks + table)
 
     @app.post("/admin/logout")
     async def admin_logout(request:Request):
@@ -844,6 +885,39 @@ def install_gateway(app: FastAPI):
         response=RedirectResponse("/admin/login",status_code=303)
         response.delete_cookie(_COOKIE,path="/")
         return _headers(response)
+
+    @app.post("/admin/restore-imported")
+    async def admin_restore_imported(request:Request):
+        claims=_decode(request)
+        if not claims or claims.get("role")!="admin":
+            return _bad_request("管理员身份无效",403,back="/admin/login")
+        # Cap the raw HTTP body before percent decoding; a JSON backup can contain
+        # large Chinese text expansions in form encoding.
+        body=await request.body()
+        if len(body)>6_000_000:
+            return _bad_request("备份文件超过恢复上限",413,back="/admin")
+        try:
+            form={k:v[0] for k,v in parse_qs(
+                body.decode("utf-8"),max_num_fields=12).items()}
+        except (UnicodeDecodeError,ValueError):
+            return _bad_request("备份表单格式无效",422,back="/admin")
+        if not _owner_csrf_ok(request,form,claims):
+            return _bad_request("备份恢复请求验证失败",403,back="/admin")
+        if form.get("restore_confirm")!="yes":
+            return _bad_request("请先确认备份来源和恢复规则",422,back="/admin")
+        if not _persistent_case_store():
+            return _bad_request("尚未连接 PostgreSQL，正式云端恢复已禁止",503,back="/admin")
+        try:
+            cases=parse_owner_imported_backup(form.get("backup_json",""))
+            if not cases:
+                return _bad_request("备份中没有可恢复的站长导入案例",422,back="/admin")
+            result=_restore_owner_imports(cases)
+            return RedirectResponse("/admin?restore_added="+str(result["added"])
+                +"&restore_skipped="+str(result["duplicates"]),status_code=303)
+        except CaseImportError as error:
+            return _bad_request(str(error),422,back="/admin")
+        except Exception:
+            return _bad_request("云端恢复失败，本次批量写入已回滚；请检查数据库连接",503,back="/admin")
 
     @app.post("/admin/import-case")
     async def owner_import_case(request:Request):
@@ -969,7 +1043,7 @@ def install_gateway(app: FastAPI):
             imported=_exec("SELECT import_id,source_key,imported_at,status,payload,reviewer_note FROM experience_imported_cases ORDER BY imported_at",get=True)
         except Exception:
             return _bad_request("数据库无法导出",503)
-        content=json.dumps({"exported_at":_now(),"cases":[{"id":cid,"label":label,"submitted_at":dt,
+        content=json.dumps({"format":CLOUD_BACKUP_FORMAT,"version":2,"exported_at":_now(),"cases":[{"id":cid,"label":label,"submitted_at":dt,
             "status":status,"case":json.loads(raw)} for cid,label,dt,status,raw in cases],
             "events":[{"label":a,"kind":b,"module":c,"at":d} for a,b,c,d in events],
             "owner_imported_cases":[{"id":cid,"source_key":source,"imported_at":stamp,
