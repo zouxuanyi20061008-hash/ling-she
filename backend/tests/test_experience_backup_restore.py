@@ -162,7 +162,9 @@ def test_v34_invalid_later_case_does_not_restore_valid_earlier_case(owner,monkey
 
 def test_v34_backup_preview_html_has_explicit_manual_consent_and_privacy(owner,monkeypatch):
     c,_=owner
-    monkeypatch.setattr(gate,"_persistent_case_store",lambda:True)
+    monkeypatch.setattr(gate,"_storage_status",lambda:{
+        "state":"ready","connected":True,"store":"postgresql",
+        "description":"测试环境连接可用"})
     dashboard=c.get("/admin")
     assert dashboard.status_code==200
     assert "V34 · 恢复以前的云端案例备份" in dashboard.text
