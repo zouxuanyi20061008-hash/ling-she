@@ -67,7 +67,7 @@ export default function SixYaoJointOverview({chart,onChooseFocus,onChoosePositio
         <span>日月已填写 · 请再核换日与交节</span>:
         <span className="six-joint-alert">未完整输入日月，部分指标保持“未核”</span>}
     </div>
-    <p className="six-joint-instruction">先选择所问事项对应的六亲或世应，再查看其本卦候选。**本系统不会自动决定哪个用神有效。**</p>
+    <p className="six-joint-instruction">先选择所问事项对应的六亲或世应，再查看其本卦候选。<strong>本系统不会自动决定哪个用神有效。</strong></p>
     <div className="six-joint-choices" role="group" aria-label="选择六爻关注对象">
       {data.focus_choices.map(choice=><button type="button" key={choice.id}
         onClick={()=>onChooseFocus?.(choice.id)} disabled={busy}
