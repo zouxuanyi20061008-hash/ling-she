@@ -1,0 +1,37 @@
+/* V37 focused six-line audit: allows hands-on input while keeping all unresolved branches visible. */
+.six-joint{margin:14px 0 22px;padding:clamp(12px,2.8vw,22px);border:1px solid #b9c7ae;background:#f7f7ed;color:#305341}
+.six-joint-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #c7cdb8;padding-bottom:12px}
+.six-joint-head small{font-size:11px;color:#6d7b5a;letter-spacing:.08em}
+.six-joint-head h3{font-size:19px;font-family:serif;color:#2b5c44;margin:5px 0}
+.six-joint-status{border:1px solid #95b398;padding:7px 10px;background:#e3eddd;font-size:11px;color:#385c46}
+.six-joint-date{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0}
+.six-joint-date span{padding:6px 8px;background:#e8eee0;font-size:11px;border:1px solid #cdd7c2}
+.six-joint-date .six-joint-alert{background:#f6e9d5;border-color:#d7b78f;color:#79563a}
+.six-joint-instruction{font-size:12px;color:#665f47;line-height:1.8}
+.six-joint-choices{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0}
+.six-joint-choices button,.six-joint-pos-buttons button{min-height:41px;padding:9px 12px;border:1px solid #a7b99f;background:#fdfbf2;color:#365c43;font-weight:700;font-size:12px;cursor:pointer}
+.six-joint-choices button[aria-pressed=true],.six-joint-pos-buttons button[aria-pressed=true]{background:#326849;border-color:#326849;color:#fff7e7}
+.six-joint-choices button:disabled,.six-joint-pos-buttons button:disabled{opacity:.55;cursor:wait}
+.six-joint-focus{background:#e8f0e4;padding:12px;border-left:3px solid #5f9072;margin-bottom:13px}
+.six-joint-focus h4{font-size:13px;margin:0 0 8px;color:#2f6044}
+.six-joint-pos-buttons{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.six-joint-pos-buttons>p,.six-joint-hidden p{font-size:11px;line-height:1.7;margin:4px 0;color:#5d6145}
+.six-joint-scroll{overflow-x:auto;max-width:100%;overscroll-behavior-x:contain}
+.six-joint-scroll table{border-collapse:collapse;min-width:930px;width:100%;font-size:11px}
+.six-joint-scroll th,.six-joint-scroll td{border-bottom:1px solid #d5dacd;padding:12px 9px;text-align:left;vertical-align:middle;white-space:nowrap}
+.six-joint-scroll thead th{background:#305943;color:#f9f4e2}
+.six-joint-scroll tbody tr:nth-child(2n){background:#eff2e7}
+.six-joint-scroll tbody tr.six-joint-focus-row{background:#e7efdf}
+.six-joint-scroll tbody tr.six-joint-selected{background:#e7e5c9}
+.six-joint-scroll tbody th{color:#395c45}
+.six-joint-scroll tbody th small{display:block;font-size:10px;color:#867451;margin-top:5px}
+.six-joint-scroll details>summary{cursor:pointer;color:#296a48;font-weight:700}
+.six-joint-scroll details[open]{width:280px;white-space:normal}
+.six-joint-details{margin-top:9px;max-width:300px;white-space:normal}
+.six-joint-details section{margin:8px 0;padding:8px;background:#fffdf4;border:1px solid #e0d8bd}
+.six-joint-details section h5{font-size:11px;margin:0 0 5px}
+.six-joint-details section p{font-size:11px;line-height:1.7;margin:5px 0;white-space:normal;overflow-wrap:anywhere}
+.six-joint-evidence-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.six-joint-boundary{font-size:11px;line-height:1.8;color:#745f46;background:#f1e7d5;border-left:3px solid #b39261;padding:11px;margin-top:14px}
+.six-joint-missing{padding:11px;background:#f8e6da;color:#86533e;font-size:12px}
+@media(max-width:720px){.six-joint-head h3{font-size:17px}.six-joint-scroll table{min-width:825px}.six-joint-evidence-row{grid-template-columns:1fr}.six-joint-choices button{flex:1 0 65px}}
