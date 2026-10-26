@@ -23,6 +23,7 @@ from .void_context import decorate_void_context
 from .focus_effect_review import decorate_focus_effect_review
 from .review_sheet import decorate_review_sheet
 from .focus_comparison import decorate_focus_comparison
+from .joint_overview import decorate_joint_overview
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -74,4 +75,5 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     chart = decorate_focus_effect_review(chart)
     chart = decorate_review_sheet(chart)
     chart = decorate_focus_comparison(chart)
+    chart = decorate_joint_overview(chart)
     return decorate_review_flow(chart)
