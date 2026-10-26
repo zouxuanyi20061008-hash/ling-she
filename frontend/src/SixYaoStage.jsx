@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react'
 import './academy.css'
 import SixYaoFullChart from './SixYaoFullChart.jsx'
+import SixYaoJointOverview from './SixYaoJointOverview.jsx'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 import {shareCaseFromArchive} from './case-exchange.js'
 import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
@@ -1999,6 +2000,8 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <SixYaoFullChart chart={chart}/>
+            <SixYaoJointOverview chart={chart} onChooseFocus={chooseFocus}
+              onChoosePosition={chooseStudyPosition} busy={calendarBusy}/>
             <nav className="review-flow-nav" ref={reviewNavRef} aria-label="六爻五步研判页面">
               {REVIEW_STEPS.map((step,i)=>{
                 const state=chart.review_flow?.stages?.[i]?.status
