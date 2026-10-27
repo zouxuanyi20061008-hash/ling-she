@@ -1,5 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 96 96"><defs><radialGradient id="scale" cx=".33" cy=".17" r=".86"><stop stop-color="#d7fffa"/><stop offset=".42" stop-color="#55c2c7"/><stop offset=".85" stop-color="#327b9d"/><stop offset="1" stop-color="#25496e"/></radialGradient></defs>
-<ellipse cx="48" cy="58" rx="39" ry="29" fill="#162a2b" opacity=".32"/>
-<ellipse cx="48" cy="46" rx="40" ry="38" fill="url(#scale)" stroke="#25496e" stroke-width="3"/>
-<path d="M19 42Q25 23 43 18" stroke="#d7fffa" stroke-width="4" opacity=".6" fill="none" stroke-linecap="round"/>
-<g stroke="#bcefff" fill="none" stroke-width="3"><path d="M14 40Q33 17 62 24Q83 30 80 58Q72 81 44 80Q26 75 24 59"/><path d="M24 31Q44 28 55 39Q62 51 52 61Q42 67 35 58"/><path d="M37 40L45 35L53 42L46 51Z"/></g><path d="M18 62Q30 73 42 75" stroke="#fffefa" stroke-width="2" fill="none"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 96 96"><defs><radialGradient id="body" cx=".31" cy=".18" r=".82"><stop stop-color="#f0fff7"/><stop offset=".23" stop-color="#a1f2eb"/><stop offset=".55" stop-color="#50bcd1"/><stop offset=".8" stop-color="#317baf"/><stop offset="1" stop-color="#263f87"/></radialGradient>
+ <linearGradient id="plate" x1=".18" y1="0" x2=".85" y2=".95"><stop stop-color="#f0fff7"/><stop offset=".54" stop-color="#b1efff"/><stop offset="1" stop-color="#317baf"/></linearGradient></defs>
+ <g fill="url(#plate)" stroke="#23345b" stroke-width="2.3"><path d="M25 29L16 4L36 21Z"/><path d="M71 29L80 4L60 21Z"/><path d="M20 58L4 79L31 75Z"/><path d="M76 58L92 79L65 75Z"/></g><ellipse cx="48" cy="47" rx="38" ry="39" fill="url(#body)" stroke="#23345b" stroke-width="3"/><path d="M24 36Q29 20 47 18Q58 17 65 24" stroke="#f0fff7" stroke-width="4" opacity=".57" stroke-linecap="round" fill="none"/><g fill="none" stroke="#d7ffff" stroke-width="2.4" opacity=".86">
+  <path d="M20 42Q32 23 50 25Q73 30 77 48Q76 67 53 72Q30 70 27 52Q35 36 52 38"/>
+  <path d="M30 62Q48 85 66 65"/></g>
+  <path d="M48 24L36 43L48 58L60 43Z" fill="url(#plate)" stroke="#23345b" stroke-width="1.2"/>
+  <path d="M48 28L42 42L48 50L54 42Z" fill="#d7ffff"/></svg>
