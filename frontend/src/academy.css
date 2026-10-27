@@ -1128,3 +1128,28 @@
 /* V54 distinguish classical three wonders from variant chief-door labels */
 .qimen-v54-wonder{color:#7b4f26;background:#f3e9d2;border-radius:2px;padding:3px 5px;font-size:9px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
 @media(max-width:660px){.qimen-v50-nine button{min-height:156px}.qimen-v54-wonder{font-size:8px}}
+
+/* V55 四柱：以可读的赤金色传统命简显示独立真实排盘结果 */
+.bazi-v55{margin:18px 0 25px;padding:20px;border:1px solid #c6a27e;background:linear-gradient(135deg,#fff8e8,#f0e4d0);color:#593d31}
+.bazi-v55 header small{color:#966549;letter-spacing:.08em}
+.bazi-v55 h2{margin:7px 0 8px;font-size:21px;color:#754637}
+.bazi-v55 header p{font-size:12px;line-height:1.95}
+.bazi-v55-form{display:flex;align-items:flex-end;flex-wrap:wrap;gap:12px;margin:18px 0}
+.bazi-v55-form label{display:flex;flex:1 1 145px;min-width:0;flex-direction:column;gap:7px;font-size:12px;color:#61442f}
+.bazi-v55-form input,.bazi-v55-form select{box-sizing:border-box;width:100%;height:43px;min-width:0;background:#fffcf2;border:1px solid #bfa282;color:#563d2e;padding:8px}
+.bazi-v55-form button{min-height:43px;cursor:pointer;background:#795038;color:#fff5e4;border:0;padding:10px 14px}
+.bazi-v55-form button:disabled{opacity:.6;cursor:wait}
+.bazi-v55-meta{display:grid;gap:6px;margin:15px 0;padding:14px;border-left:3px solid #a67851;background:#fffaf2;font-size:12px;line-height:1.85}
+.bazi-v55-meta strong{font-size:18px;color:#80503b}
+.bazi-v55-pillar-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:12px 0}
+.bazi-v55-pillar{display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 9px;min-width:0;background:#fffaf1;border:1px solid #ddc9a9;text-align:center;overflow-wrap:anywhere}
+.bazi-v55-pillar--day{border-color:#b86f48;box-shadow:inset 0 3px #ad7752}
+.bazi-v55-pillar strong{font-size:31px;color:#754431;letter-spacing:.12em;white-space:nowrap}
+.bazi-v55-pillar b{font-size:11px;color:#5f5548}
+.bazi-v55-pillar span,.bazi-v55-pillar small{font-size:11px;color:#665b49}
+.bazi-v55-hidden{display:flex;flex-direction:column;gap:5px;width:100%;border-top:1px solid #e0d0bc;padding-top:9px}
+.bazi-v55-hidden em{font-size:10px;font-style:normal;color:#9a6b4b}
+.bazi-v55-hidden span{font-size:11px}
+.bazi-v55-result>a{font-size:12px;color:#866045;text-decoration:underline}
+.bazi-v55-result .academy-caution{line-height:1.9;font-size:12px}
+@media(max-width:720px){.bazi-v55-pillar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bazi-v55{padding:13px}.bazi-v55-pillar strong{font-size:27px}}
