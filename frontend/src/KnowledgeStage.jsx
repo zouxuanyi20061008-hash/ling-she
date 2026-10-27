@@ -161,7 +161,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                         <>复合格局候选：{p.classical_patterns.map(x=>x.title+'（'+x.evidence+'）').join('、')}。</>:
                         '本宫未见已支持的复合格局条件。'}
                       格名只说明传统结构，不能直接下吉凶结论。
-                    </>}</>:</>:
+                    </>}</>:
                   <>{p.original_star}、{p.original_door||'中宫不安八门'}为固定本宫出处，
                     <strong>不是</strong>此时天盘星门的实际落宫。</>}</p>)}
           </div>
