@@ -72,6 +72,17 @@ jobs:
           name: qimen-v50-earthplate-acceptance
           path: backend/acceptance-output/qimen-v50.json
           if-no-files-found: error
+      - name: Run V51 Qimen rotated stars and gates acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/qimen_v51_acceptance.py --output backend/acceptance-output/qimen-v51.json
+      - name: Upload V51 Qimen full ring acceptance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: qimen-v51-star-gate-acceptance
+          path: backend/acceptance-output/qimen-v51.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]

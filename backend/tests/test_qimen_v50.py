@@ -79,8 +79,10 @@ def test_actual_beijing_timestamp_changes_term_at_lichun_but_not_automatically_d
     assert after["solar_term"]=="立春"
     assert before["day_ganzhi"]==after["day_ganzhi"]
     assert before["input_provenance"]["beijing_time"].endswith("+08:00")
-    assert after["state"]=="earth_plate_computed_sky_gate_pending"
-    assert all(r["actual_gate"] is None for r in after["palaces"])
+    assert after["state"]=="sky_stars_and_eight_gates_rotated_spirits_pending"
+    assert after["has_rotated_stars_and_gates"] is True
+    assert after["has_complete_rotating_plate"] is False
+    assert all(r["actual_spirit"] is None for r in after["palaces"])
 
 
 def test_23_hour_day_boundary_is_explicit_and_changes_derived_hour():

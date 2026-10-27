@@ -164,4 +164,5 @@ def cast_qimen(solar_date:date,clock:time,day_boundary:str="zi_hour")->dict:
         "warnings":list(preview["warnings"]),
         "verification":"lunar_python_1.4.8_not_official_almanac",
     }
-    return _plate(term["name"],day,hour,metadata)
+    from .qimen_rotation import rotate_qimen
+    return rotate_qimen(_plate(term["name"],day,hour,metadata))

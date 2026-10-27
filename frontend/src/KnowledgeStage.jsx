@@ -63,12 +63,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       <section className="academy-stage-banner"><div>
         <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
         <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'干支四柱 · 入门认识命盘':'古典文献 · 入门导览'}</p>
-        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V50 已支持按北京时间计算阴阳遁、三元局数、九宫地盘及旬首值符值使本宫；天盘星门尚待实现。':isBazi?'这里是互动教学演示，不会伪装成真实完整排盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
+        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V51 已计算北京时间起局、九宫地盘、天盘九星与八门随时辰转布；八神、空亡及格局仍待实现。':isBazi?'这里是互动教学演示，不会伪装成真实完整排盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
-      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V50 真正定局 · 九宫地盘':isBazi?'四柱命简 · 干支辨识':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'真实日期起局基础 · 天盘转布未完成':isBazi?'互动结构教学 · 不冒充完整实盘':'独立主题 · 后续按本门术法逐步完善'}</small></div>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V51 真正定局 · 星门转盘':isBazi?'四柱命简 · 干支辨识':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'值符值使动态落宫已算 · 八神待实现':isBazi?'互动结构教学 · 不冒充完整实盘':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isQimen&&<section className="qimen-v50">
-        <header><small>V50 · 时家奇门 / 拆补法</small><h2>按北京时间定阴阳遁 · 起九宫地盘</h2>
-          <p>输入真实公历日期与钟面时刻，以二十四节气及甲己日符头定局。九星、八门此版仅显示本宫出处，尚未随时辰转宫。</p>
+        <header><small>V51 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
+          <p>输入中国北京时间，以节气及符头定局。值符随时干转布九星和天盘干；值使按旬内时辰数排八门。中五寄坤二，八神尚待完成。</p>
         </header>
         <form onSubmit={castActualQimen} className="qimen-v50-form">
           <label>公历日期（中国时间）
@@ -98,25 +98,48 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             <span>值符原始本宫：{qimenChart.duty_origin.origin_star} ·
               {qimenChart.duty_origin.earth_origin_palace}宫；
               值使本宫：{qimenChart.duty_origin.origin_door}</span>
+            {qimenChart.has_rotated_stars_and_gates&&<>
+              <span>值符{qimenChart.duty_origin.origin_star}：原{qimenChart.duty_origin.earth_origin_palace}宫 →
+                {qimenChart.duty_origin.rotated_star_palace}宫
+                {qimenChart.duty_origin.rotated_star_palace!==qimenChart.duty_origin.rotated_star_display_palace?
+                  '（寄坤二展示）':''}</span>
+              <span>值使{qimenChart.duty_origin.origin_door}：原{qimenChart.duty_origin.earth_origin_palace}宫 →
+                {qimenChart.duty_origin.rotated_door_palace}宫
+                {qimenChart.duty_origin.rotated_door_palace!==qimenChart.duty_origin.rotated_door_display_palace?
+                  '（寄坤二展示）':''}</span>
+            </>}
           </div>
-          <div className="academy-nine qimen-v50-nine" role="group" aria-label="V50 奇门九宫真实地盘">
+          <div className="academy-nine qimen-v50-nine" role="group"
+            aria-label={qimenChart.has_rotated_stars_and_gates?'V51 奇门九宫星门转盘':'V50 奇门九宫真实地盘'}>
             {qimenChart.palaces.map(p=><button type="button" key={p.number}
               className={palaceNum===p.number?'active':''}
               onClick={()=>setPalaceNum(p.number)}>
               <small>{p.name}宫 · {p.number}</small>
-              <strong>{p.earth_stem}</strong>
-              <b>地盘</b>
+              {qimenChart.has_rotated_stars_and_gates?
+                <><strong>{p.actual_star||'中宫'}</strong><b>{p.actual_gate||'无独立八门'}</b>
+                  <small>地{p.earth_stem} · 天{p.sky_stem}
+                    {p.attached_center_stem?' · 寄'+p.attached_center_stem:''}</small></>:
+                <><strong>{p.earth_stem}</strong><b>地盘</b></>}
             </button>)}
           </div>
           <div className="qimen-v50-palace">
             {qimenChart.palaces.filter(p=>p.number===palaceNum).map(p=>
               <p key={p.number}><b>{p.name}{p.number}宫</b> · 地盘 {p.earth_stem}。
-                {p.original_star}、{p.original_door||'中宫不安八门'}为固定本宫出处，
-                <strong>不是</strong>此时天盘星门的实际落宫。</p>)}
+                {qimenChart.has_rotated_stars_and_gates?
+                  <>天盘 {p.sky_stem}，实际九星 {p.actual_star||'中五无独立转宫星'}，
+                    实际八门 {p.actual_gate||'中五不安八门'}。
+                    {p.star_from_palace&&<> 九星来源{p.star_from_palace===7?'兑':p.star_from_palace===2?'坤':'第'}{p.star_from_palace}宫，
+                      八门来源{p.gate_from_palace}宫；</>}
+                    {p.attached_center_star&&<> {p.attached_center_star}随天芮寄，中宫干{p.attached_center_stem}。</>}
+                    八神尚待完成。</>:
+                  <>{p.original_star}、{p.original_door||'中宫不安八门'}为固定本宫出处，
+                    <strong>不是</strong>此时天盘星门的实际落宫。</>}</p>)}
           </div>
           {qimenChart.input_provenance?.warnings?.map((w,i)=>
             <p key={i} className="academy-caution">{w}</p>)}
-          <p className="academy-caution">尚未转布天盘九星、八门及八神，不是完整奇门时盘；
+          <p className="academy-caution">{qimenChart.has_rotated_stars_and_gates?
+            'V51 天盘九星、八门已按时辰实际转宫，但八神、旬空、马星和格局尚未完成；不是全部层次齐备的完整奇门时盘。':
+            '当前只有 V50 地盘，九星、八门与八神尚未完成。不是完整奇门时盘。'}
             不提供据此判定的吉凶、择时或方位。</p>
           <a href={qimenChart.reference} target="_blank" rel="noopener noreferrer">原典：《奇门遁甲元灵经》卷一</a>
         </div>}
@@ -137,7 +160,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           <hr/><h3>认识八门</h3>
           <div className="academy-small-picker">{DOORS.map((d,i)=><button key={d[0]} className={door===i?'selected':''} onClick={()=>setDoor(i)}>{d[0]}</button>)}</div>
           <blockquote>{DOORS[door][0]}常被联系到{DOORS[door][1]}等传统象义。</blockquote>
-          <p className="academy-caution">此区仍是固定九宫、八门文化教学图；上方 V50 已按实际日期算出地盘。天盘九星、八门与八神实际落宫仍待后续版本完成，不能以本宫索引冒充实盘。</p>
+          <p className="academy-caution">此区仅为固定九宫文化教学图；上方 V51 才是按时辰起出的九星与八门盘。此处的八门是原始名称索引，不等于这一时刻的落宫。</p>
         </article>
       </section>:isBazi?<section className="academy-learning-layout">
         <div className="academy-learning-surface">

@@ -1105,3 +1105,12 @@
 .qimen-v50 .academy-caution{line-height:1.9;margin-top:10px}
 .qimen-v50-result>a{color:#376549;text-decoration:underline;font-size:12px}
 @media(max-width:660px){.qimen-v50{padding:12px}.qimen-v50-form{gap:9px}.qimen-v50-form label{flex-basis:110px}.qimen-v50-nine button{min-height:69px}.qimen-v50-nine button strong{font-size:20px}}
+
+/* V51 实际转盘上的星、门、地盘干/天盘干，避免与固定教学盘混淆 */
+.qimen-v50-nine button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 4px}
+.qimen-v50-nine button strong{font-size:15px;line-height:1.4;white-space:normal}
+.qimen-v50-nine button b{font-size:12px}
+.qimen-v50-nine button small{font-size:10px;line-height:1.5;white-space:normal}
+.qimen-v50-summary span{line-height:1.8}
+.qimen-v50-palace p{margin:0;line-height:2.1;overflow-wrap:anywhere}
+@media(max-width:650px){.qimen-v50-nine button{min-height:108px}.qimen-v50-nine button strong{font-size:13px}.qimen-v50-nine button small{font-size:9px}}
