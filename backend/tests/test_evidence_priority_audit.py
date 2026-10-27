@@ -1,11 +1,13 @@
 """V47 stable canonical evidence / provenance, missing input and nondecisive review order."""
 from copy import deepcopy
+from datetime import date, time
 
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 from app.core.hexagrams import TRIGRAMS
 from app.core.liuyao import cast_six_yao
+from app.core.solar_calendar import preview_solar_calendar
 from app.core.evidence_priority_audit import decorate_evidence_priority_audit
 
 
@@ -55,11 +57,19 @@ def test_manual_calendar_source_is_priority_one_not_trusted_verified_date():
 
 
 def test_calendar_provenance_from_source_is_not_silently_treated_as_manual():
-    chart=cast_six_yao([7]*6,"甲子","辰",calendar_provenance={
-        "source":"server_recomputed_calendar",
-        "beijing_time":"2026-02-01T10:00:00",
-        "warnings":[],
-    })
+    # Calendar provenance cannot be fabricated independently of the true day.
+    day=preview_solar_calendar(date(2026,2,1),time(10,0))
+    chart=cast_six_yao(
+        [7]*6,day["day_ganzhi"],day["month_branch"],calendar_provenance={
+            "source":"server_recomputed_calendar",
+            "day_ganzhi":day["day_ganzhi"],
+            "month_branch":day["month_branch"],
+            "solar_date":"2026-02-01",
+            "beijing_time":"2026-02-01T10:00:00",
+            "day_boundary_label":"午夜换日",
+            "warnings":[],
+        }
+    )
     d=chart["evidence_priority_audit"]
     assert d["calendar_provenance_verified"] is True
     assert not any(x["priority"]==1 for x in d["review_queue"])
