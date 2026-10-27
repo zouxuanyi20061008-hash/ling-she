@@ -63,7 +63,7 @@ it('V65 two-sided independently verified year shows two calculated walk traces',
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>full}))
  render(<TaiyiV64/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙年局'}))
- expect(await screen.findByText(/2026年 · 壬子元/)).toBeTruthy()
+ expect(await screen.findByText(/1624年 · 壬子元/)).toBeTruthy()
  expect(screen.getByText(/本年份文昌、始击、主客算已与独立古籍固定例盘逐项相符/)).toBeTruthy()
  expect(screen.getByText(/两方均已计算/)).toBeTruthy()
  expect(screen.getByText('19 算')).toBeTruthy()

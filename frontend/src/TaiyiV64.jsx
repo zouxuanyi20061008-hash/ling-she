@@ -118,7 +118,7 @@ export default function TaiyiV64(){
             {spirit.palace!=null?'正宫按'+spirit.palace+'数累计。':'间位非起点时不累算。'}
           </p>}
         </section>
-        <section className="taiyi-v65-counts" aria-label="V65 主客逐宫投算证据">
+        <section className="taiyi-v65-counts" role="group" aria-label="V65 主客逐宫投算证据">
           <h3>主客投算 · 可逐位复核</h3>
           <div className="taiyi-v65-count-grid">
             {[
