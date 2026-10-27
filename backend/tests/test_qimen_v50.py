@@ -79,7 +79,7 @@ def test_actual_beijing_timestamp_changes_term_at_lichun_but_not_automatically_d
     assert after["solar_term"]=="立春"
     assert before["day_ganzhi"]==after["day_ganzhi"]
     assert before["input_provenance"]["beijing_time"].endswith("+08:00")
-    assert after["state"]=="sky_stars_and_eight_gates_rotated_spirits_pending"
+    assert after["state"]=="stars_gates_spirits_hour_void_horse_structures"
     assert after["has_rotated_stars_and_gates"] is True
     assert after["has_complete_rotating_plate"] is False
     assert all(r["actual_spirit"] is None for r in after["palaces"])

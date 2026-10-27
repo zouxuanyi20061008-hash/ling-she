@@ -38,7 +38,7 @@ def test_yin_reverse_from_middle_borrowed_star():
     assert c["spirit_plate"]["placements"]=={
         "1":"玄武","2":"值符","3":"六合","4":"太阴",
         "6":"九地","7":"九天","8":"白虎","9":"腾蛇"}
-    assert c["hour_markers"]["void_branches"]==["子","丑"]
+    assert c["hour_markers"]["void_branches"]==["戌","亥"]
     assert c["hour_markers"]["horse_branch"]=="巳"
 
 
