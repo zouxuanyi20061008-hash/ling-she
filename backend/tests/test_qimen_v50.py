@@ -82,7 +82,9 @@ def test_actual_beijing_timestamp_changes_term_at_lichun_but_not_automatically_d
     assert after["state"]=="stars_gates_spirits_hour_void_horse_structures"
     assert after["has_rotated_stars_and_gates"] is True
     assert after["has_complete_rotating_plate"] is False
-    assert all(r["actual_spirit"] is None for r in after["palaces"])
+    assert {r["actual_spirit"] for r in after["palaces"] if r["number"]!=5}=={
+        "值符","腾蛇","太阴","六合","白虎","玄武","九地","九天"}
+    assert next(r for r in after["palaces"] if r["number"]==5)["actual_spirit"] is None
 
 
 def test_23_hour_day_boundary_is_explicit_and_changes_derived_hour():
