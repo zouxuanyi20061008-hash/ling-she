@@ -1165,3 +1165,17 @@
 .bazi-v56-cycles article b{font-size:11px}
 .bazi-v56-cycles article small,.bazi-v56-cycles article span{font-size:10px;line-height:1.5}
 @media(max-width:710px){.bazi-v56-cycles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* V57 精确节令月 12 宫表：标识选中月份并清楚展示起止交节时间 */
+.bazi-v57-flow{margin-top:25px;padding:18px 0;border-top:2px solid #ac8d62}
+.bazi-v57-flow header h3{font-size:20px;color:#704b30;margin:8px 0}
+.bazi-v57-flow header p{font-size:12px;line-height:1.8}
+.bazi-v57-flow-enable span{display:flex;align-items:center;gap:8px}
+.bazi-v57-flow-enable input{width:16px;height:16px;min-height:auto;margin:0;flex:0 0 16px;accent-color:#876344}
+.bazi-v57-months{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.bazi-v57-months article{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:11px 8px;background:#fffcf6;border:1px solid #ddc7aa;text-align:center;overflow-wrap:anywhere}
+.bazi-v57-months article.selected{background:#fff1da;border:2px solid #a06d42}
+.bazi-v57-months article strong{font-size:23px;color:#744b34;white-space:nowrap}
+.bazi-v57-months article b{font-size:11px}
+.bazi-v57-months article small,.bazi-v57-months article span{font-size:10px;line-height:1.6}
+@media(max-width:710px){.bazi-v57-months{grid-template-columns:repeat(2,minmax(0,1fr))}}
