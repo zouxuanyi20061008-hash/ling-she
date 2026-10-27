@@ -26,7 +26,8 @@ def test_source_liuren_guide_jiashen_hai_general_chou_hour_all_four_lessons():
     assert c["heaven_plate"]["丑"]=="亥"
     assert c["heaven_plate"]["寅"]=="子"
     assert c["three_transmissions"]["status"]=="pending"
-    assert c["three_transmissions"]["method"]=="需涉害判深浅"
+    assert "涉害" in c["three_transmissions"]["method"]
+    assert c["three_transmissions"]["rule_audit"]["depths_computed"] is False
 
 
 def test_source_liuren_daquan_bingxu_reexamination_three_transmissions():
@@ -53,11 +54,13 @@ def test_source_liuren_shuoyue_jiazi_hai_general_zi_hour_biyong():
        "子","亥","戌"]
 
 
-def test_fuyin_fanyin_special_methods_now_compute_only_verified_cases():
-    for hour,general in [("子","子"),("子","午")]:
-        c=build_liuren("甲子",general,hour)
-        assert c["three_transmissions"]["status"]=="computed"
-        assert len(c["three_transmissions"]["transmissions"])==3
+def test_fuyin_fanyin_special_methods_only_when_unique():
+    fuyin=build_liuren("甲子","子","子")
+    assert fuyin["three_transmissions"]["status"]=="computed"
+    assert len(fuyin["three_transmissions"]["transmissions"])==3
+    fanyin=build_liuren("甲子","午","子")
+    assert fanyin["three_transmissions"]["status"]=="pending"
+    assert fanyin["three_transmissions"]["transmissions"] is None
 
 
 def test_all_60days_12hour_generals_never_use_invalid_branch_or_unverified_choice():

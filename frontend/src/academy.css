@@ -1210,3 +1210,12 @@
 .liuren-v58-pending{background:#fff9ec;border:1px solid #cab797;padding:13px;font-size:12px;line-height:1.8}
 .liuren-v58-result>a{font-size:12px;color:#295e73;text-decoration:underline}
 @media(max-width:680px){.liuren-v58{padding:12px}.liuren-v58-plate{grid-template-columns:repeat(3,minmax(0,1fr))}.liuren-v58-lessons{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* V59 三传发用依据以及未决涉害候选清晰分栏 */
+.liuren-v59-rule{padding:11px 13px;background:#e7efef;border-left:3px solid #44848b;margin:12px 0;display:grid;gap:5px;font-size:12px}
+.liuren-v59-rule small{color:#55777b}
+.liuren-v59-candidates{margin-top:13px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.liuren-v59-candidates article{display:flex;flex-direction:column;gap:5px;padding:10px;background:#fffef8;border:1px solid #c4b9a7;min-width:0}
+.liuren-v59-candidates article span{font-size:11px;overflow-wrap:anywhere}
+.liuren-v59-candidates p{grid-column:1/-1;margin:0;font-size:11px}
+@media(max-width:600px){.liuren-v59-candidates{grid-template-columns:1fr}}

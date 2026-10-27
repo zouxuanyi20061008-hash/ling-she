@@ -95,17 +95,23 @@ def _fuyin(day:str,lessons:list[dict])->dict:
 
 
 def _fanyin(day:str,plate:dict,lessons:list[dict],original:dict)->dict:
-    if original["status"]=="computed":
-        t=original["transmissions"]
-        triple=[p["branch"] for p in t]
-        if triple[0]!=triple[2]:
-            raise ValueError("V59 反吟有克的初末传理应相同")
-        return _triple(*triple,"反吟·有克（"+original["method"]+"）",
-                       original["initial_candidates"],SOURCES["fanyin"],
-                       {"underlying_method":original["method"]})
-    if any(p["relation"]!="无直接克" for p in lessons):
+    # V58 deliberately short-circuited *all* fanyin before evaluating conflicts,
+    # so recompute 贼克/比用 from the four real lessons here.
+    chosen,candidates=_unique_from_lessons(day,lessons)
+    if candidates and chosen is not None:
+        mid=plate[chosen];last=plate[mid]
+        if last!=chosen or mid==chosen:
+            raise ValueError("V59 反吟有克不能违反六冲相承")
+        method=("反吟·有克·唯一贼克/比用"
+                if len(candidates)>1 else "反吟·有克·单一贼克")
+        return _triple(chosen,mid,last,method,candidates,
+                       SOURCES["fanyin"],{
+                         "source_priority":"下贼上优先；无下贼才上克下",
+                         "used_four_lessons":True})
+    if candidates:
         return _pending("反吟多贼克仍需涉害",
-                "此反吟课贼克比用未唯一，暂不越过涉害分歧",original.get("initial_candidates"))
+                "反吟四课含多处贼克，阴阳比用后仍非唯一，须涉害核验",
+                candidates,{"source":"实际四课（非旧 V58 反吟占位标记）"})
     if day[0] not in "丁己辛" or day[1] not in "丑未":
         return _pending("反吟特殊课式仍待原典校验",
                 "无直接贼克但不属于已校验的丁己辛丑未六日")

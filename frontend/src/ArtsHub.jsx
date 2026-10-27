@@ -11,7 +11,7 @@ export const ARTS = [
   {id:'bazi',name:'四柱八字',title:'干支四柱',symbol:'干',en:'FOUR PILLARS',tone:'amber',
    brief:'年、月、日、时，观干支历法。',detail:'四柱十神 · 大运 · 十二节令流月',status:'V57 可查流年流月',group:'命理'},
   {id:'liuren',name:'大六壬',title:'六壬天盘',symbol:'壬',en:'DA LIU REN',tone:'night',
-   brief:'天盘地盘，古代三式之一。',detail:'真实十二宫 · 四课 · 部分三传',status:'V58 可起天地四课',group:'三式'},
+   brief:'天盘地盘，古代三式之一。',detail:'十二宫四课 · 遥克伏吟反吟 · 涉害待验',status:'V59 九宗门扩展',group:'三式'},
   {id:'taiyi',name:'太乙神数',title:'太乙行宫',symbol:'乙',en:'TAI YI',tone:'jade',
    brief:'步宫推数，历法中的术数传统。',detail:'九宫 · 积年 · 原典入门',status:'典籍导览',group:'三式'},
   {id:'ziwei',name:'紫微斗数',title:'紫微星盘',symbol:'星',en:'ZIWEI DOUSHU',tone:'copper',
