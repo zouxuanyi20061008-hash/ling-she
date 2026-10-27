@@ -8,6 +8,7 @@ const staticFloraChunks=new Map();
 function invalidateStaticGround(){staticGroundChunks.clear()}
 function invalidateStaticFlora(){staticFloraChunks.clear()}
 if(pathArt.addEventListener)pathArt.addEventListener('load',invalidateStaticGround);
+if(bankArt.addEventListener)bankArt.addEventListener('load',invalidateStaticGround);
 if(bambooArt.addEventListener)bambooArt.addEventListener('load',invalidateStaticFlora);
 
 function cachedWorldChunk(cache,ix,iy,build){
@@ -29,26 +30,6 @@ function makeStaticCanvas(ix,iy){
   g.imageSmoothingEnabled=false;
   g.translate(-ix*STATIC_CHUNK_PX,-iy*STATIC_CHUNK_PX);
   return {canvas:c,g};
-}
-function paintStaticRiver(g){
-  g.save();g.lineCap='round';g.lineJoin='round';
-  function riverPath(){
-    g.beginPath();
-    for(let y=1200;y<=3500;y+=36){
-      let x=streamCenter(y);
-      if(y===1200)g.moveTo(x,y);else g.lineTo(x,y);
-    }
-  }
-  const styles=[['#385b46',92],['#7d9f80',75],['#366e83',58],['#5ba5a5',40]];
-  for(const [color,width] of styles){
-    g.strokeStyle=color;g.lineWidth=width;riverPath();g.stroke();
-  }
-  g.globalAlpha=.32;g.strokeStyle='#c5eee1';g.lineWidth=2;
-  for(let j=0;j<48;j++){
-    const y=1230+j*47,x=streamCenter(y);
-    g.beginPath();g.moveTo(x-9,y);g.lineTo(x+7,y-3);g.stroke();
-  }
-  g.restore();
 }
 function buildStaticGround(ix,iy){
   const out=makeStaticCanvas(ix,iy);if(!out)return null;
@@ -73,9 +54,12 @@ function buildStaticGround(ix,iy){
     }
   }
   g.globalAlpha=1;
-  // Roads and river are entirely static world geometry.
+  // V6.3a texture treatment: additional grass, hand-scattered road grains,
+  // then one continuous layered river, all clipped into the static chunk.
+  paintQinglanGroundDetails(g,ix,iy);
   paintStoneRoad(g);
-  paintStaticRiver(g);
+  paintQinglanRoadDetails(g,ix,iy);
+  paintQinglanRiver(g,ix,iy);
   return canvas;
 }
 function buildStaticFlora(ix,iy){
