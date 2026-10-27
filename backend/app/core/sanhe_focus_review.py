@@ -78,7 +78,9 @@ def decorate_sanhe_focus(chart:dict)->dict:
                 "kind":item["kind"],"source_type":key,"source_label":label,
                 "element":item["element"],"branches":pattern_branches,
                 "positions":actual_positions,
-                "moving_positions":list(item.get("moving_positions",actual_positions if key=="missing_branch_candidates" else [])),
+                "moving_positions":list(item["moving_positions"]) if key=="original_triad_candidates"
+                    else list(actual_positions) if key in (
+                        "moving_transformed_candidates","missing_branch_candidates") else [],
                 "missing_branch":item.get("missing_branch"),
                 "transformed_branch":item.get("changed_branch"),
                 "transformed_position":item.get("changed_position"),

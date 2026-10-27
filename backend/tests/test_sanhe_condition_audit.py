@@ -90,7 +90,13 @@ def test_mixed_candidate_only_checks_real_changed_branch_with_void_clash_provena
     assert found is not None
     chart,row=found
     assert row["movement_state"]=="two_original_movers_plus_local_change"
+    assert row["moving_count"]==2
     assert row["transformed_branch_used"] is True
+    candidate=next(x for x in chart["sanhe_focus_review"]["rows"]
+                   if x["candidate_key"]==row["candidate_key"])
+    assert sorted(candidate["moving_positions"])==[1,3]
+    assert sorted(row["positions"])==[1,3]
+    assert all(pos in chart["dong_yao"] for pos in candidate["moving_positions"])
     transformed=row["changed_position_check"]
     assert transformed is not None
     pos=transformed["position"]

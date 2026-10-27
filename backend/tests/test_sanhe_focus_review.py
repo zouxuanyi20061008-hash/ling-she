@@ -101,6 +101,25 @@ def test_actual_movers_and_waiting_missing_branch_preserve_provenance():
     assert all(r["transformed_branch"] is None for r in waiting)
     assert all(r["season"]["effective_formation"] is None for r in waiting)
 
+def test_mixed_sanhe_positions_are_true_movers_never_an_empty_list():
+    found=0
+    for low in TRIGRAMS:
+        for high in TRIGRAMS:
+            for moves in ((1,3),(4,6)):
+                chart=cast_six_yao(_nums(low,high,moves))
+                for row in chart["sanhe_focus_review"]["rows"]:
+                    if row["source_type"]!="moving_transformed_candidates":
+                        continue
+                    found+=1
+                    assert row["moving_positions"]==list(moves)
+                    assert row["positions"]==list(moves)
+                    assert row["formed"] is None
+                    assert row["transformed_position"] in moves
+                    assert row["transformed_branch"]==chart["bian_najia_lines"][
+                        row["transformed_position"]-1]["branch"]
+    assert found>0
+
+
 def test_exhaustive_no_mutation_of_original_sanhe_geometry():
     # Each of 64 combinations, one mover, with/without focus.
     for low in TRIGRAMS:

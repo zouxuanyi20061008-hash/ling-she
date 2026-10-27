@@ -47,7 +47,7 @@ export default function SixYaoCombinationPanel({chart}){
       aria-label="三合局与用神日月合参">
       <h4>V40 · 三合局与用神、日月合参</h4>
       <p>{chart.sanhe_focus_review.status==='no_focus'?
-        '还没有选择用神。请在下方合参总览选择六亲或世应，再来核对三合关系。':
+        '还没有选择用神。请在上方合参总览选择六亲或世应，再来核对三合关系。':
         chart.sanhe_focus_review.status==='hidden_focus'?
         '当前关注的六亲在本卦不现，先核飞伏与日月，不把三合局直接当成可用用神。':
         '当前关注：'+chart.sanhe_focus_review.focus_category+'，候选爻位 '+
