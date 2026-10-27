@@ -16,7 +16,32 @@ function paintBody(t,i){if(!snakeBodyArt.complete||!snakeBodyArt.naturalWidth)re
 var bridgeArt=document.createElement('img');bridgeArt.src='assets/stone-bridge.svg';
 var cliffArt=document.createElement('img');cliffArt.src='assets/mossy-cliff.svg';
 
-function paintBridge(x,y){if(!bridgeArt.complete||!bridgeArt.naturalWidth)return false;ctx.drawImage(bridgeArt,x-88,y-59,176,118);return true}
+function paintBridge(x,y){
+  if(!isArtReady(bridgeArt))return false;
+  ctx.save();
+  // Contact shadows and the cut-stone footings make the horizontal span read
+  // as an elevated walkable crossing over the north-south stream.
+  ctx.fillStyle='#16373c77';ctx.beginPath();ctx.ellipse(x,y+12,100,52,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#7f8c75';
+  for(var side of [-1,1]){
+    var bx=x+side*94;
+    ctx.beginPath();ctx.ellipse(bx,y+38,16,13,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#c2b799';ctx.beginPath();ctx.ellipse(bx-2,y+31,11,5,-.1,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#7f8c75';
+  }
+  ctx.drawImage(bridgeArt,x-88,y-59,176,118);
+  ctx.restore();return true;
+}
+// Foreground rail is drawn after the serpent only when the serpent is still
+// north of the lower handrail. No new collision or bridge geometry is added.
+function paintBridgeForeground(p){
+  if(!isArtReady(bridgeArt)||!p)return;
+  var cx=streamCenter(1800),cy=1800;
+  if(p.x<cx-92||p.x>cx+92||p.y<cy-45||p.y>cy+34)return;
+  ctx.save();ctx.globalAlpha=.92;
+  ctx.drawImage(bridgeArt,0,126,320,50,cx-88,cy-59+118*126/176,176,118*50/176);
+  ctx.restore();
+}
 function paintCliff(x,y,w,h){if(!cliffArt.complete||!cliffArt.naturalWidth)return false;ctx.drawImage(cliffArt,x,y,w,h);return true}
 function paintTreeCanopy(o,sz){if(!treeArt.complete||!treeArt.naturalWidth)return false;ctx.save();ctx.globalAlpha=.8;ctx.drawImage(treeArt,0,0,180,142,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*142/220);ctx.restore();return true}
 
@@ -60,14 +85,21 @@ function paintStreamBanks(){
 }
 function paintCliffScene(){
   if(!isArtReady(cliffArt))return false;
-  // A broad limestone cliff made of several overlapping moss-covered ledges.
+  // Single authored escarpment, instead of four repeated cliff stamps.
+  // Width and contact positions intentionally match the original solid cliff.
   ctx.save();
-  ctx.fillStyle='#213c3588';ctx.fillRect(1367,1284,290,300);
-  ctx.drawImage(cliffArt,1360,1213,158,180);
-  ctx.drawImage(cliffArt,1495,1213,163,180);
-  ctx.drawImage(cliffArt,1360,1367,164,171);
-  ctx.drawImage(cliffArt,1496,1367,163,171);
+  ctx.fillStyle='#1c423c4f';ctx.beginPath();
+  ctx.ellipse(1510,1577,167,27,-.08,0,Math.PI*2);ctx.fill();
+  ctx.drawImage(cliffArt,1358,1204,314,387);
   ctx.restore();return true;
+}
+function paintCliffForeground(p){
+  if(!isArtReady(cliffArt)||!p||p.x<1368||p.x>1655||p.y<1545||p.y>1608)return;
+  // A small section of cliff-base moss hangs in front of a passing serpent.
+  // Keep it translucent so the player never disappears behind scenery.
+  ctx.save();ctx.globalAlpha=.6;
+  ctx.drawImage(cliffArt,0,623,620,97,1358,1204+387*623/720,314,387*97/720);
+  ctx.restore();
 }
 function paintTreeScene(o,sz){
   if(!isArtReady(treeArt))return false;
@@ -84,7 +116,7 @@ function paintForegroundCanopies(playerRef,decorList,cameraX,cameraY,viewWidth,v
     // Only obscure the hero when she/he actually walks behind a trunk/canopy.
     if(o.y<=playerRef.y||playerRef.y<o.y-sz*1.42||Math.abs(o.x-playerRef.x)>sz*.63)continue;
     if(o.x<cameraX-sz||o.x>cameraX+viewWidth+sz||o.y<cameraY-sz*2||o.y>cameraY+viewHeight+sz)continue;
-    ctx.save();ctx.globalAlpha=.88;ctx.drawImage(treeArt,0,0,180,137,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*137/220);ctx.restore();
+    ctx.save();ctx.globalAlpha=.74;ctx.drawImage(treeArt,0,0,180,137,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*137/220);ctx.restore();
   }
 }
 function paintCreature(e){
@@ -104,6 +136,57 @@ function paintBambooStand(x,y,scale,g=ctx){
   g.drawImage(bambooArt,x-width*.5,y-height,width,height);g.restore();return true;
 }
 
+
+/* V6.3b: evergreen understory belongs to the baked flora layer.
+ * At most a handful of nearby fern/bamboo silhouettes are re-drawn in front
+ * when the serpent actually walks behind them. */
+var fernArt=new Image();fernArt.src='assets/qinglan-fern.svg';
+function paintFernCluster(x,y,scale,g=ctx){
+  if(!isArtReady(fernArt))return false;
+  var w=80*scale,h=60*scale;
+  g.save();g.fillStyle='#204c3c29';g.beginPath();
+  g.ellipse(x+3,y+1,w*.42,h*.15,0,0,Math.PI*2);g.fill();
+  g.drawImage(fernArt,x-w*.5,y-h,w,h);
+  g.restore();return true;
+}
+function paintFernFallback(x,y,scale,g=ctx){
+  g.save();g.translate(x,y);g.scale(scale,scale);
+  g.strokeStyle='#568761';g.lineWidth=3;g.lineCap='round';
+  for(var i=0;i<5;i++){
+    var a=-Math.PI*.84+i*Math.PI*.17;
+    g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(Math.cos(a)*28,-24,Math.cos(a)*42,-30);g.stroke();
+  }
+  g.restore();
+}
+function paintForegroundGrove(p){
+  if(!p||!isArtReady(bambooArt)&&!isArtReady(fernArt))return;
+  var tx=Math.floor(p.x/100),ty=Math.floor(p.y/100);
+  // Same deterministic world tiles and plant positions as buildStaticFlora.
+  // Scope stays within the serpent's current and adjacent tiles: no full map scan.
+  for(var ix=Math.max(0,tx-1);ix<=Math.min(35,tx+1);ix++)for(var iy=Math.max(0,ty-1);iy<=Math.min(35,ty+1);iy++){
+    var x=ix*100+50,y=iy*100+50;
+    if(biome(x,y)!==0||onQinglanRoad(x,y)||landmarkClearing(x,y,40)||
+       isEncounterClearing(x,y,35)||isAdventureClearing(x,y,40))continue;
+    var n=terrainHash(ix,iy,7);
+    if(n>.78&&isArtReady(bambooArt)){
+      var stands=[[x-23,y+24,.65+n*.45],[x+8,y+13,.55+n*.3]];
+      for(var k=0;k<stands.length;k++){
+        var t=stands[k],w=76*t[2],h=94*t[2];
+        if(p.y>=t[1]||p.y<t[1]-h*.9||Math.abs(p.x-t[0])>w*.48)continue;
+        ctx.save();ctx.globalAlpha=.72;
+        ctx.drawImage(bambooArt,0,0,192,175,t[0]-w*.5,t[1]-h,w,h*175/236);
+        ctx.restore();
+      }
+    }else if(n>.29&&n<.4&&isArtReady(fernArt)){
+      var px=x+10,py=y+28,scale=.66+n*.5,w=80*scale,h=60*scale;
+      if(p.y<py&&p.y>py-h*.8&&Math.abs(p.x-px)<w*.47){
+        ctx.save();ctx.globalAlpha=.68;
+        ctx.drawImage(fernArt,0,0,160,88,px-w*.5,py-h,w,h*88/120);
+        ctx.restore();
+      }
+    }
+  }
+}
 
 /* V5.4: fixed Qinglan landmarks. All coordinates are world-space and stable
    across reloads. The gate has an open center; the shrine has a solid base. */
