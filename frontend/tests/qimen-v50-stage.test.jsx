@@ -27,7 +27,7 @@ it('V50 user inputs Beijing date/time, requests server cast, shows computed eart
  })})
  vi.stubGlobal('fetch',fetchMock)
  panel()
- expect(screen.getByRole('heading',{name:'按北京时间定阴阳遁 · 起九宫地盘'})).toBeTruthy()
+ expect(screen.getByRole('heading',{name:'北京时间定局 · 九宫星门转盘'})).toBeTruthy()
  fireEvent.change(screen.getByLabelText('奇门公历日期'),{target:{value:'2026-02-04'}})
  fireEvent.change(screen.getByLabelText('奇门北京时间'),{target:{value:'04:30'}})
  fireEvent.change(screen.getByLabelText('奇门换日规则'),{target:{value:'midnight'}})

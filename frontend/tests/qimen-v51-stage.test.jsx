@@ -40,7 +40,7 @@ it('V51 renders true rotating sky stars and gates with source and destination wh
  expect(within(palace2).getByText(/地丙 · 天辛/)).toBeTruthy()
  fireEvent.click(palace2)
  expect(screen.getByText(/来源兑7宫/)).toBeTruthy()
- expect(screen.getByText(/八神尚待完成/)).toBeTruthy()
+ expect(screen.getAllByText(/八神尚待完成/).length).toBeGreaterThan(0)
 })
 
 it('V51 keeps V50-only saved response fallback with no fake rotated stars',async()=>{

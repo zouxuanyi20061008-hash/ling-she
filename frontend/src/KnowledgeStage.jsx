@@ -99,12 +99,10 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               {qimenChart.duty_origin.earth_origin_palace}宫；
               值使本宫：{qimenChart.duty_origin.origin_door}</span>
             {qimenChart.has_rotated_stars_and_gates&&<>
-              <span>值符{qimenChart.duty_origin.origin_star}：原{qimenChart.duty_origin.earth_origin_palace}宫 →
-                {qimenChart.duty_origin.rotated_star_palace}宫
+              <span>{`值符${qimenChart.duty_origin.origin_star}：原${qimenChart.duty_origin.earth_origin_palace}宫 → ${qimenChart.duty_origin.rotated_star_palace}宫`}
                 {qimenChart.duty_origin.rotated_star_palace!==qimenChart.duty_origin.rotated_star_display_palace?
                   '（寄坤二展示）':''}</span>
-              <span>值使{qimenChart.duty_origin.origin_door}：原{qimenChart.duty_origin.earth_origin_palace}宫 →
-                {qimenChart.duty_origin.rotated_door_palace}宫
+              <span>{`值使${qimenChart.duty_origin.origin_door}：原${qimenChart.duty_origin.earth_origin_palace}宫 → ${qimenChart.duty_origin.rotated_door_palace}宫`}
                 {qimenChart.duty_origin.rotated_door_palace!==qimenChart.duty_origin.rotated_door_display_palace?
                   '（寄坤二展示）':''}</span>
             </>}
