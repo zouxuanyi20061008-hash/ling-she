@@ -158,15 +158,38 @@ function paintTreeScene(o,sz){
   ctx.drawImage(treeArt,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65);
   ctx.restore();return true;
 }
-function paintForegroundCanopies(playerRef,decorList,cameraX,cameraY,viewWidth,viewHeight){
-  if(!isArtReady(treeArt))return;
+/* Keep tall trees in spatial buckets. After the forest is placed, the
+ * foreground pass only looks at the adjacent canopy cells, not all 1100 props. */
+var FOREST_FRONT_CELL=200;
+var forestFrontBuckets=new Map(),forestFrontSourceLength=-1;
+function rebuildForestCanopyIndex(decorList){
+  forestFrontBuckets.clear();
+  if(!decorList){forestFrontSourceLength=-1;return}
   for(var i=0;i<decorList.length;i++){
-    var o=decorList[i];if(o.type>=.29||biome(o.x,o.y)!==0)continue;
-    var sz=72+o.size*2.2;
-    // Only obscure the hero when she/he actually walks behind a trunk/canopy.
-    if(o.y<=playerRef.y||playerRef.y<o.y-sz*1.42||Math.abs(o.x-playerRef.x)>sz*.63)continue;
-    if(o.x<cameraX-sz||o.x>cameraX+viewWidth+sz||o.y<cameraY-sz*2||o.y>cameraY+viewHeight+sz)continue;
-    ctx.save();ctx.globalAlpha=.74;ctx.drawImage(treeArt,0,0,180,137,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*137/220);ctx.restore();
+    var tree=decorList[i];
+    if(tree.type>=.29||biome(tree.x,tree.y)!==0)continue;
+    var key=Math.floor(tree.x/FOREST_FRONT_CELL)+'_'+Math.floor(tree.y/FOREST_FRONT_CELL);
+    var bucket=forestFrontBuckets.get(key);
+    if(!bucket){bucket=[];forestFrontBuckets.set(key,bucket)}
+    bucket.push(tree);
+  }
+  forestFrontSourceLength=decorList.length;
+}
+function paintForegroundCanopies(playerRef,decorList,cameraX,cameraY,viewWidth,viewHeight){
+  if(!isArtReady(treeArt)||!playerRef)return;
+  if(forestFrontSourceLength!==decorList.length)rebuildForestCanopyIndex(decorList);
+  var ix=Math.floor(playerRef.x/FOREST_FRONT_CELL),iy=Math.floor(playerRef.y/FOREST_FRONT_CELL);
+  for(var xx=ix-1;xx<=ix+1;xx++)for(var yy=iy;yy<=iy+1;yy++){
+    var bucket=forestFrontBuckets.get(xx+'_'+yy);if(!bucket)continue;
+    for(var j=0;j<bucket.length;j++){
+      var o=bucket[j],sz=72+o.size*2.2;
+      if(o.y<=playerRef.y||playerRef.y<o.y-sz*1.42||Math.abs(o.x-playerRef.x)>sz*.63)continue;
+      if(o.x<cameraX-sz||o.x>cameraX+viewWidth+sz||
+         o.y<cameraY-sz*2||o.y>cameraY+viewHeight+sz)continue;
+      ctx.save();ctx.globalAlpha=.74;
+      ctx.drawImage(treeArt,0,0,180,137,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*137/220);
+      ctx.restore();
+    }
   }
 }
 function paintCreature(e){
@@ -2180,7 +2203,7 @@ function resize(){
  canvas.height=Math.max(1,Math.round(H*dpr));
  ctx.setTransform(dpr,0,0,dpr,0,0);
 }addEventListener('resize',resize);resize();
-const SIZE=3600,biomes=[{name:'青岚平原',color:'#467f4f',ground:'#61915b'},{name:'寒霜雪境',color:'#afc8c5',ground:'#d6e5dc'},{name:'赤炎荒漠',color:'#b68b55',ground:'#d2ac6d'},{name:'幽冥魔域',color:'#5b4c6c',ground:'#74617c'}];function biome(x,y){if(x<900&&y<1250)return 1;if(x>2450&&y<1850)return 2;if(x>2200&&y>2400)return 3;return 0}function rand(a,b){return a+Math.random()*(b-a)}const obstacles=[],fruits=[],enemies=[],decor=[];let player,trail,exp,need,level,hp,invuln=0,running=false,last=0,camX=0,camY=0,joystick={x:0,y:0},keys={},dashUntil=0,dashReady=0,healReady=0,kills=0,toastTimer,projectiles=[],essence=0,breakReady=false,attackTime=0,evoPoints=0,evoStage=0,particles=[],damageTexts=[],boss=null,lastAutosave=0;const SAVE_KEY="lingshe_v4_save";const forms=["凡蛇","灵蛇","妖蟒","蛟龙","真龙"],evoThresholds=[5,14,30,55,9999];const realmNames=['凡蛇','炼气','筑基','金丹','元婴','化神','渡劫','真仙'];function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}function flash(t){let e=document.querySelector('#feedback');e.textContent=t;e.classList.remove('show');void e.offsetWidth;e.classList.add('show')}function toast(t){let el=document.querySelector('#toast');el.textContent=t;el.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.opacity=0,1600)}function place(arr,n,fn){for(let i=0;i<n;i++)arr.push(fn(rand(70,SIZE-70),rand(70,SIZE-70)))}function reset(){resetEvolutionEffects();resetEncounters();resetAdventure();resetGuidance();resetRegionalEcology();obstacles.length=fruits.length=enemies.length=decor.length=0;projectiles.length=0;essence=0;breakReady=false;attackTime=0;evoPoints=0;evoStage=0;particles.length=0;damageTexts.length=0;boss={x:3040,y:2950,hp:650,max:650,r:42,last:0,shot:0,defeated:false};placeStable(decor,1100,(x,y,i)=>({x,y,type:terrainHash(i,17,21),size:5+terrainHash(i,18,22)*14}),177,22);placeStable(obstacles,150,(x,y,i)=>({x,y,r:15+terrainHash(i,19,24)*16}),191,36);placeStable(fruits,240,(x,y,i)=>({x,y,kind:terrainHash(i,23,25)<.13?1:0}),223,8);placeStable(enemies,52,(x,y,i)=>makeCreature(x,y,i),233,85);seedRegionalCreatures();player={x:1750,y:1800,angle:0};camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));trail=Array.from({length:17},(_,i)=>({x:player.x-i*7,y:player.y}));exp=0;need=50;level=1;hp=100;kills=0;dashUntil=0;dashReady=0;healReady=0;invuln=0;updateHud()}
+const SIZE=3600,biomes=[{name:'青岚平原',color:'#467f4f',ground:'#61915b'},{name:'寒霜雪境',color:'#afc8c5',ground:'#d6e5dc'},{name:'赤炎荒漠',color:'#b68b55',ground:'#d2ac6d'},{name:'幽冥魔域',color:'#5b4c6c',ground:'#74617c'}];function biome(x,y){if(x<900&&y<1250)return 1;if(x>2450&&y<1850)return 2;if(x>2200&&y>2400)return 3;return 0}function rand(a,b){return a+Math.random()*(b-a)}const obstacles=[],fruits=[],enemies=[],decor=[];let player,trail,exp,need,level,hp,invuln=0,running=false,last=0,camX=0,camY=0,joystick={x:0,y:0},keys={},dashUntil=0,dashReady=0,healReady=0,kills=0,toastTimer,projectiles=[],essence=0,breakReady=false,attackTime=0,evoPoints=0,evoStage=0,particles=[],damageTexts=[],boss=null,lastAutosave=0;const SAVE_KEY="lingshe_v4_save";const forms=["凡蛇","灵蛇","妖蟒","蛟龙","真龙"],evoThresholds=[5,14,30,55,9999];const realmNames=['凡蛇','炼气','筑基','金丹','元婴','化神','渡劫','真仙'];function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}function flash(t){let e=document.querySelector('#feedback');e.textContent=t;e.classList.remove('show');void e.offsetWidth;e.classList.add('show')}function toast(t){let el=document.querySelector('#toast');el.textContent=t;el.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.opacity=0,1600)}function place(arr,n,fn){for(let i=0;i<n;i++)arr.push(fn(rand(70,SIZE-70),rand(70,SIZE-70)))}function reset(){resetEvolutionEffects();resetEncounters();resetAdventure();resetGuidance();resetRegionalEcology();obstacles.length=fruits.length=enemies.length=decor.length=0;projectiles.length=0;essence=0;breakReady=false;attackTime=0;evoPoints=0;evoStage=0;particles.length=0;damageTexts.length=0;boss={x:3040,y:2950,hp:650,max:650,r:42,last:0,shot:0,defeated:false};placeStable(decor,1100,(x,y,i)=>({x,y,type:terrainHash(i,17,21),size:5+terrainHash(i,18,22)*14}),177,22);rebuildForestCanopyIndex(decor);placeStable(obstacles,150,(x,y,i)=>({x,y,r:15+terrainHash(i,19,24)*16}),191,36);placeStable(fruits,240,(x,y,i)=>({x,y,kind:terrainHash(i,23,25)<.13?1:0}),223,8);placeStable(enemies,52,(x,y,i)=>makeCreature(x,y,i),233,85);seedRegionalCreatures();player={x:1750,y:1800,angle:0};camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));trail=Array.from({length:17},(_,i)=>({x:player.x-i*7,y:player.y}));exp=0;need=50;level=1;hp=100;kills=0;dashUntil=0;dashReady=0;healReady=0;invuln=0;updateHud()}
 function saveGame(silent=false){if(!player)return;try{offlineStore.setItem(SAVE_KEY,JSON.stringify({version:4,player,trail,exp,need,level,hp,kills,evoPoints,evoStage,essence,bossDefeated:boss?.defeated||false,...encounterSaveFields(),...adventureSaveFields(),guideMode,...regionalSaveFields()}));document.querySelector('#saveStatus').textContent='已保存 '+new Date().toLocaleTimeString();if(!silent)toast('💾 修炼进度已保存')}catch(e){toast('存档不可用：请检查浏览器存储权限')}}
 function loadGame(){try{const v=JSON.parse(offlineStore.getItem(SAVE_KEY)||'null');if(!v||v.version!==4||!v.player||!Array.isArray(v.trail))return false;Object.assign(player,v.player);trail=v.trail;if(terrainBlocked(player.x,player.y)){player.x=1750;player.y=1800;trail=trail.map((_,i)=>({x:player.x-i*8,y:player.y}))}exp=v.exp;need=v.need;level=v.level;hp=v.hp;kills=v.kills;evoPoints=v.evoPoints;evoStage=v.evoStage;essence=v.essence||0;breakReady=exp>=need;if(boss)boss.defeated=!!v.bossDefeated;restoreEncounters(v);restoreAdventure(v);restoreGuidance(v.guideMode);restoreRegionalEcology(v);camX=Math.max(0,Math.min(Math.max(0,SIZE-W),player.x-W/2));camY=Math.max(0,Math.min(Math.max(0,SIZE-H),player.y-H/2));updateHud();return true}catch(e){return false}}
 function die(){if(!running)return;running=false;saveGame(true);document.querySelector('#panel').style.display='flex';document.querySelector('#card').innerHTML='<h1>🐍 轮回之地</h1><p>你已倒下，修为和进化进度将保留。<br>选择复活后生命恢复，返回青岚平原安全区域。</p><button id="reviveBtn">🌱 原地复活（安全区）</button><button id="newBtn">重新开局（清除存档）</button>';document.querySelector('#reviveBtn').onclick=()=>{hp=Math.round((100+level*10)*.75);player.x=1750;player.y=1800;trail=trail.map((_,i)=>({x:player.x-i*8,y:player.y}));invuln=performance.now()+3500;running=true;document.querySelector('#panel').style.display='none';saveGame(true);toast('复活成功 · 3.5秒保护')};document.querySelector('#newBtn').onclick=()=>{offlineStore.removeItem(SAVE_KEY);startGame(false)}}
