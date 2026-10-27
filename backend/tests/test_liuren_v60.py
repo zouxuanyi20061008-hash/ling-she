@@ -18,7 +18,7 @@ from app.core.calendar import BRANCHES,SIXTY_DAYS
 def test_classic_ancient_transmissions_exact(day,gen,hour,count,method,triple):
     c=build_liuren(day,gen,hour)
     t=c["three_transmissions"]
-    assert c["version"]=="V62"
+    assert c["version"]=="V63"
     assert t["status"]=="computed",(day,gen,hour,t)
     assert t["method"].startswith(method)
     assert c["transmission_review"]["distinct_lesson_audit"]["distinct_lesson_count"]==count
@@ -86,5 +86,5 @@ def test_v60_http_endpoint():
     r=TestClient(app).post("/api/liuren/cast",json={
         "solar_date":"2026-03-20","clock":"12:00","day_boundary":"zi_hour"})
     assert r.status_code==200,r.text
-    assert r.json()["version"]=="V62"
-    assert r.json()["transmission_review"]["version"]=="V62"
+    assert r.json()["version"]=="V63"
+    assert r.json()["transmission_review"]["version"]=="V63"

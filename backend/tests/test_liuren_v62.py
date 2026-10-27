@@ -63,7 +63,7 @@ def test_inverse_direction_ji_day_jia_night_noble_shen_at_you():
 def test_concrete_chronological_yin_yang_switch_without_looking_at_sunrise():
     b=build_liuren("戊申","辰","巳")
     c=build_liuren("戊申","辰","巳",noble_mode="night")
-    assert b["version"]==c["version"]=="V62"
+    assert b["version"]==c["version"]=="V63"
     assert b["heaven_plate"]==c["heaven_plate"]
     assert b["four_lessons"][0]["upper"]==c["four_lessons"][0]["upper"]
     assert b["heavenly_generals"]["noble_branch"]=="丑"
@@ -98,7 +98,7 @@ def test_complete_8640_liuren_combinations_have_bijections_and_correct_alignment
             for month_general in BRANCHES:
                 c=build_liuren(day,month_general,hour)
                 general=c["heavenly_generals"]
-                assert c["version"]=="V62"
+                assert c["version"]=="V63"
                 assert len(c["palaces"])==12
                 assert len(c["four_lessons"])==4
                 assert set(general["by_earth"].values())==set(GENERALS)
@@ -117,7 +117,7 @@ def test_existing_endpoint_default_and_manual_night_selection():
     params={"solar_date":"2026-03-20","clock":"12:00","day_boundary":"zi_hour"}
     auto=client.post("/api/liuren/cast",json=params)
     assert auto.status_code==200,auto.text
-    assert auto.json()["version"]=="V62"
+    assert auto.json()["version"]=="V63"
     assert auto.json()["heavenly_generals"]["mode"]=="hour_branch"
     night=client.post("/api/liuren/cast",json={**params,"noble_mode":"night"})
     assert night.status_code==200,night.text
