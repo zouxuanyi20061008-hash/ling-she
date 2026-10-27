@@ -108,15 +108,38 @@ function paintTreeScene(o,sz){
   ctx.drawImage(treeArt,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65);
   ctx.restore();return true;
 }
-function paintForegroundCanopies(playerRef,decorList,cameraX,cameraY,viewWidth,viewHeight){
-  if(!isArtReady(treeArt))return;
+/* Keep tall trees in spatial buckets. After the forest is placed, the
+ * foreground pass only looks at the adjacent canopy cells, not all 1100 props. */
+var FOREST_FRONT_CELL=200;
+var forestFrontBuckets=new Map(),forestFrontSourceLength=-1;
+function rebuildForestCanopyIndex(decorList){
+  forestFrontBuckets.clear();
+  if(!decorList){forestFrontSourceLength=-1;return}
   for(var i=0;i<decorList.length;i++){
-    var o=decorList[i];if(o.type>=.29||biome(o.x,o.y)!==0)continue;
-    var sz=72+o.size*2.2;
-    // Only obscure the hero when she/he actually walks behind a trunk/canopy.
-    if(o.y<=playerRef.y||playerRef.y<o.y-sz*1.42||Math.abs(o.x-playerRef.x)>sz*.63)continue;
-    if(o.x<cameraX-sz||o.x>cameraX+viewWidth+sz||o.y<cameraY-sz*2||o.y>cameraY+viewHeight+sz)continue;
-    ctx.save();ctx.globalAlpha=.74;ctx.drawImage(treeArt,0,0,180,137,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*137/220);ctx.restore();
+    var tree=decorList[i];
+    if(tree.type>=.29||biome(tree.x,tree.y)!==0)continue;
+    var key=Math.floor(tree.x/FOREST_FRONT_CELL)+'_'+Math.floor(tree.y/FOREST_FRONT_CELL);
+    var bucket=forestFrontBuckets.get(key);
+    if(!bucket){bucket=[];forestFrontBuckets.set(key,bucket)}
+    bucket.push(tree);
+  }
+  forestFrontSourceLength=decorList.length;
+}
+function paintForegroundCanopies(playerRef,decorList,cameraX,cameraY,viewWidth,viewHeight){
+  if(!isArtReady(treeArt)||!playerRef)return;
+  if(forestFrontSourceLength!==decorList.length)rebuildForestCanopyIndex(decorList);
+  var ix=Math.floor(playerRef.x/FOREST_FRONT_CELL),iy=Math.floor(playerRef.y/FOREST_FRONT_CELL);
+  for(var xx=ix-1;xx<=ix+1;xx++)for(var yy=iy;yy<=iy+1;yy++){
+    var bucket=forestFrontBuckets.get(xx+'_'+yy);if(!bucket)continue;
+    for(var j=0;j<bucket.length;j++){
+      var o=bucket[j],sz=72+o.size*2.2;
+      if(o.y<=playerRef.y||playerRef.y<o.y-sz*1.42||Math.abs(o.x-playerRef.x)>sz*.63)continue;
+      if(o.x<cameraX-sz||o.x>cameraX+viewWidth+sz||
+         o.y<cameraY-sz*2||o.y>cameraY+viewHeight+sz)continue;
+      ctx.save();ctx.globalAlpha=.74;
+      ctx.drawImage(treeArt,0,0,180,137,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65*137/220);
+      ctx.restore();
+    }
   }
 }
 function paintCreature(e){
