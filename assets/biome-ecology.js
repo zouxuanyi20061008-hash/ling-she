@@ -106,7 +106,7 @@ function regionalCreatureTick(enemy,now){
  if(now<(enemy.regionalBurnTick||0))return false;
  enemy.regionalBurnTick=now+650;
  const amount=Math.max(2,Math.min(12,4+Math.floor(level*.4)))*(enemy.armor||1);
- enemy.hp-=amount;enemy.hitFlash=now+130;
+ enemy.hp-=amount;enemy.hitFlash=now+130;combatArtHit(enemy.x,enemy.y,enemy.species||'fox',now,.75);
  damageTexts.push({x:enemy.x,y:enemy.y-32,text:'灼烧 -'+Math.round(amount),life:.7,color:'#ffb07c'});
  if(enemy.hp<=0){killEnemy(enemy,false);return true}
  return false;
@@ -195,22 +195,44 @@ function seedRegionalCreatures(){
   }
  }
 }
+/* V6.5 projectile silhouettes communicate the affliction without a HUD:
+ * forked ice shard, orange ember tail, violet rune orb. Pure Canvas art.
+ */
 function paintRegionalProjectile(projectile,now){
- if(!projectile.affliction)return false;
- const palette={
-  frost:['#efffff','#9adbe8','#548ba9'],
-  ember:['#ffe6a1','#f1a65c','#c45246'],
-  nether:['#eee0ff','#bd97e7','#6e57ac']
- }[projectile.affliction];
- if(!palette)return false;
+ const status=projectile.affliction;
+ if(status!=='frost'&&status!=='ember'&&status!=='nether')return false;
  const ang=Math.atan2(projectile.vy,projectile.vx);
  ctx.save();ctx.translate(projectile.x,projectile.y);ctx.rotate(ang);
- ctx.globalAlpha=.33;ctx.fillStyle=palette[2];ctx.beginPath();ctx.ellipse(-10,0,17,8,0,0,Math.PI*2);ctx.fill();
- ctx.globalAlpha=1;ctx.fillStyle=palette[1];ctx.beginPath();ctx.arc(0,0,8,0,Math.PI*2);ctx.fill();
- ctx.fillStyle=palette[0];ctx.beginPath();ctx.arc(2,-2,4,0,Math.PI*2);ctx.fill();
- if(projectile.affliction==='frost'){
-  ctx.strokeStyle=palette[0];ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(-8,-8);ctx.lineTo(4,6);ctx.moveTo(-5,7);ctx.lineTo(4,-7);ctx.stroke();
+ if(status==='frost'){
+  ctx.globalAlpha=.26;ctx.fillStyle='#5098ae';
+  ctx.beginPath();ctx.ellipse(-12,0,18,6,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=.94;ctx.fillStyle='#e7ffff';ctx.strokeStyle='#7ec4da';ctx.lineWidth=1.4;
+  ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-1,-8);ctx.lineTo(-12,0);ctx.lineTo(0,8);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.strokeStyle='#c9f9ff';ctx.beginPath();
+  ctx.moveTo(-5,0);ctx.lineTo(8,0);ctx.moveTo(-4,1);ctx.lineTo(-9,-6);
+  ctx.moveTo(-4,-1);ctx.lineTo(-9,6);ctx.stroke();
+ }else if(status==='ember'){
+  const pulse=Math.sin(now*.007+projectile.x*.01)*2;
+  ctx.globalAlpha=.28;ctx.fillStyle='#c34d35';
+  ctx.beginPath();ctx.ellipse(-11,0,19,8,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=.82;ctx.fillStyle='#f69e49';ctx.beginPath();
+  ctx.moveTo(-17,0);ctx.quadraticCurveTo(-8,-9+pulse,2,-7);ctx.quadraticCurveTo(16,-6,13,0);
+  ctx.quadraticCurveTo(16,8,1,8);ctx.quadraticCurveTo(-8,8-pulse,-17,0);ctx.fill();
+  ctx.fillStyle='#fff0b3';ctx.beginPath();ctx.ellipse(4,0,6,4,0,0,Math.PI*2);ctx.fill();
+  if(qualityMode==='sharp'){
+   ctx.fillStyle='#ffcd74';ctx.globalAlpha=.66;
+   ctx.fillRect(-16,8,2,2);ctx.fillRect(-22,-5,2,2);
+  }
+ }else{
+  ctx.globalAlpha=.25;ctx.fillStyle='#6850ac';ctx.beginPath();ctx.ellipse(-10,0,21,10,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=.89;ctx.strokeStyle='#d9c1f9';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(1,0,10,0,Math.PI*2);ctx.stroke();
+  ctx.globalAlpha=.83;ctx.fillStyle='#a58bda';ctx.beginPath();ctx.arc(1,0,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#f4e9ff';ctx.beginPath();ctx.moveTo(1,-6);ctx.lineTo(6,0);ctx.lineTo(1,6);ctx.lineTo(-4,0);ctx.closePath();ctx.fill();
+  if(qualityMode==='sharp'){
+   ctx.strokeStyle='#f3e7ff';ctx.globalAlpha=.53;ctx.lineWidth=1;
+   ctx.beginPath();ctx.moveTo(-12,-8);ctx.lineTo(-18,-13);ctx.moveTo(-12,8);ctx.lineTo(-18,13);ctx.stroke();
+  }
  }
  ctx.restore();return true;
 }
