@@ -66,6 +66,7 @@ def test_calendar_provenance_from_source_is_not_silently_treated_as_manual():
             "month_branch":day["month_branch"],
             "solar_date":"2026-02-01",
             "beijing_time":"2026-02-01T10:00:00",
+            "day_boundary":"midnight",
             "day_boundary_label":"午夜换日",
             "warnings":[],
         }
