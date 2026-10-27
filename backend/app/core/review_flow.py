@@ -31,6 +31,7 @@ def decorate_review_flow(chart: dict) -> dict:
     progression=chart["progression_review"]
     combinations=chart["hexagram_combinations"]
     sanhe_focus=chart["sanhe_focus_review"]
+    sanhe_audit=chart["sanhe_condition_audit"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -271,8 +272,15 @@ def decorate_review_flow(chart: dict) -> dict:
             str(sanhe_focus["selected_overlap_count"])+"个三合候选的结构位置；"+
             "结构包含不代表成局或吉凶。"
         )
+    sanhe_audit_digest=[
+        "三合 V41：原卦静态三支 "+str(sanhe_audit["counts"]["static_three_branches"])+
+        " 组；有真实明动参与 "+str(sanhe_audit["counts"]["with_actual_movers"])+
+        " 组；尚缺一支 "+str(sanhe_audit["counts"]["missing_one_branch"])+
+        " 组；全部保持待复核，不自动判成局或吉凶。"
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "sanhe_audit_digest":sanhe_audit_digest,
         "sanhe_focus_digest":sanhe_focus_digest,
         "combination_digest":combination_digest,
         "progression_digest":progression_digest,

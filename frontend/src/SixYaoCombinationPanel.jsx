@@ -1,6 +1,7 @@
 import './sixyao-combinations.css'
 
 const POS=['初','二','三','四','五','上']
+const auditState={three_branches_static:'三支全静',one_real_mover:'有一处明动',two_or_more_real_movers:'多处明动',two_original_movers_plus_local_change:'双动加本位化支',two_original_movers_missing_one_branch:'两动缺一支'}
 function PositionList({positions=[]}){return <>{positions.map(n=>POS[n-1]+'爻').join('、')||'无'}</>}
 function TriadRow({entry,type}){
   return <li>
@@ -83,6 +84,46 @@ export default function SixYaoCombinationPanel({chart}){
         </div>
       </details>:<p>当前盘未识别三合候选，不代表吉凶结论。</p>}
     </div>}
+    {chart.sanhe_condition_audit&&<section className="six-combo-audit"
+      aria-label="V41 三合成局条件、世应、空破核验">
+      <h4>V41 · 三合条件与世应空破逐项校验</h4>
+      <p>先看世、应在局位置和局五行生克，再逐项核对动静、日月、旬空及月破。
+        <strong> 所有候选的成局效力仍待人工核对。</strong></p>
+      <div className="six-combo-audit-counts">
+        <span>静态三支：{chart.sanhe_condition_audit.counts.static_three_branches}</span>
+        <span>实际明动参与：{chart.sanhe_condition_audit.counts.with_actual_movers}</span>
+        <span>缺一支：{chart.sanhe_condition_audit.counts.missing_one_branch}</span>
+      </div>
+      {chart.sanhe_condition_audit.rows.length>0?chart.sanhe_condition_audit.rows.map(item=>
+        <details key={item.candidate_key}>
+          <summary>{item.element}局（{item.branches.join('·')}）·
+            {auditState[item.movement_state]||'待核动态'} · 世应核查</summary>
+          <div className="six-combo-audit-inner">
+            {['世','应'].map(role=><p key={role}>
+              <b>{role}爻：</b>{POS[item.roles[role].position-1]}爻
+              （{item.roles[role].ganzhi} · {item.roles[role].liuqin}），
+              {item.roles[role].originally_in_positions?'位置在候选结构内':'位置不在候选结构内'}；
+              {item.roles[role].relation_to_pattern}。
+            </p>)}
+            {item.calendar.day_branch_matches_missing===true&&<p>日支碰巧与缺支相同，但不自动补足第三个明动爻。</p>}
+            {item.calendar.month_branch_matches_missing===true&&<p>月支碰巧与缺支相同，但不自动补足第三个明动爻。</p>}
+            {item.changed_position_check&&<p>本位动化：
+              {POS[item.changed_position_check.position-1]}爻化
+              {item.changed_position_check.ganzhi}；
+              化空：{item.changed_position_check.is_void===null?'未核':item.changed_position_check.is_void?'有':'无'}；
+              化爻月冲：{item.changed_position_check.month_clash===null?'未核':item.changed_position_check.month_clash?'有':'无'}。
+            </p>}
+            <ul>{item.gates.map(gate=><li key={gate.key}>
+              <b>{gate.key}</b>：{gate.fact}
+            </li>)}</ul>
+            {item.pending.length>0&&<div className="six-combo-audit-pending">
+              <b>仍需核对</b>
+              <ul>{item.pending.map((p,i)=><li key={i}>{p}</li>)}</ul>
+            </div>}
+            <small>不据此判定成局、局旺、利世或利应，更不直接推断应期。</small>
+          </div>
+        </details>):<p>当前盘面尚无三合候选；这不是吉凶结论。</p>}
+    </section>}
     <div className="six-combo-stats" aria-label="三合候选数量">
       <div><b>{data.counts.visible}</b><span>原卦三支俱见</span></div>
       <div><b>{data.counts.mixed}</b><span>初三／四六动变候选</span></div>

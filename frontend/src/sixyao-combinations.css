@@ -32,3 +32,17 @@
 .six-combo-none{font-size:12px;color:#696853}
 .six-combo-warning{margin:12px 0 0;padding:10px;background:#f3e9d5;border-left:3px solid #a98756;font-size:11px;line-height:1.8;color:#725c42}
 @media(max-width:580px){.six-combo-types article strong{font-size:17px}.six-combo-pair-explainer span{width:100%}.six-combo{padding:11px}}
+
+/* V41 condition audit: separate verifiable pattern facts from conclusions. */
+.six-combo-audit{margin:13px 0;padding:13px;background:#eef0e5;border:1px solid #b3c0aa}
+.six-combo-audit h4{font-size:15px;margin:0 0 7px;color:#2e5d43}
+.six-combo-audit>p{font-size:12px;line-height:1.8}
+.six-combo-audit-counts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.six-combo-audit-counts span{padding:7px 9px;font-size:11px;background:#dce8d8;color:#385a45}
+.six-combo-audit details{background:#fffdf4;border:1px solid #cfdbc7;margin:8px 0;padding:10px}
+.six-combo-audit summary{font-size:12px;font-weight:700;color:#315b40;cursor:pointer}
+.six-combo-audit-inner{padding-top:8px}
+.six-combo-audit-inner p,.six-combo-audit-inner li{font-size:11px;line-height:1.7;overflow-wrap:anywhere}
+.six-combo-audit-inner ul{padding-left:20px}
+.six-combo-audit-pending{border-left:3px solid #b38c5b;padding:8px;background:#f3e8d7;font-size:11px}
+.six-combo-audit-inner small{font-size:11px;color:#795c45;line-height:1.8}
