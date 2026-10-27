@@ -13,4 +13,9 @@
 <path d="M65 129L56 143L71 141M95 129L104 143L89 141" fill="#d2f0ea" stroke="#5f9cae" stroke-width="2"/>
 <path d="M80 64L74 73L80 82L86 73Z" fill="#efffff" stroke="#7ac4d1" stroke-width="2"/>
 <g fill="#f5ffff"><circle cx="47" cy="62" r="2"/><circle cx="113" cy="62" r="2"/><circle cx="118" cy="119" r="2"/><circle cx="36" cy="117" r="2"/></g>
+<!-- V6.5: fine hand-painted contour, species markings, luminous details -->
+<g fill="none" stroke="#ecffff" stroke-linecap="round" opacity=".78"><path d="M37 29L45 42L55 50M123 29L115 42L105 50" stroke-width="2"/>
+ <path d="M68 64L79 59L91 65M65 110L80 105L95 110" stroke-width="2.2"/></g>
+ <path d="M80 53l-8 13 8 13 8-13Z" fill="#dffbfc" stroke="#61b2c1" stroke-width="1.7" opacity=".85"/>
+ <g fill="#eaffff" opacity=".82"><circle cx="25" cy="26" r="2"/><circle cx="134" cy="30" r="2"/><circle cx="76" cy="35" r="2.2"/></g>
 </svg>
