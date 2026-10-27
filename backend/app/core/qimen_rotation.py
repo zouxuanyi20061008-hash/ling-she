@@ -108,7 +108,7 @@ def rotate_qimen(chart:dict)->dict:
     if ({by_palace[p]["actual_star"] for p in OUTER_RING}!=set(EXTERNAL_STARS.values())
         or {by_palace[p]["actual_gate"] for p in OUTER_RING}!=set(EXTERNAL_DOORS.values())
         or {by_palace[p]["sky_stem"] for p in OUTER_RING}!={earth[p] for p in OUTER_RING}
-        or sum(p["attached_center_star"]=="天禽" for p in by_palace.values())!=1):
+        or sum(by_palace[p].get("attached_center_star")=="天禽" for p in OUTER_RING)!=1):
         raise ValueError("V51 转盘九星、八门或天盘干出现缺失或重复")
 
     duty.update({
