@@ -37,9 +37,10 @@ function scenePathGeometry(g=ctx){
 }
 function paintStoneRoad(g=ctx){
   g.save();g.lineCap='round';g.lineJoin='round';
-  scenePathGeometry(g);g.strokeStyle='#324c3a88';g.lineWidth=96;g.stroke();
-  scenePathGeometry(g);g.strokeStyle='#c0ad80';g.lineWidth=82;g.stroke();
-  scenePathGeometry(g);g.strokeStyle=stonePattern(g);g.lineWidth=71;g.stroke();
+  scenePathGeometry(g);g.strokeStyle='#30493f7d';g.lineWidth=109;g.stroke();
+  scenePathGeometry(g);g.strokeStyle='#647c58';g.lineWidth=98;g.stroke();
+  scenePathGeometry(g);g.strokeStyle='#d0b88b';g.lineWidth=87;g.stroke();
+  scenePathGeometry(g);g.strokeStyle=stonePattern(g);g.lineWidth=75;g.stroke();
   paintQinglanCourtyard(g);
   g.restore();
 }
@@ -70,8 +71,8 @@ function paintCliffScene(){
 }
 function paintTreeScene(o,sz){
   if(!isArtReady(treeArt))return false;
-  ctx.save();ctx.fillStyle='#122a2155';ctx.beginPath();
-  ctx.ellipse(o.x+7,o.y+2,sz*.49,sz*.16,-.22,0,Math.PI*2);ctx.fill();
+  ctx.save();ctx.fillStyle='#163e335e';ctx.beginPath();
+  ctx.ellipse(o.x+8,o.y+3,sz*.53,sz*.17,-.22,0,Math.PI*2);ctx.fill();
   ctx.drawImage(treeArt,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65);
   ctx.restore();return true;
 }
