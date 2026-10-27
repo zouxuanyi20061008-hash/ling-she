@@ -248,7 +248,7 @@ def decorate_temporal_review(chart:dict)->dict:
         "notice":note+(
             " V43 已按所选北京时间钟面时刻逐日重算节令月建；只显示传统月令条件，不评定未来旺衰。"
             if months else
-            " V43 没有已核验原始日期，不生成后续月份或跨节气结论。"
+            " V43 没有已核验原始日期，未来月建及月破月令等级保持未知，不生成跨节气结论。"
         ),
         "has_timing_prediction":False,
         "final_event_date":None,
