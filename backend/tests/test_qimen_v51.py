@@ -109,7 +109,7 @@ def test_corrupted_earth_or_stem_source_fails_closed():
 
 def test_cast_api_has_rotated_stars_and_gates_not_spirits():
     c=cast_qimen(date(2026,3,18),time(15,20))
-    assert c["version"]=="V51"
+    assert c["version"]=="V52"
     assert c["hour_ganzhi"]=="丙申"
     assert c["ju_label"]=="阳遁4局"
     assert c["has_rotated_stars_and_gates"] is True

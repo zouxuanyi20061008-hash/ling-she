@@ -83,6 +83,17 @@ jobs:
           name: qimen-v51-star-gate-acceptance
           path: backend/acceptance-output/qimen-v51.json
           if-no-files-found: error
+      - name: Run V52 Qimen spirit and hour marker acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/qimen_v52_acceptance.py --output backend/acceptance-output/qimen-v52.json
+      - name: Upload V52 Qimen independent evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: qimen-v52-spirit-markers
+          path: backend/acceptance-output/qimen-v52.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
