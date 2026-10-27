@@ -28,10 +28,10 @@ export default function LiurenV58(){
     }catch(e){setError(e?.message||'大六壬起课失败')}
     finally{setBusy(false)}
   }
-  return <section className="liuren-v58" aria-label="V59 大六壬真实起课">
-    <header><small>V59 · 大六壬 / 九宗门逐步完善</small>
+  return <section className="liuren-v58" aria-label="V60 大六壬真实起课">
+    <header><small>V60 · 大六壬 / 九宗门取传复核</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
-      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。三传已扩展贼克、比用、遥克、伏吟与反吟可核定课式；涉害多候选保留公开审计，不伪造初传。</p>
+      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。本版新增昴星、别责、八专已核准的特殊取传法；涉害分歧按真实地盘宫显示候选，未验证深浅时不伪造三传。</p>
     </header>
     <form className="liuren-v58-form" onSubmit={cast}>
       <label>公历起课日期
@@ -83,9 +83,19 @@ export default function LiurenV58(){
       </div>
       <h3>三传 · 初传、中传、末传</h3>
       {chart.transmission_review&&<div className="liuren-v59-rule">
-        <strong>V59 取传门类：{chart.transmission_review.method_family}</strong>
+        <strong>{chart.transmission_review.version||chart.version} 取传门类：{chart.transmission_review.method_family}</strong>
         <small>天地盘偏移 {chart.transmission_review.offset_palaces} 宫；
           {chart.has_full_nine_methods?'九宗门已齐':'九宗门仍有未完规则'}</small>
+        {chart.transmission_review.distinct_lesson_audit&&<>
+          <span>实际相异课数：
+            <strong>{chart.transmission_review.distinct_lesson_audit.distinct_lesson_count}课</strong>；
+            日干下神按寄宫归地盘判重。</span>
+          <div role="group" aria-label="四课实际合并证据" className="liuren-v60-lesson-audit">
+            {chart.transmission_review.distinct_lesson_audit.unique_pairs.map((p,i)=>
+              <span key={i}>第{p.from_original_lessons.join('、')}课同组：
+                {p.ground}宫上临{p.heaven}</span>)}
+          </div>
+        </>}
       </div>}
       {chart.three_transmissions.status==='computed'?
         <div role="group" aria-label="大六壬三传" className="liuren-v58-transmissions">
@@ -112,15 +122,17 @@ export default function LiurenV58(){
                   <strong>候选上神 {c.upper}</strong>
                   <span>原课第 {c.lesson_numbers.join('、')} 课</span>
                   <span>下神：{c.lowers.join('、')} · 地盘落位：{c.lowers_lodges.join('、')}</span>
-                  <span>{c.candidate_branch_class}位 ·
+                  <span>下临地盘 {c.actual_ground_palace||'待核'} 宫，
+                    {c.actual_ground_class||c.candidate_branch_class}位 ·
                     {c.same_yin_yang_as_day?'与日干阴阳相同':'与日干阴阳不同'}</span>
+                  {c.classification_basis&&<small>依据：{c.classification_basis}</small>}
                 </article>)}
               <p>逐宫涉害深浅未独立核验；不同口径不可自动择一。</p>
             </div>}
         </div>}
       {chart.calendar_provenance.warnings.map((w,i)=>
         <p key={i} className="academy-caution">{w}</p>)}
-      <p className="academy-caution">V59 已支持遥克、伏吟、反吟部分明晰规则；涉害完整深浅、昴星、别责、八专仍未覆盖。
+      <p className="academy-caution">V60 已实现可独立验收的昴星、别责、八专，并保留遥克、伏吟、反吟。涉害逐宫计害深浅仍未完成，候选不冒充已经定传。
         尚未完整排十二天将，不能把本版叫作全部大六壬断课，也不生成实际吉凶预测。</p>
       <a href={chart.source.earth_heaven_four_lessons} target="_blank"
         rel="noopener noreferrer">阅读《六壬指南》天地盘与四课原文</a>

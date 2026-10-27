@@ -1219,3 +1219,9 @@
 .liuren-v59-candidates article span{font-size:11px;overflow-wrap:anywhere}
 .liuren-v59-candidates p{grid-column:1/-1;margin:0;font-size:11px}
 @media(max-width:600px){.liuren-v59-candidates{grid-template-columns:1fr}}
+
+/* V60 干寄宫后的四课实际去重判定；涉害所临地盘孟仲季可审查 */
+.liuren-v60-lesson-audit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:8px}
+.liuren-v60-lesson-audit span{padding:7px 8px;border:1px solid #a5c0bc;background:#fafefa;font-size:11px;line-height:1.65;overflow-wrap:anywhere}
+.liuren-v59-candidates small{font-size:10px;color:#567a7b}
+@media(max-width:620px){.liuren-v60-lesson-audit{grid-template-columns:1fr}}
