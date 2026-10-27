@@ -1256,3 +1256,18 @@
 .liuren-v62-lesson-general{font-size:11px;color:#527760;border-top:1px dotted #9db7ad;padding-top:5px}
 .liuren-v62-trans-general{font-size:11px;color:#626e5c}
 @media(max-width:710px){.liuren-v62-order{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* V63 day-Xun: 12-branch reference and separated upper/earth void indicators */
+.liuren-v63-xun{border:1px solid #b4b5c9;background:linear-gradient(120deg,#f2f1fa,#f5f8f6);padding:14px;margin:19px 0}
+.liuren-v63-xun header small{font-size:11px;color:#655c85}
+.liuren-v63-xun header h3{font-size:18px;color:#544a7d;margin:6px 0}
+.liuren-v63-xun header p,.liuren-v63-xun>p{font-size:11px;line-height:1.9}
+.liuren-v63-branch-table{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.liuren-v63-branch-table>div{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 3px;border:1px solid #c8c6d7;background:#fffcfa}
+.liuren-v63-branch-table>div span{color:#5a5484;font-size:15px}
+.liuren-v63-branch-table>div strong{font-size:12px;color:#5b6877}
+.liuren-v63-branch-table>div.empty{border-color:#bd907a;background:#ffebde}
+.liuren-v63-branch-table>div.empty strong,.liuren-v63-empty{color:#ae5534!important;font-weight:bold}
+.liuren-v63-distinction{background:#fff9e9;padding:9px 12px;border-left:3px solid #af8a45}
+.liuren-v58-plate button small.liuren-v63-empty{font-size:11px}
+@media(max-width:680px){.liuren-v63-branch-table{grid-template-columns:repeat(4,minmax(0,1fr))}}

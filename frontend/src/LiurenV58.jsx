@@ -30,10 +30,10 @@ export default function LiurenV58(){
     }catch(e){setError(e?.message||'大六壬起课失败')}
     finally{setBusy(false)}
   }
-  return <section className="liuren-v58" aria-label="V62 大六壬真实起课">
-    <header><small>V62 · 大六壬 / 贵人十二天将</small>
+  return <section className="liuren-v58" aria-label="V63 大六壬真实起课">
+    <header><small>V63 · 大六壬 / 旬空与旬遁干</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
-      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。已实现涉害逐宫计克，并进一步在真实天盘贵人支上起十二天将。可选择固定时辰昼夜规则，也可手动选昼贵或夜贵。贵人顺逆按其所临地盘宫，而非简单由昼夜决定。</p>
+      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。</p>
     </header>
     <form className="liuren-v58-form" onSubmit={cast}>
       <label>公历起课日期
@@ -91,11 +91,37 @@ export default function LiurenV58(){
             <span key={g}><small>{i+1}</small><strong>{g}</strong></span>)}
         </div>
       </section>}
+      {chart.xun_void_and_dun&&<section className="liuren-v63-xun"
+          role="group" aria-label="V63 六甲旬遁干与旬空">
+        <header>
+          <small>V63 · 日旬六甲 / 遁干空亡</small>
+          <h3>{chart.xun_void_and_dun.xun_head}旬 ·
+            旬空 {chart.xun_void_and_dun.empty_branches.join('、')}</h3>
+          <p>以{chart.xun_void_and_dun.day_ganzhi}日所属旬为准。
+            天盘上神的遁干随天盘支走；地盘本位支的旬空则另外标记。</p>
+        </header>
+        <div role="group" aria-label="十二支旬遁干对照" className="liuren-v63-branch-table">
+          {chart.xun_void_and_dun.branch_table.map(p=>
+            <div key={p.branch} className={p.is_void?'empty':''}>
+              <span>{p.branch}</span>
+              <strong>{p.xun_dun_stem||'旬空'}</strong>
+            </div>)}
+        </div>
+        <p>天盘空亡支实际下临：
+          {chart.xun_void_and_dun.heaven_void_earth_palaces.map(p=>
+            p.heaven+'临地'+p.earth).join('、')}。
+          地盘本位旬空：{chart.xun_void_and_dun.earth_branch_void_palaces.join('、')}。</p>
+        <p className="liuren-v63-distinction">注意：十二天将“天空”与六甲旬的“旬空”是两套不同概念。
+          本盘不推断真空、假空或现实应期。</p>
+      </section>}
       <h3>十二宫 · 天盘在上、地盘在下</h3>
       <div role="group" aria-label="大六壬十二宫天地盘" className="liuren-v58-plate">
         {chart.palaces.map(p=><button type="button" key={p.earth}
           className={selected===p.earth?'active':''} onClick={()=>setSelected(p.earth)}>
           <small>地盘 {p.earth}</small><strong>天盘 {p.heaven}</strong>
+          {chart.xun_void_and_dun&&<small className={p.heaven_is_void?'liuren-v63-empty':''}>
+            天盘{p.heaven_is_void?'旬空':('遁'+p.heaven_xun_dun)}
+          </small>}
           {p.heavenly_general&&<b className={p.is_noble?'liuren-v62-noble':''}>
             {p.heavenly_general} · {p.general_element}</b>}
           <span>{p.earth===chart.hour_branch?'占时':''}
@@ -105,7 +131,10 @@ export default function LiurenV58(){
       <p className="liuren-v58-selected">所选地盘 {selected} · 上临天盘
         <strong> {chart.heaven_plate[selected]}</strong>
         {chart.heavenly_generals&&<span> · 乘
-          {chart.heavenly_generals.by_earth[selected]}天将</span>}</p>
+          {chart.heavenly_generals.by_earth[selected]}天将</span>}
+        {chart.xun_void_and_dun&&<span> · 天盘
+          {chart.xun_void_and_dun.by_branch[chart.heaven_plate[selected]]||'旬空'}，
+          地盘本位{chart.xun_void_and_dun.by_branch[selected]||'旬空'}</span>}</p>
       <h3>四课 · 上神与下神</h3>
       <div role="group" aria-label="大六壬四课" className="liuren-v58-lessons">
         {chart.four_lessons.map(p=><article key={p.number}>
@@ -115,6 +144,9 @@ export default function LiurenV58(){
           <b>{p.relation}</b>
           {p.heavenly_general&&<small className="liuren-v62-lesson-general">
             乘 {p.heavenly_general} · {p.general_element}</small>}
+          {chart.xun_void_and_dun&&<small className={p.upper_is_void?'liuren-v63-empty':''}>
+            上神 {p.upper_is_void?'旬空':('遁'+p.upper_xun_dun)}
+          </small>}
         </article>)}
       </div>
       <h3>三传 · 初传、中传、末传</h3>
@@ -176,6 +208,8 @@ export default function LiurenV58(){
             <small>{p.name}</small><strong>{p.branch}</strong>
             {p.heavenly_general&&<span className="liuren-v62-trans-general">
               {p.heavenly_general} · 临地盘{p.earth_palace}</span>}
+            {chart.xun_void_and_dun&&<span className={p.is_xun_void?'liuren-v63-empty':''}>
+              {p.is_xun_void?'旬空':('旬遁'+p.xun_dun_stem)}</span>}
           </article>)}
           <p>发用规则：{chart.three_transmissions.method}。初传候选：
             {chart.three_transmissions.initial_candidates.join('、')}</p>
@@ -207,7 +241,7 @@ export default function LiurenV58(){
         </div>}
       {chart.calendar_provenance.warnings.map((w,i)=>
         <p key={i} className="academy-caution">{w}</p>)}
-      <p className="academy-caution">V62 已加入常用贵人表、时辰昼夜可选口径与十二天将完整落宫；九宗门全部变例、贵人异派、真太阳时及综合断课仍未全部核实。
+      <p className="academy-caution">V63 已按日旬排旬空与旬遁干，并分别注明天盘上神、地盘本位、四课及已核准三传；完整九宗门异派、贵人异法、真太阳时与吉凶断课仍未完全核实。
         尚未完整排十二天将，不能把本版叫作全部大六壬断课，也不生成实际吉凶预测。</p>
       <a href={chart.source.earth_heaven_four_lessons} target="_blank"
         rel="noopener noreferrer">阅读《六壬指南》天地盘与四课原文</a>
