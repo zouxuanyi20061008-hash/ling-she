@@ -30,6 +30,7 @@ from .sanhe_focus_review import decorate_sanhe_focus
 from .sanhe_condition_audit import decorate_sanhe_condition_audit
 from .cross_condition_audit import decorate_cross_condition_audit
 from .spirit_action_audit import decorate_spirit_action_audit
+from .multi_mover_audit import decorate_multi_mover_audit
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -88,4 +89,5 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     chart = decorate_joint_overview(chart)
     chart = decorate_cross_condition_audit(chart)
     chart = decorate_spirit_action_audit(chart)
+    chart = decorate_multi_mover_audit(chart)
     return decorate_review_flow(chart)

@@ -609,6 +609,47 @@ function SpecialConditionsStudy({chart}){
   </section>
 }
 
+export function MultiMoverAuditStudy({chart}){
+  const data=chart.multi_mover_audit
+  if(!data)return null
+  const flagNames={
+    original_xun_void:'本爻旬空',original_month_clash:'本爻月冲',
+    original_day_clash:'本爻日冲',actual_changed_xun_void:'本位化空',
+    actual_changed_month_clash:'本位化爻月冲',
+    returning_restrains_source:'回头克',returning_clash:'回头冲',
+    residual_month_qi:'月令余气'
+  }
+  const flags=state=>state.restriction_flags.length?
+    state.restriction_flags.map(x=>flagNames[x]||x).join('、'):'未见当前已算标记'
+  return <section className="moving-effect-review" aria-label="六爻V46多动爻交叉核验">
+    <header className="moving-effect-head"><div>
+      <small>V46 · 多动爻双向条件核验</small>
+      <h3>两个动爻，分别看两个方向</h3>
+    </div><span>{data.moving_positions.length}处明动 · {data.pair_count}组</span></header>
+    <p>本卦每对真实明动爻分别对照生克、相冲、六合候选与动墓；
+      原忌仇神角色也可并列追溯。<strong>这里只算条件，不认定实际生效。</strong></p>
+    {!data.pairs.length?<p>不足两个真实动爻，不生成多动爻两两交叉关系；静爻和本位化爻不冒充跨位动爻。</p>:
+      <div className="moving-effect-reviewlist">
+        {data.pairs.map(pair=><details key={pair.positions.join('-')}>
+          <summary>{POS[pair.positions[0]-1]}爻、{POS[pair.positions[1]-1]}爻 · 双向核验</summary>
+          <p>{POS[pair.positions[0]-1]}爻 → {POS[pair.positions[1]-1]}爻：{pair.a_to_b.relation}</p>
+          <p>{POS[pair.positions[1]-1]}爻 → {POS[pair.positions[0]-1]}爻：{pair.b_to_a.relation}</p>
+          <p>地支条件：{pair.mutual_clash?'两动相冲；':''}{pair.mutual_combine?'两动六合候选；':''}
+            {pair.special.has_moving_tomb_candidate?'动墓候选需核验；':'未见此两爻之间的动墓标记；'}
+            不是合绊或墓绝已生效。</p>
+          <p>{POS[pair.positions[0]-1]}爻来源待核：{flags(pair.a_state)}</p>
+          <p>{POS[pair.positions[1]-1]}爻来源待核：{flags(pair.b_state)}</p>
+          {pair.focus_links.map(link=><p key={link.focus_position}>
+            用神{POS[link.focus_position-1]}爻：两来源分别为{link.a_role}与{link.b_role}。
+            {link.yuan_ji_pair?'原忌同时明动的来源角色，不能相抵。':''}
+            {link.two_hop_via_roles.length?' 双段仇神路径经'+link.two_hop_via_roles.join('、')+'（仅结构）。':''}
+          </p>)}
+        </details>)}
+      </div>}
+    <p className="moving-effect-scope">{data.boundary}</p>
+  </section>
+}
+
 function MovingEffectReview({chart}) {
   const data=chart.moving_effect_review
   const [inspected,setInspected]=useState(null)
@@ -1827,6 +1868,8 @@ export function ReviewReport({chart,question}) {
     '用神原忌仇作用来源（效力未判定）：',
     ...(data.yongshen_pathway_digest||[]),
     '',
+    'V46 多动爻双向作用及原忌来源交叉核验（非实际效力）：',
+    ...(data.multi_mover_digest||[]),
     'V45 原忌真实明动直连与仇神双段路径核验（非实际效力）：',
     ...(data.spirit_action_digest||[]),
     'V24 原忌仇联合审议摘记（非旺衰结论）：',
@@ -1926,6 +1969,11 @@ export function ReviewReport({chart,question}) {
       <h4>六合、墓绝条件摘记</h4>
       {data.special_conditions_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>只供日后复核，不意味着合绊、入墓或逢绝已经实际生效。</small>
+    </div>}
+    {data.multi_mover_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V46 多动爻双向生克冲合与原忌来源核验</h4>
+      {data.multi_mover_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>两个方向的关系已算，不等于互相抵消、合绊或墓绝效力已确定。</small>
     </div>}
     {data.spirit_action_digest?.length>0&&<div className="strength-evidence-report">
       <h4>V45 原忌直连与仇神双段明动路径核验</h4>
@@ -2240,7 +2288,10 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
                   <FocusEffectReviewStudy chart={chart}/>
                   <YongshenPathwaysStudy chart={chart}/>
                 </>:
-                relationsView==='motion'?<MovingEffectReview chart={chart}/>:
+                relationsView==='motion'?<>
+                   <MultiMoverAuditStudy chart={chart}/>
+                   <MovingEffectReview chart={chart}/>
+                 </> :
                 relationsView==='special'?<SpecialConditionsStudy chart={chart}/>:
                 <>
                   <NajiaBoard chart={chart} roleView={roleView}/>

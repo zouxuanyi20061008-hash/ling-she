@@ -34,6 +34,7 @@ def decorate_review_flow(chart: dict) -> dict:
     sanhe_audit=chart["sanhe_condition_audit"]
     cross=chart["cross_condition_audit"]
     spirit_action=chart["spirit_action_audit"]
+    multi=chart["multi_mover_audit"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -143,6 +144,8 @@ def decorate_review_flow(chart: dict) -> dict:
     if any(c["active_direct_positions"]["原神"] or c["active_direct_positions"]["忌神"]
            for c in spirit_action["candidates"]):
         unresolved.append("V45 原忌直连与仇神双段明动链已核验结构，来源制约和实际传导效力仍需人工合参")
+    if multi["pairs"]:
+        unresolved.append("V46 已列每对真实动爻的双向生克冲合、动墓及原忌来源交叉条件，不自动认定合住、克制生效或彼此抵消")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "仍未完成实际应期推断；V22/V42/V43 仅复核日旬与真实动变、采纳日期后的未来节令月建，不裁定事件发生时间",
@@ -259,6 +262,17 @@ def decorate_review_flow(chart: dict) -> dict:
         for row in void_context["rows"]
         if row["category"] not in ("neither_void","day_missing") or row["cross_checks"]
     ]
+    multi_mover_digest=[
+        "V46 "+str(p["positions"][0])+"／"+str(p["positions"][1])+"爻："+
+        str(p["positions"][0])+"→"+str(p["positions"][1])+p["a_to_b"]["relation"]+
+        "；"+str(p["positions"][1])+"→"+str(p["positions"][0])+p["b_to_a"]["relation"]+
+        ("；两动六合候选" if p["mutual_combine"] else "")+
+        ("；两动相冲" if p["mutual_clash"] else "")+
+        ("；动墓候选" if p["special"]["has_moving_tomb_candidate"] else "")+
+        ("；用神原忌角色交叉"+str(len(p["focus_links"]))+"处" if p["focus_links"] else "")+
+        "；实际效力、旺衰与应期未判定"
+        for p in multi["pairs"]
+    ]
     spirit_action_digest=[
         "V45 "+str(c["position"])+"爻 "+c["ganzhi"]+"：原神真动直连"+
         ("、".join(str(x) for x in c["active_direct_positions"]["原神"]) or "无")+
@@ -344,6 +358,7 @@ def decorate_review_flow(chart: dict) -> dict:
         "review_sheet_digest":sheet_digest,
         "focus_effect_digest":focus_effect_digest,
         "spirit_action_digest":spirit_action_digest,
+        "multi_mover_digest":multi_mover_digest,
         "void_context_digest":void_context_digest,
         "cross_condition_digest":cross_condition_digest,
         "temporal_digest":temporal_digest,
