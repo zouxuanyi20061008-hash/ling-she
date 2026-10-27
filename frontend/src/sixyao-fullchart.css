@@ -33,3 +33,11 @@
 .six-full-head h3{font-size:17px}
 .six-full-scroll{box-shadow:inset -5px 0 6px -7px #7c624e}
 }
+
+/* V40: compact origin receipt, not a divination conclusion. */
+.six-core-receipt{margin:1rem 0;padding:1rem 1.15rem;border:1px solid #c6b896;border-radius:1rem;background:#fbf6e9;color:#3e3a30}
+.six-core-receipt-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.six-core-receipt-head small{font-size:.76rem;color:#746b5a}
+.six-core-receipt p{margin:.6rem 0;line-height:1.6;font-size:.85rem}
+.six-core-receipt summary{cursor:pointer;font-size:.85rem;font-weight:600}
+.six-core-receipt ol{padding-left:1.25rem;margin:.65rem 0 0;display:grid;gap:.3rem;font-size:.85rem}

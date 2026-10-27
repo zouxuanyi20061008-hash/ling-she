@@ -27,6 +27,7 @@ from .joint_overview import decorate_joint_overview
 from .progression_review import decorate_progression
 from .hexagram_combinations import decorate_hexagram_combinations
 from .sanhe_focus_review import decorate_sanhe_focus
+from .liuyao_snapshot import normalize_coin_tosses, build_core_chart
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -38,10 +39,12 @@ LINE_KIND = {
 def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
                  month_branch: str | None = None, focus_liuqin: str | None = None,
                  focus_position: int | None = None,
-                 calendar_provenance: dict | None = None) -> dict:
+                 calendar_provenance: dict | None = None,
+                 coin_tosses: list | None = None) -> dict:
     """lines 从初爻至上爻，数为6/7/8/9。铜钱记分约定：字2、背3。"""
     if len(lines)!=6 or any(type(x) is not int or x not in LINE_KIND for x in lines):
         raise ValueError("请按初爻至上爻顺序，填写六次摇得的 6、7、8、9")
+    casting_record = normalize_coin_tosses(lines, coin_tosses)
     main_bits = tuple(x % 2 for x in lines)
     changed_bits = tuple(1 - x%2 if x in (6,9) else x%2 for x in lines)
     changing = [i+1 for i,x in enumerate(lines) if x in (6,9)]
@@ -82,4 +85,6 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     chart = decorate_hexagram_combinations(chart)
     chart = decorate_sanhe_focus(chart)
     chart = decorate_joint_overview(chart)
-    return decorate_review_flow(chart)
+    chart = decorate_review_flow(chart)
+    chart["core_chart"] = build_core_chart(chart, casting_record)
+    return chart

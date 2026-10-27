@@ -72,6 +72,24 @@ it('未核日辰与月建时不凭空产生六神、旬空或月冲信息',()=>{
   expect(screen.getByText('须先核实日辰')).toBeTruthy()
 })
 
+it('起卦核验记录显示真实铜钱/手动来源与六次顺序，不混称自动断卦',()=>{
+  const sample=chart()
+  sample.core_chart={
+    schema_version:'liuyao-core/1.0',
+    casting_record:{recorded_coins:1,manual_entries:5,unknown_sources:0,throws:[
+      {position:1,number:9,faces:[3,3,3],source:'three_coins'},
+      ...Array.from({length:5},(_,i)=>({position:i+2,number:7,faces:null,source:'manual_number'}))
+    ]}
+  }
+  render(<SixYaoFullChart chart={sample}/>)
+  const receipt=screen.getByRole('region',{name:'六爻起卦记录核验'})
+  expect(receipt.textContent).toContain('三钱原始记录 1 爻')
+  expect(receipt.textContent).toContain('手动爻数 5 爻')
+  fireEvent.click(screen.getByText('核对六次起卦原始记录'))
+  expect(receipt.textContent).toContain('背 · 背 · 背')
+  expect(receipt.textContent).toContain('手动输入')
+})
+
 it('六爻台完整六掷后立即显示装卦总览，撤回一爻后可重新排盘不改变其他五爻',async()=>{
   const castChart=chart()
   const fetchMock=vi.fn().mockResolvedValue({ok:true,json:async()=>castChart})
@@ -82,6 +100,7 @@ it('六爻台完整六掷后立即显示装卦总览，撤回一爻后可重新�
   await waitFor(()=>expect(screen.getByText('本卦、之卦与六亲纳甲总览')).toBeTruthy())
   const first=JSON.parse(fetchMock.mock.calls[0][1].body)
   expect(first.numbers).toEqual([7,7,7,7,7,7])
+  expect(first.coin_tosses).toEqual([null,null,null,null,null,null])
   fireEvent.click(screen.getByRole('button',{name:/壹 · 起卦台/}))
   fireEvent.click(screen.getByRole('button',{name:/撤回最后一爻/}))
   expect(screen.getByText('5/6')).toBeTruthy()
@@ -90,4 +109,5 @@ it('六爻台完整六掷后立即显示装卦总览，撤回一爻后可重新�
   await waitFor(()=>expect(fetchMock).toHaveBeenCalledTimes(2))
   const second=JSON.parse(fetchMock.mock.calls[1][1].body)
   expect(second.numbers).toEqual([7,7,7,7,7,9])
+  expect(second.coin_tosses).toEqual([null,null,null,null,null,null])
 })

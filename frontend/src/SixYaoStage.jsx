@@ -1828,6 +1828,7 @@ function ReviewReport({chart,question}) {
 export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   const [coins,setCoins]=useState([2,3,2])
   const [lines,setLines]=useState([])
+  const [tosses,setTosses]=useState([])
   const [isSpinning,setIsSpinning]=useState(false)
   const [chart,setChart]=useState(null)
   const [question,setQuestion]=useState('')
@@ -1849,11 +1850,11 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   const reviewNavRef=useRef(null)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
-  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin,position=studyPosition,openOnSuccess=false,calendarSource=confirmedCalendarInput){
+  async function process(seq,day=dayGanzhi,month=monthBranch,focus=focusLiugin,position=studyPosition,openOnSuccess=false,calendarSource=confirmedCalendarInput,tossHistory=tosses){
     const token=++requestNumber.current
     setCalendarBusy(true)
     try{
-      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null,calendar_input:calendarSource||null})})
+      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,coin_tosses:tossHistory.length===seq.length?tossHistory:null,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null,calendar_input:calendarSource||null})})
       const data=await response.json()
       if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'排盘失败')
       if(token===requestNumber.current){
@@ -1894,8 +1895,9 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   function addLine(value,faces){
     if(lines.length>=6||busy||calendarBusy)return
     if(faces)setCoins(faces)
-    const seq=[...lines,value];setLines(seq);setChart(null);setAnswer('');setError('')
-    if(seq.length===6){setReviewStage('calendar');process(seq,dayGanzhi,monthBranch,focusLiugin,studyPosition,true)}
+    const seq=[...lines,value],history=[...tosses,faces||null]
+    setLines(seq);setTosses(history);setChart(null);setAnswer('');setError('')
+    if(seq.length===6){setReviewStage('calendar');process(seq,dayGanzhi,monthBranch,focusLiugin,studyPosition,true,confirmedCalendarInput,history)}
   }
   function cast(){
     if(isSpinning||lines.length>=6)return
@@ -1913,11 +1915,12 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
     setCalendarBusy(false)
     setIsSpinning(false)
     setLines(old=>old.slice(0,-1))
+    setTosses(old=>old.slice(0,-1))
     setChart(null);setAnswer('');setError('')
     setFocusLiugin('');setStudyPosition(null);setRoleView('用神')
     setReviewStage('calendar');setStudioView('casting')
   }
-  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar');setStudioView('casting')}
+  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setTosses([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar');setStudioView('casting')}
   function goReviewStep(target){
     if(calendarBusy)return
     setReviewStage(target)
@@ -1935,7 +1938,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
       if(apiConfig.personalApiKey.trim())headers['X-User-API-Key']=apiConfig.personalApiKey.trim()
       else if(apiConfig.aiAccessCode)headers['X-AI-Access-Code']=apiConfig.aiAccessCode
       const res=await fetch(api+'/api/liuyao/interpret',{method:'POST',headers,body:JSON.stringify({
-        numbers:lines,day_ganzhi:dayGanzhi||null,month_branch:monthBranch||null,
+        numbers:lines,coin_tosses:tosses.length===lines.length?tosses:null,day_ganzhi:dayGanzhi||null,month_branch:monthBranch||null,
         focus_liuqin:focusLiugin||null,focus_position:studyPosition||null,
         question,background,background_confirmed:true,ai_model:apiConfig.aiModel,
         calendar_input:confirmedCalendarInput||null
@@ -2008,7 +2011,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             const num=lines[i], info=K[num]
             return <div className={'academy-ledger-row '+(info?.move?'moving':'')} key={i}>
               <span>{POS[i]}爻</span><div className="academy-bars">
-                {info?(info.yin?<i/>:<><i/><i/></>):<em>待掷</em>}</div><small>{info?num+' · '+info.name:'尚未记录'}</small>
+                {info?(info.yin?<i/>:<><i/><i/></>):<em>待掷</em>}</div><small>{info?num+' · '+info.name:'尚未记录'}{tosses[i]?.length===3?' · '+tosses[i].map(n=>n===2?'字':'背').join('') : ''}</small>
             </div>
           })}</div>
           {chart?<div className="academy-computed">
