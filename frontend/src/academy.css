@@ -1305,3 +1305,26 @@
 .taiyi-v64-result>a{font-size:12px;color:#2d7255;text-decoration:underline}
 .taiyi-v64-source-sep{font-size:11px}
 @media(max-width:630px){.taiyi-v64{padding:12px}.taiyi-v64-palaces button{min-height:78px;padding:8px 2px}.taiyi-v64-palaces button strong{font-size:14px}}
+
+/* V65 Taiyi 16 direction ring / traceable classical main and guest counting */
+.taiyi-v65-marks,.taiyi-v65-counts{margin:17px 0;padding:15px;background:#f6faf4;border:1px solid #b5cdbb}
+.taiyi-v65-marks>p,.taiyi-v65-counts>p{font-size:12px;line-height:1.9}
+.taiyi-v65-spirits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:12px 0}
+.taiyi-v65-spirits button{display:flex;flex-direction:column;gap:5px;min-width:0;align-items:center;justify-content:center;padding:10px 4px;background:#fffdf5;border:1px solid #c5d5c7;cursor:pointer;color:#416656}
+.taiyi-v65-spirits button strong{font-size:14px}
+.taiyi-v65-spirits button small,.taiyi-v65-spirits button span{font-size:10px;line-height:1.4}
+.taiyi-v65-spirits button.wenchang{background:#f2e9ce;border-color:#af9960}
+.taiyi-v65-spirits button.shiji{background:#e1eaf4;border-color:#81a9c8}
+.taiyi-v65-spirits button.selected{outline:2px solid #286954;outline-offset:1px}
+.taiyi-v65-picked{padding:10px;background:#eaf5eb;font-size:12px}
+.taiyi-v65-count-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.taiyi-v65-count-grid article{padding:13px;min-width:0;background:#fefcf6;border:1px solid #d4ccae}
+.taiyi-v65-count-grid article>small{font-size:12px}
+.taiyi-v65-count-grid article>strong{display:block;font-size:23px;color:#356c51;margin:8px 0}
+.taiyi-v65-count-grid article p{font-size:12px;line-height:1.8}
+.taiyi-v65-steps{display:flex;gap:5px;flex-wrap:wrap}
+.taiyi-v65-steps span{font-size:11px;padding:5px 6px;background:#f2f1e7;border:1px solid #e0dccf}
+.taiyi-v65-steps span.counted{background:#e1eee3;border-color:#b4cbb8}
+.taiyi-v65-variant{background:#fff5e3;border-left:3px solid #af7a43;padding:9px;margin:10px 0}
+.taiyi-v65-variant a{color:#316e56;text-decoration:underline;font-size:11px}
+@media(max-width:650px){.taiyi-v65-count-grid{grid-template-columns:1fr}.taiyi-v65-spirits{grid-template-columns:repeat(4,minmax(0,1fr))}}

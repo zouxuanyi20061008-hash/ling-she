@@ -26,7 +26,7 @@ def verify():
             d=v[k]
             assert (d["main_general"],d["assistant_general"])==(
               ref[prefix+"_general"],ref[prefix+"_assistant"])
-            assert [[p["direction"],p["added"]] for p in d["trace"] if p["added"]]>0==ref[prefix+"_nonzero"]
+            assert [[p["direction"],p["added"]] for p in d["trace"] if p["added"]>0]==ref[prefix+"_nonzero"]
         witnesses.append({"year":year,"reference":ref,
             "calculated":{"wenchang":v["heaven_eye_wenchang"],
                           "shiji":v["earth_eye_shiji"],

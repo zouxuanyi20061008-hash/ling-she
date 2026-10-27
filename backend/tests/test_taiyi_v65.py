@@ -74,6 +74,9 @@ def test_2026_wenchang_16_but_shiji_equals_taiyi_special_unresolved():
     assert v["guest_general"]["same_palace_as_taiyi"]
     assert v["guest_general"]["trace"]==[]
     assert not v["main_guest_generals_computed"]
+    assert v["guest_general"]["historical_alternative"]["calculated_count"]==3
+    assert v["guest_general"]["historical_alternative"]["assistant_general"]==9
+    assert not v["guest_general"]["historical_alternative"]["is_default"]
     assert not year_board(2026)["has_complete_main_guest"]
 
 

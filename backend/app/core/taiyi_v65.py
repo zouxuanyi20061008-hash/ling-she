@@ -77,10 +77,19 @@ def trace_count(from_index:int,taiyi_palace:int)->dict:
     stop=next(i for i,way in enumerate(DIRECTIONS) if GONG.get(way)==taiyi_palace)
     if from_index==stop:
         return {"status":"pending","count":None,"trace":[],
-                "reason":"起算目与太乙同宫；掩/囚专法未校勘，不将其擅断为零算或整周算",
+                "reason":"起算目与太乙同宫：默认逐宫停算法不自动定算。另列《武备志》同宫取本宫宫数的古籍变法。",
                 "same_palace_as_taiyi":True,
                 "stop_palace":taiyi_palace,
-                "stop_direction":DIRECTIONS[stop]}
+                "stop_direction":DIRECTIONS[stop],
+                "historical_alternative":{
+                    "school":"《武备志》卷一百六十九",
+                    "source":"https://www.shidianguji.com/book/CADAL02092259/chapter/1lb3wzm7f2qzs",
+                    "rule":"文昌/始击与太乙同宫时直接按该宫宫数取算",
+                    "calculated_count":taiyi_palace,
+                    "main_general":taiyi_palace,
+                    "assistant_general":(taiyi_palace*3)%10 or (taiyi_palace*3)//10,
+                    "is_default":False,
+                }}
     trace=[]
     for offset in range(16):
         n=(from_index+offset)%16
