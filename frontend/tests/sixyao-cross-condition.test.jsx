@@ -22,6 +22,6 @@ it('V44 shows independent known, unknown and real-moving-only evidence',()=>{
   expect(screen.getByText(/本爻安静，不将变卦静态同位支作为化爻/)).toBeTruthy()
   expect(screen.getByText(/真实本位化爻：乙卯/)).toBeTruthy()
   expect(screen.getByText(/旬空与月冲并见/)).toBeTruthy()
-  expect(screen.getByText(/日辰未提供/)).toBeTruthy()
+  expect(screen.getAllByText(/日辰未提供/)).toHaveLength(2)
   expect(screen.getByText(/最终用神旺衰/)).toBeTruthy()
 })
