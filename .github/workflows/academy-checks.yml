@@ -193,6 +193,17 @@ jobs:
           name: liuren-v61-shehai-routes
           path: backend/acceptance-output/liuren-v61.json
           if-no-files-found: error
+      - name: Run V62 noble and twelve-generals classical acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/liuren_v62_acceptance.py --output backend/acceptance-output/liuren-v62.json
+      - name: Upload V62 noble daylight and night general-board fixtures
+        uses: actions/upload-artifact@v4
+        with:
+          name: liuren-v62-twelve-generals
+          path: backend/acceptance-output/liuren-v62.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
