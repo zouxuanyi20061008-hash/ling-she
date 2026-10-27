@@ -92,7 +92,7 @@ const NETHER_OVERLORD_ART=new Image();
 NETHER_OVERLORD_ART.src='assets/nether-overlord.svg?v=65';
 function paintNetherOverlord(enemy,now){
  if(!enemy||!NETHER_OVERLORD_ART.complete||!NETHER_OVERLORD_ART.naturalWidth)return false;
- ctx.save();
+ ctx.save();ctx.imageSmoothingEnabled=qualityMode==='sharp';
  ctx.fillStyle='#1d173c55';ctx.beginPath();ctx.ellipse(enemy.x+6,enemy.y+16,enemy.r*1.53,enemy.r*.44,0,0,Math.PI*2);ctx.fill();
  const pulse=Math.sin(now*.0019)*2;
  const size=enemy.r*3.65;
