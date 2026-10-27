@@ -764,6 +764,38 @@ function SeasonalMovingStudy({chart}) {
 
 
 
+export function CrossConditionAuditStudy({chart}){
+  const data=chart.cross_condition_audit
+  if(!data)return null
+  return <section className="void-context-study" aria-label="六爻V44旺衰空破动变交叉核验">
+    <header><small>V44 · 核心规则交叉核验</small><h3>生扶、旬空与动变 · 逐爻对照</h3></header>
+    <p>只关联已计算的日月、生扶制约、旬空、月冲、真实明动及回头关系。
+      下列复合条件已由程序检出，但<strong>真实效力与应期尚未判定。</strong></p>
+    {data.status==='focus_not_visible'&&<p className="void-context-warning">用神本卦不现，以下只是六爻本卦审议，不能假装伏神为明现主爻。</p>}
+    <div className="void-context-steps">
+      {data.rows.map(row=><details key={row.position} open={row.selected_by_user}>
+        <summary>{POS[row.position-1]}爻 · {row.ganzhi} {row.moving?'（明动）':'（安静）'}
+          {row.focus_candidate?' · 用神候选':''} · {row.checks.length}项复合条件</summary>
+        <p>已计算：日辰{row.computed.day.status==='missing'?'未知':row.computed.day.relation}；
+          月建{row.computed.month.status==='missing'?'未知':row.computed.month.relation}；
+          本爻旬空{row.computed.original_void===null?'未知':row.computed.original_void?'是':'否'}；
+          月冲{row.computed.original_month_clash===null?'未知':row.computed.original_month_clash?'是':'否'}</p>
+        {row.actual_change?<p>真实本位化爻：{row.actual_change.ganzhi} · {row.actual_change.returning_term}，
+          变爻旬空{row.actual_change.original_void===null?'未知':row.actual_change.original_void?'是':'否'}，
+          月冲{row.actual_change.month_clash===null?'未知':row.actual_change.month_clash?'是':'否'}；回头效力待核。</p>:
+          <p>本爻安静，不将变卦静态同位支作为化爻。</p>}
+        {row.incoming_movers.map(source=><p key={source.source_position}>
+          本卦{POS[source.source_position-1]}爻明动来作用：{source.relation}；
+          来源限制标记：{source.restriction_flags.length?source.restriction_flags.join('、'):'未见已算标记'}（非效力结论）
+        </p>)}
+        {row.checks.map(check=><p key={check.id}>· {check.title}：{check.facts.join('；')}（待人工合参）</p>)}
+        {row.missing_inputs.map((message,i)=><p key={i} className="void-context-missing">待补：{message}</p>)}
+      </details>)}
+    </div>
+    <p className="void-context-end">尚未实现：{data.unimplemented.join('、')}。{data.boundary}</p>
+  </section>
+}
+
 export function VoidContextStudy({chart}){
   const data=chart.void_context_review
   const [requested,setRequested]=useState(null)
@@ -1739,6 +1771,8 @@ export function ReviewReport({chart,question}) {
     '六合、墓绝条件摘记（不判效力）：',
     ...(data.special_conditions_digest||[]),
     '',
+    'V44 旺衰旬空与动变交叉核验（不判真实效力）：',
+    ...(data.cross_condition_digest||[]),
     '真假空六段审议（未作真假空裁定）：',
     ...(data.void_context_digest||[]),
     '',
@@ -1843,6 +1877,11 @@ export function ReviewReport({chart,question}) {
       <h4>真假空六段审议摘要</h4>
       {data.void_context_digest.map((x,i)=><p key={i}>{x}</p>)}
       <small>只核对原爻空与真实化空及交叉条件，未断出空、填实或实际吉凶。</small>
+    </div>}
+    {data.cross_condition_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V44 旺衰、真假空与动变来源交叉核验</h4>
+      {data.cross_condition_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>同时出现的条件已计算；实际效力、真假空、最终旺衰和应期仍未实现。</small>
     </div>}
     {data.temporal_month_digest?.length>0&&<div className="strength-evidence-report">
       <h4>V43 跨节气月建与用神动变条件核验</h4>
@@ -2146,6 +2185,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             </>}
             {reviewStage==='conflicts'&&<>
               <DayMonthReview chart={chart}/>
+              <CrossConditionAuditStudy chart={chart}/>
               <VoidContextStudy chart={chart}/>
               <TemporalReviewStudy chart={chart}/>
               <details className="liuyao-depth-panel">

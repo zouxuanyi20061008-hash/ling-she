@@ -32,6 +32,7 @@ def decorate_review_flow(chart: dict) -> dict:
     combinations=chart["hexagram_combinations"]
     sanhe_focus=chart["sanhe_focus_review"]
     sanhe_audit=chart["sanhe_condition_audit"]
+    cross=chart["cross_condition_audit"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -136,6 +137,8 @@ def decorate_review_flow(chart: dict) -> dict:
         unresolved.append("V23 已提供真假空六段审议，冲空、动空、化空等作用是否成立仍待合参")
     if focus_effect["candidates"]:
         unresolved.append("V24 已逐项核对原忌仇来源的日月空破和本位动变，实际作用效力仍需合参")
+    if cross["attention_positions"]:
+        unresolved.append("V44 已标出多条件并见与受限的明动来源；这不是旺衰、真假空或回头作用的实际裁定")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "仍未完成实际应期推断；V22/V42/V43 仅复核日旬与真实动变、采纳日期后的未来节令月建，不裁定事件发生时间",
@@ -230,6 +233,18 @@ def decorate_review_flow(chart: dict) -> dict:
         str(len(candidate["events"]))+"个有干支条件的日期；旺衰、真假空、回头作用及应期仍待合参。"
         for candidate in temporal["candidates"]
     ]
+    cross_condition_digest=[
+        "V44 "+str(row["position"])+"爻 "+row["ganzhi"]+"："+
+        ("；".join(x["title"] for x in row["checks"]) if row["checks"] else
+         "未发现需关联的已算复合标记")+
+        ("；缺项："+ "、".join(row["missing_inputs"]) if row["missing_inputs"] else "")+
+        "；旺衰、真假空、回头作用与应期均未判定"
+        for row in (cross["focus_candidates"] if cross["focus_candidates"] else
+                    ([] if chart.get("focus") else
+                     [r for r in cross["rows"] if r["checks"]]))
+    ]
+    if cross["status"]=="focus_not_visible":
+        cross_condition_digest=["V44 本卦关注用神不现：这里只核验可见六爻；不将伏神误认明现用神，不作最终取用。"]
     void_context_digest=[
         str(row["position"])+"爻 "+row["ganzhi"]+" · "+
         ("本爻及变爻均空" if row["category"]=="original_and_transformed_void" else
@@ -311,6 +326,7 @@ def decorate_review_flow(chart: dict) -> dict:
         "review_sheet_digest":sheet_digest,
         "focus_effect_digest":focus_effect_digest,
         "void_context_digest":void_context_digest,
+        "cross_condition_digest":cross_condition_digest,
         "temporal_digest":temporal_digest,
         "temporal_crosscheck_digest":temporal_crosscheck_digest,
         "temporal_month_digest":temporal_month_digest,
