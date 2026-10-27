@@ -87,6 +87,8 @@ function paintSpeciesEnemy(e,now){
   id==='ember_scorpion'&&now<e.rushUntil?Math.sin(t*7)*.045:Math.sin(t*1.5)*.02;
  const breathe=1+(id==='tortoise'?.012:.024)*Math.sin(t*(id==='hare'?5:2.8));
  ctx.save();
+ // Sharp mode softens authored SVG contours; smooth mode keeps fast pixel draws.
+ ctx.imageSmoothingEnabled=qualityMode==='sharp';
  ctx.translate(e.x,e.y);ctx.rotate(tilt);ctx.scale(breathe,breathe);
  if(hurt){
   ctx.globalAlpha=.78;
