@@ -1055,11 +1055,18 @@ export function TemporalReviewStudy({chart}){
       </summary>
       <p>{candidate.originally_void?'原起卦日此爻逢旬空，列出换旬、值日、相冲条件作参照。':
         '原起卦日此爻未逢旬空，仅列相值与相冲日支关系。'}</p>
+      {candidate.daily_xunkong_recomputed&&<p>V42 · 逐日重算日旬空；
+        {candidate.has_actual_change?'此爻确实明动，本位化支 '+candidate.changed_branch+' 同步核对。':
+        '此爻安静，不读取变卦静态同位支作为实际动变。'}以上均不代表旺衰、真假空或应期结论。</p>}
       <div className="temporal-review-events">
         {candidate.events.map(event=><article key={event.offset_days}>
           <div className="temporal-review-event-day">
             <strong>{event.solar_date||'第 '+event.offset_days+' 日'}</strong>
             <span>{event.day_ganzhi}日 · +{event.offset_days}天</span>
+            {event.future_xunkong&&<small>当日旬空：{event.future_xunkong.join('、')}；
+              本爻{event.original_void_on_day?'列空':'不列空'}
+              {candidate.has_actual_change&&<>；本位化支{event.changed_void_on_day?'列空':'不列空'}</>}
+              （只列历法条件）</small>}
           </div>
           <div>{event.conditions.map(condition=><p key={condition.id}>
             <b>{condition.title}</b><small>{condition.basis}</small>
@@ -1727,6 +1734,8 @@ export function ReviewReport({chart,question}) {
     '',
     '时间条件参照（不是应期预测）：',
     data.temporal_notice||'未提供日期来源',
+    'V42 旬空逐日核验与本位化支（日月实际效力未判定）：',
+    ...(data.temporal_crosscheck_digest||[]),
     ...(data.temporal_digest||[]),
     '',
     '待核实与未完成事项：',
@@ -1822,6 +1831,11 @@ export function ReviewReport({chart,question}) {
       <h4>真假空六段审议摘要</h4>
       {data.void_context_digest.map((x,i)=><p key={i}>{x}</p>)}
       <small>只核对原爻空与真实化空及交叉条件，未断出空、填实或实际吉凶。</small>
+    </div>}
+    {data.temporal_crosscheck_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V42 逐日旬空与真实动变时间条件核验</h4>
+      {data.temporal_crosscheck_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>逐日干支计算不等于实际出空、填实、旺衰、回头作用或应期已确定。</small>
     </div>}
     {data.temporal_digest?.length>0&&<div className="strength-evidence-report">
       <h4>时间条件摘要 · 不是应期预测</h4>
