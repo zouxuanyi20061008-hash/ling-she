@@ -1085,3 +1085,23 @@
  .yongshen-chain-groups{grid-template-columns:1fr}
  .yongshen-chain-head h3{font-size:15px}
 }
+
+/* V50 奇门真正按北京时间定局：九宫地盘，星门转盘仍标明未实现 */
+.qimen-v50{margin:18px 0 22px;padding:20px;border:1px solid #a7a999;background:linear-gradient(145deg,#f3eee1,#e5ebdf);color:#244b3b}
+.qimen-v50 header small{letter-spacing:.13em;color:#93734b}
+.qimen-v50 header h2{margin:8px 0;font-size:20px;color:#254838}
+.qimen-v50 header p,.qimen-v50-result p{font-size:12px;line-height:1.9}
+.qimen-v50-form{display:flex;align-items:flex-end;flex-wrap:wrap;gap:12px;margin:18px 0 15px}
+.qimen-v50-form label{display:flex;flex:1 1 145px;flex-direction:column;gap:7px;font-size:12px;min-width:0}
+.qimen-v50-form input,.qimen-v50-form select{min-width:0;width:100%;box-sizing:border-box;height:43px;border:1px solid #9eae9b;background:#fffdf6;color:#244d3b;padding:7px}
+.qimen-v50-form button{min-height:43px;background:#2e5d48;color:#fff4da;border:0;padding:9px 15px;cursor:pointer}
+.qimen-v50-form button:disabled{opacity:.6;cursor:wait}
+.qimen-v50-summary{display:grid;gap:7px;padding:13px 15px;border-left:3px solid #66836c;background:#fffaf0;margin:13px 0;font-size:12px}
+.qimen-v50-summary strong{font-size:20px;color:#27533d}
+.qimen-v50 .qimen-v50-nine{margin:12px 0}
+.qimen-v50-nine button{min-width:0;min-height:87px;overflow:hidden}
+.qimen-v50-nine button strong{font-size:24px}
+.qimen-v50-palace{background:#fffaf0;padding:12px;color:#355945}
+.qimen-v50 .academy-caution{line-height:1.9;margin-top:10px}
+.qimen-v50-result>a{color:#376549;text-decoration:underline;font-size:12px}
+@media(max-width:660px){.qimen-v50{padding:12px}.qimen-v50-form{gap:9px}.qimen-v50-form label{flex-basis:110px}.qimen-v50-nine button{min-height:69px}.qimen-v50-nine button strong{font-size:20px}}

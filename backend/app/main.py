@@ -24,6 +24,7 @@ from .clarification import followup_question
 from .yaoci import moving_line_text
 from .core.liuyao import cast_six_yao
 from .core.solar_calendar import preview_solar_calendar, preview_lunar_calendar
+from .core.qimen import cast_qimen
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
 LAN_REGEX = (
@@ -174,6 +175,20 @@ def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
             req.is_leap_month,req.clock,req.day_boundary)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
+
+class QimenCastRequest(BaseModel):
+    solar_date: date_value
+    clock: time_value
+    day_boundary: Literal["midnight","zi_hour"] = "zi_hour"
+
+
+@app.post("/api/qimen/cast")
+def qimen_cast(req: QimenCastRequest):
+    try:
+        return cast_qimen(req.solar_date,req.clock,req.day_boundary)
+    except ValueError as exc:
+        raise HTTPException(422,str(exc)) from exc
+
 
 class SixYaoCastRequest(BaseModel):
     numbers: list[int] = Field(min_length=6,max_length=6)
