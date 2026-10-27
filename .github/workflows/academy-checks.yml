@@ -116,6 +116,17 @@ jobs:
           name: qimen-v54-wonders-classical-anchors
           path: backend/acceptance-output/qimen-v54.json
           if-no-files-found: error
+      - name: Run V55 real four-pillars independent date fixtures
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/bazi_v55_acceptance.py --output backend/acceptance-output/bazi-v55.json
+      - name: Upload V55 real four-pillars acceptance
+        uses: actions/upload-artifact@v4
+        with:
+          name: bazi-v55-four-pillars-fixtures
+          path: backend/acceptance-output/bazi-v55.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
