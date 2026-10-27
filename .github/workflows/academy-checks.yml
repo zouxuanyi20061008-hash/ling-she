@@ -61,6 +61,17 @@ jobs:
           name: liuyao-v49-classic-cases
           path: backend/acceptance-output/liuyao-v49.json
           if-no-files-found: error
+      - name: Run V50 Qimen classical earth plate acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/qimen_v50_acceptance.py --output backend/acceptance-output/qimen-v50.json
+      - name: Upload V50 Qimen earth-plate acceptance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: qimen-v50-earthplate-acceptance
+          path: backend/acceptance-output/qimen-v50.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]

@@ -112,7 +112,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             {qimenChart.palaces.filter(p=>p.number===palaceNum).map(p=>
               <p key={p.number}><b>{p.name}{p.number}宫</b> · 地盘 {p.earth_stem}。
                 {p.original_star}、{p.original_door||'中宫不安八门'}为固定本宫出处，
-                **不是**此时天盘星门的实际落宫。</p>)}
+                <strong>不是</strong>此时天盘星门的实际落宫。</p>)}
           </div>
           {qimenChart.input_provenance?.warnings?.map((w,i)=>
             <p key={i} className="academy-caution">{w}</p>)}
