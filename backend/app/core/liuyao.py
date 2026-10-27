@@ -26,6 +26,7 @@ from .focus_comparison import decorate_focus_comparison
 from .joint_overview import decorate_joint_overview
 from .progression_review import decorate_progression
 from .hexagram_combinations import decorate_hexagram_combinations
+from .sanhe_focus_review import decorate_sanhe_focus
 
 LINE_KIND = {
     6: {"name":"老阴", "symbol":"⚋ ×", "yin_yang":"阴", "changing":True},
@@ -79,5 +80,6 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     chart = decorate_focus_comparison(chart)
     chart = decorate_progression(chart)
     chart = decorate_hexagram_combinations(chart)
+    chart = decorate_sanhe_focus(chart)
     chart = decorate_joint_overview(chart)
     return decorate_review_flow(chart)

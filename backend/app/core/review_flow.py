@@ -30,6 +30,7 @@ def decorate_review_flow(chart: dict) -> dict:
     comparison=chart["focus_comparison"]
     progression=chart["progression_review"]
     combinations=chart["hexagram_combinations"]
+    sanhe_focus=chart["sanhe_focus_review"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -257,8 +258,22 @@ def decorate_review_flow(chart: dict) -> dict:
         "组；虚三待用"+str(combinations["counts"]["waiting"])+
         "组。实际成局及效力未定。",
     ]
+    sanhe_focus_digest=[
+        ("三合与关注对象："+("未指定" if sanhe_focus["status"]=="no_focus" else
+            "本卦不现" if sanhe_focus["status"]=="hidden_focus" else
+            str(sanhe_focus["focus_category"])+"（候选爻 "+
+            "、".join(str(p) for p in sanhe_focus["focus_positions"])+"）"))+
+        "；共有"+str(sanhe_focus["candidate_count"])+"组三合结构候选，实际效力待核。",
+    ]
+    if sanhe_focus["selected_position"] is not None:
+        sanhe_focus_digest.append(
+            "研习主爻"+str(sanhe_focus["selected_position"])+"爻位于"+
+            str(sanhe_focus["selected_overlap_count"])+"个三合候选的结构位置；"+
+            "结构包含不代表成局或吉凶。"
+        )
     report={
         "title":"六爻研判学习笔记",
+        "sanhe_focus_digest":sanhe_focus_digest,
         "combination_digest":combination_digest,
         "progression_digest":progression_digest,
         "focus_comparison_digest":focus_comparison_digest,

@@ -1766,6 +1766,11 @@ function ReviewReport({chart,question}) {
       {data.evidence_digest.map((text,i)=><p key={i}>{text}</p>)}
       <small>这里只记录两类条件，不作净额评分，也不视为最终旺衰结论。</small>
     </div>}
+    {data.sanhe_focus_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>三合与用神、世应及日月对照</h4>
+      {data.sanhe_focus_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>只记录候选组合与位置关系；不据此判成局、旺衰或吉凶。</small>
+    </div>}
     {data.combination_digest?.length>0&&<div className="strength-evidence-report">
       <h4>六合六冲与三合结构核对</h4>
       {data.combination_digest.map((x,i)=><p key={i}>{x}</p>)}
@@ -2011,9 +2016,9 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <SixYaoFullChart chart={chart}/>
-            <SixYaoCombinationPanel chart={chart}/>
             <SixYaoJointOverview chart={chart} onChooseFocus={chooseFocus}
               onChoosePosition={chooseStudyPosition} busy={calendarBusy}/>
+            <SixYaoCombinationPanel chart={chart}/>
             <nav className="review-flow-nav" ref={reviewNavRef} aria-label="六爻五步研判页面">
               {REVIEW_STEPS.map((step,i)=>{
                 const state=chart.review_flow?.stages?.[i]?.status

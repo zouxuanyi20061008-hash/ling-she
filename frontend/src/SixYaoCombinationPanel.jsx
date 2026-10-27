@@ -42,6 +42,47 @@ export default function SixYaoCombinationPanel({chart}){
         {item.branches.join('—')}
         {item.is_six_he?'（合）':item.is_six_chong?'（冲）':'（其他）'}</span>)}
     </p>
+    {chart.sanhe_focus_review&&<div className="six-combo-focus-review"
+      aria-label="三合局与用神日月合参">
+      <h4>V40 · 三合局与用神、日月合参</h4>
+      <p>{chart.sanhe_focus_review.status==='no_focus'?
+        '还没有选择用神。请在下方合参总览选择六亲或世应，再来核对三合关系。':
+        chart.sanhe_focus_review.status==='hidden_focus'?
+        '当前关注的六亲在本卦不现，先核飞伏与日月，不把三合局直接当成可用用神。':
+        '当前关注：'+chart.sanhe_focus_review.focus_category+'，候选爻位 '+
+        chart.sanhe_focus_review.focus_positions.join('、')+
+        '。下面仅按每处本卦候选分别核对，不自动择优。'}</p>
+      {chart.sanhe_focus_review.rows.length>0?<details>
+        <summary>展开三合局与用神的逐组核查（{chart.sanhe_focus_review.rows.length} 组）</summary>
+        <div className="six-combo-focus-list">
+          {chart.sanhe_focus_review.rows.map(item=><article key={item.candidate_key}>
+            <strong>{item.source_label} · {item.element}局 · {item.branches.join('·')}</strong>
+            <p>涉及：<PositionList positions={item.positions}/>
+              {item.missing_branch?'，尚缺 '+item.missing_branch:''}
+              {item.selected_position_is_member===true?' · 包含你选择的研习主爻':
+                item.selected_position_is_member===false?' · 未包含你选择的研习主爻':''}</p>
+            {item.focus_members.length>0?item.focus_members.map(f=><p key={f.position}>
+              {f.position}爻 {f.ganzhi}（{f.liuqin}{f.role?' · '+f.role:''}）：
+              {f.five_element_relation} · {f.is_pattern_member?'位于当前组合':'不在当前组合'}
+              {f.is_selected_by_user?' · 用户选定':''}
+            </p>):<p>没有明现用神，需先核飞伏。</p>}
+            <p>日辰：{item.season.day_known?
+              (item.season.day_branch_in_pattern?'日支见组合支 · ':'日支不在组合支 · ')+
+              item.season.day_element_relation:'尚未核实'}；
+              月建：{item.season.month_known?
+                (item.season.month_branch_in_pattern?'月支见组合支 · ':'月支不在组合支 · ')+
+                item.season.month_element_relation:'尚未核实'}</p>
+            {item.season.original_void_positions?.length>0&&<p>
+              旬空涉及：<PositionList positions={item.season.original_void_positions}/>
+            </p>}
+            {item.season.original_month_clash_positions?.length>0&&<p>
+              月冲涉及：<PositionList positions={item.season.original_month_clash_positions}/>
+            </p>}
+            <small>本处关系可核算；是否真正合局、合化后是否作用于用神、旺衰及应期均未判定。</small>
+          </article>)}
+        </div>
+      </details>:<p>当前盘未识别三合候选，不代表吉凶结论。</p>}
+    </div>}
     <div className="six-combo-stats" aria-label="三合候选数量">
       <div><b>{data.counts.visible}</b><span>原卦三支俱见</span></div>
       <div><b>{data.counts.mixed}</b><span>初三／四六动变候选</span></div>

@@ -9,6 +9,16 @@
 .six-combo-types article strong{display:block;font-size:20px;color:#305b41;margin:5px 0}
 .six-combo-pair-explainer{font-size:12px;display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;line-height:1.7}
 .six-combo-pair-explainer span{background:#eee8d9;padding:3px 8px}
+.six-combo-focus-review{border:1px solid #a4b9a1;background:#eef2e7;padding:12px;margin:13px 0}
+.six-combo-focus-review h4{margin:0 0 9px;font-size:15px;color:#315c40}
+.six-combo-focus-review p{font-size:12px;line-height:1.75;color:#48634d}
+.six-combo-focus-review details{padding:8px 0}
+.six-combo-focus-review summary{font-size:12px;font-weight:700;color:#335e42;cursor:pointer}
+.six-combo-focus-list{display:grid;gap:8px;margin:10px 0}
+.six-combo-focus-list article{padding:10px;background:#fffdf6;border:1px solid #cbd5c3;overflow-wrap:anywhere}
+.six-combo-focus-list strong{font-size:13px;color:#365e45}
+.six-combo-focus-list p{margin:5px 0;font-size:11px}
+.six-combo-focus-list small{font-size:11px;color:#805f40;line-height:1.65}
 .six-combo-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}
 .six-combo-stats>div{background:#eee9d9;border:1px solid #dbceb9;text-align:center;padding:9px 5px}
 .six-combo-stats b{display:block;font-size:22px;color:#2f6243}
