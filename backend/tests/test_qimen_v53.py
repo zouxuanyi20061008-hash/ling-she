@@ -66,14 +66,15 @@ def test_yang_hour_bing_shen_dark_fly_from_real_gate_nine():
     c=case()
     dark=c["dark_stem_plate"]
     assert dark["original_value_gate_palace"]==9
-    assert dark["origin_logical_palace"]==9
+    assert dark["origin_logical_palace"]==5
+    assert "改从中五" in dark["origin_reason"]
     assert dark["starting_stem"]=="丙"
-    # Start 丙 in 离9; +1 洛书数字飞布顺序到坎1, 坤2...
+    # 时干丙与值使宫的天盘丙同干，本口径改从中五起，阳顺飞宫。
     assert dark["placements"]=={
-        "1":"乙","2":"戊","3":"己","4":"庚","5":"辛",
-        "6":"壬","7":"癸","8":"丁","9":"丙"}
+        "1":"辛","2":"壬","3":"癸","4":"丁","5":"丙",
+        "6":"乙","7":"戊","8":"己","9":"庚"}
     assert c["palaces"][4]["number"]==5
-    assert c["palaces"][4]["dark_stem"]=="辛"
+    assert c["palaces"][4]["dark_stem"]=="丙"
     assert dark["independently_verified_from_classic_example"] is False
 
 
