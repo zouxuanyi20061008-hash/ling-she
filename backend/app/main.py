@@ -177,6 +177,7 @@ def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
 
 class SixYaoCastRequest(BaseModel):
     numbers: list[int] = Field(min_length=6,max_length=6)
+    coin_tosses: list[list[int] | None] | None = Field(default=None,min_length=6,max_length=6)
     day_ganzhi: str | None = Field(default=None,min_length=2,max_length=2)
     month_branch: str | None = Field(default=None,min_length=1,max_length=1)
     focus_liuqin: Literal["父母","官鬼","兄弟","妻财","子孙","世爻","应爻"] | None = None
@@ -214,7 +215,8 @@ def _sixyao_chart(req: SixYaoCastRequest) -> dict:
         }
     return cast_six_yao(
         req.numbers,req.day_ganzhi,req.month_branch,
-        req.focus_liuqin,req.focus_position,calendar_provenance=provenance
+        req.focus_liuqin,req.focus_position,calendar_provenance=provenance,
+        coin_tosses=req.coin_tosses
     )
 
 
