@@ -34,7 +34,7 @@ it('六爻全盘下展示本卦六冲、之卦六合和三支原卦候选，附�
   expect(screen.getByText('六合、六冲与三合候选')).toBeTruthy()
   expect(screen.getByText('六冲卦')).toBeTruthy()
   expect(screen.getByText('六合卦')).toBeTruthy()
-  expect(screen.getByText('动爻进退')).toBeNull()
+  expect(screen.queryByText('动爻进退')).toBeNull()
   expect(screen.getByRole('link',{name:/增删卜易/}).getAttribute('href')).toContain('增删卜易/19')
   const btn=screen.getByText(/原卦三支俱见 · 1 组/)
   fireEvent.click(btn)
