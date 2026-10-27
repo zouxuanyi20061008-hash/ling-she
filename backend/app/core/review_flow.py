@@ -36,6 +36,7 @@ def decorate_review_flow(chart: dict) -> dict:
     spirit_action=chart["spirit_action_audit"]
     multi=chart["multi_mover_audit"]
     priority=chart["evidence_priority_audit"]
+    hidden_condition=chart["hidden_condition_review"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -182,6 +183,16 @@ def decorate_review_flow(chart: dict) -> dict:
         str(len(row["restraining"]))+"条制约条件；"+row["summary"]
         for row in (strength["focus_candidates"] or
                     ([] if focus else strength["rows"]))
+    ]
+    hidden_condition_digest=[
+        "V49 "+str(x["position"])+"爻伏神"+x["hidden_ganzhi"]+
+        "、飞神"+x["flying_ganzhi"]+"："+x["flying_hidden_relation"]+
+        "；伏神旬空"+("未知" if x["hidden_void"] is None else
+                     "是" if x["hidden_void"] else "否")+
+        "；飞神旬空"+("未知" if x["flying_void"] is None else
+                     "是" if x["flying_void"] else "否")+
+        "；月破与其他作用效力仍需分别审查"
+        for x in hidden_condition["rows"]
     ]
     moving_digest=[
         str(x["position"])+"爻 "+x["moving"]["ganzhi"]+"→"+
@@ -372,6 +383,7 @@ def decorate_review_flow(chart: dict) -> dict:
         "spirit_action_digest":spirit_action_digest,
         "multi_mover_digest":multi_mover_digest,
         "evidence_priority_digest":evidence_priority_digest,
+        "hidden_condition_digest":hidden_condition_digest,
         "void_context_digest":void_context_digest,
         "cross_condition_digest":cross_condition_digest,
         "temporal_digest":temporal_digest,

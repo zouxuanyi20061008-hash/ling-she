@@ -1,0 +1,108 @@
+{
+  "version": "V49",
+  "source_title": "《增删卜易》飞伏神章第二十八",
+  "source_url": "https://www.shidianguji.com/book/XYXZSBY/chapter/1lzxsny7d9s7d",
+  "extraction_note": "固定卦例只转录原典给出的本卦六爻、飞伏位置和生克方向；不转录现实吉凶预言，也没有原典日月输入。爻数按初至上列出；原典按上至下排卦图。",
+  "cases": [
+    {
+      "id": "zengshan_tianfeng_gou_hidden_wealth",
+      "title": "天风姤 · 妻财不现",
+      "source_kind": "primary_text_hexagram",
+      "input": {
+        "numbers": [
+          8,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "focus_liuqin": "妻财"
+      },
+      "expected": {
+        "ben_gua": "天风姤",
+        "palace": "乾",
+        "stage": "一世",
+        "shi": 1,
+        "ying": 4,
+        "najia_ganzhi": [
+          "辛丑",
+          "辛亥",
+          "辛酉",
+          "壬午",
+          "壬申",
+          "壬戌"
+        ],
+        "liuqin": [
+          "父母",
+          "子孙",
+          "兄弟",
+          "官鬼",
+          "兄弟",
+          "父母"
+        ],
+        "focus_status": "not_visible",
+        "hidden": [
+          {
+            "position": 2,
+            "hidden_ganzhi": "甲寅",
+            "hidden_liuqin": "妻财",
+            "flying_ganzhi": "辛亥",
+            "flying_liuqin": "子孙",
+            "flying_hidden_relation": "飞生伏"
+          }
+        ]
+      }
+    },
+    {
+      "id": "zengshan_tianshan_dun_hidden_child",
+      "title": "天山遁 · 子孙不现",
+      "source_kind": "primary_text_hexagram",
+      "input": {
+        "numbers": [
+          8,
+          8,
+          7,
+          7,
+          7,
+          7
+        ],
+        "focus_liuqin": "子孙"
+      },
+      "expected": {
+        "ben_gua": "天山遁",
+        "palace": "乾",
+        "stage": "二世",
+        "shi": 2,
+        "ying": 5,
+        "najia_ganzhi": [
+          "丙辰",
+          "丙午",
+          "丙申",
+          "壬午",
+          "壬申",
+          "壬戌"
+        ],
+        "liuqin": [
+          "父母",
+          "官鬼",
+          "兄弟",
+          "官鬼",
+          "兄弟",
+          "父母"
+        ],
+        "focus_status": "not_visible",
+        "hidden": [
+          {
+            "position": 1,
+            "hidden_ganzhi": "甲子",
+            "hidden_liuqin": "子孙",
+            "flying_ganzhi": "丙辰",
+            "flying_liuqin": "父母",
+            "flying_hidden_relation": "飞克伏"
+          }
+        ]
+      }
+    }
+  ]
+}

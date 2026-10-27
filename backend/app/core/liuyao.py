@@ -11,6 +11,7 @@ from .dynamics import decorate_line_dynamics
 from .moving_season import decorate_moving_and_seasons
 from .conflict_review import decorate_conflicts_and_focus_review
 from .void_review import decorate_void_interactions
+from .hidden_condition_review import decorate_hidden_condition_review
 from .focus_decision import decorate_focus_decision
 from .review_flow import decorate_review_flow
 from .strength_evidence import decorate_strength_evidence
@@ -72,6 +73,7 @@ def cast_six_yao(lines: list[int], day_ganzhi: str | None = None,
     chart = decorate_moving_and_seasons(chart)
     chart = decorate_conflicts_and_focus_review(chart)
     chart = decorate_void_interactions(chart)
+    chart = decorate_hidden_condition_review(chart)
     chart = decorate_focus_decision(chart, focus_position)
     chart = decorate_strength_evidence(chart)
     chart = decorate_moving_effects(chart)

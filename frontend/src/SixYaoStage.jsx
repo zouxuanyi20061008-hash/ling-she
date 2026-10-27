@@ -342,6 +342,24 @@ function FuShenStudy({chart,onChoose,busy}){
             <span>{entry.hidden.liuqin} · {entry.hidden.element}</span></div>
         </div>
         <b>{entry.flying_hidden_relation}</b>
+        {selected.condition_review?.rows?.filter(x=>x.position===entry.position).map(x=>
+          <div key={x.position} className="fushen-day-note">
+            <b>V49 · 伏神与飞神的实际日月证据</b>
+            <p>伏神旬空：{x.hidden_void===null?'日辰未知':x.hidden_void?'是':'否'}；
+              飞神旬空：{x.flying_void===null?'日辰未知':x.flying_void?'是':'否'}。</p>
+            <p>伏神逢月冲：{x.hidden_month_break===null?'月建未知':x.hidden_month_break?'是':'否'}；
+              飞神逢月冲：{x.flying_month_break===null?'月建未知':x.flying_month_break?'是':'否'}。</p>
+            <p>月令：{x.hidden_month_grade||'月建未提供'}；
+              日辰生克：{x.day_relation_to_hidden||'未提供'}；
+              月建生克：{x.month_relation_to_hidden||'未提供'}。</p>
+            <details><summary>展开六项古籍条件候选（不代表伏神已可用）</summary>
+              {x.conditions.map(c=><p key={c.id}>· {c.title}：
+                {c.observed===null?'缺资料':c.observed?'条件线索存在':'当前未见此线索'}。{c.note}</p>)}
+            </details>
+            <p>其他真正明动的五行参考：{x.other_actual_movers.length?
+              x.other_actual_movers.map(m=>m.source_position+'爻'+m.element_relation_to_hidden).join('、'):
+              '无'}；不证明直接生克伏神。</p>
+          </div>)}
       </article>)}</div>
       {candidateReview&&<div className="fushen-day-note">
         <b>日月取用提醒</b>
@@ -1891,6 +1909,8 @@ export function ReviewReport({chart,question}) {
     '用神原忌仇作用来源（效力未判定）：',
     ...(data.yongshen_pathway_digest||[]),
     '',
+    'V49 飞伏神古籍条件与来源校验（只列依据不判能否出伏）：',
+    ...(data.hidden_condition_digest||[]),
     'V47 跨模块证据去重与检查次序（非旺衰优先级）：',
     ...(data.evidence_priority_digest||[]),
     'V46 多动爻双向作用及原忌来源交叉核验（非实际效力）：',
@@ -1994,6 +2014,11 @@ export function ReviewReport({chart,question}) {
       <h4>六合、墓绝条件摘记</h4>
       {data.special_conditions_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>只供日后复核，不意味着合绊、入墓或逢绝已经实际生效。</small>
+    </div>}
+    {data.hidden_condition_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V49 飞伏神独立古籍校验与条件核对</h4>
+      {data.hidden_condition_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>飞伏五行关系与旬空月破相互独立；程序不替你自动认定伏神实际有用。</small>
     </div>}
     {data.evidence_priority_digest?.length>0&&<div className="strength-evidence-report">
       <h4>V47 证据去重与条件并见检查清单</h4>

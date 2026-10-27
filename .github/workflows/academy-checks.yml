@@ -50,6 +50,17 @@ jobs:
           name: liuyao-v48-acceptance
           path: backend/acceptance-output/liuyao-v48.json
           if-no-files-found: error
+      - name: Run V49 independent classical examples
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/liuyao_v49_classic_cases.py --output backend/acceptance-output/liuyao-v49.json
+      - name: Upload V49 independent classical evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: liuyao-v49-classic-cases
+          path: backend/acceptance-output/liuyao-v49.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
