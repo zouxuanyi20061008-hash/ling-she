@@ -82,16 +82,6 @@ function paintQinglanRoadDetails(g,ix,iy){
 }
 // Narrow river: banks at roughly +/- 40px, collision remains +/-30px.
 // The river is a static world-space shape, continuous across tile boundaries.
-function qinglanRiverStroke(g,width,color,alpha=1){
- g.save();g.lineCap='round';g.lineJoin='round';
- g.strokeStyle=color;g.lineWidth=width;g.globalAlpha=alpha;
- g.beginPath();
- for(let y=1200;y<=3510;y+=23){
-  const x=streamCenter(y)+Math.sin(y*.025)*1.2;
-  if(y===1200)g.moveTo(x,y);else g.lineTo(x,y);
- }
- g.stroke();g.restore();
-}
 function paintQinglanRiver(g,ix,iy){
  const left=ix*STATIC_CHUNK_PX,top=iy*STATIC_CHUNK_PX;
  const right=left+STATIC_CHUNK_PX,bottom=top+STATIC_CHUNK_PX;
@@ -102,15 +92,22 @@ function paintQinglanRiver(g,ix,iy){
   const x=streamCenter(y);min=Math.min(min,x);max=Math.max(max,x);
  }
  if(right<min-90||left>max+90)return;
- // Wet soil, sand, bank shadow, deep water, turquoise moving channel.
- qinglanRiverStroke(g,113,'#335d4c',.5);
- qinglanRiverStroke(g,102,'#708b66',.88);
- qinglanRiverStroke(g,91,'#c5b88c',1);
- qinglanRiverStroke(g,81,'#718f7c',1);
- qinglanRiverStroke(g,74,'#1f5364',1);
- qinglanRiverStroke(g,65,'#287688',1);
- qinglanRiverStroke(g,46,'#3e95a0',.87);
- qinglanRiverStroke(g,25,'#5ca7a9',.54);
+ // Generate the meandering path just once per cached terrain chunk.
+ // The eight strokes create a shoreline-to-water depth gradient.
+ g.save();g.lineCap='round';g.lineJoin='round';g.beginPath();
+ for(let y=1200;y<=3510;y+=23){
+  const x=streamCenter(y)+Math.sin(y*.025)*1.2;
+  if(y===1200)g.moveTo(x,y);else g.lineTo(x,y);
+ }
+ const layers=[
+  [113,'#335d4c',.5],[102,'#708b66',.88],[91,'#c5b88c',1],
+  [81,'#718f7c',1],[74,'#1f5364',1],[65,'#287688',1],
+  [46,'#3e95a0',.87],[25,'#5ca7a9',.54]
+ ];
+ for(const layer of layers){
+  g.lineWidth=layer[0];g.strokeStyle=layer[1];g.globalAlpha=layer[2];g.stroke();
+ }
+ g.restore();
  // Original sprite is transparent and baked once per chunk (not every frame).
  if(typeof bankArt!=='undefined'&&isArtReady(bankArt)){
   g.save();g.globalAlpha=.43;
