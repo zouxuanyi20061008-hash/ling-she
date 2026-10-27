@@ -42,7 +42,7 @@ function sample(withAudit=true){
 it('三合局逐组列出独立世应、动静和空破核验，不显示最终成局推断',()=>{
   render(<SixYaoCombinationPanel chart={sample()}/>)
   expect(screen.getByText(/三合条件与世应空破逐项校验/)).toBeTruthy()
-  fireEvent.click(screen.getByText(/水局（申·子·辰）/))
+  fireEvent.click(screen.getByText(/多处明动 · 世应核查/))
   expect(screen.getByText(/上爻/)).toBeTruthy()
   expect(screen.getByText(/三爻/)).toBeTruthy()
   expect(screen.getByText(/位置不在候选结构内/)).toBeTruthy()
