@@ -1114,3 +1114,9 @@
 .qimen-v50-summary span{line-height:1.8}
 .qimen-v50-palace p{margin:0;line-height:2.1;overflow-wrap:anywhere}
 @media(max-width:650px){.qimen-v50-nine button{min-height:108px}.qimen-v50-nine button strong{font-size:13px}.qimen-v50-nine button small{font-size:9px}}
+
+/* V52 八神与时旬空、马星，保持九宫三列手机可读 */
+.qimen-v52-spirit{font-weight:800;color:#855f37;background:#f1e6cc;padding:2px 5px;border-radius:3px}
+.qimen-v52-marks{font-weight:700;color:#925b45;max-width:100%;overflow-wrap:anywhere}
+.qimen-v50-nine button:focus-visible{outline:2px solid #42775b;outline-offset:2px}
+@media(max-width:650px){.qimen-v50-nine button{min-height:138px}.qimen-v52-marks{font-size:8px!important;line-height:1.35!important}}

@@ -63,12 +63,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       <section className="academy-stage-banner"><div>
         <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
         <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'干支四柱 · 入门认识命盘':'古典文献 · 入门导览'}</p>
-        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V51 已计算北京时间起局、九宫地盘、天盘九星与八门随时辰转布；八神、空亡及格局仍待实现。':isBazi?'这里是互动教学演示，不会伪装成真实完整排盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
+        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V52 已计算北京时间起局、九宫星门、八神、时旬空、马星及基础结构条件；完整奇仪格局仍待校勘。':isBazi?'这里是互动教学演示，不会伪装成真实完整排盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
-      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V51 真正定局 · 星门转盘':isBazi?'四柱命简 · 干支辨识':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'值符值使动态落宫已算 · 八神待实现':isBazi?'互动结构教学 · 不冒充完整实盘':'独立主题 · 后续按本门术法逐步完善'}</small></div>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V52 星门八神 · 九宫转盘':isBazi?'四柱命简 · 干支辨识':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'八神、时旬空与马星已算 · 完整格局待校勘':isBazi?'互动结构教学 · 不冒充完整实盘':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isQimen&&<section className="qimen-v50">
-        <header><small>V51 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
-          <p>输入中国北京时间，以节气及符头定局。值符随时干转布九星和天盘干；值使按旬内时辰数排八门。中五寄坤二，八神尚待完成。</p>
+        <header><small>V52 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
+          <p>节气与符头定局，值符、值使带动九星八门；八神顺逆排盘，时旬空与时马星分支标记。结构条件只作文化研究。</p>
         </header>
         <form onSubmit={castActualQimen} className="qimen-v50-form">
           <label>公历日期（中国时间）
@@ -106,6 +106,11 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                 {qimenChart.duty_origin.rotated_door_palace!==qimenChart.duty_origin.rotated_door_display_palace?
                   '（寄坤二展示）':''}</span>
             </>}
+            {qimenChart.hour_markers&&<>
+              <span>时旬空：{qimenChart.hour_markers.void_branches.join('、')}（{qimenChart.hour_markers.void_palaces.join('、')}宫）</span>
+              <span>时支{qimenChart.hour_markers.horse_time_branch} · 马星{qimenChart.hour_markers.horse_branch}（{qimenChart.hour_markers.horse_palace}宫）</span>
+              <span>八神：{qimenChart.spirit_plate?.direction}，自值符星{qimenChart.spirit_plate?.chief_star_display_palace}宫起</span>
+            </>}
           </div>
           <div className="academy-nine qimen-v50-nine" role="group"
             aria-label={qimenChart.has_rotated_stars_and_gates?'V51 奇门九宫星门转盘':'V50 奇门九宫真实地盘'}>
@@ -113,10 +118,14 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               className={palaceNum===p.number?'active':''}
               onClick={()=>setPalaceNum(p.number)}>
               <small>{p.name}宫 · {p.number}</small>
+              {qimenChart.has_eight_spirits&&<small className="qimen-v52-spirit">{p.actual_spirit||'中宫无神'}</small>}
               {qimenChart.has_rotated_stars_and_gates?
                 <><strong>{p.actual_star||'中宫'}</strong><b>{p.actual_gate||'无独立八门'}</b>
                   <small>地{p.earth_stem} · 天{p.sky_stem}
-                    {p.attached_center_stem?' · 寄'+p.attached_center_stem:''}</small></>:
+                    {p.attached_center_stem?' · 寄'+p.attached_center_stem:''}</small>
+                  {qimenChart.has_hourly_void_and_horse&&<small className="qimen-v52-marks">
+                    {[p.hour_horse?'马':'',p.has_hour_void?'空'+p.hour_xunkong_branches_here.join(''):'',
+                      ...(p.structural_tags||[])].filter(Boolean).join(' · ')}</small>}</>:
                 <><strong>{p.earth_stem}</strong><b>地盘</b></>}
             </button>)}
           </div>
@@ -129,13 +138,22 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                     {p.star_from_palace&&<> 九星来源{p.star_from_palace===7?'兑':p.star_from_palace===2?'坤':'第'}{p.star_from_palace}宫，
                       八门来源{p.gate_from_palace}宫；</>}
                     {p.attached_center_star&&<> {p.attached_center_star}随天芮寄，中宫干{p.attached_center_stem}。</>}
-                    八神尚待完成。</>:
+                    {qimenChart.has_eight_spirits?
+                      <>八神 {p.actual_spirit||'中五不安八神'}；
+                        {p.has_hour_void?<>时旬空 {p.hour_xunkong_branches_here.join('、')}；</>:'本宫无时旬空；'}
+                        {p.hour_horse?<>时支马星 {p.horse_branch_here}；</>:'本宫无时支马星；'}
+                        {p.door_palace_relation?<>门宫五行 {p.door_palace_relation}；</>:null}
+                        {p.structural_tags?.length?
+                          <>结构条件：{p.structural_tags.join('、')}。</>:'未出现当前核验的结构条件。'}
+                        仅标记结构，不作吉凶结论。</>:'八神尚待完成。'}</>:
                   <>{p.original_star}、{p.original_door||'中宫不安八门'}为固定本宫出处，
                     <strong>不是</strong>此时天盘星门的实际落宫。</>}</p>)}
           </div>
           {qimenChart.input_provenance?.warnings?.map((w,i)=>
             <p key={i} className="academy-caution">{w}</p>)}
-          <p className="academy-caution">{qimenChart.has_rotated_stars_and_gates?
+          <p className="academy-caution">{qimenChart.has_eight_spirits?
+            'V52 地盘、天盘九星、八门、八神、时旬空与马星及基础结构条件已实现；暗干、完整奇仪格局和用神裁决尚未实现，不可据单项标签断吉凶。':
+            qimenChart.has_rotated_stars_and_gates?
             'V51 天盘九星、八门已按时辰实际转宫，但八神、旬空、马星和格局尚未完成；不是全部层次齐备的完整奇门时盘。':
             '当前只有 V50 地盘，九星、八门与八神尚未完成。不是完整奇门时盘。'}
             不提供据此判定的吉凶、择时或方位。</p>
