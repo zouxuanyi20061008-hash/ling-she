@@ -60,7 +60,14 @@ def test_without_calendar_pair_relations_exist_but_void_month_unknown():
         assert state["month_clash"] is None
         assert state["actual_changed_void"] is None
         assert state["actual_changed_month_clash"] is None
-        assert state["restriction_flags"]==[]
+        # 日月未输入不代表本位回头关系未知：它由真实动变直接算出。
+        assert not set(state["restriction_flags"]) & {
+            "original_xun_void", "original_month_clash", "original_day_clash",
+            "actual_changed_xun_void", "actual_changed_month_clash",
+            "residual_month_qi"
+        }
+        if state["returning_term"]=="回头克":
+            assert "returning_restrains_source" in state["restriction_flags"]
         assert state["missing_inputs"]
     assert d["effective_action_computed"] is False
 
