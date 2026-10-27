@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach,expect,it} from 'vitest'
-import {cleanup,fireEvent,render,screen} from '@testing-library/react'
+import {cleanup,fireEvent,render,screen,within} from '@testing-library/react'
 import SixYaoCombinationPanel from '../src/SixYaoCombinationPanel.jsx'
 afterEach(()=>cleanup())
 function sample(withAudit=true){
@@ -42,13 +42,14 @@ function sample(withAudit=true){
 it('三合局逐组列出独立世应、动静和空破核验，不显示最终成局推断',()=>{
   render(<SixYaoCombinationPanel chart={sample()}/>)
   expect(screen.getByText(/三合条件与世应空破逐项校验/)).toBeTruthy()
-  fireEvent.click(screen.getByText(/多处明动 · 世应核查/))
-  expect(screen.getByText(/上爻/)).toBeTruthy()
-  expect(screen.getByText(/三爻/)).toBeTruthy()
-  expect(screen.getByText(/位置不在候选结构内/)).toBeTruthy()
-  expect(screen.getByText(/位置在候选结构内/)).toBeTruthy()
-  expect(screen.getByText(/原卦局内月冲/)).toBeTruthy()
-  expect(screen.getByText(/不据此判定成局、局旺/)).toBeTruthy()
+  const audit=within(screen.getByRole('region',{name:/V41 三合成局条件/}))
+  fireEvent.click(audit.getByText(/多处明动 · 世应核查/))
+  expect(audit.getByText(/上爻/)).toBeTruthy()
+  expect(audit.getByText(/三爻/)).toBeTruthy()
+  expect(audit.getByText(/位置不在候选结构内/)).toBeTruthy()
+  expect(audit.getByText(/位置在候选结构内/)).toBeTruthy()
+  expect(audit.getByText(/原卦局内月冲/)).toBeTruthy()
+  expect(audit.getByText(/不据此判定成局、局旺/)).toBeTruthy()
 })
 it('V40 旧盘未提供 V41 审核结构时仍能看到原有三合结果',()=>{
   render(<SixYaoCombinationPanel chart={sample(false)}/>)
