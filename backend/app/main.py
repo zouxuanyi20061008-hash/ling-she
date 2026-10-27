@@ -27,6 +27,7 @@ from .core.solar_calendar import preview_solar_calendar, preview_lunar_calendar
 from .core.qimen import cast_qimen
 from .core.bazi import cast_bazi
 from .core.liuren import cast_liuren
+from .core.taiyi import cast_taiyi
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
 LAN_REGEX = (
@@ -177,6 +178,18 @@ def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
             req.is_leap_month,req.clock,req.day_boundary)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
+
+class TaiyiCastRequest(BaseModel):
+    gregorian_year: int = Field(ge=1901,le=2099)
+
+
+@app.post("/api/taiyi/cast")
+def taiyi_cast(req: TaiyiCastRequest):
+    try:
+        return cast_taiyi(req.gregorian_year)
+    except ValueError as exc:
+        raise HTTPException(422,str(exc)) from exc
+
 
 class LiurenCastRequest(BaseModel):
     solar_date: date_value

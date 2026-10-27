@@ -215,6 +215,17 @@ jobs:
           name: liuren-v63-xun-void-dun
           path: backend/acceptance-output/liuren-v63.json
           if-no-files-found: error
+      - name: Run V64 Taiyi 1561/1624 independent historical year-plate acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v64_acceptance.py --output backend/acceptance-output/taiyi-v64.json
+      - name: Upload V64 Taiyi authentic annual number evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v64-ancient-annual-palaces
+          path: backend/acceptance-output/taiyi-v64.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
