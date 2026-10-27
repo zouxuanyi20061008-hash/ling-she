@@ -185,7 +185,7 @@ class BaziCastRequest(BaseModel):
         "none","traditional_male","traditional_female","forward","reverse"
     ] = "none"
     flow_solar_date: date_value | None = None
-    flow_clock: time_value = time(12,0)
+    flow_clock: time_value = time_value(12,0)
 
 
 @app.post("/api/bazi/cast")
