@@ -63,7 +63,8 @@ def _format_pillar(kind:str,name:str,ganzhi:str,day_stem:str)->dict:
 
 
 def cast_bazi(solar_date:date,clock:time,day_boundary:str="midnight",
-              luck_direction:str="none")->dict:
+              luck_direction:str="none",flow_solar_date:date|None=None,
+              flow_clock:time=time(12,0))->dict:
     if not isinstance(solar_date,date) or isinstance(solar_date,datetime):
         raise ValueError("V55 须提供正确公历日期")
     if not isinstance(clock,time) or clock.tzinfo is not None:
@@ -156,4 +157,14 @@ def cast_bazi(solar_date:date,clock:time,day_boundary:str="midnight",
         result["limits"]=[
             x for x in result["limits"] if not x.startswith("大运顺逆")
         ]+["大运起运已按指定口径计算，但流年流月、合冲关系、完整命理分析仍未实现。"]
+    if flow_solar_date is not None:
+        from .bazi_flow import compute_bazi_flow
+        result["flow"]=compute_bazi_flow(result,flow_solar_date,flow_clock)
+        result["version"]="V57"
+        result["has_flow_year_month"]=True
+        result["limits"]=[
+            x for x in result["limits"] if not (
+                x.startswith("大运顺逆") or x.startswith("大运起运已按")
+            )
+        ]+["流年流月已按实际十二节精确排盘；流日流时、合冲刑害与完整命理分析仍未实现。"]
     return result

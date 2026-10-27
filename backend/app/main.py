@@ -184,12 +184,15 @@ class BaziCastRequest(BaseModel):
     luck_direction: Literal[
         "none","traditional_male","traditional_female","forward","reverse"
     ] = "none"
+    flow_solar_date: date_value | None = None
+    flow_clock: time_value = time(12,0)
 
 
 @app.post("/api/bazi/cast")
 def bazi_cast(req: BaziCastRequest):
     try:
-        return cast_bazi(req.solar_date,req.clock,req.day_boundary,req.luck_direction)
+        return cast_bazi(req.solar_date,req.clock,req.day_boundary,req.luck_direction,
+                         req.flow_solar_date,req.flow_clock)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 
