@@ -18,7 +18,7 @@ var cliffArt=document.createElement('img');cliffArt.src='assets/mossy-cliff.svg'
 
 function paintBridge(x,y){
   if(!isArtReady(bridgeArt))return false;
-  ctx.save();
+  ctx.save();ctx.imageSmoothingEnabled=qualityMode==='sharp';
   // Contact shadows and the cut-stone footings make the horizontal span read
   // as an elevated walkable crossing over the north-south stream.
   ctx.fillStyle='#16373c77';ctx.beginPath();ctx.ellipse(x,y+12,100,52,0,0,Math.PI*2);ctx.fill();
@@ -87,7 +87,7 @@ function paintCliffScene(){
   if(!isArtReady(cliffArt))return false;
   // Single authored escarpment, instead of four repeated cliff stamps.
   // Width and contact positions intentionally match the original solid cliff.
-  ctx.save();
+  ctx.save();ctx.imageSmoothingEnabled=qualityMode==='sharp';
   ctx.fillStyle='#1c423c4f';ctx.beginPath();
   ctx.ellipse(1510,1577,167,27,-.08,0,Math.PI*2);ctx.fill();
   ctx.drawImage(cliffArt,1358,1204,314,387);
@@ -103,7 +103,7 @@ function paintCliffForeground(p){
 }
 function paintTreeScene(o,sz){
   if(!isArtReady(treeArt))return false;
-  ctx.save();ctx.fillStyle='#163e335e';ctx.beginPath();
+  ctx.save();ctx.imageSmoothingEnabled=qualityMode==='sharp';ctx.fillStyle='#163e335e';ctx.beginPath();
   ctx.ellipse(o.x+8,o.y+3,sz*.53,sz*.17,-.22,0,Math.PI*2);ctx.fill();
   ctx.drawImage(treeArt,o.x-sz*.65,o.y-sz*1.5,sz*1.3,sz*1.65);
   ctx.restore();return true;
