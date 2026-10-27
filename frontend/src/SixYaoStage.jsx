@@ -1710,7 +1710,7 @@ export function ReviewReport({chart,question}) {
     'V38 动爻进退神（古籍异本另记）：',
     ...(data.progression_digest||[]),
     '',
-    '本位动变与日月空破核对（效力尚未判断）：
+    '本位动变与日月空破核对（效力尚未判断）：',
     ...(data.moving_effect_digest||[]),
     '',
     '用神原忌仇作用来源（效力未判定）：',
