@@ -138,7 +138,7 @@ def decorate_review_flow(chart: dict) -> dict:
         unresolved.append("V24 已逐项核对原忌仇来源的日月空破和本位动变，实际作用效力仍需合参")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
-        "仍未完成实际应期推断；V22/V42 只逐日复算旬空、日支相值相冲及真实本位化支的历法候选条件",
+        "仍未完成实际应期推断；V22/V42/V43 仅复核日旬与真实动变、采纳日期后的未来节令月建，不裁定事件发生时间",
     ])
     stages.append(_step(
         "report","整理研究","review",
@@ -205,6 +205,19 @@ def decorate_review_flow(chart: dict) -> dict:
             "、".join(x["title"] for x in event["conditions"])+"）"
             for event in candidate["events"]
         )
+        for candidate in temporal["candidates"]
+    ]
+    temporal_month_digest=[
+        "V43 "+str(candidate["position"])+"爻 "+candidate["ganzhi"]+"："+(
+            "服务端逐日复算节令月建；后续30日出现"+
+            str(len(candidate["future_month_transitions"]))+"次跨节气月建切换"+
+            ("（第"+",".join(str(o) for o in candidate["future_month_transitions"])+"日）"
+             if candidate["future_month_transitions"] else "")+
+            ("；"+str(len(candidate["future_month_out_of_range"]))+"日超出历法支持范围"
+             if candidate["future_month_out_of_range"] else "")
+            if candidate["future_month_status"]=="server_recomputed" else
+            "缺可核验公历原始日期，后续月建/月破/月令等级保持未知"
+        )+"；用神旺衰、真假空、回头作用与真实应期未判定。"
         for candidate in temporal["candidates"]
     ]
     temporal_crosscheck_digest=[
@@ -300,6 +313,7 @@ def decorate_review_flow(chart: dict) -> dict:
         "void_context_digest":void_context_digest,
         "temporal_digest":temporal_digest,
         "temporal_crosscheck_digest":temporal_crosscheck_digest,
+        "temporal_month_digest":temporal_month_digest,
         "temporal_notice":temporal["notice"],
         "evidence_chain_digest":chain_digest,
         "yongshen_pathway_digest":pathway_digest,

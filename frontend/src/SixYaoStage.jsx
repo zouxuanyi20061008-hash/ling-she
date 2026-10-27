@@ -1055,6 +1055,9 @@ export function TemporalReviewStudy({chart}){
       </summary>
       <p>{candidate.originally_void?'原起卦日此爻逢旬空，列出换旬、值日、相冲条件作参照。':
         '原起卦日此爻未逢旬空，仅列相值与相冲日支关系。'}</p>
+      <p>V43 · {candidate.future_month_status==='server_recomputed'?
+        '以已核验的北京时间逐日重算节令月建，标记 '+candidate.future_month_transitions.length+' 次月建切换；月冲及旺相等仍非实际效力。':
+        '没有已采纳并复算的真实日期，后续月建、月破及月令等级保持未知。'}</p>
       {candidate.daily_xunkong_recomputed&&<p>V42 · 逐日重算日旬空；
         {candidate.has_actual_change?'此爻确实明动，本位化支 '+candidate.changed_branch+' 同步核对。':
         '此爻安静，不读取变卦静态同位支作为实际动变。'}以上均不代表旺衰、真假空或应期结论。</p>}
@@ -1063,6 +1066,13 @@ export function TemporalReviewStudy({chart}){
           <div className="temporal-review-event-day">
             <strong>{event.solar_date||'第 '+event.offset_days+' 日'}</strong>
             <span>{event.day_ganzhi}日 · +{event.offset_days}天</span>
+            {event.future_month?.status==='server_recomputed'&&<small>当日节令月建：{event.future_month.month_branch}月
+              （本爻{event.future_month.original_season}；
+              {event.future_month.original_month_break?'月冲条件':'非月冲'}；
+              {event.future_month.original_same_month?'临月建':'非临月建'}
+              {candidate.has_actual_change&&<>；本位化爻{event.future_month.changed_season}，
+              {event.future_month.changed_month_break?'月冲条件':'非月冲'}</>}）。
+              {event.future_month.near_solar_term?'交节边界请人工核历。':'只作历法参考。'}</small>}
             {event.future_xunkong&&<small>当日旬空：{event.future_xunkong.join('、')}；
               本爻{event.original_void_on_day?'列空':'不列空'}
               {candidate.has_actual_change&&<>；本位化支{event.changed_void_on_day?'列空':'不列空'}</>}
@@ -1734,6 +1744,8 @@ export function ReviewReport({chart,question}) {
     '',
     '时间条件参照（不是应期预测）：',
     data.temporal_notice||'未提供日期来源',
+    'V43 跨节气逐日月建与用神动变核验（不判实际旺衰）：',
+    ...(data.temporal_month_digest||[]),
     'V42 旬空逐日核验与本位化支（日月实际效力未判定）：',
     ...(data.temporal_crosscheck_digest||[]),
     ...(data.temporal_digest||[]),
@@ -1831,6 +1843,11 @@ export function ReviewReport({chart,question}) {
       <h4>真假空六段审议摘要</h4>
       {data.void_context_digest.map((x,i)=><p key={i}>{x}</p>)}
       <small>只核对原爻空与真实化空及交叉条件，未断出空、填实或实际吉凶。</small>
+    </div>}
+    {data.temporal_month_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V43 跨节气月建与用神动变条件核验</h4>
+      {data.temporal_month_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>真实日月来源才允许继续复算；月冲、四时等级、空亡等不自动判旺衰、真假空、动变效力或应期。</small>
     </div>}
     {data.temporal_crosscheck_digest?.length>0&&<div className="strength-evidence-report">
       <h4>V42 逐日旬空与真实动变时间条件核验</h4>
