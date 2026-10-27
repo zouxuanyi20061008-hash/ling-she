@@ -17,7 +17,7 @@ from app.core.calendar import BRANCHES,SIXTY_DAYS
 def test_classic_shehai_exact_source_cases(day,general,hour,three,depths):
     c=build_liuren(day,general,hour)
     t=c["three_transmissions"]
-    assert c["version"]=="V61"
+    assert c["version"]=="V62"
     assert t["status"]=="computed",(day,general,hour,t)
     assert tuple(x["branch"] for x in t["transmissions"])==three
     got={x["upper"]:x["inclusive_depth"] for x in c["shehai_v61"]["candidate_depths"]}
@@ -106,4 +106,4 @@ def test_v61_api_still_serves_valid_dated_calendar():
     c=TestClient(app).post("/api/liuren/cast",json={
         "solar_date":"2026-03-20","clock":"12:00","day_boundary":"zi_hour"})
     assert c.status_code==200,c.text
-    assert c.json()["version"]=="V61"
+    assert c.json()["version"]=="V62"

@@ -109,7 +109,7 @@ def test_end_to_end_api_and_invalid_date_clock():
        "solar_date":"2026-03-20","clock":"12:00","day_boundary":"midnight"})
     assert r.status_code==200,r.text
     j=r.json()
-    assert j["version"]=="V61" and len(j["four_lessons"])==4
+    assert j["version"]=="V62" and len(j["four_lessons"])==4
     assert len(j["heaven_plate"])==12
     assert j["heaven_plate"][j["hour_branch"]]==j["month_general"]
     for bad in [

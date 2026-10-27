@@ -49,8 +49,8 @@ def test_independent_modern_oracle_wu_day_si_hour_noble_chou_at_yin():
 
 
 def test_inverse_direction_ji_day_jia_night_noble_shen_at_you():
-    # General 未 placed on 子, 甲日子时夜贵未 => noble under 酉 (inverse).
-    v=rotate_twelve_generals("甲子","未","子")
+    # General 戌 placed on 子, 甲日子时夜贵未 => noble under 酉 (inverse).
+    v=rotate_twelve_generals("甲子","戌","子")
     assert v["noble_branch"]=="未"
     assert v["noble_ground_palace"]=="酉"
     assert v["direction"]=="逆行"

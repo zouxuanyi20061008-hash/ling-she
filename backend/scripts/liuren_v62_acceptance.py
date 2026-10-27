@@ -18,7 +18,7 @@ def verify():
     c=rotate_twelve_generals("戊申","辰","巳")
     assert c["noble_ground_palace"]=="寅" and c["direction"]=="顺行"
     assert [c["by_earth"][p] for p in EARTH]==EXPECTED
-    inv=rotate_twelve_generals("甲子","未","子")
+    inv=rotate_twelve_generals("甲子","戌","子")
     assert inv["noble_branch"]=="未" and inv["noble_ground_palace"]=="酉"
     assert inv["direction"]=="逆行"
     assert inv["by_earth"]["申"]=="螣蛇"
@@ -34,7 +34,7 @@ def verify():
         "day_and_night_table":DAY_NIGHT,
         "external_ground_order":EARTH,"external_general_order":EXPECTED,
         "day_fixture":{"day":"戊申","general":"辰","hour":"巳","noble":"丑","noble_ground":"寅","direction":"顺行"},
-        "night_fixture":{"day":"甲子","general":"未","hour":"子","noble":"未","noble_ground":"酉","direction":"逆行"},
+        "night_fixture":{"day":"甲子","general":"戌","hour":"子","noble":"未","noble_ground":"酉","direction":"逆行"},
         "twelve_unique_palaces":True,"prior_pillars_preserved":True,
         "sunrise_sunset_calculated":False,"nine_methods_fully_verified":False,
         "fortune_verdict":None}

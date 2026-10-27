@@ -25,7 +25,7 @@ def case(day,general,hour):
 def test_independent_historical_nine_method_examples(day,general,hour,method,wanted):
     c=case(day,general,hour)
     actual=c["three_transmissions"]
-    assert c["version"]=="V61"
+    assert c["version"]=="V62"
     assert actual["status"]=="computed",(day,general,hour,actual)
     assert method in actual["method"]
     assert tuple(x["branch"] for x in actual["transmissions"])==wanted
@@ -103,6 +103,6 @@ def test_endpoint_v59_same_api_and_contains_evidence():
         "solar_date":"2026-03-20","clock":"12:00","day_boundary":"midnight"})
     assert r.status_code==200,r.text
     c=r.json()
-    assert c["version"]=="V61"
-    assert c["transmission_review"]["version"]=="V61"
+    assert c["version"]=="V62"
+    assert c["transmission_review"]["version"]=="V62"
     assert c["has_full_nine_methods"] is False
