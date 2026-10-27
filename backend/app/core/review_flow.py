@@ -35,6 +35,7 @@ def decorate_review_flow(chart: dict) -> dict:
     cross=chart["cross_condition_audit"]
     spirit_action=chart["spirit_action_audit"]
     multi=chart["multi_mover_audit"]
+    priority=chart["evidence_priority_audit"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -146,6 +147,8 @@ def decorate_review_flow(chart: dict) -> dict:
         unresolved.append("V45 原忌直连与仇神双段明动链已核验结构，来源制约和实际传导效力仍需人工合参")
     if multi["pairs"]:
         unresolved.append("V46 已列每对真实动爻的双向生克冲合、动墓及原忌来源交叉条件，不自动认定合住、克制生效或彼此抵消")
+    if priority["review_queue"]:
+        unresolved.append("V47 已去重合并跨模块重复证据，检查次序仅指历法资料与冲突线索核对，不能决定术数效力强弱")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "仍未完成实际应期推断；V22/V42/V43 仅复核日旬与真实动变、采纳日期后的未来节令月建，不裁定事件发生时间",
@@ -262,6 +265,15 @@ def decorate_review_flow(chart: dict) -> dict:
         for row in void_context["rows"]
         if row["category"] not in ("neither_void","day_missing") or row["cross_checks"]
     ]
+    evidence_priority_digest=[
+        "V47 已建立"+str(priority["fact_count"])+"条唯一条件事实，"+
+        "合并"+str(priority["deduplicated_reference_count"])+"次重复引用；"+
+        "待核查"+str(len(priority["review_queue"]))+"项，按输入缺失、历法来源、并见条件分组（不是旺衰等级）。",
+    ]+[
+        "V47 待核·"+str(item["priority"])+"："+item["title"]+
+        "；不可由此认定真实作用已生效"
+        for item in priority["review_queue"][:8]
+    ]
     multi_mover_digest=[
         "V46 "+str(p["positions"][0])+"／"+str(p["positions"][1])+"爻："+
         str(p["positions"][0])+"→"+str(p["positions"][1])+p["a_to_b"]["relation"]+
@@ -359,6 +371,7 @@ def decorate_review_flow(chart: dict) -> dict:
         "focus_effect_digest":focus_effect_digest,
         "spirit_action_digest":spirit_action_digest,
         "multi_mover_digest":multi_mover_digest,
+        "evidence_priority_digest":evidence_priority_digest,
         "void_context_digest":void_context_digest,
         "cross_condition_digest":cross_condition_digest,
         "temporal_digest":temporal_digest,

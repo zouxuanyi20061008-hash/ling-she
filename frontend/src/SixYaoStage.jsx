@@ -609,6 +609,29 @@ function SpecialConditionsStudy({chart}){
   </section>
 }
 
+export function EvidencePriorityAuditStudy({chart}){
+  const data=chart.evidence_priority_audit
+  if(!data)return null
+  const tier={0:'输入资料待补',1:'日期来源待核',2:'并见条件合参'}
+  return <section className="moving-effect-review" aria-label="六爻V47证据去重与审议次序">
+    <header className="moving-effect-head"><div><small>V47 · 已算证据去重与检查次序</small>
+      <h3>同一规则事实只记一次，冲突并见分别保留</h3>
+    </div><span>{data.fact_count}条唯一事实</span></header>
+    <p>多模块对同一爻的日月、旬空和本位化爻重复引用时会合并来源。
+      本次合并了 {data.deduplicated_reference_count} 次重复引用，<strong>不是旺衰计分。</strong></p>
+    <p>这里的检查顺序只用于整理资料：先补缺失日月，再核对日期来源，最后合参已知的并见条件；
+      <strong>不代表日辰、月建、空亡或动变任何一项必然压过另一项。</strong></p>
+    {data.review_queue.length===0?<p>当前没有额外交叉审议项，但不代表已经完成断卦。</p>:
+      <div className="moving-effect-reviewlist">
+        {data.review_queue.slice(0,12).map(x=><p key={x.id}>
+          <strong>{tier[x.priority]}：</strong>{x.title}（只作审议，不判真实效力）
+        </p>)}
+        {data.review_queue.length>12&&<p>另有 {data.review_queue.length-12} 项已保存在排盘数据中；此处仅展示前12项。</p>}
+      </div>}
+    <p className="moving-effect-scope">{data.boundary}</p>
+  </section>
+}
+
 export function MultiMoverAuditStudy({chart}){
   const data=chart.multi_mover_audit
   if(!data)return null
@@ -1868,6 +1891,8 @@ export function ReviewReport({chart,question}) {
     '用神原忌仇作用来源（效力未判定）：',
     ...(data.yongshen_pathway_digest||[]),
     '',
+    'V47 跨模块证据去重与检查次序（非旺衰优先级）：',
+    ...(data.evidence_priority_digest||[]),
     'V46 多动爻双向作用及原忌来源交叉核验（非实际效力）：',
     ...(data.multi_mover_digest||[]),
     'V45 原忌真实明动直连与仇神双段路径核验（非实际效力）：',
@@ -1969,6 +1994,11 @@ export function ReviewReport({chart,question}) {
       <h4>六合、墓绝条件摘记</h4>
       {data.special_conditions_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>只供日后复核，不意味着合绊、入墓或逢绝已经实际生效。</small>
+    </div>}
+    {data.evidence_priority_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V47 证据去重与条件并见检查清单</h4>
+      {data.evidence_priority_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>检查先后只代表资料需要补齐或复核，不能作为生克、真假空、旺衰或应期的实际结论。</small>
     </div>}
     {data.multi_mover_digest?.length>0&&<div className="strength-evidence-report">
       <h4>V46 多动爻双向生克冲合与原忌来源核验</h4>
@@ -2289,6 +2319,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
                   <YongshenPathwaysStudy chart={chart}/>
                 </>:
                 relationsView==='motion'?<>
+                   <EvidencePriorityAuditStudy chart={chart}/>
                    <MultiMoverAuditStudy chart={chart}/>
                    <MovingEffectReview chart={chart}/>
                  </> :
