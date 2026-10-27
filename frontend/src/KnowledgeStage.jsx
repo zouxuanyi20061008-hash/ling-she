@@ -63,12 +63,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       <section className="academy-stage-banner"><div>
         <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
         <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'干支四柱 · 入门认识命盘':'古典文献 · 入门导览'}</p>
-        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V53 已补81组十干克应、三遁复合格局和注明流派的暗干飞宫试算；完整断课仍待校勘。':isBazi?'这里是互动教学演示，不会伪装成真实完整排盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
+        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'这里是互动教学演示，不会伪装成真实完整排盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
-      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V53 十干克应 · 暗干参考盘':isBazi?'四柱命简 · 干支辨识':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'81组天地干对照 · 三遁复合条件 · 暗干标明流派':isBazi?'互动结构教学 · 不冒充完整实盘':'独立主题 · 后续按本门术法逐步完善'}</small></div>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'四柱命简 · 干支辨识':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'互动结构教学 · 不冒充完整实盘':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isQimen&&<section className="qimen-v50">
-        <header><small>V53 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
-          <p>九宫四层继续保留，新增十干克应、三遁复合条件；暗干是单独注明流派的飞宫试算，不与实际天盘干混淆。</p>
+        <header><small>V54 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
+          <p>真实九宫地盘、星门神盘保持不变；增加三奇入墓与古籍六甲式三奇得使，并单独列出另一种值使门同宫口径，绝不合并判定。</p>
         </header>
         <form onSubmit={castActualQimen} className="qimen-v50-form">
           <label>公历日期（中国时间）
@@ -114,6 +114,11 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             {qimenChart.dark_stem_plate&&<span>V53 暗干：{qimenChart.dark_stem_plate.method}；
               {qimenChart.dark_stem_plate.origin_reason}，从{qimenChart.dark_stem_plate.origin_logical_palace}宫起；
               尚缺同流派完整古籍例盘独立校验。</span>}
+            {qimenChart.wonder_rule_review&&<span>
+              V54 三奇入墓：{qimenChart.wonder_rule_review.burial_positions.join('、')||'本盘未见'}；
+              古籍六甲式三奇得使：{qimenChart.wonder_rule_review.classical_six_jia_positions.join('、')||'本盘未见'}；
+              值使门同宫另一口径：{qimenChart.wonder_rule_review.chief_door_overlap_positions.join('、')||'本盘未见'}。
+              分歧宫位：{qimenChart.wonder_rule_review.interpretation_disagreements.join('、')||'无'}。</span>}
           </div>
           <div className="academy-nine qimen-v50-nine" role="group"
             aria-label={qimenChart.has_rotated_stars_and_gates?'V51 奇门九宫星门转盘':'V50 奇门九宫真实地盘'}>
@@ -128,6 +133,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                     {p.attached_center_stem?' · 寄'+p.attached_center_stem:''}</small>
                   {qimenChart.has_ten_stem_lookup&&<small className="qimen-v53-stems">
                     暗{p.dark_stem} · {p.ten_stem_response?.title||'克应未命名/中宫'}</small>}
+                  {p.wonder_rule_review?.candidates?.length>0&&
+                    <small className="qimen-v54-wonder">
+                      {p.wonder_rule_review.candidates.map(w=>w.title).join(' · ')}</small>}
                   {qimenChart.has_hourly_void_and_horse&&<small className="qimen-v52-marks">
                     {[p.hour_horse?'马':'',p.has_hour_void?'空'+p.hour_xunkong_branches_here.join(''):'',
                       ...(p.structural_tags||[])].filter(Boolean).join(' · ')}</small>}</>:
@@ -161,13 +169,29 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                         <>复合格局候选：{p.classical_patterns.map(x=>x.title+'（'+x.evidence+'）').join('、')}。</>:
                         '本宫未见已支持的复合格局条件。'}
                       格名只说明传统结构，不能直接下吉凶结论。
+                    </>}
+                    {p.wonder_rule_review&&<>
+                      V54 三奇入墓：{p.wonder_rule_review.burial?
+                        '是，墓支'+p.wonder_rule_review.burial_grave_branch:'当前未见'}；
+                      古籍六甲式三奇得使：{p.wonder_rule_review.classical_six_jia_de_shi?
+                        '满足，遁'+p.wonder_rule_review.classical_six_jia_instrument:'当前未见'}；
+                      值使门同宫另一口径：{p.wonder_rule_review.alternative_chief_door_overlap?
+                        '相遇':'未相遇'}；
+                      {p.wonder_rule_review.classical_and_alternative_disagree?
+                        '两种口径对此宫判断不同，不应混为同一种格。':'两种口径目前未见分歧。'}
+                      {p.wonder_rule_review.candidates.length>0?
+                        <>依据：{p.wonder_rule_review.candidates.map(w=>w.evidence).join('；')}。</>:
+                        '本宫未见新增三奇规则的结构条件。'}
+                      只作结构参考，实际效力及应期未判定。
                     </>}</>:
                   <>{p.original_star}、{p.original_door||'中宫不安八门'}为固定本宫出处，
                     <strong>不是</strong>此时天盘星门的实际落宫。</>}</p>)}
           </div>
           {qimenChart.input_provenance?.warnings?.map((w,i)=>
             <p key={i} className="academy-caution">{w}</p>)}
-          <p className="academy-caution">{qimenChart.has_ten_stem_lookup?
+          <p className="academy-caution">{qimenChart.wonder_rule_review?
+            'V54 三奇入墓与古籍六甲式三奇得使已分别校验；值使门同宫属于其他解释口径，严格开休生值使门也单列。暗干尚未独立例盘核验，所有格名均不可直接推断吉凶。':
+            qimenChart.has_ten_stem_lookup?
             'V53 81组十干克应格名已对照原典，天遁地遁人遁需多条件同宫；暗干飞宫法只采用明确变体，缺少同流派独立整盘例证，不等于完成所有奇门断课。':
             qimenChart.has_eight_spirits?
             'V52 地盘、天盘九星、八门、八神、时旬空与马星及基础结构条件已实现；暗干、完整奇仪格局和用神裁决尚未实现，不可据单项标签断吉凶。':

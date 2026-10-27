@@ -103,7 +103,7 @@ def test_corrupt_duty_xun_and_missing_chief_star_fail_closed():
 
 def test_api_real_clock_exposes_markers_without_conclusion():
     c=cast_qimen(date(2026,3,18),time(15,20))
-    assert c["version"]=="V53"
+    assert c["version"]=="V54"
     assert c["spirit_plate"]["placements"]["2"]=="值符"
     assert c["hour_markers"]["void_palaces"]==[4]
     r=TestClient(app).post("/api/qimen/cast",json={

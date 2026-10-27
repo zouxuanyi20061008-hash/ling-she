@@ -110,7 +110,7 @@ def test_corrupted_inputs_fail_closed_and_legacy_api_present():
     with pytest.raises(ValueError,match="V52"):
         decorate_qimen_v53(_plate("惊蛰","辛卯","丙申"))
     c=cast_qimen(date(2026,3,18),time(15,20))
-    assert c["version"]=="V53"
+    assert c["version"]=="V54"
     assert c["has_dark_stem_variant"] is True
     r=TestClient(app).post("/api/qimen/cast",json={
         "solar_date":"2026-03-18","clock":"15:20","day_boundary":"zi_hour"})
