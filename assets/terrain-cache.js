@@ -10,6 +10,7 @@ function invalidateStaticFlora(){staticFloraChunks.clear()}
 if(pathArt.addEventListener)pathArt.addEventListener('load',invalidateStaticGround);
 if(bankArt.addEventListener)bankArt.addEventListener('load',invalidateStaticGround);
 if(bambooArt.addEventListener)bambooArt.addEventListener('load',invalidateStaticFlora);
+if(fernArt.addEventListener)fernArt.addEventListener('load',invalidateStaticFlora);
 
 function cachedWorldChunk(cache,ix,iy,build){
   const key=ix+'_'+iy;
@@ -78,6 +79,9 @@ function buildStaticFlora(ix,iy){
       if(!paintBambooStand(x+8,y+13,.55+n*.3,g))drawBamboo(x+8,y+13,.55+n*.3,g);
     }else if(n<.13){
       drawPine(x+18,y+25,16+n*35,g);
+    }else if(n>.29&&n<.4){
+      const scale=.66+n*.5;
+      if(!paintFernCluster(x+10,y+28,scale,g))paintFernFallback(x+10,y+28,scale,g);
     }else if(n>.45&&n<.53){
       drawRock(x+18,y+24,10+n*8,g);
     }
