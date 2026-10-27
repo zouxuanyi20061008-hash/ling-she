@@ -28,10 +28,10 @@ export default function LiurenV58(){
     }catch(e){setError(e?.message||'大六壬起课失败')}
     finally{setBusy(false)}
   }
-  return <section className="liuren-v58" aria-label="V60 大六壬真实起课">
-    <header><small>V60 · 大六壬 / 九宗门取传复核</small>
+  return <section className="liuren-v58" aria-label="V61 大六壬真实起课">
+    <header><small>V61 · 大六壬 / 涉害循宫计克</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
-      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。本版新增昴星、别责、八专已核准的特殊取传法；涉害分歧按真实地盘宫显示候选，未验证深浅时不伪造三传。</p>
+      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。本版实算涉害自候选下临宫归本家途中每一重克害，并分开比较「首宫计入／不计入」与「孟仲季先取」规则；若流派结果不一致，明确提示。</p>
     </header>
     <form className="liuren-v58-form" onSubmit={cast}>
       <label>公历起课日期
@@ -97,6 +97,43 @@ export default function LiurenV58(){
           </div>
         </>}
       </div>}
+      {chart.shehai_v61?.full_path_witnesses&&<section className="liuren-v61-evidence"
+          role="group" aria-label="V61 涉害逐宫路径与分歧">
+        <h3>V61 涉害 · 逐宫计害证据</h3>
+        <p>原课贼克方向：{chart.shehai_v61.relationship}；
+          主法从实际下临地盘宫走到候选上神本家，逐一核查地支与寄干。</p>
+        <div className="liuren-v61-compare">
+          <span>循宫深度法：
+            <strong>{chart.shehai_v61.selected_by_inclusive.winner||'待核'} </strong>
+            （{chart.shehai_v61.selected_by_inclusive.depth}重最大深度）</span>
+          <span>不计首宫：
+            <strong>{chart.shehai_v61.selected_by_exclusive.winner||'待核'} </strong></span>
+          <span>孟仲季先取简式：
+            <strong>{chart.shehai_v61.selected_by_direct_class.winner||'待核'} </strong></span>
+        </div>
+        {(chart.shehai_v61.variance.depth_vs_shortcut_disagree||
+           chart.shehai_v61.variance.inclusive_vs_exclusive_disagree)&&
+          <p className="liuren-v61-disagreement" role="note">
+            古籍口径存在取用分歧：当前三传仅按「循宫深度、首宫计入」结果排出，
+            其他口径单独对照，不能当作一致结论。
+          </p>}
+        <div className="liuren-v61-candidates">
+          {chart.three_transmissions.rule_audit.candidate_details
+            .filter(p=>p.shehai_trace).map(p=><article key={p.upper}>
+            <strong>{p.upper} 上神 · 下临 {p.actual_ground_palace} 宫</strong>
+            <span>归本家路径：{p.shehai_trace.path.join(' → ')}</span>
+            <span>计首宫 {p.shehai_trace.depth} 重；不计首宫
+              {p.shehai_excluding_start.depth} 重</span>
+            <div className="liuren-v61-hit-list">
+              {p.shehai_trace.hits.map((h,i)=><small key={i}>
+                {h.earth}宫 · {h.kind}{h.symbol}（{h.element}）
+              </small>)}
+            </div>
+          </article>)}
+        </div>
+        <a href={chart.shehai_v61.source} rel="noopener noreferrer"
+           target="_blank">《六壬大全》涉害原文</a>
+      </section>}
       {chart.three_transmissions.status==='computed'?
         <div role="group" aria-label="大六壬三传" className="liuren-v58-transmissions">
           {chart.three_transmissions.transmissions.map(p=><article key={p.order}>
@@ -132,7 +169,7 @@ export default function LiurenV58(){
         </div>}
       {chart.calendar_provenance.warnings.map((w,i)=>
         <p key={i} className="academy-caution">{w}</p>)}
-      <p className="academy-caution">V60 已实现可独立验收的昴星、别责、八专，并保留遥克、伏吟、反吟。涉害逐宫计害深浅仍未完成，候选不冒充已经定传。
+      <p className="academy-caution">V61 已补涉害逐宫计害和多流派对照，但完整九宗门逐盘交叉校验、贵人十二天将仍未完成；未核准的课不冒充三传。
         尚未完整排十二天将，不能把本版叫作全部大六壬断课，也不生成实际吉凶预测。</p>
       <a href={chart.source.earth_heaven_four_lessons} target="_blank"
         rel="noopener noreferrer">阅读《六壬指南》天地盘与四课原文</a>

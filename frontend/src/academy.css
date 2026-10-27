@@ -1225,3 +1225,19 @@
 .liuren-v60-lesson-audit span{padding:7px 8px;border:1px solid #a5c0bc;background:#fafefa;font-size:11px;line-height:1.65;overflow-wrap:anywhere}
 .liuren-v59-candidates small{font-size:10px;color:#567a7b}
 @media(max-width:620px){.liuren-v60-lesson-audit{grid-template-columns:1fr}}
+
+/* V61 逐宫涉害源路径，主法和两种非统一口径均可展开核对 */
+.liuren-v61-evidence{margin:18px 0;padding:15px;background:#f3f8f1;border:1px solid #adc0a7}
+.liuren-v61-evidence h3{margin-top:0;color:#356d64}
+.liuren-v61-evidence p,.liuren-v61-evidence>a{font-size:12px;line-height:1.8}
+.liuren-v61-compare{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.liuren-v61-compare span{display:flex;flex-direction:column;gap:5px;padding:9px 7px;background:#fff;border:1px solid #bcd0c4;font-size:11px;min-width:0;overflow-wrap:anywhere}
+.liuren-v61-compare strong{font-size:17px;color:#285e6e}
+.liuren-v61-disagreement{border-left:3px solid #a46b39;padding:9px 10px;background:#fff5e9;color:#77522d}
+.liuren-v61-candidates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:13px 0}
+.liuren-v61-candidates article{min-width:0;padding:11px;border:1px solid #c4d3ba;background:#fafcf7;display:flex;flex-direction:column;gap:7px;font-size:11px;line-height:1.75;overflow-wrap:anywhere}
+.liuren-v61-candidates article strong{font-size:13px;color:#2e6a62}
+.liuren-v61-hit-list{display:flex;gap:5px;flex-wrap:wrap;border-top:1px dotted #bbcec1;padding-top:8px}
+.liuren-v61-hit-list small{padding:3px 5px;background:#e7f0ec;font-size:10px}
+.liuren-v61-evidence>a{color:#2a6170;text-decoration:underline}
+@media(max-width:620px){.liuren-v61-compare,.liuren-v61-candidates{grid-template-columns:1fr}}
