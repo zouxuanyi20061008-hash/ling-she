@@ -308,7 +308,7 @@ function SpiritRelationsPanel({chart,activeRole,onChange,busy}) {
 }
 
 
-function FuShenStudy({chart,onChoose,busy}){
+export function FuShenStudy({chart,onChoose,busy}){
   const data=chart.fushen
   if(!data)return null
   const selected=data.selected

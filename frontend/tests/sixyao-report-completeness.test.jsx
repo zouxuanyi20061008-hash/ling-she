@@ -14,6 +14,7 @@ function chart(overrides={}){
     verified_by_program:['六爻排盘数据已计算'],
     outstanding_questions:['实际合化仍需人工核实'],
     notice:'传统排盘条件，不是现实吉凶判断',
+    hidden_condition_digest:['V49 天风姤二爻妻财甲寅伏辛亥，伏神旬空未知，飞生伏仅为关系'],
     evidence_priority_digest:['V47 唯一事实与来源已合并，日月未确认则优先核资料，效力未定'],
     multi_mover_digest:['V46 二四动爻双向作用：生克与动墓条件并见，效力未定'],
     spirit_action_digest:['V45 父母三爻：原忌明动且有仇神双段候选，效力未定'],
@@ -30,6 +31,8 @@ function chart(overrides={}){
 
 it('V41 合局条件进入第五步研究报告，不遗漏三合、世应与空破',()=>{
   render(<ReviewReport chart={chart()} question="测试事项"/>)
+  expect(screen.getByText('V49 飞伏神独立古籍校验与条件核对')).toBeTruthy()
+  expect(screen.getByText(/V49 天风姤二爻妻财甲寅伏辛亥/)).toBeTruthy()
   expect(screen.getByText('V47 证据去重与条件并见检查清单')).toBeTruthy()
   expect(screen.getByText(/V47 唯一事实与来源已合并/)).toBeTruthy()
   expect(screen.getByText('V46 多动爻双向生克冲合与原忌来源核验')).toBeTruthy()
@@ -61,6 +64,8 @@ it('复制六爻研究记录应完整带上 V38-V41 新增摘要，且不自动�
   const saved=writeText.mock.calls[0][0]
   expect(saved).toContain('所问事项：家庭事项')
   for(const marker of [
+    'V49 飞伏神古籍条件与来源校验',
+    'V49 天风姤二爻妻财甲寅伏辛亥',
     'V47 跨模块证据去重与检查次序',
     'V47 唯一事实与来源已合并',
     'V46 多动爻双向作用及原忌来源交叉核验',
@@ -88,6 +93,7 @@ it('复制六爻研究记录应完整带上 V38-V41 新增摘要，且不自动�
 
 it('加载旧版不含 V38-V41 摘要的研究记录不会崩溃或编造数据',async()=>{
   render(<ReviewReport chart={chart({
+    hidden_condition_digest:undefined,
     evidence_priority_digest:undefined,
     multi_mover_digest:undefined,
     spirit_action_digest:undefined,
