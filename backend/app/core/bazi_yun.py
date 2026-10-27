@@ -68,7 +68,13 @@ def compute_bazi_luck(chart:dict,solar_date:date,clock:time,mode:str)->dict:
         raise ValueError("V56 前后节时刻次序错误")
     # library Yun sect=2 uses whole minutes: 4320min=1 luck year,
     # 360min=1 luck month, 12min=1 luck day, 1min=2 luck hours.
-    gap_minutes=int(seconds//60)
+    # Yun sect=2 intentionally ignores seconds when subtracting Solar minutes.
+    # Python timedelta flooring would lose 1 minute on reverse-count cases
+    # whenever the previous solar term occurs at xx:xx:01..59.
+    floor_minute=lambda d: d.replace(second=0,microsecond=0)
+    interval_start=birth_at if forward else jie_at
+    interval_end=jie_at if forward else birth_at
+    gap_minutes=int((floor_minute(interval_end)-floor_minute(interval_start)).total_seconds()//60)
     remaining=gap_minutes
     years,remaining=divmod(remaining,4320)
     months,remaining=divmod(remaining,360)
