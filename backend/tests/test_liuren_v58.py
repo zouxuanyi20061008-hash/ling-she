@@ -53,11 +53,11 @@ def test_source_liuren_shuoyue_jiazi_hai_general_zi_hour_biyong():
        "子","亥","戌"]
 
 
-def test_fuyin_and_fanyin_do_not_fake_three_transmissions():
+def test_fuyin_fanyin_special_methods_now_compute_only_verified_cases():
     for hour,general in [("子","子"),("子","午")]:
         c=build_liuren("甲子",general,hour)
-        assert c["three_transmissions"]["status"]=="pending"
-        assert c["three_transmissions"]["transmissions"] is None
+        assert c["three_transmissions"]["status"]=="computed"
+        assert len(c["three_transmissions"]["transmissions"])==3
 
 
 def test_all_60days_12hour_generals_never_use_invalid_branch_or_unverified_choice():
@@ -105,7 +105,7 @@ def test_end_to_end_api_and_invalid_date_clock():
        "solar_date":"2026-03-20","clock":"12:00","day_boundary":"midnight"})
     assert r.status_code==200,r.text
     j=r.json()
-    assert j["version"]=="V58" and len(j["four_lessons"])==4
+    assert j["version"]=="V59" and len(j["four_lessons"])==4
     assert len(j["heaven_plate"])==12
     assert j["heaven_plate"][j["hour_branch"]]==j["month_general"]
     for bad in [
