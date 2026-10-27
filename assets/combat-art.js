@@ -85,3 +85,21 @@ function paintCreatureAttackTell(e,now){
  }
  ctx.restore();
 }
+
+/* Unique overlord sprite replaces the original temporary Canvas circles.
+ * Last-resort fallback remains in the main game if this image fails to load. */
+const NETHER_OVERLORD_ART=new Image();
+NETHER_OVERLORD_ART.src='assets/nether-overlord.svg?v=65';
+function paintNetherOverlord(enemy,now){
+ if(!enemy||!NETHER_OVERLORD_ART.complete||!NETHER_OVERLORD_ART.naturalWidth)return false;
+ ctx.save();
+ ctx.fillStyle='#1d173c55';ctx.beginPath();ctx.ellipse(enemy.x+6,enemy.y+16,enemy.r*1.53,enemy.r*.44,0,0,Math.PI*2);ctx.fill();
+ const pulse=Math.sin(now*.0019)*2;
+ const size=enemy.r*3.65;
+ if(qualityMode==='sharp'){
+  ctx.strokeStyle='#ae7dda';ctx.globalAlpha=.19+Math.sin(now*.0021)*.05;ctx.lineWidth=2;
+  ctx.beginPath();ctx.ellipse(enemy.x,enemy.y+5,enemy.r+20,enemy.r*.75,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+ }
+ ctx.drawImage(NETHER_OVERLORD_ART,enemy.x-size*.5,enemy.y-size*.69+pulse,size,size);
+ ctx.restore();return true;
+}
