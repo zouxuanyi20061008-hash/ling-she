@@ -25,9 +25,10 @@ def test_source_liuren_guide_jiashen_hai_general_chou_hour_all_four_lessons():
        ("子","甲"),("戌","子"),("午","申"),("辰","午")]
     assert c["heaven_plate"]["丑"]=="亥"
     assert c["heaven_plate"]["寅"]=="子"
-    assert c["three_transmissions"]["status"]=="pending"
+    assert c["three_transmissions"]["status"]=="computed"
     assert "涉害" in c["three_transmissions"]["method"]
-    assert c["three_transmissions"]["rule_audit"]["depths_computed"] is False
+    assert [p["branch"] for p in c["three_transmissions"]["transmissions"]]==["午","辰","寅"]
+    assert c["three_transmissions"]["rule_audit"]["depths_computed"] is True
 
 
 def test_source_liuren_daquan_bingxu_reexamination_three_transmissions():
@@ -108,7 +109,7 @@ def test_end_to_end_api_and_invalid_date_clock():
        "solar_date":"2026-03-20","clock":"12:00","day_boundary":"midnight"})
     assert r.status_code==200,r.text
     j=r.json()
-    assert j["version"]=="V60" and len(j["four_lessons"])==4
+    assert j["version"]=="V61" and len(j["four_lessons"])==4
     assert len(j["heaven_plate"])==12
     assert j["heaven_plate"][j["hour_branch"]]==j["month_general"]
     for bad in [

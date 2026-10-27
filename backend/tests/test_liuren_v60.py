@@ -18,7 +18,7 @@ from app.core.calendar import BRANCHES,SIXTY_DAYS
 def test_classic_ancient_transmissions_exact(day,gen,hour,count,method,triple):
     c=build_liuren(day,gen,hour)
     t=c["three_transmissions"]
-    assert c["version"]=="V60"
+    assert c["version"]=="V61"
     assert t["status"]=="computed",(day,gen,hour,t)
     assert t["method"].startswith(method)
     assert c["transmission_review"]["distinct_lesson_audit"]["distinct_lesson_count"]==count
@@ -40,16 +40,16 @@ def test_three_lesson_yin_bieze_direct_trine_and_two_lesson_bazhuan_priority():
 def test_shehai_candidates_ground_palace_actual_not_candidate_itself():
     c=build_liuren("甲申","亥","丑")
     t=c["three_transmissions"]
-    assert t["status"]=="pending"
-    assert t["transmissions"] is None
+    assert t["status"]=="computed"
+    assert [v["branch"] for v in t["transmissions"]]==["午","辰","寅"]
     details=t["rule_audit"]["candidate_details"]
-    assert {r["upper"] for r in details}=={"戌","午"}
+    assert {p["upper"] for p in details}=={"戌","午"}
     for item in details:
         assert c["heaven_plate"][item["actual_ground_palace"]]==item["upper"]
         assert item["candidate_branch_class"]==item["actual_ground_class"]
-        assert item["depth_verified"] is False
-    assert t["rule_audit"]["automatically_selected"] is False
-    assert not c["transmission_review"]["shehai_depths_verified"]
+        assert item["depth_verified"] is True
+    assert t["rule_audit"]["automatically_selected"] is True
+    assert c["transmission_review"]["shehai_depths_verified"] is True
 
 
 def test_older_three_transmission_anchors_remain_unchanged():
@@ -86,5 +86,5 @@ def test_v60_http_endpoint():
     r=TestClient(app).post("/api/liuren/cast",json={
         "solar_date":"2026-03-20","clock":"12:00","day_boundary":"zi_hour"})
     assert r.status_code==200,r.text
-    assert r.json()["version"]=="V60"
-    assert r.json()["transmission_review"]["version"]=="V60"
+    assert r.json()["version"]=="V61"
+    assert r.json()["transmission_review"]["version"]=="V61"

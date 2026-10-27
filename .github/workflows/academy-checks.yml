@@ -182,6 +182,17 @@ jobs:
           name: liuren-v60-special-transmissions
           path: backend/acceptance-output/liuren-v60.json
           if-no-files-found: error
+      - name: Run V61 classical SheHai route-by-route acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/liuren_v61_acceptance.py --output backend/acceptance-output/liuren-v61.json
+      - name: Upload V61 independent SheHai route evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: liuren-v61-shehai-routes
+          path: backend/acceptance-output/liuren-v61.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]

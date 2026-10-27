@@ -24,14 +24,14 @@ def verify():
         out.append({"day":day,"general":gen,"hour":hour,
                     "three":third,"method":method,"status":"passed"})
     unresolved=build_liuren("丁卯","亥","丑")
-    assert unresolved["three_transmissions"]["transmissions"] is None
+    assert [x["branch"] for x in unresolved["three_transmissions"]["transmissions"]]==["亥","酉","未"]
     assert {x["upper"] for x in unresolved["three_transmissions"]["rule_audit"]["candidate_details"]}=={"丑","亥"}
     return {"version":"V59","status":"passed","git_sha":os.getenv("GITHUB_SHA"),
        "independent_refs":{
          "remote":"https://www.shidianguji.com/book/SK1599/chapter/1k1lqkrmpx06d",
          "fuyin":"https://libokang.com/classics/liuren/%E5%A4%A7%E5%85%AD%E5%A3%AC%E6%8C%87%E5%8D%97/",
          "fanyin":"https://libokang.com/classics/liuren/%E5%85%AD%E5%A3%AC%E7%B2%B9%E8%A8%80/"},
-       "golden_cases":out,"shehai_not_auto_guessed":True,
+       "golden_cases":out,"shehai_computed_and_auditable_in_V61":True,
        "all_nine_methods_complete":False,"fortune_verdict":None}
 if __name__=="__main__":
     p=argparse.ArgumentParser();p.add_argument("--output",required=True,type=Path)

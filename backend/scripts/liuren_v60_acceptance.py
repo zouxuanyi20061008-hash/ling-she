@@ -25,14 +25,14 @@ def verify():
                       "transmissions":expected,"unique_real_lessons":
                        c["transmission_review"]["distinct_lesson_audit"]["distinct_lesson_count"]})
     pending=build_liuren("甲申","亥","丑")["three_transmissions"]
-    assert pending["transmissions"] is None and pending["status"]=="pending"
+    assert [x["branch"] for x in pending["transmissions"]]==["午","辰","寅"]
     assert pending["rule_audit"]["uses_true_ground_palace"] is True
-    assert pending["rule_audit"]["depths_computed"] is False
+    assert pending["rule_audit"]["depths_computed"] is True
     return {"version":"V60","status":"passed","sha":os.getenv("GITHUB_SHA"),
        "classical_source":"https://zh.wikisource.org/wiki/%E5%85%AD%E5%A3%AC%E5%A4%A7%E5%85%A8/7",
        "independent_source":"https://libokang.com/classics/liuren/%E5%A4%A7%E5%85%AD%E5%A3%AC%E9%87%91%E9%93%B0%E5%89%AA/",
        "classic_cases":cases,"fixed_case_count":len(cases),
-       "shehai_ground_class_fixed":True,"shehai_depths_verified":False,
+       "shehai_ground_class_fixed":True,"shehai_depths_verified_in_V61":True,
        "all_nine_methods_complete":False,"actual_fortune_prediction":None}
 if __name__=="__main__":
     p=argparse.ArgumentParser();p.add_argument("--output",required=True,type=Path)

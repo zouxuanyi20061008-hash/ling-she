@@ -25,7 +25,7 @@ def case(day,general,hour):
 def test_independent_historical_nine_method_examples(day,general,hour,method,wanted):
     c=case(day,general,hour)
     actual=c["three_transmissions"]
-    assert c["version"]=="V60"
+    assert c["version"]=="V61"
     assert actual["status"]=="computed",(day,general,hour,actual)
     assert method in actual["method"]
     assert tuple(x["branch"] for x in actual["transmissions"])==wanted
@@ -38,20 +38,20 @@ def test_shehai_q1_retains_classic_four_lessons_and_candidate_evidence():
     assert [(x["upper"],x["lower"]) for x in c["four_lessons"]]==[
        ("子","甲"),("戌","子"),("午","申"),("辰","午")]
     x=c["three_transmissions"]
-    assert x["status"]=="pending"
+    assert x["status"]=="computed"
     assert "涉害" in x["method"]
-    assert x["transmissions"] is None
+    assert [p["branch"] for p in x["transmissions"]]==["午","辰","寅"]
     details=x["rule_audit"]["candidate_details"]
     assert {p["upper"] for p in details}=={"戌","午"}
-    assert x["rule_audit"]["automatically_selected"] is False
-    assert x["rule_audit"]["depths_computed"] is False
+    assert x["rule_audit"]["automatically_selected"] is True
+    assert x["rule_audit"]["depths_computed"] is True
 
 
 def test_real_shehai_classic_dingmao_would_require_depth_not_shortcut():
     c=case("丁卯","亥","丑")
     v=c["three_transmissions"]
-    assert v["status"]=="pending"
-    assert v["transmissions"] is None
+    assert v["status"]=="computed"
+    assert [p["branch"] for p in v["transmissions"]]==["亥","酉","未"]
     assert {p["upper"] for p in v["rule_audit"]["candidate_details"]}=={"丑","亥"}
 
 
@@ -103,6 +103,6 @@ def test_endpoint_v59_same_api_and_contains_evidence():
         "solar_date":"2026-03-20","clock":"12:00","day_boundary":"midnight"})
     assert r.status_code==200,r.text
     c=r.json()
-    assert c["version"]=="V60"
-    assert c["transmission_review"]["version"]=="V60"
+    assert c["version"]=="V61"
+    assert c["transmission_review"]["version"]=="V61"
     assert c["has_full_nine_methods"] is False
