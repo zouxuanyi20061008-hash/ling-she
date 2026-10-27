@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - meihua-web-deploy
+  pull_request:
+    branches:
+      - meihua-web-deploy
   workflow_dispatch:
 jobs:
   frontend:
