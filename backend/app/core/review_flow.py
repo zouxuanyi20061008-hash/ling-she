@@ -33,6 +33,7 @@ def decorate_review_flow(chart: dict) -> dict:
     sanhe_focus=chart["sanhe_focus_review"]
     sanhe_audit=chart["sanhe_condition_audit"]
     cross=chart["cross_condition_audit"]
+    spirit_action=chart["spirit_action_audit"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -139,6 +140,9 @@ def decorate_review_flow(chart: dict) -> dict:
         unresolved.append("V24 已逐项核对原忌仇来源的日月空破和本位动变，实际作用效力仍需合参")
     if cross["attention_positions"]:
         unresolved.append("V44 已标出多条件并见与受限的明动来源；这不是旺衰、真假空或回头作用的实际裁定")
+    if any(c["active_direct_positions"]["原神"] or c["active_direct_positions"]["忌神"]
+           for c in spirit_action["candidates"]):
+        unresolved.append("V45 原忌直连与仇神双段明动链已核验结构，来源制约和实际传导效力仍需人工合参")
     unresolved.extend([
         "未核验实际所问背景，需用可核实的现实证据检验推论",
         "仍未完成实际应期推断；V22/V42/V43 仅复核日旬与真实动变、采纳日期后的未来节令月建，不裁定事件发生时间",
@@ -255,6 +259,20 @@ def decorate_review_flow(chart: dict) -> dict:
         for row in void_context["rows"]
         if row["category"] not in ("neither_void","day_missing") or row["cross_checks"]
     ]
+    spirit_action_digest=[
+        "V45 "+str(c["position"])+"爻 "+c["ganzhi"]+"：原神真动直连"+
+        ("、".join(str(x) for x in c["active_direct_positions"]["原神"]) or "无")+
+        "；忌神真动直连"+
+        ("、".join(str(x) for x in c["active_direct_positions"]["忌神"]) or "无")+
+        "；仇神双段真实明动结构"+str(len(c["two_hop_paths"]))+"条"+
+        ("；来源待核："+ "、".join(str(s["source_position"])+"爻"
+         for r in ("原神","忌神") for s in c["roles"][r]
+         if s["actual_original_moving_edge"] and s["source_limit_flags"])
+         if any(s["source_limit_flags"] for r in ("原神","忌神")
+                for s in c["roles"][r] if s["actual_original_moving_edge"]) else "")+
+        "；作用传导、旺衰、真假空与应期未判定"
+        for c in spirit_action["candidates"]
+    ]
     focus_effect_digest=[
         str(c["position"])+"爻 "+c["ganzhi"]+"："+
         "；".join(role+"（"+
@@ -325,6 +343,7 @@ def decorate_review_flow(chart: dict) -> dict:
         "focus_comparison_digest":focus_comparison_digest,
         "review_sheet_digest":sheet_digest,
         "focus_effect_digest":focus_effect_digest,
+        "spirit_action_digest":spirit_action_digest,
         "void_context_digest":void_context_digest,
         "cross_condition_digest":cross_condition_digest,
         "temporal_digest":temporal_digest,

@@ -366,6 +366,60 @@ function FuShenStudy({chart,onChoose,busy}){
 
 
 
+export function SpiritActionAuditStudy({chart}){
+  const data=chart.spirit_action_audit
+  const [requested,setRequested]=useState(null)
+  if(!data)return null
+  const positions=data.candidates.map(c=>c.position)
+  const currentPosition=positions.includes(requested)?requested:
+    positions.includes(data.selected_position)?data.selected_position:positions[0]
+  const candidate=data.candidates.find(c=>c.position===currentPosition)
+  const roleLabel={原神:'生用之角色',忌神:'克用之角色',仇神:'间接五行角色'}
+  const kindLabel={
+    active_direct_edge:'本卦明动直连 · 效力未判',
+    static_role_reference:'静态五行参考 · 并未发动',
+    indirect_role:'仇神间接角色 · 不直接作用用神'
+  }
+  return <section className="focus-effect-review" aria-label="V45用神原忌仇明动链复核">
+    <header><small>V45 · 原忌仇真实明动路径审查</small>
+      <h3>原忌直连、仇神双段 · 只算真实本卦动爻</h3></header>
+    {!candidate?<p>{data.status==='focus_not_visible'?
+      '所选用神本卦不现，不能将伏神伪造成明动作用链。':
+      '请先选择六亲或世应，程序不擅自取用。'}</p>:<>
+      {data.candidates.length>1&&<div className="focus-effect-picks" role="group" aria-label="选择V45用神候选">
+        {data.candidates.map(x=><button type="button" key={x.position}
+          aria-pressed={x.position===currentPosition} onClick={()=>setRequested(x.position)}>
+          {POS[x.position-1]}爻 {x.ganzhi}{x.selected_by_user?' · 人工指定':''}
+        </button>)}
+      </div>}
+      <p>当前核查：{POS[candidate.position-1]}爻 {candidate.ganzhi}
+        {candidate.selected_by_user?'（由你指定）':'（保留候选，不排名）'}</p>
+      <p>原神真实直连：{candidate.active_direct_positions['原神'].join('、')||'无'}；
+        忌神真实直连：{candidate.active_direct_positions['忌神'].join('、')||'无'}；
+        双段仇神结构：{candidate.two_hop_paths.length} 条。数量不是旺衰评分。</p>
+      <div className="focus-effect-roles">{['原神','忌神','仇神'].map(role=><article key={role}>
+        <h4>{role}<small>{roleLabel[role]}</small></h4>
+        {candidate.roles[role].length===0?<p>本卦没有此类明现来源。</p>:
+          candidate.roles[role].map(source=><details key={source.source_position}>
+            <summary>{POS[source.source_position-1]}爻 · {source.source_ganzhi}</summary>
+            <p>{kindLabel[source.kind]}</p>
+            {source.relation_to_target&&<p>已算方向：{source.relation_to_target}</p>}
+            <p>来源条件：{source.source_limit_flags.length?
+              source.source_limit_flags.join('、'):'未见当前已算的空破回头限制标记'}（不判断是否有效）</p>
+            {source.missing_inputs.map((x,i)=><p key={i}>待补：{x}</p>)}
+          </details>)}
+      </article>)}</div>
+      {candidate.checks.map(check=><p key={check.id}>· {check.title}（仅结构条件成立）</p>)}
+      {candidate.two_hop_paths.map((hop,i)=><p key={i}>
+        仇神双段候选（经{hop.via_role}）：{hop.positions.map(p=>POS[p-1]+'爻').join(' → ')}
+        · {hop.first_relation} → {hop.second_relation}。不证明作用传递或吉凶。</p>)}
+      {candidate.target_limit_flags.length>0&&<p>用神自身需核：{candidate.target_limit_flags.join('、')}</p>}
+      {candidate.missing_inputs.map((x,i)=><p key={i}>用神待补：{x}</p>)}
+    </>}
+    <p className="focus-effect-boundary">{data.boundary}</p>
+  </section>
+}
+
 export function FocusEffectReviewStudy({chart}){
   const data=chart.focus_effect_review
   const [requested,setRequested]=useState(null)
@@ -1765,6 +1819,8 @@ export function ReviewReport({chart,question}) {
     '用神原忌仇作用来源（效力未判定）：',
     ...(data.yongshen_pathway_digest||[]),
     '',
+    'V45 原忌真实明动直连与仇神双段路径核验（非实际效力）：',
+    ...(data.spirit_action_digest||[]),
     'V24 原忌仇联合审议摘记（非旺衰结论）：',
     ...(data.focus_effect_digest||[]),
     '',
@@ -1862,6 +1918,11 @@ export function ReviewReport({chart,question}) {
       <h4>六合、墓绝条件摘记</h4>
       {data.special_conditions_digest.map((entry,i)=><p key={i}>{entry}</p>)}
       <small>只供日后复核，不意味着合绊、入墓或逢绝已经实际生效。</small>
+    </div>}
+    {data.spirit_action_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V45 原忌直连与仇神双段明动路径核验</h4>
+      {data.spirit_action_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>两段明动只代表五行边存在，不等于生克已传递或实际起效。</small>
     </div>}
     {data.focus_effect_digest?.length>0&&<div className="strength-evidence-report">
       <h4>V24 原忌仇联合审议</h4>
@@ -2167,6 +2228,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
                 <StrengthEvidenceStudy chart={chart}/>
               </> :
                 relationsView==='pathways'?<>
+                  <SpiritActionAuditStudy chart={chart}/>
                   <FocusEffectReviewStudy chart={chart}/>
                   <YongshenPathwaysStudy chart={chart}/>
                 </>:

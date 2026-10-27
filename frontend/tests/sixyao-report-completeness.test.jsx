@@ -14,6 +14,7 @@ function chart(overrides={}){
     verified_by_program:['六爻排盘数据已计算'],
     outstanding_questions:['实际合化仍需人工核实'],
     notice:'传统排盘条件，不是现实吉凶判断',
+    spirit_action_digest:['V45 父母三爻：原忌明动且有仇神双段候选，效力未定'],
     cross_condition_digest:['V44 父母六爻：旬空与月冲并见，效力未定'],
     temporal_month_digest:['V43 父母六爻：节令月建复算，旺衰仍待合参'],
     temporal_crosscheck_digest:['V42 父母六爻：旬空逐日重算，本位化支待复核'],
@@ -27,6 +28,8 @@ function chart(overrides={}){
 
 it('V41 合局条件进入第五步研究报告，不遗漏三合、世应与空破',()=>{
   render(<ReviewReport chart={chart()} question="测试事项"/>)
+  expect(screen.getByText('V45 原忌直连与仇神双段明动路径核验')).toBeTruthy()
+  expect(screen.getByText(/V45 父母三爻：原忌明动且有仇神双段候选/)).toBeTruthy()
   expect(screen.getByText('V44 旺衰、真假空与动变来源交叉核验')).toBeTruthy()
   expect(screen.getByText(/V44 父母六爻：旬空与月冲并见/)).toBeTruthy()
   expect(screen.getByText('V43 跨节气月建与用神动变条件核验')).toBeTruthy()
@@ -52,6 +55,8 @@ it('复制六爻研究记录应完整带上 V38-V41 新增摘要，且不自动�
   const saved=writeText.mock.calls[0][0]
   expect(saved).toContain('所问事项：家庭事项')
   for(const marker of [
+    'V45 原忌真实明动直连与仇神双段路径核验',
+    'V45 父母三爻：原忌明动且有仇神双段候选',
     'V44 旺衰旬空与动变交叉核验',
     'V44 父母六爻：旬空与月冲并见',
     'V43 跨节气逐日月建与用神动变核验',
@@ -73,6 +78,7 @@ it('复制六爻研究记录应完整带上 V38-V41 新增摘要，且不自动�
 
 it('加载旧版不含 V38-V41 摘要的研究记录不会崩溃或编造数据',async()=>{
   render(<ReviewReport chart={chart({
+    spirit_action_digest:undefined,
     cross_condition_digest:undefined,
     temporal_month_digest:undefined,
     temporal_crosscheck_digest:undefined,
