@@ -62,7 +62,8 @@ def _format_pillar(kind:str,name:str,ganzhi:str,day_stem:str)->dict:
     }
 
 
-def cast_bazi(solar_date:date,clock:time,day_boundary:str="midnight")->dict:
+def cast_bazi(solar_date:date,clock:time,day_boundary:str="midnight",
+              luck_direction:str="none")->dict:
     if not isinstance(solar_date,date) or isinstance(solar_date,datetime):
         raise ValueError("V55 须提供正确公历日期")
     if not isinstance(clock,time) or clock.tzinfo is not None:
@@ -100,7 +101,7 @@ def cast_bazi(solar_date:date,clock:time,day_boundary:str="midnight")->dict:
     warnings=list(preview["warnings"])
     if solar_date.year in (1901,2099):
         warnings.append("当前处于历法计算允许的端点年份，请按权威历书复核跨年交节。")
-    return {
+    result={
         "version":"V55",
         "school":"四柱八字",
         "state":"real_four_pillars_computed",
@@ -146,3 +147,13 @@ def cast_bazi(solar_date:date,clock:time,day_boundary:str="midnight")->dict:
             "大运顺逆、起运岁数、流年流月、完整命理分析尚未实现。",
         ],
     }
+    if luck_direction!="none":
+        from .bazi_yun import compute_bazi_luck
+        result["luck"]=compute_bazi_luck(result,solar_date,clock,luck_direction)
+        result["version"]="V56"
+        result["has_decade_luck_cycles"]=True
+        result["has_luck_start_date"]=True
+        result["limits"]=[
+            x for x in result["limits"] if not x.startswith("大运顺逆")
+        ]+["大运起运已按指定口径计算，但流年流月、合冲关系、完整命理分析仍未实现。"]
+    return result

@@ -127,6 +127,17 @@ jobs:
           name: bazi-v55-four-pillars-fixtures
           path: backend/acceptance-output/bazi-v55.json
           if-no-files-found: error
+      - name: Run V56 Bazi luck-decades canonical crosschecks
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/bazi_v56_acceptance.py --output backend/acceptance-output/bazi-v56.json
+      - name: Upload V56 Bazi ten-year luck canonical evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: bazi-v56-luck-start-cases
+          path: backend/acceptance-output/bazi-v56.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
