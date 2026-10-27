@@ -146,7 +146,8 @@ def build_liuren(day:str,month_general:str,占时:str,reference:dict|None=None)-
     if reference:result["calendar_provenance"]=reference
     from .liuren_v59 import decorate_liuren_v59
     from .liuren_v60 import decorate_liuren_v60
-    return decorate_liuren_v60(decorate_liuren_v59(result))
+    from .liuren_v61 import decorate_liuren_v61
+    return decorate_liuren_v61(decorate_liuren_v60(decorate_liuren_v59(result)))
 
 
 def cast_liuren(d:date,clock:time,day_boundary:str="zi_hour")->dict:
