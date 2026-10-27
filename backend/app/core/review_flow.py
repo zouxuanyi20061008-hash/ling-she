@@ -28,6 +28,7 @@ def decorate_review_flow(chart: dict) -> dict:
     focus_effect=chart["focus_effect_review"]
     sheet=chart["review_sheet"]
     comparison=chart["focus_comparison"]
+    progression=chart["progression_review"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -241,8 +242,16 @@ def decorate_review_flow(chart: dict) -> dict:
         "；不判断哪一爻较优"
         for pair in comparison["pairs"]
     ]
+    progression_digest=[
+        str(row["position"])+"爻 "+row["original_ganzhi"]+"→"+
+        row["transformed_ganzhi"]+"："+row["label"]+
+        ("；"+("、".join(row["cautions"])) if row["cautions"] else
+         "；这是静态转化关系，实际效力待核")
+        for row in progression["rows"] if row["is_actual_change"]
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "progression_digest":progression_digest,
         "focus_comparison_digest":focus_comparison_digest,
         "review_sheet_digest":sheet_digest,
         "focus_effect_digest":focus_effect_digest,

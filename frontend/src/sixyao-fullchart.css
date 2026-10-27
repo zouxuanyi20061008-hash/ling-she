@@ -25,6 +25,8 @@
 .six-full-stroke{display:flex;align-items:center;width:70px;height:9px;gap:10px;margin:0 0 5px}
 .six-full-stroke i{display:block;background:#305d45;flex:1;height:8px}
 .six-full-stroke.is-moving i{background:#a96740}
+.six-full-progressions{font-size:12px;line-height:1.8;color:#3d684e;background:#e7efdf;padding:9px 12px;border-left:3px solid #5b8663}
+.six-full-progressions a{display:inline-block;margin-left:8px;color:#365e77;text-decoration:underline}
 .six-full-caution{font-size:11px;color:#765f43;line-height:1.75;margin:13px 0 0;padding:8px 10px;background:#f1e5d2;border-left:3px solid #a98b5b}
 .six-full-missing{font-size:12px;color:#955940;background:#fae9dd;border-left:3px solid #a96945;padding:11px}
 @media(max-width:620px){.six-full-summary{grid-template-columns:repeat(2,minmax(0,1fr))}

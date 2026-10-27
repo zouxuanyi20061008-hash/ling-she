@@ -1765,6 +1765,11 @@ function ReviewReport({chart,question}) {
       {data.evidence_digest.map((text,i)=><p key={i}>{text}</p>)}
       <small>这里只记录两类条件，不作净额评分，也不视为最终旺衰结论。</small>
     </div>}
+    {data.progression_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>动爻进退神 · 逐位核查</h4>
+      {data.progression_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>只将本位明动转化记录为进退；古籍异本会单独提示，不据此判吉凶。</small>
+    </div>}
     {data.moving_effect_digest?.length>0&&<div className="strength-evidence-report">
       <h4>动变与日月合参摘记</h4>
       {data.moving_effect_digest.map((entry,i)=><p key={i}>{entry}</p>)}

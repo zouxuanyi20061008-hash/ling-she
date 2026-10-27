@@ -40,7 +40,7 @@ def _moving_edges(chart:dict,position:int)->list[dict]:
     ]
 
 
-def _line_overview(chart:dict,position:int)->dict:
+def _line_overview(chart:dict,position:int,focus_positions:list[int])->dict:
     original=chart["najia_lines"][position-1]
     transformed=chart["bian_najia_lines"][position-1]
     strength=chart["strength_evidence"]["rows"][position-1]
@@ -49,12 +49,13 @@ def _line_overview(chart:dict,position:int)->dict:
     has_month=bool(chart["calendar"]["month"])
     changed=bool(original["moving"])
     return_relation=original.get("turnback") if changed else None
+    progress=chart["progression_review"]["rows"][position-1]
     # On static lines, transformed plate is a comparison, not a moving line.
     return {
         "position":position,
         "ganzhi":original["ganzhi"],"liuqin":original["liuqin"],
         "element":original["element"],"role":original["role"],
-        "moving":changed,"focus_candidate":position in chart["focus_decision"].get("candidates_positions",[]),
+        "moving":changed,"focus_candidate":position in focus_positions,
         "selected_by_user":chart["focus_decision"].get("selected_position")==position,
         "day":_calendar_action(original,"day"),
         "month":_calendar_action(original,"month"),
@@ -71,6 +72,10 @@ def _line_overview(chart:dict,position:int)->dict:
             "returning_combine":bool(return_relation["returning_combine"]) if return_relation else None,
             "transformed_void":bool(void["transformed_void"]) if changed and has_day else None,
             "is_actual_change":changed,
+            "progression_kind":progress["kind"],
+            "progression_label":progress["label"] if changed else None,
+            "progression_source_status":progress["source_status"],
+            "progression_cautions":list(progress["cautions"]),
             "effectiveness":None,
         },
         "hidden_relatives":list(original.get("fushen",[])),
@@ -88,10 +93,7 @@ def decorate_joint_overview(chart:dict)->dict:
     focus=chart.get("focus")
     decision=chart["focus_decision"]
     positions=[x["position"] for x in decision["candidates"]]
-    decision["candidates_positions"]=positions
-    all_lines=[_line_overview(chart,p) for p in range(1,7)]
-    for line in all_lines:
-        line["focus_candidate"]=line["position"] in positions
+    all_lines=[_line_overview(chart,p,positions) for p in range(1,7)]
     hidden=[]
     if focus and not positions:
         for entry in chart["fushen"]["selected"]["entries"]:
@@ -127,6 +129,11 @@ def decorate_joint_overview(chart:dict)->dict:
         "hidden_focus":hidden,
         "rows":all_lines,
         "moving_positions":list(chart["dong_yao"]),
+        "progression_summary":{
+            "advances":list(chart["progression_review"]["primary_advances"]),
+            "retreats":list(chart["progression_review"]["primary_retreats"]),
+            "edition_variants":list(chart["progression_review"]["edition_variants"]),
+        },
         "requires_user_choice":len(positions)>1 and decision["selected_position"] is None,
         "has_complete_calendar":bool(chart["calendar"]["day"] and chart["calendar"]["month"]),
         "strength_score":None,
@@ -142,6 +149,4 @@ def decorate_joint_overview(chart:dict)->dict:
         ],
         "boundary":"传统六爻规则的事实对照盘。支持、克制与动变等关系成立，不等于实际效力或吉凶应期已确定。",
     }
-    # No extra mutation of earlier focus_decision schema is needed.
-    decision.pop("candidates_positions",None)
     return chart

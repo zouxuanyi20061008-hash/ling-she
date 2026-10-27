@@ -24,6 +24,11 @@ function EvidenceDetails({row}){
       </p>)}
     </section>}
     {row.moving&&<section><h5>本位动变（非跨位变爻）</h5>
+      <p><b>化进退核查：</b>{row.self_change.progression_label||'待核'}
+        {row.self_change.progression_source_status==='variant_edition'?' · 古籍版本差异':''}
+        。只表示同位地支的进退转换，不能独立判断旺衰。
+      </p>
+      {row.self_change.progression_cautions?.map((x,i)=><p key={i}>· {x}</p>)}
       <p>{row.ganzhi} → {row.self_change.ganzhi}：
         {row.self_change.returning_term||'静态位置对照'}
         {row.self_change.returning_clash?' · 回头冲':''}
@@ -116,6 +121,8 @@ export default function SixYaoJointOverview({chart,onChooseFocus,onChoosePositio
           <td>{row.moving?'本爻明动':'本爻安静'}
             {row.moving&&row.self_change.returning_term?
               ' · '+row.self_change.returning_term:''}
+            {row.moving&&row.self_change.progression_kind!=='neither'?
+              ' · '+row.self_change.progression_label:''}
             {row.incoming_movers.length?' · '+row.incoming_movers.length+'处明动作用来源':''}
           </td>
           <td>{row.has_opposing_indicators?'生扶与制约并见':
