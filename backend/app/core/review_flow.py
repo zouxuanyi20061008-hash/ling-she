@@ -29,6 +29,7 @@ def decorate_review_flow(chart: dict) -> dict:
     sheet=chart["review_sheet"]
     comparison=chart["focus_comparison"]
     progression=chart["progression_review"]
+    combinations=chart["hexagram_combinations"]
     provenance=chart.get("calendar_provenance")
     source_verified=bool(provenance and provenance.get("source")=="server_recomputed_calendar")
     calendar_origin=(
@@ -249,8 +250,16 @@ def decorate_review_flow(chart: dict) -> dict:
          "；这是静态转化关系，实际效力待核")
         for row in progression["rows"] if row["is_actual_change"]
     ]
+    combination_digest=[
+        combinations["transition"]+"（卦类结构，不是吉凶结论）",
+        "三合：本卦三支俱见"+str(combinations["counts"]["visible"])+
+        "组；动变候选"+str(combinations["counts"]["mixed"])+
+        "组；虚三待用"+str(combinations["counts"]["waiting"])+
+        "组。实际成局及效力未定。",
+    ]
     report={
         "title":"六爻研判学习笔记",
+        "combination_digest":combination_digest,
         "progression_digest":progression_digest,
         "focus_comparison_digest":focus_comparison_digest,
         "review_sheet_digest":sheet_digest,
