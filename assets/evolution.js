@@ -63,7 +63,7 @@ function paintEvolvedHead(p,a,stage,now){
  const index=Math.max(0,Math.min(4,stage|0)),im=SNAKE_HEAD_IMAGES[index];
  if(!im.complete||!im.naturalWidth)return paintHead(p,a,index);
  const style=SNAKE_FORMS[index],size=style.size;
- ctx.save();ctx.translate(p.x,p.y);ctx.rotate(a-Math.PI/2);
+ ctx.save();ctx.imageSmoothingEnabled=qualityMode==='sharp';ctx.translate(p.x,p.y);ctx.rotate(a-Math.PI/2);
  if(index>=1){
   // Rear rim: the actual horns, crest and whiskers are baked into each SVG,
   // preventing expensive per-frame vector outlines on low-memory devices.
