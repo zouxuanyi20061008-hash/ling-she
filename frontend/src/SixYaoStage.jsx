@@ -1677,7 +1677,7 @@ export function HumanReviewWorkbook({chart,question}){
   </section>
 }
 
-function ReviewReport({chart,question}) {
+export function ReviewReport({chart,question}) {
   const data=chart.review_flow?.report
   const [message,setMessage]=useState('')
   if(!data)return null
@@ -1698,7 +1698,19 @@ function ReviewReport({chart,question}) {
     '综合证据摘记（条数并非旺衰分数）：',
     ...(data.evidence_digest||[]),
     '',
-    '本位动变与日月空破核对（效力尚未判断）：',
+    'V41 三合成立条件与世应空破核验（成局效力未判定）：',
+    ...(data.sanhe_audit_digest||[]),
+    '',
+    'V40 三合与用神、日月合参（不自动择优）：',
+    ...(data.sanhe_focus_digest||[]),
+    '',
+    'V39 六合六冲卦类与三合候选（仅结构）：',
+    ...(data.combination_digest||[]),
+    '',
+    'V38 动爻进退神（古籍异本另记）：',
+    ...(data.progression_digest||[]),
+    '',
+    '本位动变与日月空破核对（效力尚未判断）：
     ...(data.moving_effect_digest||[]),
     '',
     '用神原忌仇作用来源（效力未判定）：',
@@ -1765,6 +1777,11 @@ function ReviewReport({chart,question}) {
       <h4>综合证据摘记</h4>
       {data.evidence_digest.map((text,i)=><p key={i}>{text}</p>)}
       <small>这里只记录两类条件，不作净额评分，也不视为最终旺衰结论。</small>
+    </div>}
+    {data.sanhe_audit_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>V41 三合成局条件与世应空破核查</h4>
+      {data.sanhe_audit_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>须核对动静、世应、日月与空破；不自动判成局效力、吉凶或应期。</small>
     </div>}
     {data.sanhe_focus_digest?.length>0&&<div className="strength-evidence-report">
       <h4>三合与用神、世应及日月对照</h4>
