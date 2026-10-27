@@ -11,10 +11,10 @@ const SNAKE_FORMS=[
  {name:'真龙',title:'九霄龙吟',perk:'灵息弹·三重龙息',color:'#fff4c2',accent:'#e5b95e',size:80,body:47}
 ];
 const HEAD_ART_PATHS=[
- 'assets/jade-snake-head.svg','assets/evo1-head.svg','assets/evo2-head.svg','assets/evo3-head.svg','assets/evo4-head.svg'
+ 'assets/jade-snake-head.svg?v=64','assets/evo1-head.svg?v=64','assets/evo2-head.svg?v=64','assets/evo3-head.svg?v=64','assets/evo4-head.svg?v=64'
 ];
 const BODY_ART_PATHS=[
- 'assets/jade-snake-body.svg','assets/evo1-body.svg','assets/evo2-body.svg','assets/evo3-body.svg','assets/evo4-body.svg'
+ 'assets/jade-snake-body.svg?v=64','assets/evo1-body.svg?v=64','assets/evo2-body.svg?v=64','assets/evo3-body.svg?v=64','assets/evo4-body.svg?v=64'
 ];
 const SNAKE_HEAD_IMAGES=[],SNAKE_BODY_IMAGES=[];
 for(let stage=0;stage<5;stage++){
