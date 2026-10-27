@@ -30,8 +30,9 @@ def test_historical_witness_stays_reference_not_fabricated_calculation():
     assert a["main_guest"]["source_if_attested"]["guest_count"]==19
     assert b["main_guest"]["source_if_attested"]["main_count"]==16
     assert b["main_guest"]["source_if_attested"]["guest_count"]==30
-    assert not a["has_complete_main_guest"]
-    assert a["main_guest"]["main_calculated"] is None
+    assert a["has_complete_main_guest"]
+    assert a["main_guest"]["main_calculated"]==18
+    assert a["main_guest"]["guest_calculated"]==19
     assert year_board(2026)["main_guest"]["source_if_attested"] is None
 
 
@@ -71,7 +72,7 @@ def test_whole_public_calendar_range_and_ancient_constancy():
         assert a["year"]["taiyi_palace"]["number"] in (1,2,3,4,6,7,8,9)
         assert a["year"]["five_yuan_name"] in YUAN_NAMES
         assert len(a["nine_palaces"])==9
-        assert a["main_guest"]["status"]=="pending"
+        assert a["main_guest"]["status"] in ("computed","partially_computed","pending")
         assert a["fortune_verdict"] is None
 
 
@@ -86,7 +87,7 @@ def test_api_year_input_and_ancient_rollover_422():
     for year in (1901,2024,2026,2099):
         r=cli.post("/api/taiyi/cast",json={"gregorian_year":year})
         assert r.status_code==200,r.text
-        assert r.json()["version"]=="V64"
+        assert r.json()["version"]=="V65"
         assert r.json()["year"]["gregorian_year"]==year
     for year in (1561,1624,2100,-1,"hello"):
         r=cli.post("/api/taiyi/cast",json={"gregorian_year":year})

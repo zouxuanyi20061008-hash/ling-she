@@ -226,6 +226,17 @@ jobs:
           name: taiyi-v64-ancient-annual-palaces
           path: backend/acceptance-output/taiyi-v64.json
           if-no-files-found: error
+      - name: Run V65 Taiyi independent year-eye and main/guest count acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v65_acceptance.py --output backend/acceptance-output/taiyi-v65.json
+      - name: Upload V65 real sixteen-spirit and counted-path evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v65-sixteen-spirit-main-guest
+          path: backend/acceptance-output/taiyi-v65.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]

@@ -15,14 +15,17 @@ def verify():
                 y["taiyi_palace"]["number"],y["year_governing"])==(acc,yuan,ju,palace,tenure)
         witness=d["main_guest"]["source_if_attested"]
         assert witness["main_count"]==main and witness["guest_count"]==guest
-        assert d["main_guest"]["main_calculated"] is None
+        assert d["main_guest"]["main_calculated"]==main
+        assert d["main_guest"]["guest_calculated"]==guest
         cases.append({"gregorian_year":year,"accumulated":acc,"yuan":yuan,
                       "ju":ju,"taiyi":palace,"tenure":tenure,
                       "host_guest_reference_only":witness})
     now=year_board(2026)
     assert now["year"]["ju"]==55
     assert now["year"]["taiyi_palace"]["trigram"]=="艮"
-    assert now["main_guest"]["status"]=="pending"
+    assert now["main_guest"]["status"]=="partially_computed"
+    assert now["main_guest"]["main_calculated"]==16
+    assert now["main_guest"]["guest_calculated"] is None
     return {"version":"V64","status":"passed","sha":os.getenv("GITHUB_SHA"),
         "original_examples":cases,
         "present_day_example":{"gregorian_year":2026,
@@ -33,7 +36,7 @@ def verify():
         "ancient_palace_ring":[v["number"] for v in now["palace_ring"]],
         "source_1624":"https://zh.wikisource.org/wiki/%E6%AC%BD%E5%AE%9A%E5%8F%A4%E4%BB%8A%E5%9C%96%E6%9B%B8%E9%9B%86%E6%88%90/%E5%8D%9A%E7%89%A9%E5%BD%99%E7%B7%A8/%E8%97%9D%E8%A1%93%E5%85%B8/%E7%AC%AC688%E5%8D%B7",
         "source_1561":"https://www.shidianguji.com/book/NGJ89241199902106666022/chapter/1lq8dkylq3yn8",
-        "no_unverified_host_guest_computation":True,"no_divination_verdict":True}
+        "main_guest_checked_against_both_original_examples":True,"no_divination_verdict":True}
 
 if __name__=="__main__":
     p=argparse.ArgumentParser();p.add_argument("--output",type=Path,required=True)

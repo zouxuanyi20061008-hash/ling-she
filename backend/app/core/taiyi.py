@@ -109,7 +109,7 @@ def year_board(gregorian_year:int, *, historical:bool=False)->dict:
         "reason":"主客需先严密完成十六神文昌、始击和投算；本版尚未实现，历史例盘仅作校勘真值。",
         "next":"V65 校勘十六神、文昌、计神加宫与始击，才能建立全部年份的主客算。",
     }
-    return {
+    board={
        "version":"V64",
        "art":"太乙神数","calculation":"岁计",
        "school":"太乙古籍积年 1624 锚点系",
@@ -130,6 +130,10 @@ def year_board(gregorian_year:int, *, historical:bool=False)->dict:
        ],
        "fortune_verdict":None,
     }
+
+    from .taiyi_v65 import decorate_taiyi_v65
+    return decorate_taiyi_v65(board)
+
 
 def cast_taiyi(gregorian_year:int)->dict:
     return year_board(gregorian_year)
