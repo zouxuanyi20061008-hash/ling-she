@@ -19,6 +19,8 @@ export default function SixYaoFullChart({chart}){
   const month=chart.calendar?.month
   const proven=chart.calendar_provenance?.source==='server_recomputed_calendar'
   const changed=chart.dong_yao||[]
+  const core=chart?.core_chart
+  const throwRows=core?.casting_record?.throws||[]
   const progresses=chart.progression_review?.rows||[]
   return <section className="six-full-chart" aria-label="六爻完整装卦总览">
     <header className="six-full-head">
@@ -37,6 +39,22 @@ export default function SixYaoFullChart({chart}){
       <span><b>旬空：</b>{day?.xunkong?.join('、')||'须先核实日辰'}</span>
       <span><b>日月来源：</b>{proven?'服务器中国历法库重算，边界仍需核对':day||month?'手动录入，未自动核对':'未核对'}</span>
     </div>
+    {core&&<section className="six-core-receipt" aria-label="六爻起卦记录核验">
+      <div className="six-core-receipt-head">
+        <strong>六爻核心盘 · 起卦来源记录</strong>
+        <small>{core.schema_version} · 初爻至上爻</small>
+      </div>
+      <p>三钱原始记录 {core.casting_record.recorded_coins} 爻 · 手动爻数 {core.casting_record.manual_entries} 爻
+        {core.casting_record.unknown_sources>0?' · 来源未记录 '+core.casting_record.unknown_sources+' 爻':''}。
+        本卦与变卦由六个爻态机械计算，不因是否提供日月而改变。</p>
+      <details>
+        <summary>核对六次起卦原始记录</summary>
+        <ol>{throwRows.map(x=><li key={x.position}>
+          {POS[x.position-1]}爻：{x.number} · {NAMES[x.number]||'待核'} ·
+          {x.faces?x.faces.map(n=>n===2?'字':'背').join(' · '):x.source==='manual_number'?'手动输入':'未记录铜钱正反面'}
+        </li>)}</ol>
+      </details>
+    </section>}
     <p className="six-full-scrollhint">完整装卦表 · 从上爻到初爻显示；手机可左右滚动查看全部字段。</p>
     <div className="six-full-scroll" role="region" tabIndex={0} aria-label="六爻纳甲全表，横向滚动查看">
       <table>
