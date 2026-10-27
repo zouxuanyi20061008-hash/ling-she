@@ -7,6 +7,7 @@ export default function LiurenV58(){
   const [date,setDate]=useState(BEIJING_DATE)
   const [clock,setClock]=useState('12:00')
   const [dayBoundary,setDayBoundary]=useState('zi_hour')
+  const [nobleMode,setNobleMode]=useState('hour_branch')
   const [chart,setChart]=useState(null)
   const [selected,setSelected]=useState('子')
   const [error,setError]=useState('')
@@ -19,7 +20,8 @@ export default function LiurenV58(){
     try{
       const r=await fetch('/api/liuren/cast',{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({solar_date:date,clock,day_boundary:dayBoundary})
+        body:JSON.stringify({solar_date:date,clock,day_boundary:dayBoundary,
+          ...(nobleMode!=='hour_branch'?{noble_mode:nobleMode}:{})})
       })
       const result=await r.json()
       if(!r.ok)throw new Error(typeof result.detail==='string'?result.detail:'请核对日期或时辰')
@@ -28,10 +30,10 @@ export default function LiurenV58(){
     }catch(e){setError(e?.message||'大六壬起课失败')}
     finally{setBusy(false)}
   }
-  return <section className="liuren-v58" aria-label="V61 大六壬真实起课">
-    <header><small>V61 · 大六壬 / 涉害循宫计克</small>
+  return <section className="liuren-v58" aria-label="V62 大六壬真实起课">
+    <header><small>V62 · 大六壬 / 贵人十二天将</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
-      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。本版实算涉害自候选下临宫归本家途中每一重克害，并分开比较「首宫计入／不计入」与「孟仲季先取」规则；若流派结果不一致，明确提示。</p>
+      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。已实现涉害逐宫计克，并进一步在真实天盘贵人支上起十二天将。可选择固定时辰昼夜规则，也可手动选昼贵或夜贵。贵人顺逆按其所临地盘宫，而非简单由昼夜决定。</p>
     </header>
     <form className="liuren-v58-form" onSubmit={cast}>
       <label>公历起课日期
@@ -49,6 +51,14 @@ export default function LiurenV58(){
           <option value="midnight">零点换日</option>
         </select>
       </label>
+      <label>贵人昼夜口径
+        <select aria-label="贵人昼夜规则" value={nobleMode}
+          onChange={e=>setNobleMode(e.target.value)}>
+          <option value="hour_branch">按时支：卯至申昼，酉至寅夜</option>
+          <option value="day">手动指定昼贵</option>
+          <option value="night">手动指定夜贵</option>
+        </select>
+      </label>
       <button type="submit" disabled={busy}>{busy?'起课中…':'起大六壬天地盘'}</button>
     </form>
     {error&&<p role="alert" className="academy-caution">{error}</p>}
@@ -61,17 +71,41 @@ export default function LiurenV58(){
           {chart.calendar_provenance.next_middle_term.beijing_time.replace('T',' ')}</span>
         <span>日干寄宫：{chart.day_stem_lodge}；月将按中气、八字月柱按节，两者不同。</span>
       </div>
+      {chart.heavenly_generals&&<section className="liuren-v62-generals"
+          aria-label="V62 贵人与十二天将">
+        <header>
+          <small>V62 · 贵人定位 / 十二天将</small>
+          <h3>{chart.heavenly_generals.period} {chart.heavenly_generals.noble_branch} ·
+            下临地盘 {chart.heavenly_generals.noble_ground_palace} ·
+            {chart.heavenly_generals.direction}</h3>
+          <p>贵人日干 {chart.heavenly_generals.day_stem}；
+            昼贵 {chart.heavenly_generals.day_noble}，
+            夜贵 {chart.heavenly_generals.night_noble}。</p>
+          <p>{chart.heavenly_generals.clock_basis}。
+            {chart.heavenly_generals.manual_override?
+              '本盘是用户手动指定昼／夜贵的结果。':'本盘按占时地支自动分昼夜。'}</p>
+          <p>{chart.heavenly_generals.direction_basis}。</p>
+        </header>
+        <div role="group" aria-label="十二天将次序" className="liuren-v62-order">
+          {chart.heavenly_generals.order.map((g,i)=>
+            <span key={g}><small>{i+1}</small><strong>{g}</strong></span>)}
+        </div>
+      </section>}
       <h3>十二宫 · 天盘在上、地盘在下</h3>
       <div role="group" aria-label="大六壬十二宫天地盘" className="liuren-v58-plate">
         {chart.palaces.map(p=><button type="button" key={p.earth}
           className={selected===p.earth?'active':''} onClick={()=>setSelected(p.earth)}>
           <small>地盘 {p.earth}</small><strong>天盘 {p.heaven}</strong>
+          {p.heavenly_general&&<b className={p.is_noble?'liuren-v62-noble':''}>
+            {p.heavenly_general} · {p.general_element}</b>}
           <span>{p.earth===chart.hour_branch?'占时':''}
             {p.heaven===chart.month_general?' · 月将':''}</span>
         </button>)}
       </div>
       <p className="liuren-v58-selected">所选地盘 {selected} · 上临天盘
-        <strong> {chart.heaven_plate[selected]}</strong></p>
+        <strong> {chart.heaven_plate[selected]}</strong>
+        {chart.heavenly_generals&&<span> · 乘
+          {chart.heavenly_generals.by_earth[selected]}天将</span>}</p>
       <h3>四课 · 上神与下神</h3>
       <div role="group" aria-label="大六壬四课" className="liuren-v58-lessons">
         {chart.four_lessons.map(p=><article key={p.number}>
@@ -79,6 +113,8 @@ export default function LiurenV58(){
           <strong>{p.upper}</strong><span>上神 · {p.upper_element}</span>
           <strong>{p.lower}</strong><span>下神 · {p.lower_element}</span>
           <b>{p.relation}</b>
+          {p.heavenly_general&&<small className="liuren-v62-lesson-general">
+            乘 {p.heavenly_general} · {p.general_element}</small>}
         </article>)}
       </div>
       <h3>三传 · 初传、中传、末传</h3>
@@ -138,6 +174,8 @@ export default function LiurenV58(){
         <div role="group" aria-label="大六壬三传" className="liuren-v58-transmissions">
           {chart.three_transmissions.transmissions.map(p=><article key={p.order}>
             <small>{p.name}</small><strong>{p.branch}</strong>
+            {p.heavenly_general&&<span className="liuren-v62-trans-general">
+              {p.heavenly_general} · 临地盘{p.earth_palace}</span>}
           </article>)}
           <p>发用规则：{chart.three_transmissions.method}。初传候选：
             {chart.three_transmissions.initial_candidates.join('、')}</p>
@@ -169,7 +207,7 @@ export default function LiurenV58(){
         </div>}
       {chart.calendar_provenance.warnings.map((w,i)=>
         <p key={i} className="academy-caution">{w}</p>)}
-      <p className="academy-caution">V61 已补涉害逐宫计害和多流派对照，但完整九宗门逐盘交叉校验、贵人十二天将仍未完成；未核准的课不冒充三传。
+      <p className="academy-caution">V62 已加入常用贵人表、时辰昼夜可选口径与十二天将完整落宫；九宗门全部变例、贵人异派、真太阳时及综合断课仍未全部核实。
         尚未完整排十二天将，不能把本版叫作全部大六壬断课，也不生成实际吉凶预测。</p>
       <a href={chart.source.earth_heaven_four_lessons} target="_blank"
         rel="noopener noreferrer">阅读《六壬指南》天地盘与四课原文</a>

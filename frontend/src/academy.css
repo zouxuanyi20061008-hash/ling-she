@@ -1241,3 +1241,18 @@
 .liuren-v61-hit-list small{padding:3px 5px;background:#e7f0ec;font-size:10px}
 .liuren-v61-evidence>a{color:#2a6170;text-decoration:underline}
 @media(max-width:620px){.liuren-v61-compare,.liuren-v61-candidates{grid-template-columns:1fr}}
+
+/* V62 十二天将：贵人起点、顺逆和每宫所乘将，兼容旧版牌面 */
+.liuren-v62-generals{margin:16px 0 18px;padding:13px;border:1px solid #b6bda4;background:linear-gradient(115deg,#f8f5e9,#eef5eb)}
+.liuren-v62-generals header small{font-size:11px;color:#6e714f}
+.liuren-v62-generals header h3{font-size:19px;color:#6b542e;margin:7px 0}
+.liuren-v62-generals header p{font-size:11px;line-height:1.8;margin:4px 0}
+.liuren-v62-order{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:12px}
+.liuren-v62-order span{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 2px;background:#fffaf2;border:1px solid #d4c9b4;min-width:0}
+.liuren-v62-order span strong{font-size:12px;color:#775b39;white-space:nowrap}
+.liuren-v62-order span small{color:#8d887b}
+.liuren-v58-plate button b{font-size:12px;white-space:nowrap;color:#4d6c52}
+.liuren-v58-plate button b.liuren-v62-noble{color:#926028;font-size:14px;text-decoration:underline}
+.liuren-v62-lesson-general{font-size:11px;color:#527760;border-top:1px dotted #9db7ad;padding-top:5px}
+.liuren-v62-trans-general{font-size:11px;color:#626e5c}
+@media(max-width:710px){.liuren-v62-order{grid-template-columns:repeat(4,minmax(0,1fr))}}

@@ -98,9 +98,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       <section className="academy-stage-banner"><div>
         <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
         <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'四柱八字 · 真实节令排盘':isLiuren?'大六壬 · 中气月将与四课':'古典文献 · 入门导览'}</p>
-        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V61 已补涉害按地盘逐宫计害及不同古籍取用口径的对照，例课路径可逐宫查看；贵人十二天将待实现。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
+        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V62 已加入昼夜贵人及十二天将真实落宫，可核对贵人下临宫与顺逆；涉害等九宗门已保留可审计的规则来源。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
-      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'V57 四柱大运 · 流年流月':isLiuren?'V61 涉害逐宫计克 · 九宗门校勘':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'十二节令流月 · 交节流年 · 大运时段定位':isLiuren?'涉害深浅 · 古籍规则分歧 · 天地四课三传':'独立主题 · 后续按本门术法逐步完善'}</small></div>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'V57 四柱大运 · 流年流月':isLiuren?'V62 贵人昼夜 · 十二天将落宫':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'十二节令流月 · 交节流年 · 大运时段定位':isLiuren?'贵人下临宫 · 十二天将 · 四课三传所乘将':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isLiuren&&<LiurenV58/>}
       {isQimen&&<section className="qimen-v50">
         <header><small>V54 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
