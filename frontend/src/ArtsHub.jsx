@@ -9,7 +9,7 @@ export const ARTS = [
   {id:'qimen',name:'奇门遁甲',title:'九宫遁甲',symbol:'九',en:'QIMEN DUNJIA',tone:'night',
    brief:'九宫为盘，观察时空的结构。',detail:'洛书九宫 · 方位 · 八门认识',status:'V54 三奇格局盘',group:'三式'},
   {id:'bazi',name:'四柱八字',title:'干支四柱',symbol:'干',en:'FOUR PILLARS',tone:'amber',
-   brief:'年、月、日、时，观干支历法。',detail:'节令四柱 · 日主十神 · 藏干纳音',status:'V55 真实四柱',group:'命理'},
+   brief:'年、月、日、时，观干支历法。',detail:'节令四柱 · 十神藏干 · 十年大运',status:'V56 可排十年大运',group:'命理'},
   {id:'liuren',name:'大六壬',title:'六壬天盘',symbol:'壬',en:'DA LIU REN',tone:'night',
    brief:'天盘地盘，古代三式之一。',detail:'十二支 · 四课三传 · 典籍导读',status:'典籍导览',group:'三式'},
   {id:'taiyi',name:'太乙神数',title:'太乙行宫',symbol:'乙',en:'TAI YI',tone:'jade',

@@ -60,6 +60,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
     new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date()))
   const [baziClock,setBaziClock]=useState('12:00')
   const [baziBoundary,setBaziBoundary]=useState('midnight')
+  const [baziLuckMode,setBaziLuckMode]=useState('none')
   const [baziChart,setBaziChart]=useState(null)
   const [baziBusy,setBaziBusy]=useState(false)
   const [baziError,setBaziError]=useState('')
@@ -73,7 +74,8 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       const response=await fetch('/api/bazi/cast',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
-          solar_date:baziDate,clock:baziClock,day_boundary:baziBoundary
+          solar_date:baziDate,clock:baziClock,day_boundary:baziBoundary,
+          ...(baziLuckMode!=='none'?{luck_direction:baziLuckMode}:{})
         })
       })
       const body=await response.json()
@@ -90,9 +92,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       <section className="academy-stage-banner"><div>
         <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
         <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'四柱八字 · 真实节令排盘':'古典文献 · 入门导览'}</p>
-        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'V55 已可按公历日期与北京时间计算真实四柱、五行、藏干与十神；完整大运、流年与命理断课仍待实现。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
+        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'V56 已可选用传统男女命规则或直接指定顺逆，计算节令起运与八步十年大运；未选择仍只排四柱。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
-      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'V55 北京时间真实四柱排盘':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'立春换年 · 交节换月 · 子时双换日':'独立主题 · 后续按本门术法逐步完善'}</small></div>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'V56 四柱及可选十年大运':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'立春换年 · 交节换月 · 自选顺逆起运':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isQimen&&<section className="qimen-v50">
         <header><small>V54 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
           <p>真实九宫地盘、星门神盘保持不变；增加三奇入墓与古籍六甲式三奇得使，并单独列出另一种值使门同宫口径，绝不合并判定。</p>
@@ -231,9 +233,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       </section>}
       {isBazi&&<section className="bazi-v55" aria-label="V55 四柱八字真实排盘">
         <header>
-          <small>V55 · 节气四柱 / 中国北京时间</small>
+          <small>V56 · 节令四柱 + 可选大运</small>
           <h2>输入出生时刻 · 计算真实四柱</h2>
-          <p>按立春交节换年、十二节换月；子初与午夜换日可自行选择。排盘为传统干支结构，不自动判断个人命运。</p>
+          <p>按立春交节换年、十二节换月。大运可选择传统男女命规则，也可不填性别、直接指定顺逆；默认只看四柱。不提供命运预测。</p>
         </header>
         <form className="bazi-v55-form" onSubmit={castActualBazi}>
           <label>公历出生日期
@@ -252,8 +254,18 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               <option value="zi_hour">子初 23:00 换日</option>
             </select>
           </label>
+          <label>大运顺逆（可选，不推断性别）
+            <select aria-label="大运顺逆规则" value={baziLuckMode}
+              onChange={e=>setBaziLuckMode(e.target.value)}>
+              <option value="none">不排大运（只看四柱）</option>
+              <option value="traditional_male">传统男命规则（按年干阴阳）</option>
+              <option value="traditional_female">传统女命规则（按年干阴阳）</option>
+              <option value="forward">直接顺排（不填性别）</option>
+              <option value="reverse">直接逆排（不填性别）</option>
+            </select>
+          </label>
           <button type="submit" disabled={baziBusy}>
-            {baziBusy?'正在计算四柱…':'按出生时间排四柱'}
+            {baziBusy?'正在计算…':baziLuckMode==='none'?'按出生时间排四柱':'排四柱及十年大运'}
           </button>
         </form>
         {baziError&&<p role="alert" className="academy-caution">{baziError}</p>}
@@ -282,10 +294,40 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               </div>
             </article>)}
           </div>
+          {baziChart.luck&&<section className="bazi-v56-luck" aria-label="V56 八步十年大运">
+            <header><small>V56 · 时家节令起运</small>
+              <h3>十年大运 · {baziChart.luck.direction}</h3>
+              <p>所选口径：{baziChart.luck.mode_label}。传统男女命是历史排运算法的名称，也可直接指定顺逆，不推断身份。</p>
+            </header>
+            <div className="bazi-v55-meta">
+              <span>原月柱：{baziChart.luck.month_ganzhi}；
+                {baziChart.luck.reference_jie.position}：{baziChart.luck.reference_jie.name}，
+                {baziChart.luck.reference_jie.beijing_time.replace('T',' ')}</span>
+              <span>节令间隔：{baziChart.luck.interval_minutes} 分钟；
+                折算 {baziChart.luck.start_offset.years} 年
+                {baziChart.luck.start_offset.months} 月
+                {baziChart.luck.start_offset.days} 日
+                {baziChart.luck.start_offset.hours} 小时</span>
+              <strong>推算起运时间：{baziChart.luck.start_at_beijing.replace('T',' ')}</strong>
+              <small>三天折一年；下方年份不是周岁，也不代表实际事件的应期。</small>
+            </div>
+            <div role="group" aria-label="十年大运干支表" className="bazi-v56-cycles">
+              {baziChart.luck.luck_decades.map(phase=><article key={phase.order}>
+                <small>第 {phase.order} 步</small>
+                <strong>{phase.ganzhi}</strong>
+                <span>{phase.stem_element} · {phase.branch_element}</span>
+                <b>十神：{phase.stem_ten_god}</b>
+                <small>{phase.start_calendar_year}—{phase.end_calendar_year_exclusive}（末年为下一运起点）</small>
+                <small>始于 {phase.begins_at_beijing.slice(0,16).replace('T',' ')}</small>
+                <span>藏干：{phase.hidden_stems.map(h=>h.stem).join('、')}</span>
+              </article>)}
+            </div>
+            <p className="academy-caution">大运只是传统干支时间结构，不代表个人健康、事业、婚姻或财富的预测；没有进行出生地真太阳时、流年和完整断课。</p>
+          </section>}
           {baziChart.warnings.map((w,i)=>
             <p key={i} className="academy-caution">{w}</p>)}
           <p className="academy-caution">年柱依立春、月柱依交节；本盘使用北京时间而非出生地真太阳时。
-            大运起运、流年与完整命理分析尚未完成，十神仅说明传统五行结构。</p>
+            {baziChart.luck?'所选大运已经推算；':'未选择大运规则；'}流年与完整命理分析尚未完成，十神仅说明传统五行结构。</p>
           <a href={baziChart.source.independent_fixed_cases_reference}
             rel="noopener noreferrer" target="_blank">历法与固定例盘核验依据</a>
         </div>}

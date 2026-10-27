@@ -1153,3 +1153,15 @@
 .bazi-v55-result>a{font-size:12px;color:#866045;text-decoration:underline}
 .bazi-v55-result .academy-caution{line-height:1.9;font-size:12px}
 @media(max-width:720px){.bazi-v55-pillar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bazi-v55{padding:13px}.bazi-v55-pillar strong{font-size:27px}}
+
+/* V56 可选大运：与真实四柱共用赤金底色，分步显示交运边界 */
+.bazi-v56-luck{margin-top:24px;padding:15px 0;border-top:2px solid #c6a17a}
+.bazi-v56-luck header h3{margin:7px 0;color:#704229;font-size:19px}
+.bazi-v56-luck header p{font-size:12px;line-height:1.9}
+.bazi-v56-luck .bazi-v55-meta strong{font-size:15px}
+.bazi-v56-cycles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:15px 0}
+.bazi-v56-cycles article{min-width:0;padding:11px 7px;background:#fffaf0;border:1px solid #cfb58f;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;overflow-wrap:anywhere}
+.bazi-v56-cycles article strong{font-size:23px;color:#804a31}
+.bazi-v56-cycles article b{font-size:11px}
+.bazi-v56-cycles article small,.bazi-v56-cycles article span{font-size:10px;line-height:1.5}
+@media(max-width:710px){.bazi-v56-cycles{grid-template-columns:repeat(2,minmax(0,1fr))}}
