@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120"><defs>
+<linearGradient id="fern" x1=".18" y1="0" x2=".72" y2="1"><stop stop-color="#d0dca6"/><stop offset=".39" stop-color="#79a978"/><stop offset="1" stop-color="#356b54"/></linearGradient>
+<linearGradient id="leaf" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#b4cc8e"/><stop offset=".54" stop-color="#6b9d70"/><stop offset="1" stop-color="#295b4c"/></linearGradient>
+</defs><ellipse cx="84" cy="105" rx="68" ry="10" fill="#1e4539" opacity=".3"/>
+<g fill="url(#fern)" stroke="#285c47" stroke-width="1.6" stroke-linejoin="round">
+<path d="M79 106Q51 89 26 88Q40 66 13 56Q40 52 50 64Q44 44 29 34Q59 42 66 67Q60 23 50 15Q88 36 86 87Z"/>
+<path d="M84 104Q105 78 136 81Q127 56 153 45Q132 45 115 62Q120 31 135 20Q105 32 97 70Q101 24 111 9Q77 40 81 90Z"/>
+<path d="M84 109Q72 85 62 81Q53 54 66 33Q69 53 81 65Q92 36 103 30Q107 56 97 74Z"/>
+</g>
+<g fill="url(#leaf)" opacity=".86" stroke="#326c50" stroke-width="1">
+<path d="M76 98Q49 67 17 85L44 86Q28 74 23 68Q58 69 80 90Z"/>
+<path d="M89 99Q113 65 152 77L126 81Q143 67 145 61Q111 69 82 90Z"/>
+<path d="M83 101Q54 59 79 21Q77 53 92 67Q107 49 111 28Q113 67 89 98Z"/>
+</g>
+<g fill="none" stroke="#d3d9a3" stroke-width="2" opacity=".65"><path d="M82 100Q73 68 76 37M83 96Q59 78 37 75M88 96Q105 74 135 73"/></g>
+<g fill="#adc68c"><path d="M66 113L55 99L75 106Z"/><path d="M91 112L105 100L93 102Z"/></g>
+</svg>
