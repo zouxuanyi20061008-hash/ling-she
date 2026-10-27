@@ -1,4 +1,4 @@
-/* V5.8: Qinglan forest creature ecology.
+/* V6.5: Qinglan forest creature ecology and sprite animation.
  * Each enemy has a distinct authored sprite, motion and combat role.
  * Enemy state is ephemeral; older V4 local save files remain compatible.
  */
@@ -13,7 +13,7 @@ const CREATURE_META={
  nether_wisp:{name:'幽冥鬼灯',role:'幽咒·闪现',hp:88,tier:6,r:19,speed:86,art:'assets/nether-wisp.svg'}
 };
 const CREATURE_ART={};
-for(const [id,info] of Object.entries(CREATURE_META)){const img=new Image();img.src=info.art;CREATURE_ART[id]=img}
+for(const [id,info] of Object.entries(CREATURE_META)){const img=new Image();img.src=info.art+'?v=65';CREATURE_ART[id]=img}
 function creatureSpecies(x,y,seed){
  const n=terrainHash(seed,Math.floor(x/160),Math.floor(y/170));
  const b=biome(x,y);
@@ -73,15 +73,29 @@ function updateCreatureMotion(e,hero,dt,now,weak){
  else{if(!terrainBlocked(nx,e.y))e.x=nx;if(!terrainBlocked(e.x,ny))e.y=ny}
 }
 function paintSpeciesEnemy(e,now){
- const id=e.species||'fox',img=CREATURE_ART[id],meta=CREATURE_META[id];
+ const id=e.species||'fox',img=CREATURE_ART[id];
  if(!img||!img.complete||!img.naturalWidth)return false;
- let width=e.r*(id==='wolf'?3.55:id==='bat'?3.8:id==='tortoise'?3.3:id==='frost_stag'?3.65:id==='ember_scorpion'?3.8:id==='nether_wisp'?3.5:3.2);
- let bob=id==='hare'?Math.sin(e.t*11)*3.6:id==='bat'?Math.sin(e.t*9)*4:id==='nether_wisp'?Math.sin(e.t*6.8)*6:Math.sin(e.t*2.4)*1.3;
+ const width=e.r*(id==='wolf'?3.55:id==='bat'?3.8:id==='tortoise'?3.3:
+  id==='frost_stag'?3.65:id==='ember_scorpion'?3.8:id==='nether_wisp'?3.5:3.2);
+ const t=e.t||0,bob=id==='hare'?Math.sin(t*11)*3.6:
+  id==='bat'?Math.sin(t*9)*4:id==='nether_wisp'?Math.sin(t*6.8)*6:
+  id==='frost_stag'?Math.sin(t*4.2)*2.1:Math.sin(t*2.4)*1.2;
  const hurt=now<e.hitFlash;
+ // Keep motions understated so attack hitboxes and visual silhouettes align.
+ const tilt=id==='bat'?Math.sin(t*5.4)*.09:id==='nether_wisp'?Math.sin(t*2.8)*.07:
+  id==='wolf'&&now<e.rushUntil?Math.sin(t*8)*.055:
+  id==='ember_scorpion'&&now<e.rushUntil?Math.sin(t*7)*.045:Math.sin(t*1.5)*.02;
+ const breathe=1+(id==='tortoise'?.012:.024)*Math.sin(t*(id==='hare'?5:2.8));
  ctx.save();
- if(e.elite&&qualityMode==='sharp'){ctx.shadowColor='#f8ca71';ctx.shadowBlur=9}
- if(hurt){ctx.globalAlpha=.6}
- ctx.drawImage(img,e.x-width*.5,e.y-width*.72+bob,width,width);
+ ctx.translate(e.x,e.y);ctx.rotate(tilt);ctx.scale(breathe,breathe);
+ if(hurt){
+  ctx.globalAlpha=.78;
+  ctx.shadowColor='#fff5d7';
+  ctx.shadowBlur=qualityMode==='sharp'?12:5;
+ }else if(e.elite&&qualityMode==='sharp'){
+  ctx.shadowColor=combatFxPalette(id)[1];ctx.shadowBlur=6;
+ }
+ ctx.drawImage(img,-width*.5,-width*.72+bob,width,width);
  ctx.restore();return true;
 }
 function creatureLabel(e){return (e.elite?'精英 · ':'')+(CREATURE_META[e.species]?.name||'妖兽')}
