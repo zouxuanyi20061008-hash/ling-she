@@ -2,6 +2,7 @@ import {useEffect,useRef,useState} from 'react'
 import './academy.css'
 import SixYaoFullChart from './SixYaoFullChart.jsx'
 import SixYaoJointOverview from './SixYaoJointOverview.jsx'
+import SixYaoCombinationPanel from './SixYaoCombinationPanel.jsx'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 import {shareCaseFromArchive} from './case-exchange.js'
 import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
@@ -1765,6 +1766,11 @@ function ReviewReport({chart,question}) {
       {data.evidence_digest.map((text,i)=><p key={i}>{text}</p>)}
       <small>这里只记录两类条件，不作净额评分，也不视为最终旺衰结论。</small>
     </div>}
+    {data.combination_digest?.length>0&&<div className="strength-evidence-report">
+      <h4>六合六冲与三合结构核对</h4>
+      {data.combination_digest.map((x,i)=><p key={i}>{x}</p>)}
+      <small>三合候选为结构线索，不等于合化已经生效或断定吉凶。</small>
+    </div>}
     {data.progression_digest?.length>0&&<div className="strength-evidence-report">
       <h4>动爻进退神 · 逐位核查</h4>
       {data.progression_digest.map((x,i)=><p key={i}>{x}</p>)}
@@ -2005,6 +2011,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
             <p>动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
             <SixYaoFullChart chart={chart}/>
+            <SixYaoCombinationPanel chart={chart}/>
             <SixYaoJointOverview chart={chart} onChooseFocus={chooseFocus}
               onChoosePosition={chooseStudyPosition} busy={calendarBusy}/>
             <nav className="review-flow-nav" ref={reviewNavRef} aria-label="六爻五步研判页面">
