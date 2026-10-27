@@ -1271,3 +1271,37 @@
 .liuren-v63-distinction{background:#fff9e9;padding:9px 12px;border-left:3px solid #af8a45}
 .liuren-v58-plate button small.liuren-v63-empty{font-size:11px}
 @media(max-width:680px){.liuren-v63-branch-table{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* V64 Taiyi annual number plate: dedicated octagonal palace names, not Lo-Shu */
+.taiyi-v64{padding:22px;margin:22px 0;border:1px solid #9db9ad;color:#304f46;background:linear-gradient(140deg,#eef6f0,#e3f0e9)}
+.taiyi-v64>header small{color:#457d66;letter-spacing:.12em}
+.taiyi-v64>header h2{font-size:23px;color:#295c48;margin:7px 0 11px}
+.taiyi-v64>header p{font-size:12px;line-height:1.95}
+.taiyi-v64-form{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:20px 0}
+.taiyi-v64-form label{display:flex;flex-direction:column;gap:6px;flex:1 1 160px;max-width:310px;font-size:12px}
+.taiyi-v64-form input{box-sizing:border-box;width:100%;min-height:42px;padding:9px;border:1px solid #a7b9ab;color:#234d41;background:#fbfefa}
+.taiyi-v64-form button{min-height:42px;background:#28684e;color:#fff;border:0;padding:9px 17px;cursor:pointer}
+.taiyi-v64-form button:disabled{opacity:.55}
+.taiyi-v64-overview{padding:14px;background:#f8fcf7;border-left:4px solid #527f68}
+.taiyi-v64-overview>strong{display:block;font-size:19px;color:#325d42}
+.taiyi-v64-overview>div{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;font-size:12px}
+.taiyi-v64-overview>p{font-size:15px;font-weight:600;margin:8px 0 0}
+.taiyi-v64-result h3{color:#2e6854;margin:21px 0 10px;font-size:17px}
+.taiyi-v64-palaces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.taiyi-v64-palaces button{min-width:0;min-height:99px;padding:13px 7px;display:flex;flex-direction:column;gap:8px;align-items:center;background:#f9fcf9;border:1px solid #bfd2c4;cursor:pointer;color:#416d58}
+.taiyi-v64-palaces button strong{font-size:17px;color:#426451}
+.taiyi-v64-palaces button small{font-size:10px}
+.taiyi-v64-palaces button span{font-size:11px}
+.taiyi-v64-palaces button.taiyi{background:#e6d0a7;border:2px solid #98672a}
+.taiyi-v64-palaces button.taiyi strong{color:#6d491f}
+.taiyi-v64-palaces button.center{border-style:dashed;background:#edf1ed}
+.taiyi-v64-palaces button.selected{outline:2px solid #346f58;outline-offset:2px}
+.taiyi-v64-picked{padding:11px;background:#f9fcf8;font-size:12px}
+.taiyi-v64-cycles,.taiyi-v64-pending{margin-top:16px;padding:11px 15px;background:#f8fbf5;border:1px solid #bbd0bd}
+.taiyi-v64-cycles p,.taiyi-v64-pending p{font-size:12px;line-height:1.95}
+.taiyi-v64-summary{display:flex;flex-wrap:wrap;gap:9px}
+.taiyi-v64-summary span{border:1px solid #b8ceb9;background:#fff;padding:8px;font-size:11px}
+.taiyi-v64-pending{background:#fff9eb;border-color:#d4c39e}
+.taiyi-v64-result>a{font-size:12px;color:#2d7255;text-decoration:underline}
+.taiyi-v64-source-sep{font-size:11px}
+@media(max-width:630px){.taiyi-v64{padding:12px}.taiyi-v64-palaces button{min-height:78px;padding:8px 2px}.taiyi-v64-palaces button strong{font-size:14px}}

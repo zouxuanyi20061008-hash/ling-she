@@ -9,8 +9,8 @@ from app.core.taiyi import year_board,cast_taiyi,YEARLY_RING,YUAN_NAMES
  (1624,10155541,301,5,13,6,"理天","寅"),
  (1625,10155542,302,5,14,6,"理地","丑"),
  (1626,10155543,303,5,15,6,"理人","子"),
- (2024,10155941,341,5,53,2,"理地","辰"),
- (2026,10155943,343,5,55,3,"理天","寅"),
+ (2024,10155941,341,5,53,2,"理地","戌"),
+ (2026,10155943,343,5,55,3,"理天","申"),
 ])
 def test_classical_annual_year_yuan_ju_palace(year,acc,cycle,yuan,ju,palace,tenure,jishen):
     v=year_board(year,historical=True)
