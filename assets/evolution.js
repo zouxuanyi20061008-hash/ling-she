@@ -1,14 +1,14 @@
-/* 灵蛇问道 V5.7 · 五境化形
+/* 灵蛇问道 V6.4 · 五境化形美术重制
  * Scene-independent sprite loader and effects. No saved data schema changes.
  * The first (凡蛇) art uses the original sprite assets; future forms
  * use their own heads, scales, features and different footprint/lighting.
  */
 const SNAKE_FORMS=[
- {name:'凡蛇',title:'初生凡骨',perk:'基础灵息',color:'#b4e2a1',accent:'#628d72',size:41,body:24},
- {name:'灵蛇',title:'玉灵初醒',perk:'灵蛇遁·灵影',color:'#96ffda',accent:'#4cc7ad',size:48,body:29},
- {name:'妖蟒',title:'金鳞凝魄',perk:'灵息弹·溅射',color:'#ffe3a3',accent:'#dcab5c',size:55,body:35},
- {name:'蛟龙',title:'覆海生角',perk:'灵蛇遁·疾风',color:'#b7efff',accent:'#62b6cf',size:64,body:38},
- {name:'真龙',title:'九霄龙吟',perk:'灵息弹·三重龙息',color:'#fff1b9',accent:'#e5bb68',size:72,body:43}
+ {name:'凡蛇',title:'初生凡骨',perk:'基础灵息',color:'#d3f2ac',accent:'#63967c',size:40,body:23},
+ {name:'灵蛇',title:'玉灵初醒',perk:'灵蛇遁·灵影',color:'#b7ffe5',accent:'#36a99c',size:50,body:30},
+ {name:'妖蟒',title:'金鳞凝魄',perk:'灵息弹·溅射',color:'#ffdc92',accent:'#bb9559',size:61,body:36},
+ {name:'蛟龙',title:'覆海生角',perk:'灵蛇遁·疾风',color:'#c5faff',accent:'#55aacf',size:70,body:40},
+ {name:'真龙',title:'九霄龙吟',perk:'灵息弹·三重龙息',color:'#fff4c2',accent:'#e5b95e',size:80,body:47}
 ];
 const HEAD_ART_PATHS=[
  'assets/jade-snake-head.svg','assets/evo1-head.svg','assets/evo2-head.svg','assets/evo3-head.svg','assets/evo4-head.svg'
@@ -39,16 +39,23 @@ function addDashEcho(x,y,a,stage){
  dashEchoes.push({x,y,a,stage,until:performance.now()+420});
  if(dashEchoes.length>18)dashEchoes.shift();
 }
+/* V6.4: each realm owns a distinct head silhouette and scale atlas.
+ * The body is still painted in the existing trail loop: no new entities or
+ * simulation-side state. High-quality glints are sparse (<5 per long serpent).
+ */
 function paintEvolvedBody(t,i,stage,now){
  const index=Math.max(0,Math.min(4,stage|0)),im=SNAKE_BODY_IMAGES[index];
  if(!im.complete||!im.naturalWidth)return paintBody(t,i);
  const style=SNAKE_FORMS[index];
- const tailTaper=Math.max(.62,1-i/Math.max(16,trail.length)*.36);
+ const tailTaper=Math.max(.56,1-i/Math.max(17,trail.length)*.44);
  const width=style.body*tailTaper;
  ctx.drawImage(im,t.x-width*.5,t.y-width*.52,width,width*1.02);
- if(index>=3&&i%4===0&&qualityMode==='sharp'){
-  ctx.fillStyle=index===4?'#fff6cd88':'#a3efff73';
-  ctx.fillRect(t.x-1,t.y-width*.36,2,3);
+ if(index>=2&&qualityMode==='sharp'&&i%5===0){
+  // The individual gold/azure scale glint is readable even on a narrow tail.
+  ctx.save();ctx.strokeStyle=style.color;ctx.lineWidth=index>=3?1.7:1.1;
+  ctx.globalAlpha=.29+.13*Math.sin(now*.0025+i*.9);
+  ctx.beginPath();ctx.arc(t.x-width*.13,t.y-width*.21,width*.12,3.5,5.45);ctx.stroke();
+  ctx.restore();
  }
  return true;
 }
@@ -58,29 +65,33 @@ function paintEvolvedHead(p,a,stage,now){
  const style=SNAKE_FORMS[index],size=style.size;
  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(a-Math.PI/2);
  if(index>=1){
-  ctx.strokeStyle=style.accent;ctx.lineWidth=index>=3?2.4:1.3;
-  ctx.globalAlpha=.3+.12*Math.sin(now*.005);
-  ctx.beginPath();ctx.ellipse(0,3,size*.43,size*.43,0,0,Math.PI*2);ctx.stroke();
+  // Rear rim: the actual horns, crest and whiskers are baked into each SVG,
+  // preventing expensive per-frame vector outlines on low-memory devices.
+  ctx.strokeStyle=style.accent;
+  ctx.lineWidth=index>=3?2.2:1.2;
+  ctx.globalAlpha=(qualityMode==='smooth'?.17:.22)+.055*Math.sin(now*.0037);
+  ctx.beginPath();ctx.ellipse(0,2,size*.49,size*.49,0,0,Math.PI*2);ctx.stroke();
   ctx.globalAlpha=1;
  }
  ctx.drawImage(im,-size*.5,-size*.5,size,size);
- if(index===4&&qualityMode==='sharp'){
-  ctx.fillStyle='#fff4cf';ctx.beginPath();ctx.arc(0,-size*.29,2.5,0,Math.PI*2);ctx.fill();
+ if(index>=3&&qualityMode==='sharp'){
+  ctx.fillStyle=index===4?'#fff0bc':'#d5ffff';
+  ctx.globalAlpha=.57+.2*Math.sin(now*.004);
+  ctx.beginPath();ctx.arc(0,-size*.25,index===4?2.9:1.9,0,Math.PI*2);ctx.fill();
  }
  ctx.restore();return true;
 }
 function paintSerpentAura(p,stage,now){
  if(stage<1)return;
- const info=SNAKE_FORMS[stage];
- ctx.save();
- ctx.strokeStyle=info.color;
- ctx.lineWidth=stage>=3?2:1.2;
- ctx.globalAlpha=(qualityMode==='smooth'?.16:.25)+(Math.sin(now*.004)*.055);
- ctx.beginPath();
- ctx.ellipse(p.x,p.y+3,18+stage*5,10+stage*3,0,0,Math.PI*2);ctx.stroke();
- if(stage===4){
-  ctx.globalAlpha=.12;
-  ctx.beginPath();ctx.ellipse(p.x,p.y+3,40,20,0,0,Math.PI*2);ctx.stroke();
+ const index=Math.max(0,Math.min(4,stage|0)),info=SNAKE_FORMS[index];
+ const pulse=Math.sin(now*.0038)*.055;
+ ctx.save();ctx.strokeStyle=info.color;
+ ctx.lineWidth=index>=3?1.9:1.2;
+ ctx.globalAlpha=(qualityMode==='smooth'?.11:.19)+pulse;
+ ctx.beginPath();ctx.ellipse(p.x,p.y+3,20+index*5,11+index*3,0,0,Math.PI*2);ctx.stroke();
+ if(index>=3&&qualityMode==='sharp'){
+  ctx.globalAlpha=.085+.025*Math.sin(now*.0026);
+  ctx.beginPath();ctx.ellipse(p.x,p.y+4,25+index*7,14+index*4,0,0,Math.PI*2);ctx.stroke();
  }
  ctx.restore();
 }
@@ -121,19 +132,35 @@ function paintEvolvedProjectile(p,now){
 }
 function paintEvolutionWorldFx(p,now){
  if(evolutionScene.until>now){
-  const stage=evolutionScene.stage,progress=Math.min(1,(now-evolutionScene.start)/2600);
-  const alpha=Math.min(1,progress*6, (1-progress)*2.6);
+  const stage=evolutionScene.stage;
+  const progress=Math.min(1,Math.max(0,(now-evolutionScene.start)/2600));
+  const alpha=Math.max(0,Math.min(1,progress*7,(1-progress)*2.7));
   const info=SNAKE_FORMS[stage];
   ctx.save();ctx.globalAlpha=alpha*.72;ctx.lineWidth=2.2;ctx.strokeStyle=info.color;
   for(let j=0;j<3;j++){
-   let r=(progress*130+j*32)%140;
+   const r=(progress*140+j*34)%151;
    ctx.beginPath();ctx.ellipse(p.x,p.y,r,Math.max(8,r*.46),-.09,0,Math.PI*2);ctx.stroke();
+  }
+  // Realm-specific breakthrough rays. Only rendered for 2.6 seconds.
+  if(stage>=2){
+   const rays=qualityMode==='smooth'?6:stage>=4?12:9;
+   for(let j=0;j<rays;j++){
+    const a=j*Math.PI*2/rays+progress*.22;
+    const near=34+stage*4+progress*10,far=near+19+stage*3;
+    ctx.strokeStyle=j%2?info.color:'#fff8df';ctx.lineWidth=stage===4?2.5:1.5;
+    ctx.globalAlpha=alpha*(j%2?.48:.66);
+    ctx.beginPath();
+    ctx.moveTo(p.x+Math.cos(a)*near,p.y+Math.sin(a)*near*.55);
+    ctx.lineTo(p.x+Math.cos(a)*far,p.y+Math.sin(a)*far*.55);
+    ctx.stroke();
+   }
   }
   const count=qualityMode==='smooth'?8:16;
   for(let j=0;j<count;j++){
-   let t=j*2.399963+now*.0007;
-   let r=23+progress*92+Math.sin(j*3.6)*14;
-   let x=p.x+Math.cos(t)*r,y=p.y+Math.sin(t)*r*.66;
+   const theta=j*2.399963+now*.0007;
+   const r=23+progress*92+Math.sin(j*3.6)*14;
+   const x=p.x+Math.cos(theta)*r,y=p.y+Math.sin(theta)*r*.66;
+   ctx.globalAlpha=alpha*.84;
    ctx.fillStyle=j%2?info.color:'#fff9d9';
    ctx.fillRect(Math.round(x),Math.round(y),stage>=3?4:3,stage>=3?6:4);
   }
