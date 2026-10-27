@@ -380,6 +380,14 @@ export function SpiritActionAuditStudy({chart}){
     static_role_reference:'静态五行参考 · 并未发动',
     indirect_role:'仇神间接角色 · 不直接作用用神'
   }
+  const flagLabel={
+    original_xun_void:'本爻旬空',original_month_clash:'本爻月冲',
+    original_day_clash:'本爻日冲',actual_changed_xun_void:'真实化爻旬空',
+    actual_changed_month_clash:'真实化爻月冲',
+    returning_restrains_source:'回头克',returning_clash:'回头冲',
+    residual_month_qi:'月令余气'
+  }
+  const visibleFlags=flags=>flags.map(code=>flagLabel[code]||code).join('、')
   return <section className="focus-effect-review" aria-label="V45用神原忌仇明动链复核">
     <header><small>V45 · 原忌仇真实明动路径审查</small>
       <h3>原忌直连、仇神双段 · 只算真实本卦动爻</h3></header>
@@ -405,7 +413,7 @@ export function SpiritActionAuditStudy({chart}){
             <p>{kindLabel[source.kind]}</p>
             {source.relation_to_target&&<p>已算方向：{source.relation_to_target}</p>}
             <p>来源条件：{source.source_limit_flags.length?
-              source.source_limit_flags.join('、'):'未见当前已算的空破回头限制标记'}（不判断是否有效）</p>
+              visibleFlags(source.source_limit_flags):'未见当前已算的空破回头限制标记'}（不判断是否有效）</p>
             {source.missing_inputs.map((x,i)=><p key={i}>待补：{x}</p>)}
           </details>)}
       </article>)}</div>
@@ -413,7 +421,7 @@ export function SpiritActionAuditStudy({chart}){
       {candidate.two_hop_paths.map((hop,i)=><p key={i}>
         仇神双段候选（经{hop.via_role}）：{hop.positions.map(p=>POS[p-1]+'爻').join(' → ')}
         · {hop.first_relation} → {hop.second_relation}。不证明作用传递或吉凶。</p>)}
-      {candidate.target_limit_flags.length>0&&<p>用神自身需核：{candidate.target_limit_flags.join('、')}</p>}
+      {candidate.target_limit_flags.length>0&&<p>用神自身需核：{visibleFlags(candidate.target_limit_flags)}</p>}
       {candidate.missing_inputs.map((x,i)=><p key={i}>用神待补：{x}</p>)}
     </>}
     <p className="focus-effect-boundary">{data.boundary}</p>

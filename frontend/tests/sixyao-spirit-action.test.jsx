@@ -29,6 +29,7 @@ it('V45 shows direct moving roles, two original-moving hops, and no efficacy cla
   }}}/>)
   expect(screen.getByText(/V45 · 原忌仇真实明动路径审查/)).toBeTruthy()
   expect(screen.getByText(/原忌同时明动直连/)).toBeTruthy()
-  expect(screen.getByText(/甲子.*甲辰/)).toBeTruthy()
+  expect(screen.getByText(/初爻 → 四爻 → 三爻/)).toBeTruthy()
+  expect(screen.getByText(/真实化爻旬空/)).toBeTruthy()
   expect(screen.getByText(/未完成效力判断/)).toBeTruthy()
 })
