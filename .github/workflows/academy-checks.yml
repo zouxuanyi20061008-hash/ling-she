@@ -149,6 +149,17 @@ jobs:
           name: bazi-v57-flow-year-month
           path: backend/acceptance-output/bazi-v57.json
           if-no-files-found: error
+      - name: Run V58 Liuren ancient lesson and transmission acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/liuren_v58_acceptance.py --output backend/acceptance-output/liuren-v58.json
+      - name: Upload V58 Liuren verified historical examples
+        uses: actions/upload-artifact@v4
+        with:
+          name: liuren-v58-classic-lessons
+          path: backend/acceptance-output/liuren-v58.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
