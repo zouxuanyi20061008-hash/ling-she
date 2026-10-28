@@ -248,6 +248,17 @@ jobs:
           name: taiyi-v66-55-to-59-historical-cases
           path: backend/acceptance-output/taiyi-v66.json
           if-no-files-found: error
+      - name: Run V67 Taiyi annual Dingji and central-five general acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v67_acceptance.py --output backend/acceptance-output/taiyi-v67.json
+      - name: Upload V67 Taiyi Dingji original counted-path fixtures
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v67-dingji-central-five
+          path: backend/acceptance-output/taiyi-v67.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]

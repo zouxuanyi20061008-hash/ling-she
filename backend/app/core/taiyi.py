@@ -134,7 +134,9 @@ def year_board(gregorian_year:int, *, historical:bool=False,
 
     from .taiyi_v65 import decorate_taiyi_v65
     from .taiyi_v66 import decorate_taiyi_v66
-    return decorate_taiyi_v66(decorate_taiyi_v65(board),same_palace_rule)
+    from .taiyi_v67 import decorate_taiyi_v67
+    return decorate_taiyi_v67(
+        decorate_taiyi_v66(decorate_taiyi_v65(board),same_palace_rule))
 
 
 def cast_taiyi(gregorian_year:int,same_palace_rule:str="wubeizhi")->dict:

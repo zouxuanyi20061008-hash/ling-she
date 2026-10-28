@@ -16,7 +16,7 @@ def test_five_consecutive_original_ancient_full_plates(
    year,ju,wen,shiji,main,guest,mg,ma,gg,ga):
     c=year_board(year)
     v=c["main_guest"]
-    assert c["version"]=="V66"
+    assert c["version"]=="V67"
     assert c["year"]["ju"]==ju
     assert c["historical_case_audit"]["status"]=="verified_original_text"
     assert c["historical_case_audit"]["ju"]==ju
@@ -53,7 +53,7 @@ def test_55_direct_original_two_sources_and_same_palace_single_step():
 def test_conservative_mode_preserves_v65_without_faked_counts():
     a=year_board(2026)
     b=year_board(2026,same_palace_rule="conservative")
-    assert b["version"]=="V66"
+    assert b["version"]=="V67"
     assert b["same_palace_rule"]=="conservative"
     assert b["main_guest"]["guest_calculated"] is None
     assert b["main_guest"]["status"]=="partially_computed"
@@ -90,7 +90,7 @@ def test_360_year_period_and_199_years_always_have_verified_two_calcs():
     for year in range(1901,2100):
         d=cast_taiyi(year)
         v=d["main_guest"]
-        assert d["version"]=="V66"
+        assert d["version"]=="V67"
         assert v["status"]=="computed"
         assert v["main_calculated"]>0 and v["guest_calculated"]>0
         assert len(d["sixteen_spirits"])==16
