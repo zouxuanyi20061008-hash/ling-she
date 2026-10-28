@@ -153,5 +153,6 @@ def decorate_taiyi_v79(chart:dict)->dict:
     chart["main_guest_version"]="V79"
     chart["warnings"].append(
         "V79按甲子日简捷时计起点逐位求始击与主客算及大参将；"
-        "遇与太乙同宫保守待判，定计、合神、八门及吉凶断课仍未完成。")
-    return chart
+        "遇与太乙同宫保守待判，完整定计、合神、八门及吉凶断课尚待后续核验。")
+    from .taiyi_hour_v80 import decorate_taiyi_v80
+    return decorate_taiyi_v80(chart)
