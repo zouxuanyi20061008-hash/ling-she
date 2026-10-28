@@ -1392,3 +1392,27 @@
 .liuren-v76-lesson-proof span{padding:4px 9px;border:1px solid #cfdddd;
  background:#fff;border-radius:7px;font-size:13px}
 .liuren-v76-witness a{margin-left:8px;color:#1c6371;text-decoration:underline}
+
+/* V77 太乙时计独立二至阴阳八宫，区别岁计的年积七十二局。 */
+.taiyi-v77-hour{margin:20px 0;padding:18px 20px;border:1px solid #a6b9ca;
+ border-radius:14px;background:linear-gradient(140deg,#eef3f9,#faf5e9);
+ color:#283e55;line-height:1.85}
+.taiyi-v77-hour h3{margin:4px 0 8px;font-size:22px;color:#273b59}
+.taiyi-v77-form{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:14px 0}
+.taiyi-v77-form label{display:flex;flex-direction:column;gap:6px;font-weight:600}
+.taiyi-v77-form input{min-height:40px;padding:8px;border:1px solid #afbfc8;border-radius:8px}
+.taiyi-v77-form button{min-height:40px;padding:8px 16px;border-radius:8px;border:1px solid #566a80;
+ background:#2d496c;color:white;font-weight:600;cursor:pointer}
+.taiyi-v77-form button:disabled{opacity:.6;cursor:wait}
+.taiyi-v77-result h4{margin:10px 0;font-size:18px}
+.taiyi-v77-palace-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:8px;max-width:660px}
+.taiyi-v77-cell{display:flex;flex-direction:column;min-height:88px;gap:3px;
+ padding:10px 12px;border:1px solid #b7c5cf;border-radius:8px;background:#fffdf7}
+.taiyi-v77-cell strong{font-size:16px}
+.taiyi-v77-cell small,.taiyi-v77-cell span{color:#5c6e7a;font-size:12px}
+.taiyi-v77-cell.is-taiyi{border:2px solid #83683b;background:#f9edcd}
+.taiyi-v77-cell.is-center{background:#edf0f1}
+@media(max-width:540px){.taiyi-v77-hour{padding:12px}
+ .taiyi-v77-palace-grid{gap:5px}.taiyi-v77-cell{padding:7px;min-height:84px}
+ .taiyi-v77-cell strong{font-size:13px}}

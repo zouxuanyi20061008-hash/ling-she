@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import './academy.css'
+import TaiyiV77Hour from './TaiyiV77Hour.jsx'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
   year:'numeric'}).format(new Date()))
@@ -58,6 +59,7 @@ export default function TaiyiV64(){
       </label>
       <button type="submit" disabled={busy}>{busy?'正在排岁计…':'计算太乙年局'}</button>
     </form>
+    <TaiyiV77Hour/>
     {error&&<p className="academy-caution" role="alert">{error}</p>}
     {chart&&<div className="taiyi-v64-result">
       <div className="taiyi-v64-overview">
