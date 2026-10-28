@@ -11,6 +11,7 @@ export default function TaiyiV64(){
   const [error,setError]=useState('')
   const [picked,setPicked]=useState(null)
   const [pickedSpirit,setPickedSpirit]=useState(null)
+  const [samePalaceRule,setSamePalaceRule]=useState('wubeizhi')
   async function cast(event){
     event.preventDefault()
     const n=Number(year)
@@ -23,7 +24,8 @@ export default function TaiyiV64(){
     try{
       const response=await fetch('/api/taiyi/cast',{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({gregorian_year:n})
+        body:JSON.stringify({gregorian_year:n,
+          ...(samePalaceRule==='conservative'?{same_palace_rule:'conservative'}:{})})
       })
       const result=await response.json()
       if(!response.ok)throw new Error(typeof result.detail==='string'?
@@ -35,17 +37,24 @@ export default function TaiyiV64(){
   }
   const chosen=chart?.nine_palaces.find(p=>p.number===picked)
   const spirit=chart?.sixteen_spirits?.find(s=>s.index===pickedSpirit)
-  return <section className="taiyi-v64" aria-label="V65 太乙真实岁计">
-    <header><small>V65 · 太乙神数 / 十六神主客投算</small>
+  return <section className="taiyi-v64" aria-label="V66 太乙真实岁计">
+    <header><small>V66 · 太乙神数 / 主客取算异派校勘</small>
       <h2>积年推局 · 太乙八宫行次</h2>
       <p>采用《古今图书集成》天启四年与《太乙金钥匙》嘉靖四十年的同系积年，
         实算五元、七十二局、太乙行宫、理天理地理人及岁计计神。此为岁计，
-        不把冬夏至转换的时计阴阳规则混入。V65 新增文昌、始击的真实位置与逐位主客算。</p>
+        不把冬夏至转换的时计阴阳规则混入。V66 已实现文昌、始击同宫的《武备志》特法，并保留 V65 谨慎待算口径供切换。</p>
     </header>
     <form onSubmit={cast} className="taiyi-v64-form">
       <label>公历年份
         <input type="number" aria-label="太乙岁计公历年" min="1901" max="2099" step="1"
           value={year} onChange={e=>setYear(e.target.value)} required/>
+      </label>
+      <label>同宫特殊取算口径
+        <select aria-label="太乙同宫计算口径" value={samePalaceRule}
+          onChange={e=>setSamePalaceRule(e.target.value)}>
+          <option value="wubeizhi">《武备志》同宫取本宫数（默认）</option>
+          <option value="conservative">谨慎口径：同宫待校勘（V65）</option>
+        </select>
       </label>
       <button type="submit" disabled={busy}>{busy?'正在排岁计…':'计算太乙年局'}</button>
     </form>
@@ -120,6 +129,9 @@ export default function TaiyiV64(){
         </section>
         <section className="taiyi-v65-counts" role="group" aria-label="V65 主客逐宫投算证据">
           <h3>主客投算 · 可逐位复核</h3>
+          {chart.main_guest.same_palace_rule_label&&<p>
+            当前同宫取算口径：<strong>{chart.main_guest.same_palace_rule_label}</strong>。
+            非同宫课仍沿用原有逐宫累计算法。</p>}
           <div className="taiyi-v65-count-grid">
             {[
               ['主算 · 文昌出发',chart.main_guest.main_general],
@@ -129,13 +141,19 @@ export default function TaiyiV64(){
               {calc.status==='computed'?<>
                 <strong>{calc.count} 算</strong>
                 <p>大将 {calc.main_general} 宫 · 参将 {calc.assistant_general} 宫</p>
+                {calc.special_rule_applied&&<p className="taiyi-v66-special">
+                  <strong>同宫特例已计算</strong>：按《武备志》只取本宫数，
+                  不沿十六神再绕一周；原 V65 待算分支仍有记录。
+                </p>}
                 <div className="taiyi-v65-steps">
                   {calc.trace.map(x=><span key={x.order}
                     className={x.added>0?'counted':''}>
                     {x.direction} {x.god}：+{x.added}
                   </span>)}
                 </div>
-                <p>行至太乙{calc.stop_palace}宫前止，不计本宫。</p>
+                <p>{calc.special_rule_applied?
+                 '同宫特法：在太乙'+calc.stop_palace+'宫取本宫数后立即止算。':
+                 '常规法：行至太乙'+calc.stop_palace+'宫前止，不计本宫。'}</p>
               </>:<>
                 <strong>待校勘</strong>
                 <p>{calc.reason}</p>
@@ -151,12 +169,31 @@ export default function TaiyiV64(){
               </>}
             </article>)}
           </div>
+          {chart.historical_case_audit&&<p className="taiyi-v66-verified">
+            阳遁第{chart.historical_case_audit.ju}局已与独立古籍原文逐项核对：
+            文昌、始击、主客算以及大将迁宫有完整例盘证据。
+          </p>}
           {chart.main_guest.verified_by_independent_ancient_case&&<p>
             本年份文昌、始击、主客算已与独立古籍固定例盘逐项相符。</p>}
           <p>本盘主客状态：{chart.main_guest.status==='computed'?'两方均已计算':
              chart.main_guest.status==='partially_computed'?'仅部分已计算':'待核验'}。
              主客将与主客算是古典算式，不代表现实事件吉凶。</p>
         </section>
+        {chart.school_disagreements?.length>0&&<section className="taiyi-v66-disagreements"
+            role="group" aria-label="太乙古籍异文比对">
+          <h3>古籍异文 · 保留不同记载</h3>
+          {chart.school_disagreements.map((c,i)=><div key={i}>
+            <strong>{c.topic}</strong>
+            <p>{c.chosen_school}：主算{c.chosen_main_count}；
+              {c.other_school}：主算{c.other_main_count}。
+              当前程序遵循实际逐宫投算，其他记载不自动覆盖结果。</p>
+            <a href={c.chosen_source} target="_blank" rel="noopener noreferrer">
+              当前口径原文</a>
+            <span>　·　</span>
+            <a href={c.other_source} target="_blank" rel="noopener noreferrer">
+              异文原文</a>
+          </div>)}
+        </section>}
       </>}
       {!chart.main_guest.heaven_eye_wenchang&&<section aria-label="太乙主客待校勘" className="taiyi-v64-pending">
         <h3>主客计算 · 原典校勘中</h3>
@@ -170,7 +207,7 @@ export default function TaiyiV64(){
           <strong>仅为古籍原文校验值，并非本版主客计算结果。</strong>
         </p>}
       </section>}
-      <p className="academy-caution">V65 为古典岁计结构推演，不包含月计、日计、时计或现代事件预测。
+      <p className="academy-caution">V66 为古典岁计结构推演，不包含月计、日计、时计或现代事件预测。
         不同太乙历元传承不能混用；同宫主客异派口径并列，不将未核准的主客将数字充当默认排盘结论。</p>
       <a href={chart.sources.historical_1624} target="_blank" rel="noopener noreferrer">
         《古今图书集成》1624 年原始年局案例</a>

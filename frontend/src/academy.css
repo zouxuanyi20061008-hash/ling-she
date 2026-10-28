@@ -1328,3 +1328,13 @@
 .taiyi-v65-variant{background:#fff5e3;border-left:3px solid #af7a43;padding:9px;margin:10px 0}
 .taiyi-v65-variant a{color:#316e56;text-decoration:underline;font-size:11px}
 @media(max-width:650px){.taiyi-v65-count-grid{grid-template-columns:1fr}.taiyi-v65-spirits{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* V66 classical same-palace calculation and source disagreement auditing */
+.taiyi-v64-form select{width:100%;min-height:42px;box-sizing:border-box;border:1px solid #a7b9ab;background:#f9fcf5;padding:9px;color:#24513d;font:inherit}
+.taiyi-v66-special{padding:10px;background:#e5f4e6;border-left:3px solid #568469;color:#276146}
+.taiyi-v66-special strong{display:block}
+.taiyi-v66-verified{background:#ecf7ed;padding:10px;border-left:3px solid #427b50}
+.taiyi-v66-disagreements{margin:18px 0;padding:13px;border:1px solid #d4b992;background:#fff9ed;color:#684e31}
+.taiyi-v66-disagreements h3{font-size:16px;margin:6px 0}
+.taiyi-v66-disagreements p{line-height:1.8;font-size:12px}
+.taiyi-v66-disagreements a{color:#75461b;font-size:12px;text-decoration:underline}
