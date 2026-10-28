@@ -52,7 +52,8 @@ def test_period_change_uses_real_2024_lichun_clock_not_fixed_feb_four_midnight()
     assert determine_period(date(2019,6,1),time(12))["period"]==8
 
 def test_period5_and_seed5_borrowing_under_nine():
-    c=cast_fengshui(0,foundation_date=date(2026,6,1))
+    # 输入朝向180度才是坐子向午；0度为坐午向子。
+    c=cast_fengshui(180,foundation_date=date(2026,6,1))
     assert c["period"]["period"]==9
     assert c["flying_stars"]["mountain_trace"]["seed"]==5
     assert c["flying_stars"]["mountain_trace"]["borrowed_five"] is True
