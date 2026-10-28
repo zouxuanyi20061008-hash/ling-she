@@ -14,7 +14,7 @@ def test_two_independent_ancient_year_host_guest_walks(
         year,wen,shiji,main,guest,mgen,mcan,ggen,gcan):
     c=year_board(year,historical=True)
     v=c["main_guest"]
-    assert c["version"]=="V66"
+    assert c["version"]=="V67"
     assert v["status"]=="computed"
     assert v["heaven_eye_wenchang"]["god"]==wen
     assert v["earth_eye_shiji"]["god"]==shiji
@@ -117,7 +117,7 @@ def test_api_2026_returns_partial_without_fabricated_guest():
     c=TestClient(app).post("/api/taiyi/cast",json={"gregorian_year":2026})
     assert c.status_code==200,c.text
     d=c.json()
-    assert d["version"]=="V66"
+    assert d["version"]=="V67"
     assert d["main_guest"]["main_calculated"]==16
     assert d["main_guest"]["guest_calculated"]==3
     conservative=TestClient(app).post("/api/taiyi/cast",json={

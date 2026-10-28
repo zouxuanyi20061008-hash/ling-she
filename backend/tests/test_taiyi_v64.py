@@ -87,7 +87,7 @@ def test_api_year_input_and_ancient_rollover_422():
     for year in (1901,2024,2026,2099):
         r=cli.post("/api/taiyi/cast",json={"gregorian_year":year})
         assert r.status_code==200,r.text
-        assert r.json()["version"]=="V66"
+        assert r.json()["version"]=="V67"
         assert r.json()["year"]["gregorian_year"]==year
     for year in (1561,1624,2100,-1,"hello"):
         r=cli.post("/api/taiyi/cast",json={"gregorian_year":year})

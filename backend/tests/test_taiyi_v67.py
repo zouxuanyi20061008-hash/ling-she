@@ -58,10 +58,16 @@ def test_center_five_kept_as_a_general_without_moving_taiyi():
 
 def test_conservative_dingji_special_stays_pending_if_starts_same_palace():
     a=calculate_dingji("子",INDEX["子"],8,"conservative")
-    assert a["dingji_ground_direction"]=="丑"
-    # choose explicit direct example with start equal to a Taiyi palace
-    b=calculate_dingji("辰",INDEX["酉"],4,"conservative")
-    assert b["status"] in ("pending","computed")
+    assert a["dingji_ground_direction"]=="亥"
+    # 酉合加辰：文昌申恰下临卯宫，太乙四宫。
+    b=calculate_dingji("辰",INDEX["申"],4,"conservative")
+    assert b["dingji_ground_direction"]=="卯"
+    assert b["status"]=="pending" and b["count"] is None
+    assert b["main_general"] is None and b["assistant_general"] is None
+    c=calculate_dingji("辰",INDEX["申"],4,"wubeizhi")
+    assert c["status"]=="computed"
+    assert (c["count"],c["main_general"],c["assistant_general"])==(4,4,2)
+    assert c["same_palace_rule_applied"]
     with pytest.raises(ValueError):calculate_dingji("辰",INDEX["坤"],7,"fictional")
 
 

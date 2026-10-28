@@ -16,7 +16,7 @@ def verify():
         assert (result["dingji_ground_direction"],result["dingji_ground_god"])==(eye,god)
         assert (result["count"],result["main_general"],result["assistant_general"])==(
             count,big,assistant)
-        assert [[p["direction"],p["added"]] for p in result["trace"] if p["added"]]>0==details
+        assert [[p["direction"],p["added"]] for p in result["trace"] if p["added"]>0]==details
         classics.append({"classical_case":year,"annual_branch":year_branch,
           "wenchang_direction":wen,"taiyi_palace":ty,
           "dingji_eye":eye,"dingji_god":god,
