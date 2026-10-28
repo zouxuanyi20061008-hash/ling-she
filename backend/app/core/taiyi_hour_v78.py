@@ -62,7 +62,7 @@ def hour_wenchang_from_count(count:int,dun:str)->dict:
        "full_18_cycles":(count-1)//18,
        "sequence_start":SCHOOLS[dun]["first"],
        "double_stay_directions":list(SCHOOLS[dun]["double"]),
-       "direction":"十六神顺行，四隅两宫各重留一算",
+       "movement":"十六神顺行，四隅两宫各重留一算",
        "trace":seq,"has_real_eighteen_count":True,
     }
 
