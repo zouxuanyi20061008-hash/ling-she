@@ -1371,3 +1371,14 @@
 .liuren-v74-branch h4{margin:0 0 8px;font-family:serif;font-size:17px;color:#365f47}
 .liuren-v74-branch p{margin:5px 0}
 .liuren-v74-branch a{text-decoration:underline;color:#365f47}
+
+/* V75 reverse-chant traced depth and visibly separated textual alternatives. */
+.liuren-v75-reverse{margin:18px 0;padding:16px 18px;background:#f5f3e9;
+ border:1px solid #b1bdad;border-radius:12px;color:#374d40;line-height:1.85}
+.liuren-v75-reverse h4{margin:0 0 10px;font-size:17px;color:#2a5945}
+.liuren-v75-depth-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.liuren-v75-depth-list article{padding:10px;background:#fffefa;border:1px solid #d8dacf;border-radius:8px;
+ display:flex;flex-direction:column;gap:3px}
+.liuren-v75-variants{border-top:1px dashed #b5b9ad;margin-top:12px;padding-top:8px}
+.liuren-v75-variants p{margin:5px 0}
+.liuren-v75-variants a{margin-left:8px;color:#2d6855;text-decoration:underline}

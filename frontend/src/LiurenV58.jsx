@@ -8,6 +8,7 @@ export default function LiurenV58(){
   const [clock,setClock]=useState('12:00')
   const [dayBoundary,setDayBoundary]=useState('zi_hour')
   const [nobleMode,setNobleMode]=useState('hour_branch')
+  const [fanyinTieSchool,setFanyinTieSchool]=useState('pending')
   const [chart,setChart]=useState(null)
   const [selected,setSelected]=useState('子')
   const [error,setError]=useState('')
@@ -27,7 +28,8 @@ export default function LiurenV58(){
       const r=await fetch('/api/liuren/cast',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({solar_date:date,clock,day_boundary:dayBoundary,
-          ...(nobleMode!=='hour_branch'?{noble_mode:nobleMode}:{})})
+          ...(nobleMode!=='hour_branch'?{noble_mode:nobleMode}:{}),
+          ...(fanyinTieSchool!=='pending'?{fanyin_tie_school:fanyinTieSchool}:{})})
       })
       const result=await r.json()
       if(!r.ok)throw new Error(typeof result.detail==='string'?result.detail:'请核对日期或时辰')
@@ -41,8 +43,8 @@ export default function LiurenV58(){
       if(ticket===requestVersion.current)setBusy(false)
     }
   }
-  return <section className="liuren-v58" aria-label="V74 大六壬真实起课">
-    <header><small>V74 · 大六壬 / 伏吟例外与三传未决审查</small>
+  return <section className="liuren-v58" aria-label="V75 大六壬真实起课">
+    <header><small>V75 · 大六壬 / 反吟多克深浅与古籍分栏</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
       <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。</p>
     </header>
@@ -69,6 +71,15 @@ export default function LiurenV58(){
           <option value="day">手动指定昼贵</option>
           <option value="night">手动指定夜贵</option>
         </select>
+      </label>
+      <label>反吟复等取法（仅戊辰、戊戌同深适用）
+        <select aria-label="反吟复等古籍取法" value={fanyinTieSchool}
+          onChange={e=>{setFanyinTieSchool(e.target.value);invalidate()}}>
+          <option value="pending">默认保留待判（古籍分歧不自动选）</option>
+          <option value="tanyuan">《大六壬探原》：先见干上亥</option>
+          <option value="cunyan">《六壬存验》：戊辰实占巳（戊戌不适用）</option>
+        </select>
+        <small>仅影响涉害同深的反吟课；不同书的初传可能相反。</small>
       </label>
       <button type="submit" disabled={busy}>{busy?'起课中…':'起大六壬天地盘'}</button>
     </form>
@@ -161,6 +172,37 @@ export default function LiurenV58(){
         </article>)}
       </div>
       <h3>三传 · 初传、中传、末传</h3>
+      {chart.fanyin_shehai_v75?.applied&&<section className="liuren-v75-reverse"
+          role="group" aria-label="V75 反吟多克逐宫涉害与古籍流派">
+        <h4>V75 · 反吟多克涉害逐宫核算</h4>
+        <p>先校对四课贼克候选：{chart.fanyin_shehai_v75.original_candidates.join('、')}；
+          依日干阴阳比较，再沿真实天盘上神下临地宫逐宫计害。</p>
+        <div className="liuren-v75-depth-list">
+          {chart.fanyin_shehai_v75.candidate_details.map(c=>
+            <article key={c.upper}>
+              <strong>候选 {c.upper} · 下临地 {c.actual_ground_palace}</strong>
+              <span>计首宫 {c.shehai_trace.depth} 重；
+                不计首宫 {c.shehai_excluding_start.depth} 重</span>
+              <small>归本家路径：{c.shehai_trace.path.join(' → ')}</small>
+              <small>原四课：{c.lesson_numbers.join('、')}课</small>
+            </article>)}
+        </div>
+        <p>{chart.fanyin_shehai_v75.selected_initial?
+          '当前发用：'+chart.fanyin_shehai_v75.selected_initial+'（'+chart.fanyin_shehai_v75.decision_rule+'）':
+          '计害同深，未选古籍口径时三传继续待判，不自动挑第一候选。'}</p>
+        {Object.keys(chart.fanyin_shehai_v75.historical_alternatives).length>0&&
+          <div className="liuren-v75-variants">
+            <p><strong>古籍独立例课分歧（不合并）</strong></p>
+            {Object.entries(chart.fanyin_shehai_v75.historical_alternatives).map(([school,v])=>
+              <p key={school}>{school==='tanyuan'?'《大六壬探原》':'《六壬存验》'}：
+                {v.transmissions.join(' → ')}
+                <a href={v.source} rel="noopener noreferrer" target="_blank">原文</a>
+              </p>)}
+          </div>}
+        {chart.fanyin_shehai_v75.reason_pending&&
+          <p className="academy-caution">{chart.fanyin_shehai_v75.reason_pending}</p>}
+        <p>V75 仅处理反吟多贼克的涉害计算；九宗门其他异文、流派断课和实际应期仍未判定。</p>
+      </section>}
       {chart.pending_branch_review&&<section className="liuren-v74-branch"
           role="group" aria-label="V74 大六壬三传古籍例外与未决审查">
         <h4>V74 · {chart.pending_branch_review.label}</h4>
