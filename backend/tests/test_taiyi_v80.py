@@ -38,7 +38,8 @@ def test_original_887_harmony_and_dingji_are_derived_not_copied():
     assert d["rotation"]["rotated_sixteen"][INDEX["戌"]]["heaven"]=="卯"
     assert d["rotation"]["rotated_sixteen"][INDEX["巳"]]["heaven"]=="乾"
     assert d["source_calc_status"]=="computed"
-    assert [p["added"] for p in d["computed_trace"]]==[1,2,7,6,1,8,3,4]
+    assert [p["added"] for p in d["computed_trace"] if p["added"]>0]==[
+        1,2,7,6,1,8,3,4]
     assert d["computed_trace_sum"]==32
     assert sum(p["added"] for p in d["computed_trace"])==32
     assert "巽" not in [p["direction"] for p in d["computed_trace"]]

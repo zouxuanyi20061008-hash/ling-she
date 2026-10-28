@@ -14,7 +14,8 @@ def audit():
     door=hour_door_chief(887,"阳遁")
     shortcut=hour_door_chief(47,"阳遁")
     assert (d["harmony"]["god"],d["dingji_eye"]["god"])==("高丛","大神")
-    assert [x["added"] for x in d["computed_trace"]]==[1,2,7,6,1,8,3,4]
+    assert [x["added"] for x in d["computed_trace"] if x["added"]>0]==[
+        1,2,7,6,1,8,3,4]
     assert d["computed_trace_sum"]==32
     assert d["source_disagreement"]["printed_total"]==33
     assert d["count"] is None and d["status"]=="source_conflict"

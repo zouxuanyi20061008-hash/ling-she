@@ -59,7 +59,8 @@ def _source_conflict(count:int,dun:str,branch:str,eye:dict,calc:dict)->dict|None
     """Compare ancient text without making its 33 a magical extra unit."""
     if ((count-1)%360)!=(887-1)%360 or dun!="阳遁":
         return None
-    actual=[row["added"] for row in calc["trace"]]
+    # 逐宫保留零项以供溯源；原典只抄入真正加数的八项。
+    actual=[row["added"] for row in calc["trace"] if row["added"]>0]
     reference=WITNESS_887
     if (branch!="戌" or eye["dingji_ground_direction"]!="巳" or
         eye["dingji_ground_god"]!="大神" or
