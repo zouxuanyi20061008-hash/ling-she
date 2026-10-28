@@ -42,7 +42,7 @@ export default function TaiyiV77Hour(){
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。本版是二至以来相对时数，
-        **不是**古籍上元甲子积时五元七十二局或完整主客断课。</p>
+        <strong>不是</strong>古籍上元甲子积时五元七十二局或完整主客断课。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
