@@ -182,4 +182,5 @@ def decorate_taiyi_v78(chart:dict,now:datetime,solstice:datetime)->dict:
            "交节或占时落23点子初换日边界：不同历书换日口径可能改变甲子日校准，"
            "请用另一历元排盘交叉核对。")
     chart["historical_ju_version"]="V78"
-    return chart
+    from .taiyi_hour_v79 import decorate_taiyi_v79
+    return decorate_taiyi_v79(chart)
