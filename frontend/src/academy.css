@@ -1427,3 +1427,18 @@
 .taiyi-v78-trace{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .taiyi-v78-trace span{padding:4px 7px;border:1px solid #e6d9c0;border-radius:6px;background:#fff;font-size:12px}
 .taiyi-v78-epoch a{color:#75572e;text-decoration:underline}
+
+/* V79 Taiyi hour Shiji, source-separated main/guest counts, pending same-palace cases. */
+.taiyi-v79-main-guest{border:1px solid #aebc9e;background:#f4f7ee;
+ color:#334a31;border-radius:12px;margin:17px 0;padding:16px 18px;line-height:1.82}
+.taiyi-v79-main-guest h4{font-size:18px;margin:0 0 10px}
+.taiyi-v79-main-guest p{margin:7px 0}
+.taiyi-v79-sides{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+ gap:11px;margin:12px 0}
+.taiyi-v79-sides article{background:#fffefa;border:1px solid #d6e0c7;
+ border-radius:9px;padding:12px}
+.taiyi-v79-sides h5{font-size:16px;margin:0 0 6px;color:#376342}
+.taiyi-v79-trace,.taiyi-v79-spirits{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.taiyi-v79-trace span,.taiyi-v79-spirits span{font-size:12px;border-radius:6px;
+ padding:5px 8px;background:#fff;border:1px solid #cbd6bd}
+.taiyi-v79-main-guest a{color:#33654b;text-decoration:underline}

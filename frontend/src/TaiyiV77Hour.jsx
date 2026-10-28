@@ -36,14 +36,15 @@ export default function TaiyiV77Hour(){
       if(ticket===version.current)setBusy(false)
     }
   }
-  return <section className="taiyi-v77-hour" aria-label="V78 太乙时计分历元实盘">
+  return <section className="taiyi-v77-hour" aria-label="V79 太乙时计主客算与历元实盘">
     <header>
-      <small>V78 · 太乙时计 / 冬夏至相对时与甲子元简捷积时</small>
+      <small>V79 · 太乙时计 / 始击主客算与甲子元简捷积时</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
         V78 另算冬夏至前最近甲子日简捷历元的五元七十二局、六纪与阴阳文昌十八算；
-        它不是古代绝对上元积时，也不是完整主客断课。</p>
+        V79 增加计神加和德取始击、主客逐宫投算与大参将；
+        它仍不是古代绝对上元积时或完整时计断课。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
@@ -116,21 +117,82 @@ export default function TaiyiV77Hour(){
             '两法此课恰同宫，不代表历元相同。':
             '两法此课太乙入宫不同；独立展示，不互相覆盖。'}</p>
         <p className="academy-caution">《太乙金钥匙》的“47时”只可独立核对行宫，
-          不能跳过甲子元23局直接推出文昌；古代绝对上元积时、时计始击、
-          主客定计、八门及断课仍待核准。</p>
+          不能跳过甲子元23局直接推出文昌；古代绝对上元积时、时计定计、
+          合神、八门及断课仍待核准。</p>
         <a href={chart.classical_jiazi_hour_v78.sources.independent_887_and_47}
           target="_blank" rel="noopener noreferrer">887时与47时原例</a>
         <span> · </span>
         <a href={chart.classical_jiazi_hour_v78.sources.yin_63}
           target="_blank" rel="noopener noreferrer">戊子元阴63局原例</a>
       </section>}
+      {chart.hour_main_guest_v79&&<section className="taiyi-v79-main-guest"
+          role="group" aria-label="V79 时计始击与主客大小将实盘">
+        <h4>V79 · 始击与主客投算（甲子日前简捷历元）</h4>
+        <p>本时局来自 V78 的
+          <strong> {chart.hour_main_guest_v79.five_yuan_name}
+            {chart.hour_main_guest_v79.dun}{chart.hour_main_guest_v79.ju}局</strong>，
+          太乙{chart.hour_main_guest_v79.taiyi_palace}宫；
+          计神{chart.hour_main_guest_v79.jishen}。
+          文昌 <strong>{chart.hour_main_guest_v79.heaven_eye_wenchang.direction}
+            ·{chart.hour_main_guest_v79.heaven_eye_wenchang.god}</strong>；
+          始击 <strong>{chart.hour_main_guest_v79.earth_eye_shiji.direction}
+            ·{chart.hour_main_guest_v79.earth_eye_shiji.god}</strong>。
+        </p>
+        <p>始击算法：将计神加于艮和德，再看文昌所临之下。
+          主客双方分别按自己的起算目顺行十六神，遇太乙宫前截止。</p>
+        <div className="taiyi-v79-sides">
+          {[
+             {label:'主',v:chart.hour_main_guest_v79.main},
+             {label:'客',v:chart.hour_main_guest_v79.guest}
+           ].map(({label,v})=><article key={label}>
+            <h5>{label}算 · {v.status==='computed'?v.count+' 算':'同宫规则待判'}</h5>
+            {v.status==='computed'?
+              <p>{label}大将 <strong>{v.main_general}宫</strong>，
+                {label}参将 <strong>{v.assistant_general}宫</strong></p>:
+              <p className="academy-caution">{v.reason}</p>}
+            <details>
+              <summary>展开{label}方逐宫取算路径
+                {v.status==='computed'?'（不含太乙本宫）':'（保留原典异法）'}</summary>
+              {v.status==='computed'?
+                <div className="taiyi-v79-trace" role="group"
+                    aria-label={label+'方主客逐位投算'}>
+                  {v.trace.map(s=><span key={s.order}>
+                    {s.order}. {s.direction}·{s.god} {s.added>0?'＋'+s.added:'＋0'}
+                  </span>)}
+                </div>:
+                <p>本方尚无唯一可核时计同宫取算依据，不显示虚构算数。</p>}
+            </details>
+          </article>)}
+        </div>
+        <p>{chart.hour_main_guest_v79.status==='computed'?
+          '主客双方逐宫实算完毕；这只是传统排盘结构，不构成现实断语。':
+          '本课有同宫特殊取算未核：只显示已核的一方，不把未决数补为零或套用岁计异法。'}</p>
+        <details>
+          <summary>核对 V79 时计十六神：文昌、始击与计神实际位置</summary>
+          <div className="taiyi-v79-spirits" role="group"
+               aria-label="V79 时计十六神原始位置">
+            {chart.hour_main_guest_v79.sixteen_spirits.map(s=><span key={s.index}>
+              {s.direction}·{s.god}
+              {s.has_wenchang?' [文昌]':''}
+              {s.has_shiji?' [始击]':''}
+              {s.has_jishen?' [计神]':''}
+            </span>)}
+          </div>
+        </details>
+        <p className="academy-caution">本盘依据 V78 二至前甲子日简捷积时，
+          尚未完成时计合神、定计、八门和绝对上元历元；不输出吉凶或应期。</p>
+        <a href={chart.hour_main_guest_v79.sources.ancient_887}
+          target="_blank" rel="noopener noreferrer">
+          《太乙金钥匙》庚戌时主16客23、大参6/8与3/9古籍例盘
+        </a>
+      </section>}
       {chart.solstice.near_15_minutes&&
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
-      <p className="academy-caution">V78 已计算甲子日前简捷积时的五元七十二局、
-        六纪及文昌十八算；古代绝对上元积时、始击、主客定计与断课仍待校核。
-        岁计与时计各用自己的历元，不得直接混用。</p>
+      <p className="academy-caution">V79 在 V78 甲子日前简捷积时上增算始击、主客算与大参将；
+        同宫待判及完整定计、合神、八门、古代绝对上元积时仍未校核。
+        岁计与时计历元独立，不能混用，也不生成现实断语。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>
       <span> · </span>
