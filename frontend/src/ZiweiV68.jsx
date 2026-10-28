@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState,useRef} from 'react'
 import './ziwei-v68.css'
 
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
@@ -20,8 +20,14 @@ export default function ZiweiV68(){
  const [selected,setSelected]=useState(null)
  const [busy,setBusy]=useState(false)
  const [error,setError]=useState('')
+ const requestVersion=useRef(0)
+ function invalidate(){
+   requestVersion.current+=1
+   setChart(null);setSelected(null);setError('');setBusy(false)
+ }
  async function submit(e){
    e.preventDefault()
+   const ticket=++requestVersion.current
    setBusy(true);setError('');setChart(null);setSelected(null)
    const body={calendar_type:calendarType,clock,gender,leap_month_rule:leapRule,
      ...(fourSchool==='common'?{four_transform_school:'common'}:{}),
@@ -34,9 +40,14 @@ export default function ZiweiV68(){
      const result=await res.json()
      if(!res.ok)throw new Error(typeof result.detail==='string'?
        result.detail:'出生日期、闰月或时辰无效')
-     setChart(result);setSelected(result.ming_branch)
-   }catch(e){setError(e.message||'排盘失败')}
-   finally{setBusy(false)}
+     if(ticket===requestVersion.current){
+       setChart(result);setSelected(result.ming_branch)
+     }
+   }catch(e){
+     if(ticket===requestVersion.current)setError(e.message||'排盘失败')
+   }finally{
+     if(ticket===requestVersion.current)setBusy(false)
+   }
  }
  const chosen=chart?.palaces?.find(p=>p.branch===selected)
  return <section className="ziwei-v68" aria-label="V69 紫微四化与辅曜真实排盘">
@@ -48,43 +59,43 @@ export default function ZiweiV68(){
    <form onSubmit={submit} className="ziwei-v68-form">
      <label>日期历法
        <select aria-label="紫微日期历法" value={calendarType}
-         onChange={e=>{setCalendarType(e.target.value);setChart(null)}}>
+         onChange={e=>{setCalendarType(e.target.value);invalidate()}}>
          <option value="solar">公历（阳历）</option><option value="lunar">农历（阴历）</option>
        </select>
      </label>
      {calendarType==='solar'?<label>公历出生日期
        <input type="date" aria-label="紫微公历日期" required
          min="1901-01-01" max="2099-12-31" value={solarDate}
-         onChange={e=>setSolarDate(e.target.value)}/>
+         onChange={e=>{setSolarDate(e.target.value);invalidate()}}/>
      </label>:<>
        <label>农历出生年<input type="number" aria-label="紫微农历年" required
-         min="1901" max="2099" value={lunarYear} onChange={e=>setLunarYear(e.target.value)}/></label>
+         min="1901" max="2099" value={lunarYear} onChange={e=>{setLunarYear(e.target.value);invalidate()}}/></label>
        <label>农历月<input type="number" aria-label="紫微农历月" required
-         min="1" max="12" value={lunarMonth} onChange={e=>setLunarMonth(e.target.value)}/></label>
+         min="1" max="12" value={lunarMonth} onChange={e=>{setLunarMonth(e.target.value);invalidate()}}/></label>
        <label>农历日<input type="number" aria-label="紫微农历日" required
-         min="1" max="30" value={lunarDay} onChange={e=>setLunarDay(e.target.value)}/></label>
+         min="1" max="30" value={lunarDay} onChange={e=>{setLunarDay(e.target.value);invalidate()}}/></label>
        <label>出生于闰月
          <input type="checkbox" aria-label="紫微闰月" checked={leap}
-           onChange={e=>setLeap(e.target.checked)}/>
+           onChange={e=>{setLeap(e.target.checked);invalidate()}}/>
        </label>
      </>}
      <label>北京时间<input type="time" aria-label="紫微北京时间" required
-       value={clock} onChange={e=>setClock(e.target.value)}/></label>
+       value={clock} onChange={e=>{setClock(e.target.value);invalidate()}}/></label>
      <label>性别（仅影响大限）
-       <select aria-label="紫微性别" value={gender} onChange={e=>setGender(e.target.value)}>
+       <select aria-label="紫微性别" value={gender} onChange={e=>{setGender(e.target.value);invalidate()}}>
          <option value="unspecified">不填写（不排大限）</option>
          <option value="male">男</option><option value="female">女</option>
        </select>
      </label>
      <label>闰月安宫口径
-       <select aria-label="紫微闰月口径" value={leapRule} onChange={e=>setLeapRule(e.target.value)}>
+       <select aria-label="紫微闰月口径" value={leapRule} onChange={e=>{setLeapRule(e.target.value);invalidate()}}>
          <option value="same_month">闰月按本月（默认）</option>
          <option value="next_month">闰月按下月（异法）</option>
        </select>
      </label>
      <label>生年四化流派
        <select aria-label="紫微四化流派" value={fourSchool}
-         onChange={e=>setFourSchool(e.target.value)}>
+         onChange={e=>{setFourSchool(e.target.value);invalidate()}}>
          <option value="quanshu">《紫微斗数全书》（壬年天府化科）</option>
          <option value="common">现代通行表（壬年左辅化科）</option>
        </select>

@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState,useRef} from 'react'
 import './fengshui-v70.css'
 
 export default function FengshuiV70(){
@@ -14,8 +14,14 @@ export default function FengshuiV70(){
   const [selectedMountain,setSelectedMountain]=useState(null)
   const [busy,setBusy]=useState(false)
   const [error,setError]=useState('')
+  const requestVersion=useRef(0)
+  function invalidate(){
+    requestVersion.current+=1
+    setChart(null);setSelectedMountain(null);setError('');setBusy(false)
+  }
   async function calculate(event){
     event.preventDefault()
+    const ticket=++requestVersion.current
     setError('');setChart(null);setSelectedMountain(null)
     const angle=Number(bearing)
     if(bearing.trim()===''||!Number.isFinite(angle)||angle<0||angle>360){
@@ -43,10 +49,15 @@ export default function FengshuiV70(){
       const result=await response.json()
       if(!response.ok)throw new Error(typeof result.detail==='string'?
         result.detail:'参数未通过方位计算校验。')
-      setChart(result)
-      setSelectedMountain(result.facing.mountain)
-    }catch(e){setError(e?.message||'二十四山计算失败，请核对输入。')}
-    finally{setBusy(false)}
+      if(ticket===requestVersion.current){
+        setChart(result)
+        setSelectedMountain(result.facing.mountain)
+      }
+    }catch(e){
+      if(ticket===requestVersion.current)setError(e?.message||'二十四山计算失败，请核对输入。')
+    }finally{
+      if(ticket===requestVersion.current)setBusy(false)
+    }
   }
   const picked=chart?.twenty_four_mountains?.find(x=>x.mountain===selectedMountain)
   return <section className="fengshui-v70" aria-label="V71 堪舆二十四山与玄空飞星计算">
@@ -61,18 +72,18 @@ export default function FengshuiV70(){
     <form onSubmit={calculate} className="fengshui-v70-form">
       <label>量得方位角（0°～360°）
         <input type="number" aria-label="堪舆方位角" min="0" max="360"
-          step="any" required value={bearing} onChange={e=>setBearing(e.target.value)}/>
+          step="any" required value={bearing} onChange={e=>{setBearing(e.target.value);invalidate()}}/>
       </label>
       <label>当前输入的方向
         <select aria-label="堪舆输入坐向" value={role}
-          onChange={e=>{setRole(e.target.value);setChart(null)}}>
+          onChange={e=>{setRole(e.target.value);invalidate()}}>
           <option value="facing">朝向（向）</option>
           <option value="sitting">坐向（坐）</option>
         </select>
       </label>
       <label>角度参考基准
         <select aria-label="堪舆北向基准" value={north}
-          onChange={e=>{setNorth(e.target.value);setChart(null)}}>
+          onChange={e=>{setNorth(e.target.value);invalidate()}}>
           <option value="true_north">真北（已经校正）</option>
           <option value="magnetic_north">磁北（需自行提供磁偏角）</option>
         </select>
@@ -80,24 +91,24 @@ export default function FengshuiV70(){
       {north==='magnetic_north'&&<label>当地磁偏角（东偏正，西偏负）
         <input type="number" aria-label="堪舆磁偏角" min="-180" max="180"
           step="any" required value={declination}
-          onChange={e=>setDeclination(e.target.value)}
+          onChange={e=>{setDeclination(e.target.value);invalidate()}}
           placeholder="例如：+5 或 -6"/>
         <small>网站不自动查询磁偏角。请确认测量地点和日期后填写。</small>
       </label>}
       <label className="fengshui-v71-toggle">启用 V71 玄空三盘
         <input type="checkbox" aria-label="启用 V71 玄空三盘"
-          checked={enableFlying} onChange={e=>{setEnableFlying(e.target.checked);setChart(null)}}/>
+          checked={enableFlying} onChange={e=>{setEnableFlying(e.target.checked);invalidate()}}/>
         <small>按入宅/立极/重大改修的日期定运；默认不自动推定建筑元运。</small>
       </label>
       {enableFlying&&<>
         <label>立极日期（公历，北京时间）
           <input type="date" aria-label="堪舆立极公历日期"
             min="1901-01-01" max="2099-12-31" required
-            value={foundationDate} onChange={e=>{setFoundationDate(e.target.value);setChart(null)}}/>
+            value={foundationDate} onChange={e=>{setFoundationDate(e.target.value);invalidate()}}/>
         </label>
         <label>立极时刻（北京时间）
           <input type="time" aria-label="堪舆立极北京时间" required
-            value={foundationClock} onChange={e=>{setFoundationClock(e.target.value);setChart(null)}}/>
+            value={foundationClock} onChange={e=>{setFoundationClock(e.target.value);invalidate()}}/>
         </label>
       </>}
       <button type="submit" disabled={busy}>{busy?'正在计算…':enableFlying?'计算玄空三盘':'计算二十四山坐向'}</button>
