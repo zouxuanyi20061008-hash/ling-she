@@ -170,4 +170,5 @@ def decorate_taiyi_v82(chart:dict)->dict:
     chart["warnings"].append(
       "V82 已按八卦环序列出太乙/主客大将/定计目四种原典锚点的候选八门排布；"
       "不同古法可能落宫不一致，时计完整八门例盘未交叉证实，不标记为唯一正式盘。")
-    return chart
+    from .taiyi_hour_v83 import decorate_taiyi_v83
+    return decorate_taiyi_v83(chart)
