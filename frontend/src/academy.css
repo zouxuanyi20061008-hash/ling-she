@@ -1489,3 +1489,15 @@
 @media(max-width:540px){.taiyi-v82-schools{padding:11px}
 .taiyi-v82-nine{gap:5px}.taiyi-v82-cell{min-height:80px;padding:6px}
 .taiyi-v82-cell strong{font-size:14px}}
+
+/* V83 two authentic but different hourly chief-door starting epochs. */
+.taiyi-v83-epoch{margin:17px 0;padding:16px 18px;border-radius:12px;
+ border:1px solid #c8af8f;background:#faf5eb;color:#5d4a36;line-height:1.85}
+.taiyi-v83-epoch h4{font-size:18px;margin:0 0 7px;color:#72502f}
+.taiyi-v83-epoch p{margin:9px 0}
+.taiyi-v83-clocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;margin:13px 0}
+.taiyi-v83-clocks article{background:#fffcf6;border-radius:9px;padding:12px 14px;
+ border:1px solid #e0ccb0;display:flex;flex-direction:column;gap:7px}
+.taiyi-v83-clocks small{font-size:12px;color:#826a47}
+.taiyi-v83-clocks strong{font-size:23px;color:#82592c}
+.taiyi-v83-epoch a{color:#76502b;text-decoration:underline}

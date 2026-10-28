@@ -46,9 +46,9 @@ export default function TaiyiV77Hour(){
     jinjing_guest:'《太乙金镜式经》·直使加客大将',
     jinyao_dingji_eye:'《太乙金钥匙》·直使加定计目'
   }
-  return <section className="taiyi-v77-hour" aria-label="V82 太乙时计分古法八门候选盘">
+  return <section className="taiyi-v77-hour" aria-label="V83 太乙时计双历元直使与八门古法候选">
     <header>
-      <small>V82 · 太乙时计 / 八门四种原典起宫法分栏核验</small>
+      <small>V83 · 太乙时计 / 王希明二至气应法与甲子日起门双历元</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
@@ -57,7 +57,9 @@ export default function TaiyiV77Hour(){
         V80 增加时支六合合神、定计目、十六神逐宫定算与四门120时直使。
         V81 继续保留庚戌时定计32／33原文矛盾；
         V82 将古籍“直使加太乙／主客大将／定计目”四种起宫方法分栏旋宫。
-        所得八门图是有出处的数学候选，并非唯一已验真的完整时计式。</p>
+        所得八门图是有出处的数学候选，并非唯一已验真的完整时计式。
+        V83 加入王希明二至气应起门，与V78甲子日前捷法分开显示，
+        不把一个历元的直使挪到另一个历元的主客大将上。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
@@ -323,6 +325,53 @@ export default function TaiyiV77Hour(){
          <a href={chart.hour_v81_door_location_candidate.primary_text_rules[1].source}
             target="_blank" rel="noopener noreferrer">直使加定计目的古法出处</a>
        </section>}
+      {chart.hour_v83_chief_epoch_comparison&&
+        <section className="taiyi-v83-epoch" role="group"
+          aria-label="V83 太乙时计二至气应和甲子捷法直使对照">
+          <h4>V83 · 两种时计历元分别推直使</h4>
+          <p>原典《太乙金镜式经》载旧法甲子日起门、
+            王希明新法以冬夏至气应即时起门，不拘固定干支日。
+            两种起点不可默认相同。</p>
+          <div className="taiyi-v83-clocks">
+            <article>
+              <small>王希明 · 二至交节后相对时实（V77）</small>
+              <strong>{chart.hour_v83_chief_epoch_comparison.solstice_chief}门</strong>
+              <span>积{chart.hour_v83_chief_epoch_comparison.relative_count}时，
+                门内第{chart.hour_v83_chief_epoch_comparison.solstice_hour_in_door}时</span>
+              <span>来源：《太乙金镜式经》二至气应起门</span>
+            </article>
+            <article>
+              <small>前甲子日简捷积时（V78–V82）</small>
+              <strong>{chart.hour_v83_chief_epoch_comparison.jiazi_chief}门</strong>
+              <span>积{chart.hour_v83_chief_epoch_comparison.previous_jiazi_count}时，
+                门内第{chart.hour_v83_chief_epoch_comparison.jiazi_hour_in_door}时</span>
+              <span>来源：《太乙金钥匙》甲子简捷起点</span>
+            </article>
+          </div>
+          <p>起点相差 <strong>
+            {chart.hour_v83_chief_epoch_comparison.offset_between_epoch_hours}时</strong>，
+            120时周余
+            {chart.hour_v83_chief_epoch_comparison.offset_modulo_120}时。
+            <strong>{chart.hour_v83_chief_epoch_comparison.same_chief_door?
+              ' 两法此课直使门名相同。':
+              ' 两法此课直使门名不同，必须分别保留。'}</strong>
+            {chart.hour_v83_chief_epoch_comparison.same_chief_and_hour_in_door?
+              ' 两法本课门内时数也相同，并不证明起点一致。':
+              ' 两法不能作为同一个值使起算结果。'}
+          </p>
+          <p className="academy-caution">
+            下方 V82 八门九宫候选使用
+            <strong>前甲子日捷法</strong>的文昌、主客大将与直使。
+            不得把此处王希明二至法直使直接套到下方原有大将宫；
+            气应派完整八门主客宫仍未单独验证。</p>
+          <p>
+            <a href={chart.hour_v83_chief_epoch_comparison.jinjing_solstice_relative.source}
+              target="_blank" rel="noopener noreferrer">《太乙金镜式经》二至气应起门原文</a>
+            {' · '}
+            <a href={chart.hour_v83_chief_epoch_comparison.jinyao_jiazi_shortcut.source}
+              target="_blank" rel="noopener noreferrer">《太乙金钥匙》时计起门法</a>
+          </p>
+        </section>}
       {v82&&<section className="taiyi-v82-schools" role="group"
         aria-label="V82 太乙时计四派八门古籍旋宫候选">
         <h4>V82 · 分古籍起宫的八门候选排布</h4>
@@ -397,10 +446,10 @@ export default function TaiyiV77Hour(){
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
-      <p className="academy-caution">V82 按古籍八卦门环生成分派候选，
-        未获完整时计八门独立例盘，不能作为唯一落门结果。
-        定算32／33冲突、同宫待判、古代绝对上元积时均未核验；
-        岁计、交节时实与甲子日起点各自独立，不作现实吉凶判断。</p>
+      <p className="academy-caution">V83 增加二至气应法与甲子日捷法独立起门时实；
+        V82 四种起宫候选仍属甲子捷法，不能跨历元互换主客大将。
+        定算32／33冲突、同宫待判、完整八门落宫与古代绝对上元积时未核验；
+        岁计独立，不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>
       <span> · </span>
