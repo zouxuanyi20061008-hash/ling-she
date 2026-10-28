@@ -101,7 +101,12 @@ def test_annual_taiyi_and_hour_taiyi_not_mixed():
     assert hour["canonical_historical_hour_count"] is None
     assert hour["hour_wenchang"] is None
     assert hour["has_full_hour_chart"] is False
-    assert hour["has_complete_shiji_and_hour_main_guest"] is False
+    # V79 已在可唯一取算的时局实算始击/主客，旧 V77 一律 false
+    # 的前置验收不再适用。仍必须阻止冒称全部时计完成。
+    assert hour["has_hour_shiji"] is True
+    assert hour["hour_main_guest_v79"]["version"]=="V79"
+    assert hour["has_complete_shiji_and_hour_main_guest"]==(
+        hour["hour_main_guest_v79"]["status"]=="computed")
     assert hour["fortune_verdict"] is None
     assert sum(x["is_taiyi"] for x in hour["nine_palaces"])==1
     assert next(x for x in hour["nine_palaces"] if x["number"]==5)["is_middle_unvisited"]
