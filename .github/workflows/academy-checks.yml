@@ -347,6 +347,17 @@ jobs:
           name: liuren-v75-reverse-chant-unique-depth-and-classic-variant
           path: backend/acceptance-output/liuren-v75.json
           if-no-files-found: error
+      - name: Run V76 Liuren exact historical witness and 8640 source-scope audit
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/liuren_v76_acceptance.py --output backend/acceptance-output/liuren-v76.json
+      - name: Upload V76 Liuren historical single-case versus general-rule evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: liuren-v76-classical-evidence-scope-24-tied-plates
+          path: backend/acceptance-output/liuren-v76.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
