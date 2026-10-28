@@ -78,16 +78,32 @@ def decorate_liuren_v75(chart:dict, tie_school:str="pending")->dict:
     if day in ("戊辰","戊戌") and set(x["upper"] for x in rows)=={"亥","巳"}:
         ancient_alternatives["tanyuan"]={
             "first":"亥","transmissions":["亥","巳","亥"],"source":SOURCE_TANYUAN}
-        if day=="戊辰":
+        # 《六壬存验》只给出一张具体戊辰日戌将辰时实占；
+        # 同一反吟偏移的十二时刻可排同形盘，但没有古籍证据表示
+        # 其特殊发用可以扩散到其余十一个时将组合。
+        cunyan_witness=(
+            day=="戊辰"
+            and chart["month_general"]=="戌"
+            and chart["hour_branch"]=="辰"
+            and tuple((p["upper"],p["lower"]) for p in chart["four_lessons"])==(
+                ("亥","戊"),("巳","亥"),("戌","辰"),("辰","戌"))
+        )
+        if cunyan_witness:
             ancient_alternatives["cunyan"]={
-                "first":"巳","transmissions":["巳","亥","巳"],"source":SOURCE_CUNYAN}
+                "first":"巳","transmissions":["巳","亥","巳"],
+                "source":SOURCE_CUNYAN,
+                "evidence_scope":"single_exact_four_lessons_and_time",
+                "witness":{"day":"戊辰","month_general":"戌","hour_branch":"辰",
+                           "hour_ganzhi":"丙辰"}}
     if winner is None and ancient_alternatives:
         if tie_school in ancient_alternatives:
             winner=ancient_alternatives[tie_school]["first"]
             choice="explicit_classical_school"
         else:
             note=("同深复等存在独立古籍取法差异，默认维持待判。" if tie_school=="pending"
-                  else "本日未核到所选《六壬存验》独立整盘，不推导另一日的同法。")
+                  else ("《六壬存验》仅有戊辰日戌将辰时此一完整实占；本课时将不吻合，不能把同形盘推断为同一古籍结论。"
+                        if day=="戊辰" else
+                        "本日未核到所选《六壬存验》独立整盘，不推导另一日的同法。"))
     elif winner is None:
         note="涉害同深且孟仲季/干支先见仍无唯一解，保留待判"
     report={

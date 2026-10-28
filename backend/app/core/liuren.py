@@ -153,11 +153,12 @@ def build_liuren(day:str,month_general:str,占时:str,reference:dict|None=None,
     from .liuren_v63 import decorate_liuren_v63
     from .liuren_v74 import decorate_liuren_v74
     from .liuren_v75 import decorate_liuren_v75
-    return decorate_liuren_v74(decorate_liuren_v63(decorate_liuren_v62(
+    from .liuren_v76 import decorate_liuren_v76
+    return decorate_liuren_v76(decorate_liuren_v74(decorate_liuren_v63(decorate_liuren_v62(
         decorate_liuren_v75(
             decorate_liuren_v61(decorate_liuren_v60(decorate_liuren_v59(result))),
             tie_school=fanyin_tie_school),
-        noble_mode=noble_mode)))
+        noble_mode=noble_mode))))
 
 
 def cast_liuren(d:date,clock:time,day_boundary:str="zi_hour",
