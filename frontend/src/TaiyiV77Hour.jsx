@@ -12,6 +12,7 @@ export default function TaiyiV77Hour(){
   const [chart,setChart]=useState(null)
   const [busy,setBusy]=useState(false)
   const [error,setError]=useState('')
+  const [doorSchool,setDoorSchool]=useState('jinjing_taiyi')
   const version=useRef(0)
   function invalidate(){
     version.current+=1
@@ -36,17 +37,27 @@ export default function TaiyiV77Hour(){
       if(ticket===version.current)setBusy(false)
     }
   }
-  return <section className="taiyi-v77-hour" aria-label="V81 太乙时计原典内证及八门实盘">
+  const v82=chart?.hour_v82_eight_door_schools
+  const doorChoices=v82?.candidates||[]
+  const doorBoard=doorChoices.find(c=>c.school===doorSchool)||doorChoices[0]
+  const doorTitle={
+    jinjing_taiyi:'《太乙金镜式经》·直使加太乙',
+    jinjing_main:'《太乙金镜式经》·直使加主大将',
+    jinjing_guest:'《太乙金镜式经》·直使加客大将',
+    jinyao_dingji_eye:'《太乙金钥匙》·直使加定计目'
+  }
+  return <section className="taiyi-v77-hour" aria-label="V82 太乙时计分古法八门候选盘">
     <header>
-      <small>V81 · 太乙时计 / 直使候选落位与原典内证审查</small>
+      <small>V82 · 太乙时计 / 八门四种原典起宫法分栏核验</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
         V78 另算冬夏至前最近甲子日简捷历元的五元七十二局、六纪与阴阳文昌十八算；
         V79 增加计神加和德取始击、主客逐宫投算与大参将；
         V80 增加时支六合合神、定计目、十六神逐宫定算与四门120时直使。
-        V81 核对古籍定计32/33为同一文本内部冲突，并补充八门直使古法候选定位；
-        冲突盘绝不冒称定大参将已定，也不把时计门位候选当作已核实九宫飞布。</p>
+        V81 继续保留庚戌时定计32／33原文矛盾；
+        V82 将古籍“直使加太乙／主客大将／定计目”四种起宫方法分栏旋宫。
+        所得八门图是有出处的数学候选，并非唯一已验真的完整时计式。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
@@ -312,14 +323,84 @@ export default function TaiyiV77Hour(){
          <a href={chart.hour_v81_door_location_candidate.primary_text_rules[1].source}
             target="_blank" rel="noopener noreferrer">直使加定计目的古法出处</a>
        </section>}
+      {v82&&<section className="taiyi-v82-schools" role="group"
+        aria-label="V82 太乙时计四派八门古籍旋宫候选">
+        <h4>V82 · 分古籍起宫的八门候选排布</h4>
+        <p>八门八卦环序：
+          <strong>开乾、休坎、生艮、伤震、杜巽、景离、死坤、惊兑</strong>。
+          本局实际直使是 <strong>{v82.chief}门</strong>，
+          门内第{v82.chief_hour_in_30}时；环序可校，起点古法却不唯一。</p>
+        {doorBoard&&<>
+          <label className="taiyi-v82-chooser">对照古籍起宫分支
+            <select value={doorBoard.school} aria-label="V82 选择太乙八门古籍起宫法"
+              onChange={e=>setDoorSchool(e.target.value)}>
+              {doorChoices.map(q=><option key={q.school} value={q.school}>
+                {doorTitle[q.school]||q.school}（{q.anchor_palace}宫）
+              </option>)}
+            </select>
+          </label>
+          <p>当前：<strong>{doorTitle[doorBoard.school]||doorBoard.school}</strong>，
+            候选将{doorBoard.chief}门置于
+            <strong>{doorBoard.anchor_palace}宫·{doorBoard.anchor_direction}</strong>，
+            顺八卦方位环旋宫；不得混用太乙的八宫游行顺序。</p>
+          <div className="taiyi-v82-nine" role="group"
+            aria-label="V82 当前古法候选八门九宫布局">
+            {[9,2,7,4,5,6,3,8,1].map(n=><div key={n}
+              className={'taiyi-v82-cell'+(n===5?' is-center':'')+
+                (n===doorBoard.anchor_palace?' is-anchor':'')}>
+              <small>{n}宫</small>
+              <strong>{n===5?'中五不布门':
+                (doorBoard.by_palace[String(n)]||'待判')+'门'}</strong>
+              <small>{n===doorBoard.anchor_palace?'直使候选起点':
+                n===5?'不入八门八方环':'旋宫候选，非已验真'}</small>
+            </div>)}
+          </div>
+          <details>
+            <summary>核对这一古法候选的八方逐宫路径及原典</summary>
+            <div className="taiyi-v82-path" role="group"
+              aria-label="V82 古法八门逐宫候选轨迹">
+              {doorBoard.slots.map(s=><span key={s.palace}>
+                {s.step+1}. {s.direction}·{s.palace}宫 {s.door}门
+                {s.is_chief_anchor?' · 直使候选起点':''}
+              </span>)}
+            </div>
+            <a href={doorBoard.anchor_source} target="_blank" rel="noopener noreferrer">
+              此古法候选起宫原文</a>
+          </details>
+        </>}
+        <p>本局四种来源共核得 {v82.candidate_count} 套可旋宫候选；
+          其他起宫法因同宫未决、中五不能布门或定计目在间神而不能置入正宫。</p>
+        {v82.unplaceable?.length>0&&<details>
+          <summary>查看无法安宫的来源（{v82.unplaceable.length}条）</summary>
+          <div role="group" aria-label="V82 未决八门起宫来源">
+            {v82.unplaceable.map(p=><p key={p.school}>
+              <strong>{doorTitle[p.school]||p.school}</strong>：
+              {p.reason}{p.eye_direction?'；原始定计目：'+p.eye_direction:''}
+            </p>)}
+          </div>
+        </details>}
+        <p className="academy-caution">所有八门方位都只是带有明确来源起点的
+          <strong>条件推演</strong>。古籍庚戌时例只核对了生门直使，
+          未提供完整八门落宫独立真值。不得把任一候选直接当作统一时计盘；
+          庚戌定计32／33及同宫特殊取算仍待校勘。</p>
+        <p><a href={v82.source_support.canonical_eight_door_compass}
+             target="_blank" rel="noopener noreferrer">八门八卦固定环序原文</a>
+          {' · '}
+          <a href={v82.source_support.time_chief_taiyi_main_guest}
+             target="_blank" rel="noopener noreferrer">直使加太乙及主客大将原文</a>
+          {' · '}
+          <a href={v82.source_support.ancient_dingji_eye_variant}
+             target="_blank" rel="noopener noreferrer">定计目古法原文</a>
+        </p>
+      </section>}
       {chart.solstice.near_15_minutes&&
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
-      <p className="academy-caution">V81 对 V80 的定算古籍32／33内部矛盾和
-        “直使加定目”候选位进行逐项来源审查；同宫待判、全部八门飞布未完成。
-        古代绝对上元积时尚未核验；岁计、交节时实与甲子日起点独立，
-        不作现实吉凶判断。</p>
+      <p className="academy-caution">V82 按古籍八卦门环生成分派候选，
+        未获完整时计八门独立例盘，不能作为唯一落门结果。
+        定算32／33冲突、同宫待判、古代绝对上元积时均未核验；
+        岁计、交节时实与甲子日起点各自独立，不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>
       <span> · </span>

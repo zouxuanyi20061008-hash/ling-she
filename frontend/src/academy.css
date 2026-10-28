@@ -1466,3 +1466,26 @@
 .taiyi-v81-spirits span{font-size:12px;border:1px solid #b6cfbe;
  background:#fff;padding:5px 8px;border-radius:7px}
 .taiyi-v81-source-review a{color:#236f60;text-decoration:underline}
+
+/* V82 8-door scenario maps: source-conditional, not a unified attested hourly plate. */
+.taiyi-v82-schools{border:1px solid #a4b1c7;border-radius:12px;
+ background:#f1f3f9;color:#334660;margin:18px 0;padding:16px 18px;line-height:1.85}
+.taiyi-v82-schools h4{margin:0 0 8px;font-size:18px;color:#27466b}
+.taiyi-v82-chooser{display:flex;flex-direction:column;gap:6px;font-weight:600;max-width:570px}
+.taiyi-v82-chooser select{padding:10px;border:1px solid #aebdcc;border-radius:8px;
+ background:white;color:#26394b;max-width:100%}
+.taiyi-v82-nine{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ max-width:680px;gap:8px;margin:12px 0}
+.taiyi-v82-cell{min-height:84px;display:flex;flex-direction:column;gap:5px;
+ border:1px solid #bbcbdb;background:#fff;border-radius:9px;padding:9px}
+.taiyi-v82-cell strong{font-size:17px;color:#335678}
+.taiyi-v82-cell small{font-size:11px;color:#5a6d83}
+.taiyi-v82-cell.is-anchor{background:#f7eed4;border:2px solid #b69551}
+.taiyi-v82-cell.is-center{background:#ebeef1}
+.taiyi-v82-path{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
+.taiyi-v82-path span{background:#fff;padding:5px 9px;border-radius:7px;
+ border:1px solid #bfcedf;font-size:12px}
+.taiyi-v82-schools a{color:#2c608d;text-decoration:underline}
+@media(max-width:540px){.taiyi-v82-schools{padding:11px}
+.taiyi-v82-nine{gap:5px}.taiyi-v82-cell{min-height:80px;padding:6px}
+.taiyi-v82-cell strong{font-size:14px}}
