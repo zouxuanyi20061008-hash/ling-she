@@ -188,13 +188,16 @@ class FengshuiCastRequest(BaseModel):
     north_reference: Literal["true_north","magnetic_north"] = "true_north"
     magnetic_declination_degrees: float | None = Field(
         default=None,ge=-180,le=180,allow_inf_nan=False)
+    foundation_date: date_value | None = Field(default=None)
+    foundation_clock: time_value = time_value(12,0)
 
 
 @app.post("/api/fengshui/cast")
 def fengshui_cast(req: FengshuiCastRequest):
     try:
         return cast_fengshui(req.bearing_degrees,req.bearing_role,
-                             req.north_reference,req.magnetic_declination_degrees)
+                             req.north_reference,req.magnetic_declination_degrees,
+                             req.foundation_date,req.foundation_clock)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 

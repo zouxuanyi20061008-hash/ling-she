@@ -8,6 +8,9 @@
 from __future__ import annotations
 
 import math
+from datetime import date, time
+
+from .fengshui_v71 import decorate_fengshui_v71
 
 MOUNTAINS = tuple("子癸丑艮寅甲卯乙辰巽巳丙午丁未坤申庚酉辛戌乾亥壬")
 TRIGRAMS = ("坎", "艮", "震", "巽", "离", "坤", "兑", "乾")
@@ -83,7 +86,9 @@ def _nine_palaces(sitting: dict, facing: dict) -> list[dict]:
 
 def cast_fengshui(bearing_degrees: float, bearing_role: str = "facing",
                   north_reference: str = "true_north",
-                  magnetic_declination_degrees: float | None = None) -> dict:
+                  magnetic_declination_degrees: float | None = None,
+                  foundation_date: date | None = None,
+                  foundation_clock: time = time(12,0)) -> dict:
     """手动输入轴线角：磁偏角正东负西，真方位角=磁方位角+偏角。"""
     if bearing_role not in ("facing", "sitting"):
         raise ValueError("请明确输入的是朝向还是坐向。")
@@ -124,7 +129,7 @@ def cast_fengshui(bearing_degrees: float, bearing_role: str = "facing",
     if north_reference=="magnetic_north":
         warnings.append("磁偏角为用户手动提供，软件未按地点、日期或地磁模型验证；若偏角不准，真北归山也会改变。")
     warnings.append("本版仅计算静态方位：不自动确定房屋真实坐向、不推断吉凶；未实现玄空飞星、三元九运、分金和形势评估。")
-    return {
+    chart = {
         "version": "V70", "system": "堪舆风水",
         "status": "twenty_four_mountains_and_sitting_facing_computed",
         "input": {
@@ -153,3 +158,7 @@ def cast_fengshui(bearing_degrees: float, bearing_role: str = "facing",
             "兼向与分金流派细算", "形势判断及吉凶断语"
         ], "sources": SOURCES,
     }
+
+    if foundation_date is not None:
+        return decorate_fengshui_v71(chart,foundation_date,foundation_clock)
+    return chart
