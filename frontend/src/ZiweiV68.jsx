@@ -138,7 +138,7 @@ export default function ZiweiV68(){
        {chart.auxiliary_star_positions&&<p>已安辅煞：
          {chosen.auxiliary_stars?.join('、')||'本宫未见本版十二颗辅煞星'}。</p>}
        {chosen.four_transformations?.length>0&&<p>
-         生年四化：{chosen.four_transformations.map(x=>x.star+x.name).join('、')}。</p>
+         生年四化：{chosen.four_transformations.map(x=>x.star+x.name).join('、')}。</p>}
        {chosen.great_limit&&<p>大限：{chosen.great_limit.start_age}–{chosen.great_limit.end_age}岁（传统虚岁）</p>}
      </section>}
      <section className="ziwei-v68-trace" aria-label="紫微安星核对步骤">
