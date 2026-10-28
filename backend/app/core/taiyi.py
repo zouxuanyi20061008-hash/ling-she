@@ -30,7 +30,8 @@ SOURCES={
  "rule":"https://libokang.com/classics/taiyi/%E5%A4%AA%E4%B9%99%E9%87%91%E9%95%9C%E5%BC%8F%E7%BB%8F/",
 }
 
-def year_board(gregorian_year:int, *, historical:bool=False)->dict:
+def year_board(gregorian_year:int, *, historical:bool=False,
+               same_palace_rule:str="wubeizhi")->dict:
     """Pure mathematical ages with explicit epoch lineage; historical fixture option."""
     if isinstance(gregorian_year,bool) or not isinstance(gregorian_year,int):
         raise ValueError("年计必须是整数公历年")
@@ -132,8 +133,9 @@ def year_board(gregorian_year:int, *, historical:bool=False)->dict:
     }
 
     from .taiyi_v65 import decorate_taiyi_v65
-    return decorate_taiyi_v65(board)
+    from .taiyi_v66 import decorate_taiyi_v66
+    return decorate_taiyi_v66(decorate_taiyi_v65(board),same_palace_rule)
 
 
-def cast_taiyi(gregorian_year:int)->dict:
-    return year_board(gregorian_year)
+def cast_taiyi(gregorian_year:int,same_palace_rule:str="wubeizhi")->dict:
+    return year_board(gregorian_year,same_palace_rule=same_palace_rule)

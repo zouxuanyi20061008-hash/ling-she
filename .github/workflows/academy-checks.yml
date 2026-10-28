@@ -237,6 +237,17 @@ jobs:
           name: taiyi-v65-sixteen-spirit-main-guest
           path: backend/acceptance-output/taiyi-v65.json
           if-no-files-found: error
+      - name: Run V66 Taiyi 55-59 annal and same-palace two-schools acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v66_acceptance.py --output backend/acceptance-output/taiyi-v66.json
+      - name: Upload V66 five authentic consecutive year-plates and divergence
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v66-55-to-59-historical-cases
+          path: backend/acceptance-output/taiyi-v66.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]

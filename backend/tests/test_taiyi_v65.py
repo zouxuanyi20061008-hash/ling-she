@@ -14,7 +14,7 @@ def test_two_independent_ancient_year_host_guest_walks(
         year,wen,shiji,main,guest,mgen,mcan,ggen,gcan):
     c=year_board(year,historical=True)
     v=c["main_guest"]
-    assert c["version"]=="V65"
+    assert c["version"]=="V66"
     assert v["status"]=="computed"
     assert v["heaven_eye_wenchang"]["god"]==wen
     assert v["earth_eye_shiji"]["god"]==shiji
@@ -65,7 +65,7 @@ def test_reverse_shiji_formula_not_confused_with_reversed_rotation():
 
 
 def test_2026_wenchang_16_but_shiji_equals_taiyi_special_unresolved():
-    v=year_board(2026)["main_guest"]
+    v=year_board(2026,same_palace_rule="conservative")["main_guest"]
     assert v["heaven_eye_wenchang"]["god"]=="武德"
     assert v["earth_eye_shiji"]["god"]=="和德"
     assert v["main_calculated"]==16
@@ -77,13 +77,13 @@ def test_2026_wenchang_16_but_shiji_equals_taiyi_special_unresolved():
     assert v["guest_general"]["historical_alternative"]["calculated_count"]==3
     assert v["guest_general"]["historical_alternative"]["assistant_general"]==9
     assert not v["guest_general"]["historical_alternative"]["is_default"]
-    assert not year_board(2026)["has_complete_main_guest"]
+    assert not year_board(2026,same_palace_rule="conservative")["has_complete_main_guest"]
 
 
 def test_all_199_years_safe_trace_or_declared_special_branch():
     counts={"computed":0,"partially_computed":0,"pending":0}
     for year in range(1901,2100):
-        c=year_board(year)
+        c=year_board(year,same_palace_rule="conservative")
         v=c["main_guest"]
         counts[v["status"]]+=1
         assert len(c["sixteen_spirits"])==16
@@ -117,6 +117,10 @@ def test_api_2026_returns_partial_without_fabricated_guest():
     c=TestClient(app).post("/api/taiyi/cast",json={"gregorian_year":2026})
     assert c.status_code==200,c.text
     d=c.json()
-    assert d["version"]=="V65"
+    assert d["version"]=="V66"
     assert d["main_guest"]["main_calculated"]==16
-    assert d["main_guest"]["guest_calculated"] is None
+    assert d["main_guest"]["guest_calculated"]==3
+    conservative=TestClient(app).post("/api/taiyi/cast",json={
+        "gregorian_year":2026,"same_palace_rule":"conservative"})
+    assert conservative.status_code==200
+    assert conservative.json()["main_guest"]["guest_calculated"] is None

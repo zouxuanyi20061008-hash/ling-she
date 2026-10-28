@@ -181,12 +181,13 @@ def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
 
 class TaiyiCastRequest(BaseModel):
     gregorian_year: int = Field(ge=1901,le=2099)
+    same_palace_rule: Literal["wubeizhi","conservative"] = "wubeizhi"
 
 
 @app.post("/api/taiyi/cast")
 def taiyi_cast(req: TaiyiCastRequest):
     try:
-        return cast_taiyi(req.gregorian_year)
+        return cast_taiyi(req.gregorian_year,req.same_palace_rule)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 

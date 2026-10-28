@@ -20,7 +20,7 @@ def verify():
         cases.append({"gregorian_year":year,"accumulated":acc,"yuan":yuan,
                       "ju":ju,"taiyi":palace,"tenure":tenure,
                       "host_guest_reference_only":witness})
-    now=year_board(2026)
+    now=year_board(2026,same_palace_rule="conservative")
     assert now["year"]["ju"]==55
     assert now["year"]["taiyi_palace"]["trigram"]=="艮"
     assert now["main_guest"]["status"]=="partially_computed"

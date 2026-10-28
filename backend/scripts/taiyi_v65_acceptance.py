@@ -31,7 +31,7 @@ def verify():
             "calculated":{"wenchang":v["heaven_eye_wenchang"],
                           "shiji":v["earth_eye_shiji"],
                           "main":v["main_general"],"guest":v["guest_general"]}})
-    current=year_board(2026)["main_guest"]
+    current=year_board(2026,same_palace_rule="conservative")["main_guest"]
     assert current["main_calculated"]==16
     assert current["guest_calculated"] is None
     assert current["earth_eye_shiji"]["god"]=="和德"
