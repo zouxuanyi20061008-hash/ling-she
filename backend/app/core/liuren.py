@@ -150,9 +150,10 @@ def build_liuren(day:str,month_general:str,占时:str,reference:dict|None=None,
     from .liuren_v61 import decorate_liuren_v61
     from .liuren_v62 import decorate_liuren_v62
     from .liuren_v63 import decorate_liuren_v63
-    return decorate_liuren_v63(decorate_liuren_v62(
+    from .liuren_v74 import decorate_liuren_v74
+    return decorate_liuren_v74(decorate_liuren_v63(decorate_liuren_v62(
         decorate_liuren_v61(decorate_liuren_v60(decorate_liuren_v59(result))),
-        noble_mode=noble_mode))
+        noble_mode=noble_mode)))
 
 
 def cast_liuren(d:date,clock:time,day_boundary:str="zi_hour",

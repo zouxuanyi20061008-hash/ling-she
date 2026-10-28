@@ -87,11 +87,27 @@ def _fuyin(day:str,lessons:list[dict])->dict:
     second=(lessons[2]["upper"] if yang else lessons[0]["upper"]) if self_first else PUNISH[first]
     self_second=PUNISH[second]==second
     third=BRANCHES[(BRANCH_INDEX[second]+6)%12] if self_second else PUNISH[second]
+    # 《大六壬课经集·伏吟课》明载丁卯/己卯/辛卯三阴日
+    # 特殊杜传为「卯、子、午」。卯刑子、子又刑卯，
+    # 若依通用刑链会无休止往返；须由子冲午作末传。
+    # 此特例只对无贼克、支卯发用生效，不影响其他伏吟。
+    reciprocal_punishment_exception=(
+        not candidates and day in ("丁卯","己卯","辛卯")
+        and first=="卯" and second=="子" and third=="卯"
+    )
+    if reciprocal_punishment_exception:
+        third="午"
+        method+=" · 卯子互刑杜传取子冲午"
     if self_first:method+=" · 初传自刑改取"+("支上神" if yang else "干上神")
     if self_second:method+=" · 中传自刑改冲"
     return _triple(first,second,third,method,candidates,
         SOURCES["fuyin"],{"initial_self_punishment":self_first,
-         "middle_self_punishment":self_second,"punishment_path":[first,second,third]})
+         "middle_self_punishment":self_second,"punishment_path":[first,second,third],
+         "reciprocal_punishment_broken_by_clash":reciprocal_punishment_exception,
+         "reciprocal_punishment_evidence":(
+           "https://www.zhaosir.online/Books/BookChapterDetail.aspx?did=1650"
+           if reciprocal_punishment_exception else None),
+         "reciprocal_rule":"仅丁卯己卯辛卯伏吟无贼克，卯子互刑不往返，子冲午作末传"})
 
 
 def _fanyin(day:str,plate:dict,lessons:list[dict],original:dict)->dict:
