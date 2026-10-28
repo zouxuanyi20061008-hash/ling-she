@@ -303,6 +303,17 @@ jobs:
           name: fengshui-v71-lichun-period-xuankong-triple-plate
           path: backend/acceptance-output/fengshui-v71.json
           if-no-files-found: error
+      - name: Run V72 full eight-school API and strict-input acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/eight_arts_v72_audit.py --output backend/acceptance-output/eight-arts-v72.json
+      - name: Upload V72 eight-school audit and limitations evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: eight-arts-v72-cross-school-core-audit
+          path: backend/acceptance-output/eight-arts-v72.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
