@@ -13,7 +13,9 @@ def audit():
         ["six_ji_number"],["hour_ganzhi_from_jiazi_start"]]
     assert not yin["can_promote_full_yin_plate"]
     modern=hour_basic_board(date(2026,10,28),time(17,30))
-    assert modern["hour_source_review_version"]=="V86"
+    assert modern["hour_v86_classical_examples"]["version"]=="V86"
+    assert modern["hour_source_review_version"]=="V87"
+    assert modern["hour_v87_modular_source_audit"]["triple_intersection"]==[]
     assert modern["hour_v85_phase_hypotheses"]["preferred_phase"] is None
     assert not modern["has_full_hour_chart"]
     return {"version":"V86","status":"passed",
