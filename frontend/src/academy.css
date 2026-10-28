@@ -1365,3 +1365,9 @@
 .qimen-v73-audit h3{margin:0 0 9px;font-size:17px;color:#253f5a}
 .qimen-v73-audit p{margin:6px 0}
 .qimen-v73-audit a{color:#2c5c79;text-decoration:underline}
+
+/* V74 Liuren evidence/status: structural witness, never a fortune verdict. */
+.liuren-v74-branch{margin:16px 0;padding:15px 17px;border:1px solid #b0b9ae;border-radius:12px;background:#f4f5eb;color:#314b3e;line-height:1.85}
+.liuren-v74-branch h4{margin:0 0 8px;font-family:serif;font-size:17px;color:#365f47}
+.liuren-v74-branch p{margin:5px 0}
+.liuren-v74-branch a{text-decoration:underline;color:#365f47}

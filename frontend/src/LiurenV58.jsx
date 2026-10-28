@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState,useRef} from 'react'
 import './academy.css'
 
 const BEIJING_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
@@ -12,8 +12,14 @@ export default function LiurenV58(){
   const [selected,setSelected]=useState('子')
   const [error,setError]=useState('')
   const [busy,setBusy]=useState(false)
+  const requestVersion=useRef(0)
+  function invalidate(){
+    requestVersion.current+=1
+    setChart(null);setError('');setBusy(false)
+  }
   async function cast(event){
     event.preventDefault()
+    const ticket=++requestVersion.current
     setBusy(true)
     setError('')
     setChart(null)
@@ -25,35 +31,40 @@ export default function LiurenV58(){
       })
       const result=await r.json()
       if(!r.ok)throw new Error(typeof result.detail==='string'?result.detail:'请核对日期或时辰')
-      setChart(result)
-      setSelected(result.hour_branch)
-    }catch(e){setError(e?.message||'大六壬起课失败')}
-    finally{setBusy(false)}
+      if(ticket===requestVersion.current){
+        setChart(result)
+        setSelected(result.hour_branch)
+      }
+    }catch(e){
+      if(ticket===requestVersion.current)setError(e?.message||'大六壬起课失败')
+    }finally{
+      if(ticket===requestVersion.current)setBusy(false)
+    }
   }
-  return <section className="liuren-v58" aria-label="V63 大六壬真实起课">
-    <header><small>V63 · 大六壬 / 旬空与旬遁干</small>
+  return <section className="liuren-v58" aria-label="V74 大六壬真实起课">
+    <header><small>V74 · 大六壬 / 伏吟例外与三传未决审查</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
       <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。</p>
     </header>
     <form className="liuren-v58-form" onSubmit={cast}>
       <label>公历起课日期
         <input aria-label="六壬公历日期" type="date" min="1901-01-01" max="2099-12-31"
-          value={date} onChange={e=>setDate(e.target.value)} required/>
+          value={date} onChange={e=>{setDate(e.target.value);invalidate()}} required/>
       </label>
       <label>北京时间
         <input aria-label="六壬北京时间" type="time" value={clock}
-          onChange={e=>setClock(e.target.value)} required/>
+          onChange={e=>{setClock(e.target.value);invalidate()}} required/>
       </label>
       <label>日柱换日口径
         <select aria-label="六壬换日规则" value={dayBoundary}
-          onChange={e=>setDayBoundary(e.target.value)}>
+          onChange={e=>{setDayBoundary(e.target.value);invalidate()}}>
           <option value="zi_hour">子初23点换日</option>
           <option value="midnight">零点换日</option>
         </select>
       </label>
       <label>贵人昼夜口径
         <select aria-label="贵人昼夜规则" value={nobleMode}
-          onChange={e=>setNobleMode(e.target.value)}>
+          onChange={e=>{setNobleMode(e.target.value);invalidate()}}>
           <option value="hour_branch">按时支：卯至申昼，酉至寅夜</option>
           <option value="day">手动指定昼贵</option>
           <option value="night">手动指定夜贵</option>
@@ -150,6 +161,26 @@ export default function LiurenV58(){
         </article>)}
       </div>
       <h3>三传 · 初传、中传、末传</h3>
+      {chart.pending_branch_review&&<section className="liuren-v74-branch"
+          role="group" aria-label="V74 大六壬三传古籍例外与未决审查">
+        <h4>V74 · {chart.pending_branch_review.label}</h4>
+        {chart.pending_branch_review.status==='pending'?
+          <>
+            <p>未决门类：{chart.pending_branch_review.method}；
+              {chart.pending_branch_review.reason}</p>
+            <p>需复核：{chart.pending_branch_review.next_check}</p>
+            <p>原课候选：{chart.pending_branch_review.candidate_branches.join('、')||'未能确定候选'}。
+              未确定初传，不自动推算中末。</p>
+          </>:
+          chart.pending_branch_review.classical_exception_applied?
+          <p>古籍固定三卯日：卯刑子，子再刑卯会重复，故末传改取子冲午。
+            三传：{chart.pending_branch_review.three_transmissions.join(' → ')}。</p>:
+          <p>本课三传已有本门现行规则来源校核，仍须区别实算排盘与最终断课。</p>}
+        {chart.pending_branch_review.source&&<a
+          href={chart.pending_branch_review.source}
+          rel="noopener noreferrer" target="_blank">三传规则来源与复核资料</a>}
+        <p>本版不自动断吉凶，也不把未完成的九宗门流派规则标为已完成。</p>
+      </section>}
       {chart.transmission_review&&<div className="liuren-v59-rule">
         <strong>{chart.transmission_review.version||chart.version} 取传门类：{chart.transmission_review.method_family}</strong>
         <small>天地盘偏移 {chart.transmission_review.offset_palaces} 宫；
@@ -241,8 +272,8 @@ export default function LiurenV58(){
         </div>}
       {chart.calendar_provenance.warnings.map((w,i)=>
         <p key={i} className="academy-caution">{w}</p>)}
-      <p className="academy-caution">V63 已按日旬排旬空与旬遁干，并分别注明天盘上神、地盘本位、四课及已核准三传；完整九宗门异派、贵人异法、真太阳时与吉凶断课仍未完全核实。
-        尚未完整排十二天将，不能把本版叫作全部大六壬断课，也不生成实际吉凶预测。</p>
+      <p className="academy-caution">V74 已保留 V62 十二天将、V63 日旬遁干与旬空实算，并修正丁卯、己卯、辛卯伏吟互刑杜传。
+        对涉害争议、反吟多克等未决条件仍不自行选择初传；完整九宗门异派、贵人异法、真太阳时与吉凶断课未全部核实。</p>
       <a href={chart.source.earth_heaven_four_lessons} target="_blank"
         rel="noopener noreferrer">阅读《六壬指南》天地盘与四课原文</a>
     </div>}

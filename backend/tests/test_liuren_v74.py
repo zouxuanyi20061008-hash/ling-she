@@ -32,7 +32,7 @@ def test_three_classical_reciprocal_punishment_fuyin_specials(day):
 @pytest.mark.parametrize("day,triple",[
   ("丁丑",("丑","戌","未")),("壬辰",("亥","辰","戌")),
   ("丙辰",("巳","申","寅")),("癸丑",("丑","戌","未")),
-  ("庚戌",("戌","未","丑"))
+  ("庚戌",("申","寅","巳"))
 ])
 def test_general_fuyin_and_self_punishment_are_not_overwritten(day,triple):
     c=build_liuren(day,"未","未")
