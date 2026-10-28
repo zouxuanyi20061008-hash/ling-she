@@ -31,19 +31,23 @@ def test_independent_ancient_887_hour_jiazi_epoch_full_results():
     assert c["has_main_guest"] is False
     assert c["fortune_verdict"] is None
 
-def test_independent_47_hour_shortcut_same_palace_and_wenchang_as_887():
+def test_independent_47_hour_shortcut_only_same_palace_not_wenchang_epoch():
+    # 47从甲戌子时起，887从甲子子时起；原典只证明行宫相同。
+    # 文昌必须先由完整积时还原戊子元23局，不可把47算直接取文昌。
     a=classical_hour_ju(47,"阳遁")
     b=classical_hour_ju(887,"阳遁")
-    assert a["ju"]==47 and b["ju"]==23  # different era/origin
+    assert a["ju"]==47 and b["ju"]==23
     assert a["taiyi_palace"]["number"]==b["taiyi_palace"]["number"]==9
     assert a["hour_in_palace"]==b["hour_in_palace"]==2
-    assert a["time_wenchang"]["god"]==b["time_wenchang"]["god"]=="阴德"
-    # 47和887的甲子元局名不同，不能因24周循环一样就认为同一历元。
+    assert a["time_wenchang"]["god"]!="阴德"
+    assert b["time_wenchang"]["god"]=="阴德"
     assert a["five_yuan_name"]!=b["five_yuan_name"]
 
+
 def test_independent_yin_63_gold_from_taiyi_jinyaoshi():
-    c=classical_hour_ju(63,"阴遁")
-    assert c["five_yuan_name"]=="甲子元"
+    # 独立原典为「戊子元阴局63」，积数须加两元72以还原历元。
+    c=classical_hour_ju(2*72+63,"阴遁")
+    assert c["five_yuan_name"]=="戊子元"
     assert c["ju"]==63 and c["ju_label"]=="阴遁63局"
     assert c["taiyi_palace"]["number"]==4 and c["hour_in_palace"]==3
     assert c["time_wenchang"]["direction"]=="坤"
@@ -59,7 +63,7 @@ def test_full_18_wenchang_sequence_has_exactly_two_double_stays(dun,first,double
     assert len(set(z["index"] for z in values))==16
     assert values[0]["direction"]==first
     assert [values[i]["direction"] for i in range(1,18)
-            if values[i]["index"]==values[i-1]["index"]]==list(doubles) if dun=="阳遁" else ["巽","艮"]
+            if values[i]["index"]==values[i-1]["index"]]==list(doubles)
     assert len(_wenchang_order(dun))==18
     assert sum(z["trace"][-1]["double_stay"] for z in values)==2
     assert hour_wenchang_from_count(19,dun)["index"]==values[0]["index"]

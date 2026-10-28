@@ -10,12 +10,13 @@ SRC63="https://www.shidianguji.com/book/NGJ89241199902106666022/chapter/1lq8dkvl
 def audit():
     a=classical_hour_ju(887,"阳遁")
     b=classical_hour_ju(47,"阳遁")
-    c=classical_hour_ju(63,"阴遁")
+    # 阴例为戊子元63局，周内累计2*72+63=207算
+    c=classical_hour_ju(2*72+63,"阴遁")
     assert (a["in_cycle_360"],a["five_yuan_name"],a["ju"])==(167,"戊子元",23)
     assert (a["taiyi_palace"]["number"],a["hour_in_palace"],
             a["time_wenchang"]["god"])==(9,2,"阴德")
-    assert (b["taiyi_palace"]["number"],b["hour_in_palace"],
-            b["time_wenchang"]["god"])==(9,2,"阴德")
+    assert (b["taiyi_palace"]["number"],b["hour_in_palace"])==(9,2)
+    assert b["time_wenchang"]["god"]!="阴德" # 47简捷只独立证宫，不证文昌
     assert (c["taiyi_palace"]["number"],c["time_wenchang"]["direction"],
             c["time_jishen"])==(4,"坤","午")
     cycles=[]
@@ -47,9 +48,11 @@ def audit():
        "independent_ancient_887":{"source":SRC887,"accum":887,
          "cycle_360":a["in_cycle_360"],"yuan":a["five_yuan_name"],
          "ju":a["ju"],"taiyi_palace":9,"hour_in_palace":2,"wenchang":"阴德"},
-       "independent_47":{"source":SRC887,"accum":47,
-         "taiyi_palace":9,"hour_in_palace":2,"wenchang":"阴德"},
-       "independent_yin_63":{"source":SRC63,"accum":63,
+       "independent_47_shortcut":{"source":SRC887,"accum":47,
+         "taiyi_palace":9,"hour_in_palace":2,
+         "wenchang_requires_original_23_ju":True},
+       "independent_yin_wuzi_63":{"source":SRC63,
+         "reconstructed_count":207,"five_yuan":"戊子元","ju":63,
          "taiyi_palace":4,"wenchang":"坤·大武","time_jishen":"午"},
        "comprehensive_360_cycle_checks":cycles,
        "modern_2026_source_separation":checks,
