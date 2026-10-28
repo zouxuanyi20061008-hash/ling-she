@@ -37,7 +37,7 @@ it('V64 real annual year input outputs historical-cycle Taiyi octagonal nine gri
  const grid=screen.getByRole('group',{name:'太乙式九宫岁计盘'})
  expect(within(grid).getAllByRole('button')).toHaveLength(9)
  expect(within(grid).getByText('3宫 · 艮')).toBeTruthy()
- expect(within(grid).getByText('中五不游')).toBeTruthy()
+ expect(within(grid).getByText('太乙中五不游')).toBeTruthy()
  expect(screen.getByText(/本年主算、客算不输出/)).toBeTruthy()
  expect(screen.getByText(/太乙在 3宫艮/)).toBeTruthy()
 })
