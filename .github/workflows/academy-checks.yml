@@ -446,6 +446,17 @@ jobs:
           name: taiyi-v84-qiying-independent-plate
           path: backend/acceptance-output/taiyi-v84.json
           if-no-files-found: error
+      - name: Run V85 Taiyi independent Yin 315 and six-Ji heavenly-eye phase acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v85_acceptance.py --output backend/acceptance-output/taiyi-v85.json
+      - name: Upload V85 original Yin 315 main-guest truth set and 720 time-slot three-phase census
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v85-yin-315-jinjing-ji-phase-audit
+          path: backend/acceptance-output/taiyi-v85.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
