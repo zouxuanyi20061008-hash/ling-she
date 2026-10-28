@@ -13,7 +13,7 @@ export const ARTS = [
   {id:'liuren',name:'大六壬',title:'六壬天盘',symbol:'壬',en:'DA LIU REN',tone:'night',
    brief:'天盘地盘，古代三式之一。',detail:'反吟涉害 · 原典单例边界 · 旬空天将',status:'V76 取传证据校核',group:'三式'},
   {id:'taiyi',name:'太乙神数',title:'太乙行宫',symbol:'乙',en:'TAI YI',tone:'jade',
-   brief:'步宫推数，历法中的术数传统。',detail:'二至气应太乙计神直使 · 双历元条件九宫对照',status:'V84 气应独立盘',group:'三式'},
+   brief:'步宫推数，历法中的术数传统。',detail:'阴遁315独立古籍例课 · 气应六纪三相位逐宫候选',status:'V85 六纪天目相位',group:'三式'},
   {id:'ziwei',name:'紫微斗数',title:'紫微星盘',symbol:'星',en:'ZIWEI DOUSHU',tone:'copper',
    brief:'十二宫垣，星曜的古典语言。',detail:'十四正曜 · 十二辅煞 · 生年四化双口径',status:'V69 四化辅曜',group:'命理'},
   {id:'fengshui',name:'堪舆风水',title:'山川堪舆',symbol:'山',en:'KAN YU',tone:'amber',

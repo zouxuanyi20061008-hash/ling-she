@@ -39,6 +39,8 @@ export default function TaiyiV77Hour(){
   }
   const v82=chart?.hour_v82_eight_door_schools
   const v84=chart?.hour_v84_qiying_plate
+  const v85=chart?.hour_v85_phase_hypotheses
+  const ancientV85=chart?.hour_v85_independent_yin_witness
   const doorChoices=v82?.candidates||[]
   const doorBoard=doorChoices.find(c=>c.school===doorSchool)||doorChoices[0]
   const doorTitle={
@@ -47,9 +49,9 @@ export default function TaiyiV77Hour(){
     jinjing_guest:'《太乙金镜式经》·直使加客大将',
     jinyao_dingji_eye:'《太乙金钥匙》·直使加定计目'
   }
-  return <section className="taiyi-v77-hour" aria-label="V84 太乙时计气应独立基本盘与甲子派分图对照">
+  return <section className="taiyi-v77-hour" aria-label="V85 太乙时计阴遁独立原典与气应三种天目相位">
     <header>
-      <small>V84 · 太乙时计 / 二至气应独立太乙与甲子派八门条件盘</small>
+      <small>V85 · 太乙时计 / 金镜式经阴遁原典315与六纪天目相位</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
@@ -62,7 +64,9 @@ export default function TaiyiV77Hour(){
         V83 加入王希明二至气应起门，与V78甲子日前捷法分开显示，
         不把一个历元的直使挪到另一个历元的主客大将上。
         V84 将气应派太乙、计神和直使独立组成基本盘，主客将尚缺初始宫位，
-        不能从甲子派借来完成气应派的全盘。</p>
+        不能从甲子派借来完成气应派的全盘。
+        V85 新增《金镜式经》阴遁第六纪壬子元27局独立真例，
+        并列六纪三种天目相位条件计算；现代气应纪首未定，不选择主客将。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
@@ -375,6 +379,71 @@ export default function TaiyiV77Hour(){
               target="_blank" rel="noopener noreferrer">《太乙金钥匙》时计起门法</a>
           </p>
         </section>}
+      {v85&&ancientV85&&<section className="taiyi-v85-ji-phase" role="group"
+        aria-label="V85 太乙阴遁315原典真值与气应天目三种纪相位">
+        <h4>V85 · 《太乙金镜式经》独立阴遁例课与六纪天目</h4>
+        <p>古籍独立例课：<strong>第六纪·壬子元27局</strong>，
+          对应一周内第 <strong>315时</strong>，不是积时27。
+          原书太乙九宫、天目大武、计神午、始击高丛，
+          主算29、客算4，主大将9宫、参将7宫；
+          客大将4宫、参将2宫。</p>
+        <div className="taiyi-v85-witness" role="group"
+             aria-label="V85 金镜式经阴遁第315时主客将独立真值">
+          <span>太乙：<strong>{ancientV85.actual.taiyi_palace}宫</strong></span>
+          <span>文昌：<strong>{ancientV85.actual.wenchang_god}</strong></span>
+          <span>始击：<strong>{ancientV85.actual.shiji_god}</strong></span>
+          <span>主算：<strong>{ancientV85.actual.main_count}</strong></span>
+          <span>客算：<strong>{ancientV85.actual.guest_count}</strong></span>
+          <span>主大/参：<strong>{ancientV85.actual.main_general}/
+            {ancientV85.actual.main_assistant}宫</strong></span>
+          <span>客大/参：<strong>{ancientV85.actual.guest_general}/
+            {ancientV85.actual.guest_assistant}宫</strong></span>
+        </div>
+        <p>这张古代例课已逐项与计算结果对照，
+          <strong>不能证明现代冬夏至气应时的纪首就在该相位</strong>。</p>
+        <p>原典六纪天目起点：
+          <strong> {v85.historical_three_seeds.join(' → ')}</strong>，
+          循环于纪一至三、四至六。下列三栏是假定不同纪首相位的
+          <strong>条件算式</strong>，不是给现代时计选定的真实大将位置。</p>
+        <div className="taiyi-v85-phases">
+          {v85.hypotheses.map(h=><article key={h.phase}>
+            <h5>相位{h.phase} · 纪
+              {h.hypothetical_ji_numbers.join('／')}</h5>
+            <p>假定纪首：<strong>{h.first_eye_in_historical_ji}</strong></p>
+            <p>文昌：<strong>{h.wenchang.direction}·{h.wenchang.god}</strong>；
+              始击：<strong>{h.shiji.direction}·{h.shiji.god}</strong></p>
+            <p>主算：{h.main.status==='computed'?
+               <><strong>{h.main.count}</strong>，大将{h.main.big_general}宫、
+               参将{h.main.assistant_general}宫</>:
+               <strong>同宫待判，不编造大将</strong>}</p>
+            <p>客算：{h.guest.status==='computed'?
+               <><strong>{h.guest.count}</strong>，大将{h.guest.big_general}宫、
+               参将{h.guest.assistant_general}宫</>:
+               <strong>同宫待判，不编造大将</strong>}</p>
+            <details>
+              <summary>核对相位{h.phase}主客逐宫投算轨迹</summary>
+              <div className="taiyi-v85-trace" role="group"
+                   aria-label={'V85 相位'+h.phase+'主客逐宫投算'}>
+                {[{name:'主',side:h.main},{name:'客',side:h.guest}].map(item=>
+                  <div key={item.name}>
+                    <b>{item.name}方</b>
+                    {item.side.status==='computed'?
+                      <p>{item.side.trace.map(s=>s.direction+'·'+s.god+
+                        ' ＋'+s.added).join('，')}</p>:
+                      <p>此方起算目与太乙同宫，无独立时计专法，不生成数字。</p>}
+                  </div>)}
+              </div>
+            </details>
+          </article>)}
+        </div>
+        <p className="academy-caution">
+          **现代气应派真实纪首相位尚未判定**：这三组仅是《金镜式经》
+          六纪起点的三种模型，不能穷尽任意未知历元偏移。
+          今日文昌、始击、主客大将仍为待证，且不得从甲子派借用；
+          古代绝对上元积时与完整时计八门亦未核准。</p>
+        <a href={ancientV85.source} target="_blank" rel="noopener noreferrer">
+          《太乙金镜式经》卷一独立阴遁时计例课与六纪天目</a>
+      </section>}
       {v84&&<section className="taiyi-v84-independent" role="group"
          aria-label="V84 气应与甲子派独立太乙八门候选九宫对照">
         <h4>V84 · 二至气应派独立基本盘</h4>
@@ -506,9 +575,10 @@ export default function TaiyiV77Hour(){
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
-      <p className="academy-caution">V84 新增二至气应独立太乙、计神、直使及太乙锚点候选八门；
-        气应主客将初始宫位未有独立真值，不能借用V78甲子派大将。
-        庚戌定算32／33、同宫专法、全部八门落宫和古代绝对上元积时仍未完成；
+      <p className="academy-caution">V85 独立核准《太乙金镜式经》阴遁315例课主客将，
+        但现代二至气应的纪首相位未定，三组天目与将位仅作条件分栏，
+        不选任一派为真实主客将。庚戌定算32／33、同宫专法、
+        全部八门落宫和古代绝对上元积时仍未完成；
         岁计独立，不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>

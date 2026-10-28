@@ -1522,3 +1522,21 @@
 .taiyi-v84-independent a{color:#346a51;text-decoration:underline}
 @media(max-width:530px){.taiyi-v84-comparisons{grid-template-columns:minmax(0,1fr)}
 .taiyi-v84-independent{padding:12px}}
+
+/* V85 historically attested Yin-315 witness vs three explicitly hypothetical qiying Ji phases. */
+.taiyi-v85-ji-phase{margin:17px 0;padding:16px 19px;border-radius:12px;
+ border:1px solid #b6a9ce;background:#f5f2f9;color:#443c56;line-height:1.8}
+.taiyi-v85-ji-phase h4{font-size:18px;margin:0 0 9px;color:#514075}
+.taiyi-v85-ji-phase p{margin:8px 0}
+.taiyi-v85-witness{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.taiyi-v85-witness span{background:#fff;border:1px solid #d2c6e0;
+ border-radius:7px;padding:6px 10px;font-size:13px}
+.taiyi-v85-phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));
+ gap:10px;margin:12px 0}
+.taiyi-v85-phases article{background:#fffefa;border:1px solid #d8cae4;
+ border-radius:9px;padding:11px;min-width:0}
+.taiyi-v85-phases h5{font-size:15px;color:#5b457b;margin:0 0 6px}
+.taiyi-v85-trace{font-size:12px;overflow-wrap:anywhere}
+.taiyi-v85-ji-phase a{color:#66439a;text-decoration:underline}
+@media(max-width:520px){.taiyi-v85-ji-phase{padding:12px}
+.taiyi-v85-phases{grid-template-columns:minmax(0,1fr)}}
