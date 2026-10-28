@@ -129,3 +129,41 @@ it('V85 legacy V84 hourly API does not invent a Yin315 historical example or pha
  expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
  expect(screen.queryByRole('group',{name:'V85 太乙阴遁315原典真值与气应天目三种纪相位'})).toBeNull()
 })
+
+it('V86 exposes three source-checked Yang examples and Yin contradictory candidates without selecting a correction',async()=>{
+ const v86={yang_examples:{
+   source:'https://zh.wikisource.org/zh-hans/太乙金鏡式經_(四庫全書本)/卷09',
+   cases:[
+    {id:'j2',attested_expected:{ju:2,hour_ganzhi_from_jiazi_start:'乙丑',guest_count:1,guest_general:1},
+     actual_on_attested_fields:{taiyi_palace:1,wenchang_god:'太簇',shiji_god:'阴主',guest_count:1},
+     guest_count_trace:[{direction:'戌',god:'阴主',added:1}]},
+    {id:'j8',attested_expected:{ju:8,hour_ganzhi_from_jiazi_start:'辛未',guest_count:22},
+     actual_on_attested_fields:{taiyi_palace:3,wenchang_god:'阳德',shiji_god:'大武',guest_count:22},
+     guest_count_trace:[]},
+    {id:'j25',attested_expected:{ju:25,hour_ganzhi_from_jiazi_start:'戊子',guest_count:40,guest_general:4},
+     actual_on_attested_fields:{taiyi_palace:1,wenchang_god:'地主',shiji_god:'大义',guest_count:40},
+     guest_count_trace:[]},
+   ]},
+   yin_source_conflict:{hypotheses:[
+    {in_cycle_360:52,interpretation:'cycle_52_ju_and_yimao',mismatched_source_fields:['six_ji_number']},
+    {in_cycle_360:124,interpretation:'third_ji_ju52',mismatched_source_fields:['hour_ganzhi_from_jiazi_start']},
+    {in_cycle_360:172,interpretation:'third_ji_hour52_yimao',mismatched_source_fields:['ju']},
+   ],preferred_interpretation:null}}
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
+   ...base,hour_v86_classical_examples:v86
+ })}))
+ render(<TaiyiV77Hour/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ const area=await screen.findByRole('group',{name:'V86 金镜式经卷九三例核验与阴遁原文冲突'})
+ expect(area.querySelectorAll('.taiyi-v85-phases article')).toHaveLength(3)
+ expect(area.textContent).toContain('客算1')
+ expect(area.textContent).toContain('客算22')
+ expect(area.textContent).toContain('客算40')
+ expect(area.textContent).toContain('未选择任何修订方案')
+ fireEvent.click(within(area).getByText('展开阴遁古籍三种积时解释和不符字段'))
+ const errors=within(area).getByRole('group',{name:'V86 阴遁第三纪52局乙卯逐条件差异'})
+ expect(errors.textContent).toContain('第52时')
+ expect(errors.textContent).toContain('第124时')
+ expect(errors.textContent).toContain('第172时')
+ expect(area.textContent).toContain('不可据此建立现代气应文昌或主客将')
+})

@@ -210,4 +210,5 @@ def decorate_taiyi_v85(chart:dict)->dict:
         "V85《金镜式经》阴遁第六纪壬子元27局已有独立主29客4整盘验收。"
         "另按六纪文昌三种起点计算气应派主客条件候选，但现代节气并非"
         "必从甲子纪首起，缺真实纪相位时不选择大将，不将候选冒充已认证时盘。")
-    return chart
+    from .taiyi_hour_v86 import decorate_taiyi_v86
+    return decorate_taiyi_v86(chart)

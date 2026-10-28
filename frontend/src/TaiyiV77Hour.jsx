@@ -41,6 +41,7 @@ export default function TaiyiV77Hour(){
   const v84=chart?.hour_v84_qiying_plate
   const v85=chart?.hour_v85_phase_hypotheses
   const ancientV85=chart?.hour_v85_independent_yin_witness
+  const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
   const doorBoard=doorChoices.find(c=>c.school===doorSchool)||doorChoices[0]
   const doorTitle={
@@ -379,6 +380,51 @@ export default function TaiyiV77Hour(){
               target="_blank" rel="noopener noreferrer">《太乙金钥匙》时计起门法</a>
           </p>
         </section>}
+      {v86&&<section className="taiyi-v85-ji-phase" role="group"
+          aria-label="V86 金镜式经卷九三例核验与阴遁原文冲突">
+        <h4>V86 · 卷九时计例课独立校核</h4>
+        <p>阳遁第一纪三张原例按太乙、文昌、始击和客算逐项复核；
+          原书没记载的字段不当作史料已验真。</p>
+        <div className="taiyi-v85-phases">
+          {v86.yang_examples.cases.map(e=><article key={e.id}>
+            <h5>阳遁第{e.attested_expected.ju}局 ·
+              {e.attested_expected.hour_ganzhi_from_jiazi_start}时</h5>
+            <p>太乙{e.actual_on_attested_fields.taiyi_palace}宫 ·
+              文昌{e.actual_on_attested_fields.wenchang_god} ·
+              始击{e.actual_on_attested_fields.shiji_god}</p>
+            <p>客算<strong>{e.actual_on_attested_fields.guest_count}</strong>
+              {e.attested_expected.guest_general!=null?
+                ' · 原文客大将'+e.attested_expected.guest_general+'宫':''}</p>
+            <details><summary>查看古例客算逐宫路径</summary>
+              <p>{e.guest_count_trace.map(s=>s.direction+'·'+s.god+
+                ' ＋'+s.added).join('，')}</p>
+            </details>
+          </article>)}
+        </div>
+        <p className="academy-caution">
+          卷九另一例称阴遁第三纪第52局乙卯时；
+          以同一360时/72局/60时纪口径核验存在字段矛盾，
+          <strong>未选择任何修订方案</strong>。</p>
+        <details>
+          <summary>展开阴遁古籍三种积时解释和不符字段</summary>
+          <div className="taiyi-v85-witness" role="group"
+               aria-label="V86 阴遁第三纪52局乙卯逐条件差异">
+            {v86.yin_source_conflict.hypotheses.map(s=><span key={s.in_cycle_360}>
+              第{s.in_cycle_360}时 · {s.interpretation}：
+              {s.mismatched_source_fields.join('、')} 不符
+            </span>)}
+          </div>
+          <p>第52时属第一纪；第124时属第三纪第52局但为丁卯时；
+            第172时是第三纪乙卯时，但为第28局。
+            全部仅是原文冲突审查，不可据此建立现代气应文昌或主客将。</p>
+        </details>
+        <p className="academy-caution">
+          现代二至气应文昌、始击、主客将仍未独立验真；
+          这三张阳遁历史例课也不可移植到现代纪首。</p>
+        <a href={v86.yang_examples.source} target="_blank" rel="noopener noreferrer">
+          《太乙金镜式经》卷九 · 三张原例及阴遁冲突原文
+        </a>
+      </section>}
       {v85&&ancientV85&&<section className="taiyi-v85-ji-phase" role="group"
         aria-label="V85 太乙阴遁315原典真值与气应天目三种纪相位">
         <h4>V85 · 《太乙金镜式经》独立阴遁例课与六纪天目</h4>
