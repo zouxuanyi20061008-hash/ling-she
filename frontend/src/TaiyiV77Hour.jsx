@@ -36,16 +36,17 @@ export default function TaiyiV77Hour(){
       if(ticket===version.current)setBusy(false)
     }
   }
-  return <section className="taiyi-v77-hour" aria-label="V80 太乙时计合神定算八门实盘">
+  return <section className="taiyi-v77-hour" aria-label="V81 太乙时计原典内证及八门实盘">
     <header>
-      <small>V80 · 太乙时计 / 时支合神、定目、定算与八门直使</small>
+      <small>V81 · 太乙时计 / 直使候选落位与原典内证审查</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
         V78 另算冬夏至前最近甲子日简捷历元的五元七十二局、六纪与阴阳文昌十八算；
         V79 增加计神加和德取始击、主客逐宫投算与大参将；
         V80 增加时支六合合神、定计目、十六神逐宫定算与四门120时直使。
-        古籍庚戌定算有32与33的算式分歧，冲突盘绝不冒称已算定大参将。</p>
+        V81 核对古籍定计32/33为同一文本内部冲突，并补充八门直使古法候选定位；
+        冲突盘绝不冒称定大参将已定，也不把时计门位候选当作已核实九宫飞布。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
@@ -254,12 +255,69 @@ export default function TaiyiV77Hour(){
             《太乙金钥匙》庚戌时合神、定计、八门原文
           </a>
         </section>}
+      {chart.hour_v81_source_review&&chart.hour_v81_door_location_candidate&&
+       <section className="taiyi-v81-source-review" role="group"
+                aria-label="V81 太乙时计原典内部冲突与值使候选位置">
+         <h4>V81 · 定算内证与值使十六神候选位</h4>
+         <p>古籍证据性质：
+           <strong>《太乙金钥匙》同一本书内部核对</strong>，
+           并非两种独立刻本已经确认的异文。
+           {chart.hour_v81_source_review.calculation_status==='source_conflict'?
+             ' 本课定算沿途加数为32，正文却写33；未凭空加一，定大参继续待判。':
+             chart.hour_v81_source_review.calculation_status==='pending'?
+             ' 本课定计目与太乙同宫，缺少独立时计专例，继续待判。':
+             ' 本课定算按实际逐宫求和，未落入庚戌时已知32／33分歧类。'}
+         </p>
+         <p>古法候选：直使 <strong>
+           {chart.hour_v81_door_location_candidate.chief_door}门</strong>
+           可依“直使加定计目”规则候选临在
+           <strong> {chart.hour_v81_door_location_candidate.candidate_direction}
+           ·{chart.hour_v81_door_location_candidate.candidate_god}</strong>。
+           {chart.hour_v81_door_location_candidate.is_intermediate_direction?
+             '此处是十六神间位，不能强行挪为某一九宫正宫。':
+             '此处本身是八正宫的十六神位置，可标注对应宫位，但不等于所有八门已飞布。'}
+         </p>
+         <p>此定位来自古法及岁计相关段落的推算候选，
+           <strong>尚无这张时计庚戌原例的独立完整落门图</strong>，
+           因此不是已认证的时计落宫结果。</p>
+         <details>
+           <summary>展开 V81 十六神直使候选标记与定算文字审查</summary>
+           <div className="taiyi-v81-spirits" role="group"
+                aria-label="V81 直使候选十六神位置">
+             {chart.hour_v81_door_location_candidate.candidate_position_marks.map(p=>
+               <span key={p.index}>
+                 {p.direction}·{p.god}
+                 {p.candidate_chief_door_here?' [候选'+p.candidate_door+'门]':''}
+               </span>)}
+           </div>
+           {chart.hour_v81_source_review.calculation_status==='source_conflict'&&
+            <p>本课非零加数：
+              {chart.hour_v81_source_review.nonzero_addends.map(x=>x.added).join('＋')}
+              ＝{chart.hour_v81_source_review.nonzero_sum}；
+              原书文字记{chart.hour_v81_source_review.reported_total}，
+              同书另一张丁未日例课算32，
+              <strong>但不是庚戌时的独立异本</strong>。</p>}
+           {chart.hour_v81_same_palace_review?.pending_sides>0&&
+            <p>同宫特殊取算仍未决：
+              {chart.hour_v81_same_palace_review.cases.map(s=>
+                s.side+'方 '+s.eye_direction+'·'+s.eye_god).join('；')}。
+              旧岁计候选未被自动用于时计。</p>}
+         </details>
+         <p className="academy-caution">时计八门直使的轮值门名已实算；
+           V81 只有有出处的候选十六神位，不能冒充完整八门实际飞宫。
+           古代绝对上元积时、定算冲突与同宫异法继续待校勘。</p>
+         <a href={chart.hour_v81_source_review.source_witnesses[0].source}
+            target="_blank" rel="noopener noreferrer">庚戌时定计原文</a>
+         <span> · </span>
+         <a href={chart.hour_v81_door_location_candidate.primary_text_rules[1].source}
+            target="_blank" rel="noopener noreferrer">直使加定计目的古法出处</a>
+       </section>}
       {chart.solstice.near_15_minutes&&
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
-      <p className="academy-caution">V80 已在 V78/V79 时计简捷历元上实算合神、定目和八门值使；
-        明载的古籍32/33矛盾须继续校勘，同宫仍待判，全部八门飞布未完成。
+      <p className="academy-caution">V81 对 V80 的定算古籍32／33内部矛盾和
+        “直使加定目”候选位进行逐项来源审查；同宫待判、全部八门飞布未完成。
         古代绝对上元积时尚未核验；岁计、交节时实与甲子日起点独立，
         不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">

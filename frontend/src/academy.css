@@ -1455,3 +1455,14 @@
  border-radius:9px;background:#fffefa;display:flex;flex-direction:column;gap:5px}
 .taiyi-v80-door strong{color:#756042;font-size:16px}
 .taiyi-v80-hour-dingji a{color:#876736;text-decoration:underline}
+
+/* V81 classic source-critical audit and candidate—not confirmed—hour door placement. */
+.taiyi-v81-source-review{padding:17px 20px;margin:18px 0;
+ border:1px solid #aab8b2;background:#f0f5f2;border-radius:13px;
+ color:#314d49;line-height:1.9}
+.taiyi-v81-source-review h4{font-size:18px;margin:0 0 8px;color:#2b5b50}
+.taiyi-v81-source-review p{margin:8px 0}
+.taiyi-v81-spirits{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
+.taiyi-v81-spirits span{font-size:12px;border:1px solid #b6cfbe;
+ background:#fff;padding:5px 8px;border-radius:7px}
+.taiyi-v81-source-review a{color:#236f60;text-decoration:underline}
