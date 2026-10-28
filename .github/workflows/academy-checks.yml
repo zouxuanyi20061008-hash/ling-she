@@ -435,6 +435,17 @@ jobs:
           name: taiyi-v83-solstice-qiying-vs-jiazi-hour-chief
           path: backend/acceptance-output/taiyi-v83.json
           if-no-files-found: error
+      - name: Run V84 Taiyi independent qiying initial plate and 720-slot source separation
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v84_acceptance.py --output backend/acceptance-output/taiyi-v84.json
+      - name: Upload V84 qiying independently rooted Taiyi and door evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v84-qiying-independent-plate
+          path: backend/acceptance-output/taiyi-v84.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
