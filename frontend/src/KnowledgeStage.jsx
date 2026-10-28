@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState,useRef} from 'react'
 import {ARTS} from './ArtsHub.jsx'
 import LiurenV58 from './LiurenV58.jsx'
 import TaiyiV64 from './TaiyiV64.jsx'
@@ -39,9 +39,15 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [qimenChart,setQimenChart]=useState(null)
   const [qimenBusy,setQimenBusy]=useState(false)
   const [qimenError,setQimenError]=useState('')
+  const qimenRequest=useRef(0)
+  function invalidateQimen(){
+    qimenRequest.current+=1
+    setQimenChart(null);setQimenBusy(false);setQimenError('')
+  }
   async function castActualQimen(event){
     event.preventDefault()
     if(!qimenDate||!qimenClock)return
+    const ticket=++qimenRequest.current
     setQimenBusy(true)
     setQimenError('')
     setQimenChart(null)
@@ -52,10 +58,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       })
       const body=await response.json()
       if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'请核实日期与时辰')
-      setQimenChart(body)
+      if(ticket===qimenRequest.current)setQimenChart(body)
     }catch(error){
-      setQimenError(error.message||'奇门定局失败，请核实输入')
-    }finally{setQimenBusy(false)}
+      if(ticket===qimenRequest.current)setQimenError(error.message||'奇门定局失败，请核实输入')
+    }finally{
+      if(ticket===qimenRequest.current)setQimenBusy(false)
+    }
   }
   const [stem,setStem]=useState([0,0,0,0])
   const [branch,setBranch]=useState([0,0,0,0])
@@ -72,9 +80,15 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [baziChart,setBaziChart]=useState(null)
   const [baziBusy,setBaziBusy]=useState(false)
   const [baziError,setBaziError]=useState('')
+  const baziRequest=useRef(0)
+  function invalidateBazi(){
+    baziRequest.current+=1
+    setBaziChart(null);setBaziBusy(false);setBaziError('')
+  }
   async function castActualBazi(event){
     event.preventDefault()
     if(!baziDate||!baziClock)return
+    const ticket=++baziRequest.current
     setBaziBusy(true)
     setBaziError('')
     setBaziChart(null)
@@ -89,10 +103,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       })
       const body=await response.json()
       if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'请核实出生日期与时间')
-      setBaziChart(body)
+      if(ticket===baziRequest.current)setBaziChart(body)
     }catch(error){
-      setBaziError(error.message||'四柱计算失败，请核实输入')
-    }finally{setBaziBusy(false)}
+      if(ticket===baziRequest.current)setBaziError(error.message||'四柱计算失败，请核实输入')
+    }finally{
+      if(ticket===baziRequest.current)setBaziBusy(false)
+    }
   }
   const palace=PALACES.find(a=>a.n===palaceNum)
   return <main className={"academy-stage academy-stage--"+mode+" academy-knowledge-mode"}>
@@ -115,15 +131,15 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
         <form onSubmit={castActualQimen} className="qimen-v50-form">
           <label>公历日期（中国时间）
             <input aria-label="奇门公历日期" type="date" value={qimenDate}
-              onChange={e=>setQimenDate(e.target.value)} required min="1901-01-01" max="2099-12-31"/>
+              onChange={e=>{setQimenDate(e.target.value);invalidateQimen()}} required min="1901-01-01" max="2099-12-31"/>
           </label>
           <label>北京时间
             <input aria-label="奇门北京时间" type="time" value={qimenClock}
-              onChange={e=>setQimenClock(e.target.value)} required/>
+              onChange={e=>{setQimenClock(e.target.value);invalidateQimen()}} required/>
           </label>
           <label>换日约定
             <select aria-label="奇门换日规则" value={qimenBoundary}
-              onChange={e=>setQimenBoundary(e.target.value)}>
+              onChange={e=>{setQimenBoundary(e.target.value);invalidateQimen()}}>
               <option value="zi_hour">子初 23:00 换日</option>
               <option value="midnight">午夜 00:00 换日</option>
             </select>
@@ -253,23 +269,23 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
         <form className="bazi-v55-form" onSubmit={castActualBazi}>
           <label>公历出生日期
             <input aria-label="八字公历出生日期" type="date" value={baziDate}
-              onChange={e=>setBaziDate(e.target.value)} required
+              onChange={e=>{setBaziDate(e.target.value);invalidateBazi()}} required
               min="1901-01-01" max="2099-12-31"/>
           </label>
           <label>北京时间（UTC+8）
             <input aria-label="八字北京时间" type="time" value={baziClock}
-              onChange={e=>setBaziClock(e.target.value)} required/>
+              onChange={e=>{setBaziClock(e.target.value);invalidateBazi()}} required/>
           </label>
           <label>换日约定
             <select aria-label="八字换日规则" value={baziBoundary}
-              onChange={e=>setBaziBoundary(e.target.value)}>
+              onChange={e=>{setBaziBoundary(e.target.value);invalidateBazi()}}>
               <option value="midnight">零点 00:00 换日</option>
               <option value="zi_hour">子初 23:00 换日</option>
             </select>
           </label>
           <label>大运顺逆（可选，不推断性别）
             <select aria-label="大运顺逆规则" value={baziLuckMode}
-              onChange={e=>setBaziLuckMode(e.target.value)}>
+              onChange={e=>{setBaziLuckMode(e.target.value);invalidateBazi()}}>
               <option value="none">不排大运（只看四柱）</option>
               <option value="traditional_male">传统男命规则（按年干阴阳）</option>
               <option value="traditional_female">传统女命规则（按年干阴阳）</option>
@@ -281,17 +297,17 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             <span>流年流月查看</span>
             <span><input aria-label="启用流年流月" type="checkbox"
               checked={baziFlowEnabled}
-              onChange={e=>setBaziFlowEnabled(e.target.checked)}/> 额外查看指定时刻（可选）</span>
+              onChange={e=>{setBaziFlowEnabled(e.target.checked);invalidateBazi()}}/> 额外查看指定时刻（可选）</span>
           </label>
           {baziFlowEnabled&&<>
             <label>流年流月公历日期
               <input aria-label="八字流年日期" type="date" value={baziFlowDate}
-                onChange={e=>setBaziFlowDate(e.target.value)}
+                onChange={e=>{setBaziFlowDate(e.target.value);invalidateBazi()}}
                 min="1901-01-01" max="2099-12-31" required/>
             </label>
             <label>流年流月北京时间
               <input aria-label="八字流年北京时间" type="time" value={baziFlowClock}
-                onChange={e=>setBaziFlowClock(e.target.value)} required/>
+                onChange={e=>{setBaziFlowClock(e.target.value);invalidateBazi()}} required/>
             </label>
           </>}
           <button type="submit" disabled={baziBusy}>
