@@ -9,6 +9,7 @@ from datetime import date, time
 
 from .calendar import STEMS, BRANCHES
 from .solar_calendar import preview_lunar_calendar, preview_solar_calendar
+from .ziwei_v69 import decorate_ziwei_v69
 
 PALACE_NAMES = ("命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄",
                 "迁移", "交友", "官禄", "田宅", "福德", "父母")
@@ -114,7 +115,8 @@ def compute_basic_ziwei(lunar_year: int, lunar_month: int, lunar_day: int,
 def cast_ziwei(calendar_type: str, solar_date: date | None, lunar_year: int | None,
                lunar_month: int | None, lunar_day: int | None, is_leap_month: bool,
                clock: time, gender: str = "unspecified",
-               leap_month_rule: str = "same_month") -> dict:
+               leap_month_rule: str = "same_month",
+               four_transform_school: str = "quanshu") -> dict:
     if calendar_type not in ("solar", "lunar"):
         raise ValueError("只支持公历、农历出生日期。")
     if clock.tzinfo is not None:
@@ -143,7 +145,7 @@ def cast_ziwei(calendar_type: str, solar_date: date | None, lunar_year: int | No
         warnings.append("此生辰在农历闰月：本盘按所选口径安命身宫；不同流派有不同取法，应对照手工盘。")
     if clock.hour == 23:
         warnings.append("23:00至23:59属子时；晚子时是否提前换日有争议，V68固定按历法原日，不自动挪动农历生日。")
-    return {
+    result = {
         "version": "V68", "system": "紫微斗数", "status": "basic_fourteen_stars_computed",
         "input": {
             "calendar_type": calendar_type,
@@ -151,7 +153,8 @@ def cast_ziwei(calendar_type: str, solar_date: date | None, lunar_year: int | No
             "lunar_year": lunar_year, "lunar_month": lunar_month,
             "lunar_day": lunar_day, "is_leap_month": is_leap_month,
             "clock": clock.strftime("%H:%M"), "timezone": "Asia/Shanghai",
-            "gender": gender, "leap_month_rule": leap_month_rule
+            "gender": gender, "leap_month_rule": leap_month_rule,
+            "four_transform_school": four_transform_school
         },
         "calendar": {"solar_date": calendar["solar_date"], "lunar": lunar,
                      "beijing_time": calendar["beijing_time"],
@@ -172,3 +175,5 @@ def cast_ziwei(calendar_type: str, solar_date: date | None, lunar_year: int | No
         "not_implemented": ["生年四化", "辅曜煞曜与杂曜", "流年及小限", "实务论断"],
         "sources": SOURCES,
     }
+
+    return decorate_ziwei_v69(result, effective_month, four_transform_school)

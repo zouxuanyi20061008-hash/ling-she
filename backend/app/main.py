@@ -191,6 +191,7 @@ class ZiweiCastRequest(BaseModel):
     clock: time_value
     gender: Literal["unspecified","male","female"] = "unspecified"
     leap_month_rule: Literal["same_month","next_month"] = "same_month"
+    four_transform_school: Literal["quanshu","common"] = "quanshu"
 
 
 @app.post("/api/ziwei/cast")
@@ -198,7 +199,8 @@ def ziwei_cast(req: ZiweiCastRequest):
     try:
         return cast_ziwei(req.calendar_type,req.solar_date,req.lunar_year,
                           req.lunar_month,req.lunar_day,req.is_leap_month,
-                          req.clock,req.gender,req.leap_month_rule)
+                          req.clock,req.gender,req.leap_month_rule,
+                          req.four_transform_school)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 

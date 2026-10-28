@@ -91,7 +91,7 @@ def test_api_ziwei_validates_and_rejects_ambiguous_inputs():
              "clock":"09:00","gender":"male"}
     ok=client.post("/api/ziwei/cast",json=payload)
     assert ok.status_code==200,ok.text
-    assert ok.json()["version"]=="V68"
+    assert ok.json()["version"]=="V69"
     assert len(ok.json()["palaces"])==12
     invalid=[
        {"lunar_month":1},{"timezone":"Asia/Tokyo"},{"is_leap_month":True},
