@@ -260,7 +260,8 @@ export default function TaiyiV77Hour(){
         </p>}
       <p className="academy-caution">V80 已在 V78/V79 时计简捷历元上实算合神、定目和八门值使；
         明载的古籍32/33矛盾须继续校勘，同宫仍待判，全部八门飞布未完成。
-        岁计、交节时实与甲子日起点独立，不作现实吉凶判断。</p>
+        古代绝对上元积时尚未核验；岁计、交节时实与甲子日起点独立，
+        不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>
       <span> · </span>
