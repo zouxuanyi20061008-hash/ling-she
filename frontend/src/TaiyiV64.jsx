@@ -37,12 +37,12 @@ export default function TaiyiV64(){
   }
   const chosen=chart?.nine_palaces.find(p=>p.number===picked)
   const spirit=chart?.sixteen_spirits?.find(s=>s.index===pickedSpirit)
-  return <section className="taiyi-v64" aria-label="V66 太乙真实岁计">
-    <header><small>V66 · 太乙神数 / 主客取算异派校勘</small>
+  return <section className="taiyi-v64" aria-label="V67 太乙真实岁计">
+    <header><small>V67 · 太乙神数 / 定计与中五将</small>
       <h2>积年推局 · 太乙八宫行次</h2>
       <p>采用《古今图书集成》天启四年与《太乙金钥匙》嘉靖四十年的同系积年，
         实算五元、七十二局、太乙行宫、理天理地理人及岁计计神。此为岁计，
-        不把冬夏至转换的时计阴阳规则混入。V66 已实现文昌、始击同宫的《武备志》特法，并保留 V65 谨慎待算口径供切换。</p>
+        不把冬夏至转换的时计阴阳规则混入。V67 已实算岁计定计目、定计大将与参将，并记录中五不出；仍可切换《武备志》同宫取算与 V65 谨慎待算口径。</p>
     </header>
     <form onSubmit={cast} className="taiyi-v64-form">
       <label>公历年份
@@ -77,7 +77,13 @@ export default function TaiyiV64(){
            onClick={()=>setPicked(p.number)}>
           <small>{p.direction}</small>
           <strong>{p.number}宫 · {p.trigram}</strong>
-          <span>{p.is_taiyi?'太乙在此':p.is_center_unoccupied?'中五不游':'查看宫位'}</span>
+          <span>{p.is_taiyi?'太乙在此':p.is_center_unoccupied?'太乙中五不游':'查看宫位'}</span>
+          {chart.dingji_v67&&<small>
+            {p.dingji_eye_here?'定计目 ':''}
+            {p.dingji_big_general_here?'定计大将 ':''}
+            {p.dingji_assistant_here?'定计参将 ':''}
+            {p.any_general_five?'有大参将居中五 ':''}
+          </small>}
           {chart.sixteen_spirits&&<small>
             {p.wenchang_here?'文昌临宫 ':''}{p.shiji_here?'始击临宫 ':''}
             {p.main_general_here?'主大将 ':''}{p.guest_general_here?'客大将 ':''}
@@ -207,7 +213,59 @@ export default function TaiyiV64(){
           <strong>仅为古籍原文校验值，并非本版主客计算结果。</strong>
         </p>}
       </section>}
-      <p className="academy-caution">V66 为古典岁计结构推演，不包含月计、日计、时计或现代事件预测。
+      {chart.dingji_v67&&<section className="taiyi-v67-dingji"
+          role="group" aria-label="V67 定计目及大参将真实计算">
+        <h3>定计 · 六合旋盘与逐宫求算</h3>
+        <p>岁支 <strong>{chart.dingji_v67.year_branch}</strong>，
+          六合神 <strong>{chart.dingji_v67.harmony_branch}</strong>
+          加岁支；文昌在天盘 {chart.dingji_v67.wenchang_sky_direction}，
+          下临地盘 <strong>{chart.dingji_v67.dingji_ground_direction}
+          · {chart.dingji_v67.dingji_ground_god}</strong>，即定计目。</p>
+        <div className="taiyi-v67-totals">
+          {chart.dingji_v67.status==='computed'?<>
+            <span><small>定计得算</small><strong>{chart.dingji_v67.count}</strong></span>
+            <span><small>定计大将</small><strong>{chart.dingji_v67.main_general} 宫</strong></span>
+            <span><small>定计参将</small><strong>{chart.dingji_v67.assistant_general} 宫</strong></span>
+          </>:<p>定计待校勘：{chart.dingji_v67.reason||
+              '该定计目与太乙同宫，保守口径不擅自给出算数。'}</p>}
+        </div>
+        {chart.dingji_v67.status==='computed'&&<div role="group"
+            aria-label="定计逐宫加算明细" className="taiyi-v67-steps">
+          {chart.dingji_v67.trace.map((x,i)=><span key={i}
+            className={x.added>0?'counted':''}>
+            {x.direction} {x.god} +{x.added}
+          </span>)}
+        </div>}
+        <details className="taiyi-v67-rotated">
+          <summary>查看十六神天地盘旋转的完整依据</summary>
+          <div role="group" aria-label="定计十六神旋盘证据">
+            {chart.dingji_v67.rotated_sixteen.map((x,i)=><span key={i}>
+              地{x.ground} / 天{x.heaven}
+              {x.is_year_ground?' · 太岁':''}
+              {x.is_dingji_eye?' · 定计目':''}
+            </span>)}
+          </div>
+        </details>
+        <p>当前同宫口径：{chart.dingji_v67.rule==='conservative'?
+          '谨慎待算（不强断）':'《武备志》遇同宫取本宫宫数'}。
+          非同宫课沿用逐宫累算，完整路径由后端记录。</p>
+        <a href={chart.dingji_v67.sources.annual_dingji}
+           target="_blank" rel="noopener noreferrer">查看《太乙指津》定计原典</a>
+      </section>}
+      {chart.middle_five_states&&<section className="taiyi-v67-middle"
+          role="group" aria-label="V67 中五将不出及太乙不入中宫">
+        <h3>中五宫 · 大参将的特殊落位</h3>
+        <p>太乙本体不进入中五，但主客、定计大将或参将算得五时仍可落中五，
+          不会私自移往八宫。</p>
+        {chart.middle_five_states.case_count>0?
+          <div className="taiyi-v67-middle-items">
+            {chart.middle_five_states.cases.map((x,i)=><span key={i}>
+              {x.side} {x.kind}：中五不出
+            </span>)}
+          </div>:<p>本年没有计算值落中五的主客或定计大参将。</p>}
+        <p>“中五不出”是古籍排盘中的术语，不代表现实情况的预测。</p>
+      </section>}
+      <p className="academy-caution">V67 为古典岁计结构推演，不包含月计、日计、时计或现代事件预测。
         不同太乙历元传承不能混用；同宫主客异派口径并列，不将未核准的主客将数字充当默认排盘结论。</p>
       <a href={chart.sources.historical_1624} target="_blank" rel="noopener noreferrer">
         《古今图书集成》1624 年原始年局案例</a>

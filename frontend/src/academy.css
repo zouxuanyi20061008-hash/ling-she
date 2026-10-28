@@ -1338,3 +1338,25 @@
 .taiyi-v66-disagreements h3{font-size:16px;margin:6px 0}
 .taiyi-v66-disagreements p{line-height:1.8;font-size:12px}
 .taiyi-v66-disagreements a{color:#75461b;font-size:12px;text-decoration:underline}
+
+/* V67 Taiyi annual Dingji: evidence-based sixteen rotation and middle-five labeling */
+.taiyi-v67-dingji,.taiyi-v67-middle{margin:18px 0;padding:14px;border:1px solid #b9cfbc;background:linear-gradient(125deg,#f0f7ee,#fafbf5)}
+.taiyi-v67-dingji h3,.taiyi-v67-middle h3{font-size:17px;color:#2b6853;margin:4px 0 10px}
+.taiyi-v67-dingji p,.taiyi-v67-middle p{font-size:12px;line-height:1.85}
+.taiyi-v67-dingji>a{font-size:12px;color:#265e50;text-decoration:underline}
+.taiyi-v67-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:13px 0}
+.taiyi-v67-totals span{display:flex;flex-direction:column;gap:6px;padding:10px;background:#fffefa;border:1px solid #c4d4bf;min-width:0}
+.taiyi-v67-totals span strong{font-size:23px;color:#2c725b}
+.taiyi-v67-totals small{font-size:11px}
+.taiyi-v67-totals p{grid-column:1/-1}
+.taiyi-v67-steps{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.taiyi-v67-steps span{padding:7px;background:#f4f3e9;font-size:11px;border:1px solid #d9e3d5}
+.taiyi-v67-steps span.counted{background:#e1eee3;border-color:#b1c8b3}
+.taiyi-v67-rotated{margin:12px 0}
+.taiyi-v67-rotated summary{cursor:pointer;font-size:12px;color:#355c4b}
+.taiyi-v67-rotated>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
+.taiyi-v67-rotated>div span{padding:5px;font-size:11px;background:#f9fdf8;border:1px solid #c9ddce}
+.taiyi-v67-middle{border-color:#d4c396;background:#fffaf0}
+.taiyi-v67-middle-items{display:flex;gap:7px;flex-wrap:wrap}
+.taiyi-v67-middle-items span{padding:8px;border:1px solid #cfb58a;background:#fff7e6;color:#785321;font-size:12px}
+@media(max-width:630px){.taiyi-v67-totals{grid-template-columns:repeat(3,minmax(0,1fr))}.taiyi-v67-totals span strong{font-size:17px}.taiyi-v67-rotated>div{grid-template-columns:repeat(2,minmax(0,1fr))}}
