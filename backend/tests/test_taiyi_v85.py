@@ -45,9 +45,14 @@ def test_local_27_must_not_be_mistaken_for_sixth_ji_315():
     assert false["six_ji_number"]==1
     assert right["five_yuan_name"]=="壬子元"
     assert false["five_yuan_name"]=="甲子元"
-    assert right["time_wenchang"]["god"]!=false["time_wenchang"]["god"]
+    # 315-27=288，恰为24、18、12位环的公倍数：
+    # 局部太乙/文昌/计神/主客算可以全同，却绝不代表元纪相同。
+    assert right["time_wenchang"]["god"]==false["time_wenchang"]["god"]
+    assert right["taiyi_palace"]==false["taiyi_palace"]
+    assert right["time_jishen"]==false["time_jishen"]
+    assert right["hour_ganzhi_from_jiazi_start"]!=false["hour_ganzhi_from_jiazi_start"]
     assert calculate_hour_main_guest(right)["main_calculated"]==29
-    assert calculate_hour_main_guest(false)["main_calculated"]!=29
+    assert calculate_hour_main_guest(false)["main_calculated"]==29
 
 @pytest.mark.parametrize("mode,term,seeds",[
     ("阳遁","冬至",("武德","地主","大炅")),

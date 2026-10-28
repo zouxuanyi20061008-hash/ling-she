@@ -437,7 +437,7 @@ export default function TaiyiV77Hour(){
           </article>)}
         </div>
         <p className="academy-caution">
-          **现代气应派真实纪首相位尚未判定**：这三组仅是《金镜式经》
+          <strong>现代气应派真实纪首相位尚未判定</strong>：这三组仅是《金镜式经》
           六纪起点的三种模型，不能穷尽任意未知历元偏移。
           今日文昌、始击、主客大将仍为待证，且不得从甲子派借用；
           古代绝对上元积时与完整时计八门亦未核准。</p>
