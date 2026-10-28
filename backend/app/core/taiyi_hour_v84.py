@@ -149,4 +149,5 @@ def decorate_taiyi_v84(chart:dict)->dict:
       "V84 王希明二至气应时计已独立排太乙、计神与直使，按太乙宫形成八门有源候选；"
       "气应主客大将的一时一移虽有原典但起宫未知，不能从甲子派借位。"
       "两历元候选即使偶同也不等同于完整时计八门已验真。")
-    return chart
+    from .taiyi_hour_v85 import decorate_taiyi_v85
+    return decorate_taiyi_v85(chart)
