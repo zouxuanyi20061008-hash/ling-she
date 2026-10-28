@@ -168,5 +168,6 @@ def cast_qimen(solar_date:date,clock:time,day_boundary:str="zi_hour")->dict:
     from .qimen_markers import decorate_qimen_v52
     from .qimen_patterns import decorate_qimen_v53
     from .qimen_wonders import decorate_qimen_v54
-    return decorate_qimen_v54(decorate_qimen_v53(decorate_qimen_v52(
-        rotate_qimen(_plate(term["name"],day,hour,metadata)))))
+    from .qimen_integrity import audit_qimen_v73
+    return audit_qimen_v73(decorate_qimen_v54(decorate_qimen_v53(decorate_qimen_v52(
+        rotate_qimen(_plate(term["name"],day,hour,metadata))))))
