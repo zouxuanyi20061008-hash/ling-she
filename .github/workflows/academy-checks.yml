@@ -369,6 +369,17 @@ jobs:
           name: taiyi-v77-solstice-hourly-palace-jishen
           path: backend/acceptance-output/taiyi-v77.json
           if-no-files-found: error
+      - name: Run V78 Taiyi primary-text 887/47/yin63 and 360-hour cycle evidence
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v78_acceptance.py --output backend/acceptance-output/taiyi-v78.json
+      - name: Upload V78 Taiyi source-separated Jiazi epoch and Wenchang witnesses
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v78-jiazi-epoch-360-72-wenchang
+          path: backend/acceptance-output/taiyi-v78.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
