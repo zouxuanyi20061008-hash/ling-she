@@ -142,4 +142,5 @@ def decorate_taiyi_v86(chart:dict)->dict:
         "V86《金镜式经》卷九阳遁2/8/25局客方原例已逐项校验；"
         "阴遁第三纪52局乙卯时存在纪/局/时柱互相冲突，保留三路候选待校。"
         "古代例盘不等于现代二至气应上元，文昌、始击、主客将不移植。")
-    return chart
+    from .taiyi_hour_v87 import decorate_taiyi_v87
+    return decorate_taiyi_v87(chart)

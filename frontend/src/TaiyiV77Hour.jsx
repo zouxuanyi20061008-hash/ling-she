@@ -40,6 +40,7 @@ export default function TaiyiV77Hour(){
   const v82=chart?.hour_v82_eight_door_schools
   const v84=chart?.hour_v84_qiying_plate
   const v85=chart?.hour_v85_phase_hypotheses
+  const v87=chart?.hour_v87_modular_source_audit
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -380,6 +381,41 @@ export default function TaiyiV77Hour(){
               target="_blank" rel="noopener noreferrer">《太乙金钥匙》时计起门法</a>
           </p>
         </section>}
+      {v87&&<section className="taiyi-v85-ji-phase" role="group"
+          aria-label="V87 阴遁古例360时同余冲突与原文来源">
+        <h4>V87 · 卷九阴遁纪／局／时柱同余核验</h4>
+        <p>在完整<strong>{v87.period_hours}时</strong>一周内独立核算：
+          第三纪、52局、乙卯时三项条件
+          <strong> 无共同成立的时数</strong>。
+          这是该计数体系下的数学结论，不是已经证实原籍有误字。</p>
+        <div className="taiyi-v85-phases">
+          {v87.pairwise_intersections.map(item=><article key={item.candidate_hour}>
+            <h5>周内第{item.candidate_hour}时</h5>
+            <p>同时吻合：<strong>{item.constraints.map(k=>({
+              six_ji_number:'第三纪',ju:'第52局',
+              hour_ganzhi_from_jiazi_start:'乙卯时'
+            }[k])).join(' ＋ ')}</strong></p>
+            <p>不符字段：<strong>{({
+              six_ji_number:'六纪',ju:'局数',
+              hour_ganzhi_from_jiazi_start:'时柱'
+            })[item.conflicting_field]}</strong>；
+            原文{item.source_value}，按本口径计算{item.calculated_value}。</p>
+          </article>)}
+        </div>
+        <p className="academy-caution">这些只是两两相容的数学候选，
+          <strong>没有一个是原文完整时计真盘</strong>；
+          没有独立校本之前，不指定修正文句，也不把候选移植到现代气应派。</p>
+        <details>
+          <summary>核对原典数字转录与版本独立性</summary>
+          <p>以下网页均为《太乙金镜式经》四库全书本卷九的转录，
+            不是三个已验真、相互独立的刻本证据：</p>
+          {v87.same_edition_transcriptions.map(s=>
+            <p key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">
+              {s.label}</a> · 独立版本校验：未完成</p>)}
+        </details>
+        <p>现代二至气应文昌、始击和主客将、完整八门落宫、古代上元积时，
+          以及《金钥匙》定计32/33冲突仍然待判。</p>
+      </section>}
       {v86&&<section className="taiyi-v85-ji-phase" role="group"
           aria-label="V86 金镜式经卷九三例核验与阴遁原文冲突">
         <h4>V86 · 卷九时计例课独立校核</h4>

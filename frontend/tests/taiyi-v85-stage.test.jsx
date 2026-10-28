@@ -167,3 +167,47 @@ it('V86 exposes three source-checked Yang examples and Yin contradictory candida
  expect(errors.textContent).toContain('第172时')
  expect(area.textContent).toContain('不可据此建立现代气应文昌或主客将')
 })
+
+it('V87 displays three pairwise-hour contradictions and does not claim independent manuscripts',async()=>{
+ const sources=[
+  {label:'维基文库·四库全书本卷九',url:'https://zh.wikisource.org/zh-hans/太乙金鏡式經_(四庫全書本)/卷09'},
+  {label:'中国哲学书电子化计划·卷九',url:'https://ctext.org/wiki.pl?chapter=435698&if=en'},
+  {label:'知命书院·卷九转录',url:'https://shuyuan.zhiming.life/read/太乙金镜式经/13'},
+ ]
+ const audit={
+  period_hours:360,
+  pairwise_intersections:[
+   {candidate_hour:124,constraints:['six_ji_number','ju'],
+    conflicting_field:'hour_ganzhi_from_jiazi_start',source_value:'乙卯',calculated_value:'丁卯'},
+   {candidate_hour:172,constraints:['six_ji_number','hour_ganzhi_from_jiazi_start'],
+    conflicting_field:'ju',source_value:52,calculated_value:28},
+   {candidate_hour:52,constraints:['ju','hour_ganzhi_from_jiazi_start'],
+    conflicting_field:'six_ji_number',source_value:3,calculated_value:1},
+  ],
+  same_edition_transcriptions:sources,
+ }
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
+  ...base,hour_v87_modular_source_audit:audit
+ })}))
+ render(<TaiyiV77Hour/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ const area=await screen.findByRole('group',{name:'V87 阴遁古例360时同余冲突与原文来源'})
+ expect(area.querySelectorAll('.taiyi-v85-phases article')).toHaveLength(3)
+ expect(area.textContent).toContain('第124时')
+ expect(area.textContent).toContain('第172时')
+ expect(area.textContent).toContain('第52时')
+ expect(area.textContent).toContain('原文乙卯，按本口径计算丁卯')
+ expect(area.textContent).toContain('原文52，按本口径计算28')
+ expect(area.textContent).toContain('没有一个是原文完整时计真盘')
+ fireEvent.click(within(area).getByText('核对原典数字转录与版本独立性'))
+ expect(within(area).getAllByRole('link')).toHaveLength(3)
+ expect(area.textContent).toContain('不是三个已验真、相互独立的刻本')
+})
+
+it('V87 legacy V86 response has no synthetic modular source proof',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>base}))
+ render(<TaiyiV77Hour/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
+ expect(screen.queryByRole('group',{name:'V87 阴遁古例360时同余冲突与原文来源'})).toBeNull()
+})
