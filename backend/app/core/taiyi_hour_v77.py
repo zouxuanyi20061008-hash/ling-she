@@ -115,7 +115,7 @@ def hour_basic_board(solar_date:date,clock:time)->dict:
        "is_middle_unvisited":p==5}
       for p in (9,2,7,4,5,6,3,8,1)
     ]
-    return {
+    board={
        "version":"V77","art":"太乙神数",
        "calculation":"时计·冬夏至后相对时实（基础）",
        "input":{"solar_date":solar_date.isoformat(),
@@ -148,3 +148,5 @@ def hour_basic_board(solar_date:date,clock:time)->dict:
        ] if near else []),
        "sources":TERM_SOURCES,"fortune_verdict":None,
     }
+    from .taiyi_hour_v78 import decorate_taiyi_v78
+    return decorate_taiyi_v78(board,now,term)
