@@ -56,7 +56,7 @@ it('V78 shows separate Jiazi historic school without replacing existing V77 rela
  expect(section.textContent).toContain('甲子日子时')
  expect(section.textContent).toContain('249')
  expect(section.textContent).toContain('庚子元')
- expect(section.textContent).toContain('六纪')
+ expect(section.textContent).toContain('第5纪')
  expect(section.textContent).toContain('阴德')
  expect(section.textContent).toContain('太乙入宫不同')
  expect(within(section).getAllByRole('link')).toHaveLength(2)

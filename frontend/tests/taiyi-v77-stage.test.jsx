@@ -65,7 +65,7 @@ it('V77 near actual solstice always warns about boundary',async()=>{
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
  const section=await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})
  expect(within(section).getByRole('note').textContent).toContain('交节前后十五分钟')
- expect(section.textContent).toContain('甲子元积时')
+ expect(section.textContent).toContain('古代绝对上元积时')
 })
 
 it('V77 field edits invalidate rendered board and stale requests',async()=>{
