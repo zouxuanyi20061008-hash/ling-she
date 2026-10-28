@@ -325,6 +325,17 @@ jobs:
           name: qimen-v73-four-layers-guyujian-q1
           path: backend/acceptance-output/qimen-v73.json
           if-no-files-found: error
+      - name: Run V74 Liuren classical Fuyin exception and 8640 pending-case census
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/liuren_v74_acceptance.py --output backend/acceptance-output/liuren-v74.json
+      - name: Upload V74 Liuren classical exceptions and unresolved-method census
+        uses: actions/upload-artifact@v4
+        with:
+          name: liuren-v74-classical-mao-and-pending-census
+          path: backend/acceptance-output/liuren-v74.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
