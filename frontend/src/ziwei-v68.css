@@ -1,0 +1,29 @@
+.ziwei-v68{margin:22px 0;padding:clamp(16px,3vw,32px);background:#f3eee3;border:1px solid #b9a68c;border-radius:16px;color:#342e35}
+.ziwei-v68 header small{letter-spacing:.12em;color:#795c82}
+.ziwei-v68 header h2{font-family:serif;color:#4a3354;font-size:clamp(24px,3vw,34px);margin:8px 0}
+.ziwei-v68 header p{line-height:1.8}
+.ziwei-v68-form{display:flex;flex-wrap:wrap;gap:12px;align-items:end;padding:18px;margin:20px 0;background:#fffaf1;border-radius:12px;border:1px solid #cbbdad}
+.ziwei-v68-form label{flex:1 1 165px;display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:600}
+.ziwei-v68-form input:not([type=checkbox]),.ziwei-v68-form select{box-sizing:border-box;padding:10px;border:1px solid #9c8e81;border-radius:7px;background:white;color:#302c30;width:100%;font-size:14px}
+.ziwei-v68-form button{padding:12px 16px;border:0;border-radius:8px;background:#583968;color:white;min-height:44px;font-weight:700;cursor:pointer}
+.ziwei-v68-form button:disabled{opacity:.6}
+.ziwei-v68-error{color:#9a3131;padding:12px;border:1px solid #bb8b8b}
+.ziwei-v68-summary{background:#fffaf3;border-left:4px solid #805d8d;padding:14px;margin-bottom:12px;line-height:1.65}
+.ziwei-v68-summary h3{font-size:22px;color:#50345d;margin:0}
+.ziwei-v68-summary p{margin:5px 0}
+.ziwei-v68-scroll{overflow-x:auto;max-width:100%}
+.ziwei-v68-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(4,minmax(120px,auto));gap:4px;min-width:490px;max-width:960px;background:#c0b1bd;padding:5px;border-radius:10px}
+.ziwei-v68-palace{display:flex;flex-direction:column;text-align:left;gap:9px;min-width:0;padding:9px;background:#fffaf1;color:#392b3b;border:1px solid #e2d9c9;cursor:pointer}
+.ziwei-v68-palace small{color:#785480;font-weight:700;font-size:12px}
+.ziwei-v68-palace strong{font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.ziwei-v68-palace span{font-size:11px;color:#7a6679}
+.ziwei-v68-palace.ming{background:#ede0ef}
+.ziwei-v68-palace.shen{border-left:4px solid #9c7a4e}
+.ziwei-v68-palace.selected{outline:3px solid #725083;outline-offset:-3px}
+.ziwei-v68-center{grid-column:2/span 2;grid-row:2/span 2;background:radial-gradient(circle,#f6f0e6,#ded3df);display:flex;flex-direction:column;gap:14px;justify-content:center;align-items:center;text-align:center;color:#543d61;border:1px solid #967e99}
+.ziwei-v68-center strong{font-size:23px;font-family:serif}
+.ziwei-v68-picked,.ziwei-v68-trace{margin-top:12px;padding:14px 18px;background:#fffaf3;border:1px solid #d7c8b6;border-radius:9px;line-height:1.8}
+.ziwei-v68-picked h3,.ziwei-v68-trace h3{color:#55375f;margin:0}
+.ziwei-v68-picked p,.ziwei-v68-trace p{margin:4px 0}
+.ziwei-v68-warning{color:#805e25;font-size:13px;line-height:1.7}
+@media(max-width:600px){.ziwei-v68-form{flex-direction:column;align-items:stretch}.ziwei-v68-form label{flex:auto}}

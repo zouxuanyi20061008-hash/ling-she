@@ -2,6 +2,7 @@ import {useState} from 'react'
 import {ARTS} from './ArtsHub.jsx'
 import LiurenV58 from './LiurenV58.jsx'
 import TaiyiV64 from './TaiyiV64.jsx'
+import ZiweiV68 from './ZiweiV68.jsx'
 import './academy.css'
 
 const PALACES=[
@@ -25,7 +26,7 @@ const BRANCHES=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌
 const PILLARS=['年柱','月柱','日柱','时柱']
 export default function KnowledgeStage({mode,onBack,onStudy}) {
   const art=ARTS.find(a=>a.id===mode)||ARTS[2]
-  const isQimen=mode==='qimen',isBazi=mode==='bazi',isLiuren=mode==='liuren',isTaiyi=mode==='taiyi'
+  const isQimen=mode==='qimen',isBazi=mode==='bazi',isLiuren=mode==='liuren',isTaiyi=mode==='taiyi',isZiwei=mode==='ziwei'
   const [palaceNum,setPalaceNum]=useState(4)
   const [door,setDoor]=useState(0)
   const [qimenDate,setQimenDate]=useState(()=>
@@ -98,12 +99,13 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       <header className="academy-stage-nav"><button onClick={onBack}>← 返回万象书院</button><b>{art.group} · {art.name}</b><button onClick={onStudy}>藏经阁 ◎</button></header>
       <section className="academy-stage-banner"><div>
         <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
-        <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'四柱八字 · 真实节令排盘':isLiuren?'大六壬 · 中气月将与四课':isTaiyi?'太乙神数 · 古籍岁计真实入局':'古典文献 · 入门导览'}</p>
-        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V63 已按起课日的六甲旬排出旬空、遁干，并标记十二宫、四课和三传的空亡状态；天将“天空”与旬空不会混淆。':isTaiyi?'V67 已补岁计定计目、六合旋盘及定计大小将实算，明确标注主客定计将落中五不出，并保留 V66 同宫双口径。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
+        <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'四柱八字 · 真实节令排盘':isLiuren?'大六壬 · 中气月将与四课':isTaiyi?'太乙神数 · 古籍岁计真实入局':isZiwei?'紫微斗数 · 北京时间与农历安星':'古典文献 · 入门导览'}</p>
+        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V63 已按起课日的六甲旬排出旬空、遁干，并标记十二宫、四课和三传的空亡状态；天将“天空”与旬空不会混淆。':isTaiyi?'V67 已补岁计定计目、六合旋盘及定计大小将实算，明确标注主客定计将落中五不出，并保留 V66 同宫双口径。':isZiwei?'V68 实算命身宫、五行局和十四主星，闰月流派口径可切换。四化及辅煞尚未完成。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
-      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'V57 四柱大运 · 流年流月':isLiuren?'V63 日旬遁干 · 旬空可核验':isTaiyi?'V67 定计目 · 中五将核验':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'十二节令流月 · 交节流年 · 大运时段定位':isLiuren?'六甲旬 · 天地盘空亡分层 · 三传遁干':isTaiyi?'六合加太岁 · 定计目 · 主客定计大参将':'独立主题 · 后续按本门术法逐步完善'}</small></div>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'V57 四柱大运 · 流年流月':isLiuren?'V63 日旬遁干 · 旬空可核验':isTaiyi?'V67 定计目 · 中五将核验':isZiwei?'V68 十二宫 · 十四正曜':mode==='fengshui'?'山水堪舆 · 空间观察':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'十二节令流月 · 交节流年 · 大运时段定位':isLiuren?'六甲旬 · 天地盘空亡分层 · 三传遁干':isTaiyi?'六合加太岁 · 定计目 · 主客定计大参将':isZiwei?'命宫身宫 · 五行局 · 紫微天府安星':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isLiuren&&<LiurenV58/>}
       {isTaiyi&&<TaiyiV64/>}
+      {isZiwei&&<ZiweiV68/>}
       {isQimen&&<section className="qimen-v50">
         <header><small>V54 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
           <p>真实九宫地盘、星门神盘保持不变；增加三奇入墓与古籍六甲式三奇得使，并单独列出另一种值使门同宫口径，绝不合并判定。</p>

@@ -15,7 +15,7 @@ export const ARTS = [
   {id:'taiyi',name:'太乙神数',title:'太乙行宫',symbol:'乙',en:'TAI YI',tone:'jade',
    brief:'步宫推数，历法中的术数传统。',detail:'岁计定计目 · 六合旋宫 · 中五将不出',status:'V67 定计起算',group:'三式'},
   {id:'ziwei',name:'紫微斗数',title:'紫微星盘',symbol:'星',en:'ZIWEI DOUSHU',tone:'copper',
-   brief:'十二宫垣，星曜的古典语言。',detail:'命盘结构 · 宫位星曜 · 流派边界',status:'典籍导览',group:'命理'},
+   brief:'十二宫垣，星曜的古典语言。',detail:'命身宫 · 五行局 · 十四正曜 · 闰月双口径',status:'V68 基础命盘',group:'命理'},
   {id:'fengshui',name:'堪舆风水',title:'山川堪舆',symbol:'山',en:'KAN YU',tone:'amber',
    brief:'察山水形势，读空间的传统观念。',detail:'形势 · 理气 · 方位基础',status:'典籍导览',group:'空间'},
 ]

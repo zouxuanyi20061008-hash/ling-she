@@ -259,6 +259,17 @@ jobs:
           name: taiyi-v67-dingji-central-five
           path: backend/acceptance-output/taiyi-v67.json
           if-no-files-found: error
+      - name: Run V68 Ziwei independent classical fixtures
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/ziwei_v68_acceptance.py --output backend/acceptance-output/ziwei-v68.json
+      - name: Upload V68 Ziwei independent fixture evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ziwei-v68-twelve-palaces-fourteen-stars
+          path: backend/acceptance-output/ziwei-v68.json
+          if-no-files-found: error
   deploy_after_checks:
     name: Deploy tested academy to Render
     needs: [frontend, backend]
