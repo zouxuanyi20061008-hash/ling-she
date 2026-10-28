@@ -191,4 +191,5 @@ def decorate_taiyi_v81(chart:dict)->dict:
     chart["warnings"].append(
        "V81 将古法直使加定计目做十六神候选定位，并未获得时计完整实例验证；"
        "庚戌时逐项32与正文33仍属同一文本内部矛盾，同宫取算与全八门飞布待校。")
-    return chart
+    from .taiyi_hour_v82 import decorate_taiyi_v82
+    return decorate_taiyi_v82(chart)
