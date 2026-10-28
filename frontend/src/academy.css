@@ -1416,3 +1416,14 @@
 @media(max-width:540px){.taiyi-v77-hour{padding:12px}
  .taiyi-v77-palace-grid{gap:5px}.taiyi-v77-cell{padding:7px;min-height:84px}
  .taiyi-v77-cell strong{font-size:13px}}
+
+/* V78 ancient-Jiazi shortcut and V77 solstice-relative time bases deliberately separated. */
+.taiyi-v78-epoch{margin:17px 0;padding:16px 18px;border:1px solid #b6aa8f;
+ border-radius:12px;background:#fbf6e9;color:#514432;line-height:1.85}
+.taiyi-v78-epoch h4{font-size:17px;margin:0 0 9px;color:#674b2e}
+.taiyi-v78-epoch p{margin:8px 0}
+.taiyi-v78-numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin:12px 0}
+.taiyi-v78-numbers span{border:1px solid #e3d7bd;border-radius:8px;background:#fffdf7;padding:9px}
+.taiyi-v78-trace{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.taiyi-v78-trace span{padding:4px 7px;border:1px solid #e6d9c0;border-radius:6px;background:#fff;font-size:12px}
+.taiyi-v78-epoch a{color:#75572e;text-decoration:underline}
