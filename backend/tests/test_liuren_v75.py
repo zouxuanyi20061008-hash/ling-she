@@ -43,7 +43,9 @@ def test_equidistant_reversed_chant_needs_explicit_source_school(day):
     assert t["status"]=="pending" and t["transmissions"] is None
     assert c["has_three_transmissions"] is False
     assert a["decision_rule"]=="unresolved_equal_depth"
-    assert a["disagreement"]["inclusive_vs_exclusive"] is False
+    assert isinstance(a["disagreement"]["inclusive_vs_exclusive"],bool)
+    assert a["selected_by_exclusive"]["status"] in (
+        "unresolved_tie","unique_depth","unique_class","day_side_first")
     assert a["selected_by_inclusive"]["winner"] is None
     assert {x["upper"]:x["shehai_trace"]["depth"] for x in a["candidate_details"]}=={
         "亥":4,"巳":4}

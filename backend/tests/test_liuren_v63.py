@@ -78,7 +78,8 @@ def test_four_lesson_void_matches_upper_branch_but_lower_stem_is_not_ground_pala
 
 
 def test_unresolved_three_transmission_stays_none_no_fake_dun():
-    c=build_liuren("甲子","午","子")
+    # V75 甲子已得唯一涉害深度；改用戊辰复等流派未决。
+    c=build_liuren("戊辰","午","子")
     assert c["three_transmissions"]["status"]=="pending"
     assert c["three_transmissions"]["transmissions"] is None
     assert c["xun_void_and_dun"]["void_transmission_names"] is None

@@ -84,8 +84,8 @@ def test_four_lessons_and_known_three_transmissions_have_corresponding_generals(
 
 
 def test_unresolved_chart_remains_pending_without_fabricated_generals():
-    # Source classical ambiguous example still pending in special fanyin.
-    c=build_liuren("甲子","午","子")
+    # 戊辰复等存在《探原》与《存验》取法差异，默认保留待判。
+    c=build_liuren("戊辰","午","子")
     assert c["three_transmissions"]["status"]=="pending"
     assert c["three_transmissions"]["transmissions"] is None
     assert c["has_twelve_heavenly_generals"]

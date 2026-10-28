@@ -61,7 +61,8 @@ def decorate_liuren_v75(chart:dict, tie_school:str="pending")->dict:
     t=chart["three_transmissions"]
     if review["offset_palaces"]!=6 or t["status"]!="pending" or "反吟多贼克" not in t["method"]:
         chart["fanyin_shehai_v75"]={"version":"V75","applied":False,
-            "reason":"非反吟多贼克待判课","selected_school":tie_school}
+            "reason":"非反吟多贼克待判课","selected_school":tie_school,
+            "school_selection":tie_school}
         return chart
     relation,candidates,comparable,rows=_audited_candidates(chart)
     main=_pick_depth(rows,"shehai_trace",chart["day_ganzhi"])

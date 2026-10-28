@@ -59,7 +59,9 @@ def test_fuyin_fanyin_special_methods_only_when_unique():
     fuyin=build_liuren("甲子","子","子")
     assert fuyin["three_transmissions"]["status"]=="computed"
     assert len(fuyin["three_transmissions"]["transmissions"])==3
-    fanyin=build_liuren("甲子","午","子")
+    # V75 甲子反吟已有《太白兵备统宗宝鉴》寅申寅真值；
+    # 以复等未选取法的戊辰作真正 pending 夹具。
+    fanyin=build_liuren("戊辰","午","子")
     assert fanyin["three_transmissions"]["status"]=="pending"
     assert fanyin["three_transmissions"]["transmissions"] is None
 
