@@ -270,6 +270,17 @@ jobs:
           name: ziwei-v68-twelve-palaces-fourteen-stars
           path: backend/acceptance-output/ziwei-v68.json
           if-no-files-found: error
+      - name: Run V69 Ziwei independent classics and ten-stem four transformations
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/ziwei_v69_acceptance.py --output backend/acceptance-output/ziwei-v69.json
+      - name: Upload V69 Ziwei classical auxiliary stars and four transformations
+        uses: actions/upload-artifact@v4
+        with:
+          name: ziwei-v69-classical-auxiliary-four-transform
+          path: backend/acceptance-output/ziwei-v69.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
