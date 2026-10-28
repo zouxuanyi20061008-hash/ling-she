@@ -15,7 +15,7 @@ from urllib.error import HTTPError, URLError
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, StrictInt
 
 from .core.casting import cast, ObservationNeedsNumbers
 from .core.strokes import UnsupportedCharacter
@@ -40,6 +40,7 @@ app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173","http:/
                    allow_origin_regex=LAN_REGEX,allow_methods=["GET","POST"],allow_headers=["*"])
 
 class CastRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     question: str = Field(min_length=1,max_length=1000)
     background: str | None = Field(default=None,max_length=1200)
     background_confirmed: bool = False
@@ -50,8 +51,8 @@ class CastRequest(BaseModel):
     observation_reason: str | None = Field(default=None,max_length=300)
     time_iso: datetime
     independent_yin: Literal["one","hour"] = "one"
-    manual_first: int | None = Field(default=None,gt=0,le=100)
-    manual_second: int | None = Field(default=None,gt=0,le=100)
+    manual_first: StrictInt | None = Field(default=None,gt=0,le=100)
+    manual_second: StrictInt | None = Field(default=None,gt=0,le=100)
     manual_structure: Literal["左右","上下","全包围","半包围","左中右","上中下","独体","其他"] | None = None
     manual_yang_part: str | None = Field(default=None,max_length=30)
     manual_yin_part: str | None = Field(default=None,max_length=30)
@@ -195,6 +196,8 @@ class FengshuiCastRequest(BaseModel):
 @app.post("/api/fengshui/cast")
 def fengshui_cast(req: FengshuiCastRequest):
     try:
+        if req.foundation_date is None and "foundation_clock" in req.model_fields_set:
+            raise ValueError("未填写立极日期时不能单独提供立极时刻，以免被忽略。")
         return cast_fengshui(req.bearing_degrees,req.bearing_role,
                              req.north_reference,req.magnetic_declination_degrees,
                              req.foundation_date,req.foundation_clock)
@@ -228,7 +231,8 @@ def ziwei_cast(req: ZiweiCastRequest):
 
 
 class TaiyiCastRequest(BaseModel):
-    gregorian_year: int = Field(ge=1901,le=2099)
+    model_config = ConfigDict(extra="forbid")
+    gregorian_year: StrictInt = Field(ge=1901,le=2099)
     same_palace_rule: Literal["wubeizhi","conservative"] = "wubeizhi"
 
 
@@ -241,6 +245,7 @@ def taiyi_cast(req: TaiyiCastRequest):
 
 
 class LiurenCastRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     solar_date: date_value
     clock: time_value
     day_boundary: Literal["midnight","zi_hour"] = "zi_hour"
@@ -256,6 +261,7 @@ def liuren_cast(req: LiurenCastRequest):
 
 
 class BaziCastRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     solar_date: date_value
     clock: time_value
     day_boundary: Literal["midnight","zi_hour"] = "midnight"
@@ -269,6 +275,8 @@ class BaziCastRequest(BaseModel):
 @app.post("/api/bazi/cast")
 def bazi_cast(req: BaziCastRequest):
     try:
+        if req.flow_solar_date is None and "flow_clock" in req.model_fields_set:
+            raise ValueError("未填写流年流月查阅日期时不能单独提供流月时刻。")
         return cast_bazi(req.solar_date,req.clock,req.day_boundary,req.luck_direction,
                          req.flow_solar_date,req.flow_clock)
     except ValueError as exc:
@@ -276,6 +284,7 @@ def bazi_cast(req: BaziCastRequest):
 
 
 class QimenCastRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     solar_date: date_value
     clock: time_value
     day_boundary: Literal["midnight","zi_hour"] = "zi_hour"
@@ -290,11 +299,12 @@ def qimen_cast(req: QimenCastRequest):
 
 
 class SixYaoCastRequest(BaseModel):
-    numbers: list[int] = Field(min_length=6,max_length=6)
+    model_config = ConfigDict(extra="forbid")
+    numbers: list[StrictInt] = Field(min_length=6,max_length=6)
     day_ganzhi: str | None = Field(default=None,min_length=2,max_length=2)
     month_branch: str | None = Field(default=None,min_length=1,max_length=1)
     focus_liuqin: Literal["父母","官鬼","兄弟","妻财","子孙","世爻","应爻"] | None = None
-    focus_position: int | None = Field(default=None,ge=1,le=6)
+    focus_position: StrictInt | None = Field(default=None,ge=1,le=6)
     calendar_input: SolarCalendarPreviewRequest | None = None
 
 class SixYaoReadRequest(SixYaoCastRequest):
