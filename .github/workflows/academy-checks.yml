@@ -413,6 +413,17 @@ jobs:
           name: taiyi-v81-gengxu-one-text-discrepancy-and-door-location
           path: backend/acceptance-output/taiyi-v81.json
           if-no-files-found: error
+      - name: Run V82 Taiyi four classical eight-door anchor schools and 720-slot evidence
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v82_acceptance.py --output backend/acceptance-output/taiyi-v82.json
+      - name: Upload V82 Taiyi source-separated door rotation and missing anchors
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v82-eight-door-source-scoped-rotation
+          path: backend/acceptance-output/taiyi-v82.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
