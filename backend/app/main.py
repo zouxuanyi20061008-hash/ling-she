@@ -28,6 +28,7 @@ from .core.qimen import cast_qimen
 from .core.bazi import cast_bazi
 from .core.liuren import cast_liuren
 from .core.taiyi import cast_taiyi
+from .core.ziwei import cast_ziwei
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
 LAN_REGEX = (
@@ -178,6 +179,29 @@ def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
             req.is_leap_month,req.clock,req.day_boundary)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
+
+class ZiweiCastRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    calendar_type: Literal["solar","lunar"] = "solar"
+    solar_date: date_value | None = None
+    lunar_year: int | None = Field(default=None,ge=1901,le=2099)
+    lunar_month: int | None = Field(default=None,ge=1,le=12)
+    lunar_day: int | None = Field(default=None,ge=1,le=30)
+    is_leap_month: bool = False
+    clock: time_value
+    gender: Literal["unspecified","male","female"] = "unspecified"
+    leap_month_rule: Literal["same_month","next_month"] = "same_month"
+
+
+@app.post("/api/ziwei/cast")
+def ziwei_cast(req: ZiweiCastRequest):
+    try:
+        return cast_ziwei(req.calendar_type,req.solar_date,req.lunar_year,
+                          req.lunar_month,req.lunar_day,req.is_leap_month,
+                          req.clock,req.gender,req.leap_month_rule)
+    except ValueError as exc:
+        raise HTTPException(422,str(exc)) from exc
+
 
 class TaiyiCastRequest(BaseModel):
     gregorian_year: int = Field(ge=1901,le=2099)
