@@ -18,7 +18,7 @@ def test_gengshen_1980_exact_auxiliary_and_four_labels_from_original_rhymes():
     assert a["auxiliary_star_positions"]=={
       "左辅":"辰","右弼":"戌","文昌":"巳","文曲":"酉",
       "禄存":"申","天魁":"丑","天钺":"未","天马":"寅",
-      "擎羊":"酉","陀罗":"未","地劫":"卯","地空":"未",
+      "擎羊":"酉","陀罗":"未","地劫":"辰","地空":"午",
     }
     assert a["auxiliary_star_count"]==12
     assert [(x["name"],x["star"],x["branch"]) for x in a["four_transformations"]]==[
