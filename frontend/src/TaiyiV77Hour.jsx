@@ -405,6 +405,19 @@ export default function TaiyiV77Hour(){
           <strong> {v85.historical_three_seeds.join(' → ')}</strong>，
           循环于纪一至三、四至六。下列三栏是假定不同纪首相位的
           <strong>条件算式</strong>，不是给现代时计选定的真实大将位置。</p>
+        {v85.historical_ji_origin_witness?.rows&&<details>
+          <summary>核对张良旧六纪：逐纪太乙起宫、天目、计神（非现代气应纪首）</summary>
+          <div className="taiyi-v85-witness" role="group"
+               aria-label="V85 张良旧六纪太乙天目计神独立对照">
+            {v85.historical_ji_origin_witness.rows.map(r=><span key={r.ji_number}>
+              第{r.ji_number}纪：太乙{r.taiyi_palace}宫 ·
+              天目{r.wenchang_god} · 计神{r.jishen}
+            </span>)}
+          </div>
+          <p className="academy-caution">
+            以上是古籍旧法夜半甲子六纪起点，并非王希明真实冬夏至气应纪首。
+            不得据此指定当代文昌、始击或主客大将。</p>
+        </details>}
         <div className="taiyi-v85-phases">
           {v85.hypotheses.map(h=><article key={h.phase}>
             <h5>相位{h.phase} · 纪

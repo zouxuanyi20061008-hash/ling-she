@@ -39,8 +39,19 @@ const phase=(n,first,wen,shiji,pending=false)=>({
  guest:{status:'computed',count:4,big_general:4,
         assistant_general:2,trace}
 })
+const historicalOrigins={
+ status:'verified_historical_zhangliang_six_ji_starts',
+ modern_solstice_ji_phase_verified:false,
+ may_be_used_as_modern_qiying_anchor:false,
+ rows:[[1,9,'吕申'],[2,4,'大威'],[3,9,'阴德'],
+       [4,4,'吕申'],[5,9,'大威'],[6,4,'阴德']]
+       .map(([ji_number,taiyi_palace,wenchang_god])=>({
+         ji_number,taiyi_palace,wenchang_god,jishen:'申'
+       }))
+}
 const hypothesis={
  version:'V85',historical_three_seeds:['吕申','大威','阴德'],
+ historical_ji_origin_witness:historicalOrigins,
  hypotheses:[
    phase(1,'吕申','吕申','武德'),
    phase(2,'大威','大威','地主',true),
@@ -91,6 +102,24 @@ it('V85 shows three separate phase cards and still conservatively handles same-p
  fireEvent.click(within(area).getByText('核对相位2主客逐宫投算轨迹'))
  const other=within(area).getByRole('group',{name:'V85 相位2主客逐宫投算'})
  expect(other.textContent).toContain('此方起算目与太乙同宫')
+})
+
+it('V85 lists six old-Ji primary-text origins without treating them as actual solstice anchors',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
+  ...base,hour_v85_independent_yin_witness:witness,
+  hour_v85_phase_hypotheses:hypothesis
+ })}))
+ render(<TaiyiV77Hour/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ const area=await screen.findByRole('group',{name:'V85 太乙阴遁315原典真值与气应天目三种纪相位'})
+ fireEvent.click(within(area).getByText(/核对张良旧六纪/))
+ const origin=within(area).getByRole('group',{name:'V85 张良旧六纪太乙天目计神独立对照'})
+ const entries=origin.querySelectorAll('span')
+ expect(entries).toHaveLength(6)
+ expect(entries[0].textContent).toContain('太乙9宫')
+ expect(entries[1].textContent).toContain('太乙4宫')
+ expect(entries[5].textContent).toContain('天目阴德')
+ expect(area.textContent).toContain('不得据此指定当代文昌、始击或主客大将')
 })
 
 it('V85 legacy V84 hourly API does not invent a Yin315 historical example or phases',async()=>{

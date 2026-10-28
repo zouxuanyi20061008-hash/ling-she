@@ -4,7 +4,8 @@ from pathlib import Path
 import argparse,json
 from app.core.taiyi_hour_v77 import hour_basic_board,_jieqi
 from app.core.taiyi_hour_v85 import (
-    independent_yin_315_witness,three_historical_ji_phase_hypotheses,JI_SEEDS
+    independent_yin_315_witness,three_historical_ji_phase_hypotheses,JI_SEEDS,
+    independent_historical_six_ji_starts
 )
 
 def audit():
@@ -13,6 +14,10 @@ def audit():
     assert (independent["actual"]["main_count"],independent["actual"]["guest_count"])==(29,4)
     assert (independent["actual"]["main_general"],independent["actual"]["main_assistant"],
         independent["actual"]["guest_general"],independent["actual"]["guest_assistant"])==(9,7,4,2)
+    historical_origins={mode:independent_historical_six_ji_starts(mode)
+                        for mode in ("阳遁","阴遁")}
+    assert all(len(x["rows"])==6 and not x["may_be_used_as_modern_qiying_anchor"]
+               for x in historical_origins.values())
     census={}
     examples=[]
     for mode,term in (("阳遁","冬至"),("阴遁","夏至")):
@@ -69,6 +74,7 @@ def audit():
          "not_equivalent_to_jiazi_shortcut_ju_27":True,
          "not_a_modern_solstice_epoch_anchor":True},
       "six_historical_ji_starts":JI_SEEDS,
+      "historical_six_ji_palace_eye_jishen_witnesses":historical_origins,
       "720_hour_slots_three_phases_each":census,
       "representative_phase_traces":examples,
       "2026_solstice_first_hour":boundary,

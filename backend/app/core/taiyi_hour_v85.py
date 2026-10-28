@@ -37,6 +37,41 @@ JI_SEEDS={
  "阴遁":("吕申","大威","阴德"),
 }
 
+# 《太乙金镜式经》卷一张良旧六纪逐纪独立真值：太乙宫与计神起支。
+# 旧法甲子纪首并非王希明「每次二至气应」的现代已证纪首。
+HISTORICAL_JI_ORIGINS={
+    "阳遁":{"taiyi_palaces":(1,6,1,6,1,6),"jishen":"寅"},
+    "阴遁":{"taiyi_palaces":(9,4,9,4,9,4),"jishen":"申"},
+}
+
+def independent_historical_six_ji_starts(dun:str)->dict:
+    """按历史六纪原文核对逐纪太乙/文昌/计神，不用作现代气应盘。"""
+    if dun not in HISTORICAL_JI_ORIGINS:
+        raise ValueError("V85 六纪原典验收仅支持阴阳遁")
+    original=HISTORICAL_JI_ORIGINS[dun]
+    rows=[]
+    for i in range(6):
+        count=60*i+1
+        c=classical_hour_ju(count,dun)
+        taiyi=c["taiyi_palace"]["number"]
+        eye=c["time_wenchang"]["god"]
+        jishen=c["time_jishen"]
+        if (c["six_ji_number"]!=i+1 or c["in_cycle_360"]!=count or
+            taiyi!=original["taiyi_palaces"][i] or
+            eye!=JI_SEEDS[dun][i%3] or jishen!=original["jishen"]):
+            raise ValueError("V85 金镜式经旧六纪起宫天目计神真值不符")
+        rows.append({
+            "ji_number":i+1,"first_hour_in_360":count,
+            "taiyi_palace":taiyi,"wenchang_god":eye,"jishen":jishen,
+            "source":SOURCE_JING,"is_modern_qiying_initial_hour":False,
+        })
+    return {
+        "status":"verified_historical_zhangliang_six_ji_starts",
+        "dun":dun,"rows":rows,"source":SOURCE_JING,
+        "modern_solstice_ji_phase_verified":False,
+        "may_be_used_as_modern_qiying_anchor":False,
+    }
+
 def independent_yin_315_witness()->dict:
     """真正以阴遁积数315校验，不把古例常量输入计算过程。"""
     c=classical_hour_ju(315,"阴遁")
@@ -128,7 +163,9 @@ def three_historical_ji_phase_hypotheses(relative_hours:int,dun:str,term:str)->d
        "status":"historical_ji_seed_hypotheses_only",
        "dun":dun,"solstice_name":term,"relative_hours":relative_hours,
        "qiying_taiyi_palace":palace,"qiying_jishen":jishen,
-       "historical_three_seeds":list(seeds),"six_ji_seed_cycle":{
+       "historical_three_seeds":list(seeds),
+       "historical_ji_origin_witness":independent_historical_six_ji_starts(dun),
+       "six_ji_seed_cycle":{
           "ji_1":seeds[0],"ji_2":seeds[1],"ji_3":seeds[2],
           "ji_4":seeds[0],"ji_5":seeds[1],"ji_6":seeds[2]},
        "hypotheses":cases,"number_of_conditional_phases":3,

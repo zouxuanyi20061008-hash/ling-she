@@ -10,7 +10,7 @@ from app.core.taiyi_hour_v78 import classical_hour_ju, hour_wenchang_from_count
 from app.core.taiyi_hour_v79 import calculate_hour_main_guest
 from app.core.taiyi_hour_v85 import (
     independent_yin_315_witness,three_historical_ji_phase_hypotheses,
-    decorate_taiyi_v85,YIN_315,JI_SEEDS
+    decorate_taiyi_v85,YIN_315,JI_SEEDS,independent_historical_six_ji_starts
 )
 
 def test_genuine_independent_yin_315_full_taiyi_hour_case_not_ju_27():
@@ -54,6 +54,29 @@ def test_local_27_must_not_be_mistaken_for_sixth_ji_315():
     assert calculate_hour_main_guest(right)["main_calculated"]==29
     assert calculate_hour_main_guest(false)["main_calculated"]==29
 
+@pytest.mark.parametrize("dun,palaces,eyes,jishen",[
+    ("阳遁",(1,6,1,6,1,6),("武德","地主","大炅","武德","地主","大炅"),"寅"),
+    ("阴遁",(9,4,9,4,9,4),("吕申","大威","阴德","吕申","大威","阴德"),"申"),
+])
+def test_six_historical_ji_start_palace_eye_and_jishen_from_original(dun,palaces,eyes,jishen):
+    w=independent_historical_six_ji_starts(dun)
+    assert w["status"]=="verified_historical_zhangliang_six_ji_starts"
+    assert not w["modern_solstice_ji_phase_verified"]
+    assert not w["may_be_used_as_modern_qiying_anchor"]
+    rows=w["rows"]
+    assert [r["first_hour_in_360"] for r in rows]==[1,61,121,181,241,301]
+    assert tuple(r["taiyi_palace"] for r in rows)==palaces
+    assert tuple(r["wenchang_god"] for r in rows)==eyes
+    assert {r["jishen"] for r in rows}=={jishen}
+    for r in rows:
+        assert not r["is_modern_qiying_initial_hour"]
+        c=classical_hour_ju(r["first_hour_in_360"],dun)
+        assert r["ji_number"]==c["six_ji_number"]
+        assert r["taiyi_palace"]==c["taiyi_palace"]["number"]
+        assert r["wenchang_god"]==c["time_wenchang"]["god"]
+    with pytest.raises(ValueError,match="V85"):
+        independent_historical_six_ji_starts("无效遁")
+
 @pytest.mark.parametrize("mode,term,seeds",[
     ("阳遁","冬至",("武德","地主","大炅")),
     ("阴遁","夏至",("吕申","大威","阴德")),
@@ -64,6 +87,7 @@ def test_three_sources_are_historical_ji_seeds_not_known_qiying_phase(mode,term,
         assert hour_wenchang_from_count(1+60*phase,mode)["god"]==seed
     result=three_historical_ji_phase_hypotheses(1,mode,term)
     assert result["historical_three_seeds"]==list(seeds)
+    assert not result["historical_ji_origin_witness"]["may_be_used_as_modern_qiying_anchor"]
     assert result["six_ji_seed_cycle"]=={
        "ji_1":seeds[0],"ji_2":seeds[1],"ji_3":seeds[2],
        "ji_4":seeds[0],"ji_5":seeds[1],"ji_6":seeds[2]}
@@ -175,6 +199,8 @@ def test_api_v85_preserves_v84_previous_jiazi_and_annual_year():
         assert c["hour_v85_independent_yin_witness"]["status"]=="verified_independent_yin_315_witness"
         assert c["hour_v85_phase_hypotheses"]["version"]=="V85"
         assert c["hour_v85_phase_hypotheses"]["preferred_phase"] is None
+        assert len(c["hour_v85_phase_hypotheses"]["historical_ji_origin_witness"]["rows"])==6
+        assert not c["hour_v85_phase_hypotheses"]["historical_ji_origin_witness"]["modern_solstice_ji_phase_verified"]
         assert c["has_verified_qiying_wenchang"] is False
         assert c["has_verified_qiying_main_guest"] is False
         assert c["has_full_hour_chart"] is False
