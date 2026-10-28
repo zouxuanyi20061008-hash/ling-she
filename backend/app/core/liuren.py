@@ -114,7 +114,8 @@ def three_transmissions(day:str,plate:dict,lessons:list[dict],month_general:str,
 
 
 def build_liuren(day:str,month_general:str,占时:str,reference:dict|None=None,
-                 noble_mode:str="hour_branch")->dict:
+                 noble_mode:str="hour_branch",
+                 fanyin_tie_school:str="pending")->dict:
     """Pure rule kernel also allows manually transcribed ancient exemplar cases."""
     if day not in SIXTY_DAYS or month_general not in BRANCHES or 占时 not in BRANCHES:
         raise ValueError("日、月将与时必须合法")
@@ -151,13 +152,17 @@ def build_liuren(day:str,month_general:str,占时:str,reference:dict|None=None,
     from .liuren_v62 import decorate_liuren_v62
     from .liuren_v63 import decorate_liuren_v63
     from .liuren_v74 import decorate_liuren_v74
+    from .liuren_v75 import decorate_liuren_v75
     return decorate_liuren_v74(decorate_liuren_v63(decorate_liuren_v62(
-        decorate_liuren_v61(decorate_liuren_v60(decorate_liuren_v59(result))),
+        decorate_liuren_v75(
+            decorate_liuren_v61(decorate_liuren_v60(decorate_liuren_v59(result))),
+            tie_school=fanyin_tie_school),
         noble_mode=noble_mode)))
 
 
 def cast_liuren(d:date,clock:time,day_boundary:str="zi_hour",
-                noble_mode:str="hour_branch")->dict:
+                noble_mode:str="hour_branch",
+                fanyin_tie_school:str="pending")->dict:
     if not isinstance(d,date) or isinstance(d,datetime) or not isinstance(clock,time) or clock.tzinfo is not None:
         raise ValueError("大六壬需正确北京时间公历日期与钟面时间")
     preview=preview_solar_calendar(d,clock,day_boundary=day_boundary)
@@ -184,7 +189,7 @@ def cast_liuren(d:date,clock:time,day_boundary:str="zi_hour",
         "warnings":preview["warnings"]+
             (["距离中气交界15分钟内，请核对月将实际交接时刻。"] if min(
                 (at-when).total_seconds(),(to-at).total_seconds())<=900 else []),
-    },noble_mode=noble_mode)
+    },noble_mode=noble_mode,fanyin_tie_school=fanyin_tie_school)
     if result["month_general_name"]!=general_name or result["heaven_plate"][result["hour_branch"]]!=branch:
         raise ValueError("月将、占时天地盘发生来源不一致")
     return result

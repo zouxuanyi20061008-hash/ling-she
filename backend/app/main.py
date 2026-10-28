@@ -250,12 +250,14 @@ class LiurenCastRequest(BaseModel):
     clock: time_value
     day_boundary: Literal["midnight","zi_hour"] = "zi_hour"
     noble_mode: Literal["hour_branch","day","night"] = "hour_branch"
+    fanyin_tie_school: Literal["pending","tanyuan","cunyan"] = "pending"
 
 
 @app.post("/api/liuren/cast")
 def liuren_cast(req: LiurenCastRequest):
     try:
-        return cast_liuren(req.solar_date,req.clock,req.day_boundary,req.noble_mode)
+        return cast_liuren(req.solar_date,req.clock,req.day_boundary,
+                           req.noble_mode,req.fanyin_tie_school)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 
