@@ -224,4 +224,5 @@ def decorate_taiyi_v80(chart:dict)->dict:
     chart["warnings"].append(
         "V80 时支六合、定计目与四门轮值可实算；原典庚戌时列数合32却写33，"
         "该同构局定计大参不自动取一边，其他同宫照旧待判；八门全飞布未验。")
-    return chart
+    from .taiyi_hour_v81 import decorate_taiyi_v81
+    return decorate_taiyi_v81(chart)
