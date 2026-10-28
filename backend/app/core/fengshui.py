@@ -10,7 +10,6 @@ from __future__ import annotations
 import math
 from datetime import date, time
 
-from .fengshui_v71 import decorate_fengshui_v71
 
 MOUNTAINS = tuple("子癸丑艮寅甲卯乙辰巽巳丙午丁未坤申庚酉辛戌乾亥壬")
 TRIGRAMS = ("坎", "艮", "震", "巽", "离", "坤", "兑", "乾")
@@ -160,5 +159,6 @@ def cast_fengshui(bearing_degrees: float, bearing_role: str = "facing",
     }
 
     if foundation_date is not None:
+        from .fengshui_v71 import decorate_fengshui_v71
         return decorate_fengshui_v71(chart,foundation_date,foundation_clock)
     return chart

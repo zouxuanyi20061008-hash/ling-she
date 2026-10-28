@@ -292,6 +292,17 @@ jobs:
           name: fengshui-v70-24-mountains-and-sitting-facing
           path: backend/acceptance-output/fengshui-v70.json
           if-no-files-found: error
+      - name: Run V71 Fengshui independent period-eight Zi-Wu and Lichun acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/fengshui_v71_acceptance.py --output backend/acceptance-output/fengshui-v71.json
+      - name: Upload V71 independent nine-palace three-star fixture
+        uses: actions/upload-artifact@v4
+        with:
+          name: fengshui-v71-lichun-period-xuankong-triple-plate
+          path: backend/acceptance-output/fengshui-v71.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
