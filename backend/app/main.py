@@ -243,6 +243,20 @@ def taiyi_cast(req: TaiyiCastRequest):
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
 
+class TaiyiHourCastRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    solar_date: date_value
+    clock: time_value
+
+
+@app.post("/api/taiyi/hour/cast")
+def taiyi_hour_cast(req: TaiyiHourCastRequest):
+    try:
+        from app.core.taiyi_hour_v77 import hour_basic_board
+        return hour_basic_board(req.solar_date,req.clock)
+    except ValueError as exc:
+        raise HTTPException(422,str(exc)) from exc
+
 
 class LiurenCastRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
