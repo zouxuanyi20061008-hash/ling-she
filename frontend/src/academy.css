@@ -1442,3 +1442,16 @@
 .taiyi-v79-trace span,.taiyi-v79-spirits span{font-size:12px;border-radius:6px;
  padding:5px 8px;background:#fff;border:1px solid #cbd6bd}
 .taiyi-v79-main-guest a{color:#33654b;text-decoration:underline}
+
+/* V80 source-audited Taiyi hour Dingji discrepancy and door chief. */
+.taiyi-v80-hour-dingji{margin:18px 0;padding:17px 20px;border:1px solid #b6b09e;
+ border-radius:13px;background:#faf6ed;color:#514a3c;line-height:1.9}
+.taiyi-v80-hour-dingji h4{font-size:18px;margin:0 0 10px;color:#5a4835}
+.taiyi-v80-hour-dingji p{margin:8px 0}
+.taiyi-v80-rotation,.taiyi-v80-trace{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.taiyi-v80-rotation span,.taiyi-v80-trace span{font-size:12px;
+ border:1px solid #dfd3bc;background:#fffdfa;border-radius:7px;padding:5px 9px}
+.taiyi-v80-door{margin:14px 0;padding:12px 14px;border:1px solid #d3c3a8;
+ border-radius:9px;background:#fffefa;display:flex;flex-direction:column;gap:5px}
+.taiyi-v80-door strong{color:#756042;font-size:16px}
+.taiyi-v80-hour-dingji a{color:#876736;text-decoration:underline}

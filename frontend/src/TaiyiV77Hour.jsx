@@ -36,15 +36,16 @@ export default function TaiyiV77Hour(){
       if(ticket===version.current)setBusy(false)
     }
   }
-  return <section className="taiyi-v77-hour" aria-label="V79 太乙时计主客算与历元实盘">
+  return <section className="taiyi-v77-hour" aria-label="V80 太乙时计合神定算八门实盘">
     <header>
-      <small>V79 · 太乙时计 / 始击主客算与甲子元简捷积时</small>
+      <small>V80 · 太乙时计 / 时支合神、定目、定算与八门直使</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
         V78 另算冬夏至前最近甲子日简捷历元的五元七十二局、六纪与阴阳文昌十八算；
         V79 增加计神加和德取始击、主客逐宫投算与大参将；
-        它仍不是古代绝对上元积时或完整时计断课。</p>
+        V80 增加时支六合合神、定计目、十六神逐宫定算与四门120时直使。
+        古籍庚戌定算有32与33的算式分歧，冲突盘绝不冒称已算定大参将。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
@@ -118,7 +119,7 @@ export default function TaiyiV77Hour(){
             '两法此课太乙入宫不同；独立展示，不互相覆盖。'}</p>
         <p className="academy-caution">《太乙金钥匙》的“47时”只可独立核对行宫，
           不能跳过甲子元23局直接推出文昌；古代绝对上元积时、时计定计、
-          合神、八门及断课仍待核准。</p>
+          全部八门飞布及断课仍待核准。</p>
         <a href={chart.classical_jiazi_hour_v78.sources.independent_887_and_47}
           target="_blank" rel="noopener noreferrer">887时与47时原例</a>
         <span> · </span>
@@ -179,20 +180,87 @@ export default function TaiyiV77Hour(){
             </span>)}
           </div>
         </details>
-        <p className="academy-caution">本盘依据 V78 二至前甲子日简捷积时，
-          尚未完成时计合神、定计、八门和绝对上元历元；不输出吉凶或应期。</p>
+        <p className="academy-caution">本盘依据 V78 二至前甲子日简捷积时；
+          合神、定目、值使在 V80 独立核算，全部八门飞布、
+          定算古籍数字分歧与绝对上元历元仍需校勘。不输出吉凶或应期。</p>
         <a href={chart.hour_main_guest_v79.sources.ancient_887}
           target="_blank" rel="noopener noreferrer">
           《太乙金钥匙》庚戌时主16客23、大参6/8与3/9古籍例盘
         </a>
       </section>}
+      {chart.hour_dingji_v80&&chart.hour_eight_doors_v80&&
+        <section className="taiyi-v80-hour-dingji" role="group"
+                 aria-label="V80 太乙时计合神定算与八门直使">
+          <h4>V80 · 合神、定计目与时计直使</h4>
+          <p>时支 <strong>{chart.hour_dingji_v80.hour_branch}</strong>，
+             六合 <strong>{chart.hour_dingji_v80.harmony.branch}</strong>，
+             合神 <strong>{chart.hour_dingji_v80.harmony.god}</strong>。
+             文昌临于定目 <strong>{chart.hour_dingji_v80.dingji_eye.direction}
+             ·{chart.hour_dingji_v80.dingji_eye.god}</strong>。
+             合神加时支的完整十六神旋宫可展开复核。</p>
+          <p>当前定计：{chart.hour_dingji_v80.status==='computed'?
+             <><strong>{chart.hour_dingji_v80.count} 算</strong>；
+               定大将 {chart.hour_dingji_v80.main_general} 宫，
+               定参将 {chart.hour_dingji_v80.assistant_general} 宫。</>:
+             chart.hour_dingji_v80.status==='source_conflict'?
+             <><strong>古籍原文与列数冲突，默认待判。</strong>
+               本盘按逐项列数合计
+               {chart.hour_dingji_v80.computed_trace_sum}算，
+               原书另记{chart.hour_dingji_v80.source_disagreement.printed_total}算。
+               原书并记大将
+               {chart.hour_dingji_v80.source_disagreement.printed_big_general}宫、
+               参将
+               {chart.hour_dingji_v80.source_disagreement.printed_assistant_general}宫；
+               未将其作为唯一计算答案。</>:
+             <strong>定目与太乙同宫，特殊取算尚待校勘。</strong>}</p>
+          <details>
+            <summary>展开 V80 定计目十六神旋宫和逐宫取算证据</summary>
+            <div className="taiyi-v80-rotation" role="group"
+                 aria-label="V80 时支六合旋宫原始位置">
+              {chart.hour_dingji_v80.rotation.rotated_sixteen.map((x,i)=>
+                <span key={i}>{x.ground} 下临 {x.heaven}
+                  {x.is_dingji_eye?' · 定目':''}
+                </span>)}
+            </div>
+            <div className="taiyi-v80-trace" role="group" aria-label="V80 定算逐项加数">
+              {chart.hour_dingji_v80.computed_trace.map(s=>
+                <span key={s.order}>{s.order}. {s.direction}·{s.god}
+                  {' ＋'+s.added}</span>)}
+            </div>
+            {chart.hour_dingji_v80.source_disagreement&&
+              <p className="academy-caution">
+                原典明确记载 33 算，但所列
+                {chart.hour_dingji_v80.source_disagreement.actual_listed_addends.join('＋')}
+                ={chart.hour_dingji_v80.source_disagreement.listed_sum}。
+                本站未人为加一；定大参将保持空值，待异本校勘。
+              </p>}
+          </details>
+          <div className="taiyi-v80-door" role="group"
+               aria-label="V80 时计八门值使与门内时数">
+            <strong>直使：{chart.hour_eight_doors_v80.chief_door}门</strong>
+            <span>{chart.hour_eight_doors_v80.dun} ·
+              每门30时，当前第{chart.hour_eight_doors_v80.hour_in_door}时
+              （120时周内第{chart.hour_eight_doors_v80.hour_in_120}时）</span>
+            <span>时计门序：
+              {chart.hour_eight_doors_v80.sequence.map(s=>s+'门').join(' → ')}</span>
+            <span>只确定直使门及定计目锚位；其他门完整飞宫尚未核验。</span>
+          </div>
+          <p className="academy-caution">V80 核算的是传统太乙时计结构；
+            史料庚戌时“定计33”与逐宫列数32矛盾，不能因算数不符
+            而伪造一算。其他时局遇同宫亦保留待判。
+            古代绝对上元历元、全部八门飞布与实际断课仍待完成。</p>
+          <a href={chart.hour_dingji_v80.sources.classical}
+             target="_blank" rel="noopener noreferrer">
+            《太乙金钥匙》庚戌时合神、定计、八门原文
+          </a>
+        </section>}
       {chart.solstice.near_15_minutes&&
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
-      <p className="academy-caution">V79 在 V78 甲子日前简捷积时上增算始击、主客算与大参将；
-        同宫待判及完整定计、合神、八门、古代绝对上元积时仍未校核。
-        岁计与时计历元独立，不能混用，也不生成现实断语。</p>
+      <p className="academy-caution">V80 已在 V78/V79 时计简捷历元上实算合神、定目和八门值使；
+        明载的古籍32/33矛盾须继续校勘，同宫仍待判，全部八门飞布未完成。
+        岁计、交节时实与甲子日起点独立，不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>
       <span> · </span>
