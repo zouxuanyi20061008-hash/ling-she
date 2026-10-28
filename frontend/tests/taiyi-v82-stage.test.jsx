@@ -68,7 +68,9 @@ it('V82 distinguishes mathematically complete candidate map from independently v
  expect(grid.querySelectorAll('.is-anchor')).toHaveLength(1)
  expect(grid.textContent).toContain('9宫生门')
  expect(grid.textContent).toContain('5宫中五不布门')
- expect(within(section).getAllByRole('link')).toHaveLength(3)
+ expect(within(section).getAllByRole('link')).toHaveLength(4)
+ expect(within(section).getAllByRole('link').some(link=>
+   link.getAttribute('href')===src.canonical_eight_door_compass)).toBe(true)
  expect(fetcher.mock.calls[0][0]).toBe('/api/taiyi/hour/cast')
 })
 
