@@ -17,7 +17,7 @@ export const ARTS = [
   {id:'ziwei',name:'紫微斗数',title:'紫微星盘',symbol:'星',en:'ZIWEI DOUSHU',tone:'copper',
    brief:'十二宫垣，星曜的古典语言。',detail:'十四正曜 · 十二辅煞 · 生年四化双口径',status:'V69 四化辅曜',group:'命理'},
   {id:'fengshui',name:'堪舆风水',title:'山川堪舆',symbol:'山',en:'KAN YU',tone:'amber',
-   brief:'察山水形势，读空间的传统观念。',detail:'二十四山 · 坐向互换 · 后天九宫 · 山界复测',status:'V70 方位实算',group:'空间'},
+   brief:'察山水形势，读空间的传统观念。',detail:'二十四山 · 立春定运 · 运山向三盘',status:'V71 玄空下卦',group:'空间'},
 ]
 
 const GROUPS=['全部','象数易','卜筮','三式','命理','空间']

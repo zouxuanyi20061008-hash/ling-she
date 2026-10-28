@@ -37,3 +37,14 @@
 .fengshui-v70-picked p,.fengshui-v70-rules p{margin:5px 0}
 .fengshui-v70-warning{color:#795c28;line-height:1.7}
 @media(max-width:650px){.fengshui-v70-form{flex-direction:column;align-items:stretch}.fengshui-v70-form label{flex:auto}.fengshui-v70-axis{grid-template-columns:1fr}.fengshui-v70-cell{padding:8px;min-height:103px}.fengshui-v70-mountains{grid-template-columns:repeat(6,minmax(0,1fr))}}
+
+/* V71: three numeric layers on the already established 9 palace board. */
+.fengshui-v71-toggle{flex:1 1 100%;padding:8px 0;border-top:1px dashed #b8bea7}
+.fengshui-v71-toggle input{width:20px;height:20px;accent-color:#38684f;align-self:flex-start}
+.fengshui-v71-period,.fengshui-v71-trace{margin:16px 0;padding:14px 17px;border:1px solid #b5c9b7;background:#f8fbf4;border-radius:10px;line-height:1.8}
+.fengshui-v71-period h3,.fengshui-v71-trace h3{margin:0 0 10px;color:#2f5a41}
+.fengshui-v71-period p,.fengshui-v71-trace p{margin:6px 0}
+.fengshui-v71-star-layer{display:flex;flex-wrap:wrap;gap:5px;justify-content:start}
+.fengshui-v71-star-layer span{background:#ecf3e8;border:1px solid #b0c6b3;border-radius:5px;padding:2px 5px;font-weight:700;font-size:13px;color:#355a41}
+.fengshui-v70-cell.facing .fengshui-v71-star-layer span{background:#dfefeb}
+.fengshui-v70-cell.sitting .fengshui-v71-star-layer span{background:#f1efd9}
