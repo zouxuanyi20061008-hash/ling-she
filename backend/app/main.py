@@ -28,6 +28,7 @@ from .core.qimen import cast_qimen
 from .core.bazi import cast_bazi
 from .core.liuren import cast_liuren
 from .core.taiyi import cast_taiyi
+from .core.fengshui import cast_fengshui
 from .core.ziwei import cast_ziwei
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
@@ -179,6 +180,24 @@ def liuyao_calendar_preview(req: SolarCalendarPreviewRequest):
             req.is_leap_month,req.clock,req.day_boundary)
     except ValueError as exc:
         raise HTTPException(422,str(exc)) from exc
+
+class FengshuiCastRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    bearing_degrees: float = Field(ge=0,le=360,allow_inf_nan=False)
+    bearing_role: Literal["facing","sitting"] = "facing"
+    north_reference: Literal["true_north","magnetic_north"] = "true_north"
+    magnetic_declination_degrees: float | None = Field(
+        default=None,ge=-180,le=180,allow_inf_nan=False)
+
+
+@app.post("/api/fengshui/cast")
+def fengshui_cast(req: FengshuiCastRequest):
+    try:
+        return cast_fengshui(req.bearing_degrees,req.bearing_role,
+                             req.north_reference,req.magnetic_declination_degrees)
+    except ValueError as exc:
+        raise HTTPException(422,str(exc)) from exc
+
 
 class ZiweiCastRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
