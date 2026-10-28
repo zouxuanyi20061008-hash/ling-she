@@ -13,6 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/app/ ./app/
 COPY backend/scripts/ ./scripts/
 COPY backend/tests/ ./tests/
+COPY backend/fixtures/ ./fixtures/
 RUN python scripts/download_data.py && ACCESS_GATE_ENABLED=0 PYTHONPATH=. python -m pytest tests -q
 COPY --from=frontend-builder /website/frontend/dist ./app/web
 EXPOSE 10000

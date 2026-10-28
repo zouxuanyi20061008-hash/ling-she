@@ -270,9 +270,16 @@ jobs:
           name: ziwei-v68-twelve-palaces-fourteen-stars
           path: backend/acceptance-output/ziwei-v68.json
           if-no-files-found: error
+  docker_build:
+    name: Docker image build and in-image regression
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production Docker image with embedded regression tests
+        run: docker build --file Dockerfile --tag wanxiang-academy:ci .
   deploy_after_checks:
     name: Deploy tested academy to Render
-    needs: [frontend, backend]
+    needs: [frontend, backend, docker_build]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
