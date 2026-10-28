@@ -43,8 +43,8 @@ export default function LiurenV58(){
       if(ticket===requestVersion.current)setBusy(false)
     }
   }
-  return <section className="liuren-v58" aria-label="V75 大六壬真实起课">
-    <header><small>V75 · 大六壬 / 反吟多克深浅与古籍分栏</small>
+  return <section className="liuren-v58" aria-label="V76 大六壬真实起课">
+    <header><small>V76 · 大六壬 / 反吟复等原典证据与严谨取传</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
       <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。</p>
     </header>
@@ -77,9 +77,9 @@ export default function LiurenV58(){
           onChange={e=>{setFanyinTieSchool(e.target.value);invalidate()}}>
           <option value="pending">默认保留待判（古籍分歧不自动选）</option>
           <option value="tanyuan">《大六壬探原》：先见干上亥</option>
-          <option value="cunyan">《六壬存验》：戊辰实占巳（戊戌不适用）</option>
+          <option value="cunyan">《六壬存验》：仅戊辰日戌将辰时实占取巳</option>
         </select>
-        <small>仅影响涉害同深的反吟课；不同书的初传可能相反。</small>
+        <small>仅影响涉害同深的反吟课；《探原》明载两日取亥，《存验》只核到戊辰戌将辰时单例取巳。其余时将不可套用单例。</small>
       </label>
       <button type="submit" disabled={busy}>{busy?'起课中…':'起大六壬天地盘'}</button>
     </form>
@@ -172,6 +172,35 @@ export default function LiurenV58(){
         </article>)}
       </div>
       <h3>三传 · 初传、中传、末传</h3>
+      {chart.historical_witness_v76?.applied&&
+        chart.historical_witness_v76.category==='fanyin_tied_classical_witness'&&
+        <section className="liuren-v76-witness" role="group"
+          aria-label="V76 反吟复等原典例课适用范围">
+          <h4>V76 · 古籍原例范围校核</h4>
+          <p>本类复等为戊辰、戊戌两日，共 24 个反吟时将组合。
+            默认仍待判；选《大六壬探原》可按两日明示通则取亥巳亥。
+            《六壬存验》仅收录戊辰日戌将丙辰时一张实占，不自动扩大。</p>
+          <p>{chart.historical_witness_v76.witness_matches_this_exact_plate?
+            '当前四课和时将与《六壬存验》原例完全吻合，可手动选巳亥巳。':
+            '当前不是《六壬存验》所记载的确切时将；即使天地盘四课同形，也不适用该独立例课的取传。'}</p>
+          <div role="group" aria-label="V76 六壬存验原始四课真值"
+               className="liuren-v76-lesson-proof">
+            {chart.historical_witness_v76.cunyan_witness.four_lessons.map((l,i)=>
+              <span key={i}>第{i+1}课 {l.upper}临{l.lower}</span>)}
+          </div>
+          <p>当前校核结果：
+            {chart.historical_witness_v76.source_evidence_level==='single_documented_observation'?
+              '所选取法对应独立实占例课':
+              chart.historical_witness_v76.source_evidence_level==='explicit_general_rule_for_two_days'?
+              '所选取法对应原典明载两日通则':
+              '未凭单张古籍实占自动裁决三传'}。</p>
+          <p>原典：
+            <a href={chart.historical_witness_v76.tanyuan_general_rule.source}
+              target="_blank" rel="noopener noreferrer">《大六壬探原》两日通则</a>
+            <a href={chart.historical_witness_v76.cunyan_witness.source}
+              target="_blank" rel="noopener noreferrer">《六壬存验》戊辰完整例课</a>
+          </p>
+        </section>}
       {chart.fanyin_shehai_v75?.applied&&<section className="liuren-v75-reverse"
           role="group" aria-label="V75 反吟多克逐宫涉害与古籍流派">
         <h4>V75 · 反吟多克涉害逐宫核算</h4>

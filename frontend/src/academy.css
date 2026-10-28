@@ -1382,3 +1382,13 @@
 .liuren-v75-variants{border-top:1px dashed #b5b9ad;margin-top:12px;padding-top:8px}
 .liuren-v75-variants p{margin:5px 0}
 .liuren-v75-variants a{margin-left:8px;color:#2d6855;text-decoration:underline}
+
+/* V76 primary source evidence boundary; do not present a single observation as a rule. */
+.liuren-v76-witness{margin:16px 0;padding:16px 18px;border:1px solid #a7b9ba;
+ border-radius:12px;background:#f0f6f4;color:#264a4b;line-height:1.86}
+.liuren-v76-witness h4{font-size:17px;margin:0 0 9px;color:#20545a}
+.liuren-v76-witness p{margin:7px 0}
+.liuren-v76-lesson-proof{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.liuren-v76-lesson-proof span{padding:4px 9px;border:1px solid #cfdddd;
+ background:#fff;border-radius:7px;font-size:13px}
+.liuren-v76-witness a{margin-left:8px;color:#1c6371;text-decoration:underline}
