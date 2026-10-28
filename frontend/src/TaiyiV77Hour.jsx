@@ -508,7 +508,7 @@ export default function TaiyiV77Hour(){
         </p>}
       <p className="academy-caution">V84 新增二至气应独立太乙、计神、直使及太乙锚点候选八门；
         气应主客将初始宫位未有独立真值，不能借用V78甲子派大将。
-        庚戌定算32／33、同宫专法、全部八门落宫和绝对上元积时仍未完成；
+        庚戌定算32／33、同宫专法、全部八门落宫和古代绝对上元积时仍未完成；
         岁计独立，不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>
