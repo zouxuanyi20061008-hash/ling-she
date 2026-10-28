@@ -128,4 +128,5 @@ def decorate_taiyi_v83(chart:dict)->dict:
         "V83《金镜式经》二至气应法与《金钥匙》甲子捷法并列核算120时四门；"
         "不同起点可能得到不同值使，V82甲子派八门候选不得混入二至派直使。"
         "完整时计八门古例及绝对上元历元仍待核实。")
-    return chart
+    from .taiyi_hour_v84 import decorate_taiyi_v84
+    return decorate_taiyi_v84(chart)
