@@ -1501,3 +1501,24 @@
 .taiyi-v83-clocks small{font-size:12px;color:#826a47}
 .taiyi-v83-clocks strong{font-size:23px;color:#82592c}
 .taiyi-v83-epoch a{color:#76502b;text-decoration:underline}
+
+/* V84 independent solstice school side-by-side with separate Jiazi-shortcut gate anchor. */
+.taiyi-v84-independent{border:1px solid #9dafa0;border-radius:12px;
+ background:#f2f6ef;color:#334a39;margin:18px 0;padding:17px 19px;line-height:1.75}
+.taiyi-v84-independent h4{font-size:18px;margin:0 0 9px;color:#31543a}
+.taiyi-v84-independent p{margin:9px 0}
+.taiyi-v84-comparisons{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));
+ gap:12px;margin:14px 0}
+.taiyi-v84-comparisons article{background:#fffef9;border:1px solid #c9d6be;
+ border-radius:10px;padding:12px;min-width:0}
+.taiyi-v84-comparisons h5{font-size:15px;margin:0 0 7px;color:#31543a}
+.taiyi-v84-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:10px 0}
+.taiyi-v84-cell{min-height:74px;padding:7px 4px;display:flex;flex-direction:column;
+ justify-content:center;align-items:center;gap:3px;background:white;border:1px solid #d1ddce;border-radius:6px;text-align:center}
+.taiyi-v84-cell strong{color:#315c47;font-size:15px}
+.taiyi-v84-cell small{font-size:10px;color:#64796c}
+.taiyi-v84-cell.is-origin{background:#fff5da;border:2px solid #b69651}
+.taiyi-v84-cell.is-center{background:#eef0ed}
+.taiyi-v84-independent a{color:#346a51;text-decoration:underline}
+@media(max-width:530px){.taiyi-v84-comparisons{grid-template-columns:minmax(0,1fr)}
+.taiyi-v84-independent{padding:12px}}

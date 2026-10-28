@@ -38,6 +38,7 @@ export default function TaiyiV77Hour(){
     }
   }
   const v82=chart?.hour_v82_eight_door_schools
+  const v84=chart?.hour_v84_qiying_plate
   const doorChoices=v82?.candidates||[]
   const doorBoard=doorChoices.find(c=>c.school===doorSchool)||doorChoices[0]
   const doorTitle={
@@ -46,9 +47,9 @@ export default function TaiyiV77Hour(){
     jinjing_guest:'《太乙金镜式经》·直使加客大将',
     jinyao_dingji_eye:'《太乙金钥匙》·直使加定计目'
   }
-  return <section className="taiyi-v77-hour" aria-label="V83 太乙时计双历元直使与八门古法候选">
+  return <section className="taiyi-v77-hour" aria-label="V84 太乙时计气应独立基本盘与甲子派分图对照">
     <header>
-      <small>V83 · 太乙时计 / 王希明二至气应法与甲子日起门双历元</small>
+      <small>V84 · 太乙时计 / 二至气应独立太乙与甲子派八门条件盘</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
       <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
@@ -59,7 +60,9 @@ export default function TaiyiV77Hour(){
         V82 将古籍“直使加太乙／主客大将／定计目”四种起宫方法分栏旋宫。
         所得八门图是有出处的数学候选，并非唯一已验真的完整时计式。
         V83 加入王希明二至气应起门，与V78甲子日前捷法分开显示，
-        不把一个历元的直使挪到另一个历元的主客大将上。</p>
+        不把一个历元的直使挪到另一个历元的主客大将上。
+        V84 将气应派太乙、计神和直使独立组成基本盘，主客将尚缺初始宫位，
+        不能从甲子派借来完成气应派的全盘。</p>
     </header>
     <form className="taiyi-v77-form" onSubmit={cast}>
       <label>时计公历日期
@@ -372,6 +375,63 @@ export default function TaiyiV77Hour(){
               target="_blank" rel="noopener noreferrer">《太乙金钥匙》时计起门法</a>
           </p>
         </section>}
+      {v84&&<section className="taiyi-v84-independent" role="group"
+         aria-label="V84 气应与甲子派独立太乙八门候选九宫对照">
+        <h4>V84 · 二至气应派独立基本盘</h4>
+        <p>王希明二至气应起时：
+          <strong>太乙{v84.qiying.taiyi_palace.number}宫
+          {v84.qiying.taiyi_palace.trigram}</strong>，
+          计神 <strong>{v84.qiying.jishen}</strong>，
+          直使 <strong>{v84.qiying.hour_chief.chief_door}门</strong>；
+          太乙每三时一移，计神逐时逆行。</p>
+        <div className="taiyi-v84-comparisons">
+          {[
+            {key:'qiying',label:'二至气应派 · V77/V83',
+             plate:v84.qiying.taiyi_eight_door_conditional_rotation,
+             palace:v84.qiying.taiyi_palace.number,
+             chief:v84.qiying.hour_chief.chief_door},
+            {key:'jiazi',label:'甲子日前简捷派 · V78/V82',
+             plate:v84.jiazi.taiyi_eight_door_conditional_rotation,
+             palace:v84.jiazi.taiyi_palace.number,
+             chief:v84.jiazi.hour_chief.chief_door}
+          ].map(s=><article key={s.key}>
+            <h5>{s.label}</h5>
+            <p>太乙 {s.palace}宫 · 直使 {s.chief}门
+              （只以太乙宫作条件锚点）</p>
+            <div className="taiyi-v84-grid" role="group"
+                 aria-label={s.key==='qiying'?
+                   'V84 王希明二至气应八门条件九宫图':
+                   'V84 前甲子日简捷八门条件九宫图'}>
+              {[9,2,7,4,5,6,3,8,1].map(p=>
+                <div key={p} className={'taiyi-v84-cell'+
+                  (p===s.palace?' is-origin':'')+(p===5?' is-center':'')}>
+                  <small>{p}宫</small>
+                  <strong>{p===5?'中五':
+                    (s.plate.by_palace[String(p)]||'未决')+'门'}</strong>
+                  <small>{p===s.palace?'太乙候选起门':
+                    p===5?'不入八门':'数学旋宫，未验真'}</small>
+                </div>)}
+            </div>
+          </article>)}
+        </div>
+        <p>核对结果：
+          {v84.same_chief?'两派直使门名相同':'两派直使门名不同'}；
+          {v84.same_taiyi_palace?'太乙落宫相同':'太乙落宫不同'}；
+          <strong>{v84.same_conditional_taiyi_door_rotation?
+             '两张八门条件图恰好相同':'两张八门条件图不同'}</strong>。
+          即使恰好同图，也不证明起元相同或完整时计已验真。</p>
+        <p className="academy-caution">气应派的主、客大将每时一移虽然见于古籍，
+          但缺少同一历元的可校初始宫位：
+          <strong>气应主大将与客大将均待判</strong>，
+          不显示借来的甲子派将位。上方两套八门图仅为各自以太乙宫起门的
+          条件数学旋转，不是独立古籍验真的完整八门实盘。</p>
+        <p><a href={v84.qiying.source.hour_palace_jishen}
+          target="_blank" rel="noopener noreferrer">《太乙金镜式经》二至后太乙与计神</a>
+          {' · '}
+          <a href={v84.qiying.source.chief_and_general_motion}
+             target="_blank" rel="noopener noreferrer">直使加太乙及大将移动法</a>
+        </p>
+      </section>}
       {v82&&<section className="taiyi-v82-schools" role="group"
         aria-label="V82 太乙时计四派八门古籍旋宫候选">
         <h4>V82 · 分古籍起宫的八门候选排布</h4>
@@ -446,9 +506,9 @@ export default function TaiyiV77Hour(){
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
-      <p className="academy-caution">V83 增加二至气应法与甲子日捷法独立起门时实；
-        V82 四种起宫候选仍属甲子捷法，不能跨历元互换主客大将。
-        定算32／33冲突、同宫待判、完整八门落宫与古代绝对上元积时未核验；
+      <p className="academy-caution">V84 新增二至气应独立太乙、计神、直使及太乙锚点候选八门；
+        气应主客将初始宫位未有独立真值，不能借用V78甲子派大将。
+        庚戌定算32／33、同宫专法、全部八门落宫和绝对上元积时仍未完成；
         岁计独立，不作现实吉凶判断。</p>
       <a href={chart.sources.zhou} target="_blank" rel="noopener noreferrer">
         《太乙金镜式经》冬夏至时计原文</a>
