@@ -31,7 +31,7 @@ def main():
     assert boundary["near_boundary"] and boundary["facing"]["mountain"]=="癸"
     assert cast_fengshui(352.5)["facing"]["mountain"]=="子"
     magnetic=cast_fengshui(350,"facing","magnetic_north",5)
-    assert (magnetic["true_bearing_degrees"],magnetic["axis_label"])==(355,"坐丙向子")
+    assert (magnetic["true_bearing_degrees"],magnetic["axis_label"])==(355,"坐午向子")
     evidence={
       "version":"V70","status":"passed","fixture_count":len(results),
       "independent_sources":[
@@ -41,7 +41,7 @@ def main():
       "wraparound":{"degree":352.5,"facing":"子"},
       "boundary":{"degree":7.5,"facing":"癸","near_boundary":True},
       "magnetic":{"measured":350,"declination_east_positive":5,"true_degrees":355,
-                  "axis":"坐丙向子"},
+                  "axis":"坐午向子"},
       "not_asserted":["真实房屋坐向","实际磁偏角来源","玄空飞星","风水吉凶"]
     }
     path=Path(args.output)

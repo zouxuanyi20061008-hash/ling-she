@@ -26,7 +26,7 @@ def _angle(value: float) -> float:
     value = float(value)
     if not math.isfinite(value) or not 0.0 <= value <= 360.0:
         raise ValueError("输入方位角须为0°至360°之间的有限数字，0°与360°均为正北。")
-    return value % 360.0
+    return round(value % 360.0, 9) % 360.0
 
 def _normalized(value: float) -> float:
     value = value % 360.0

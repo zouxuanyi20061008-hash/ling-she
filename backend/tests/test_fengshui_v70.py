@@ -86,10 +86,10 @@ def test_sitting_facing_are_inverse_for_fixed_24_centers_and_boundaries():
         assert face["sitting"]["mountain_index"]==(face["facing"]["mountain_index"]+12)%24
 
 def test_magnetic_declination_requires_user_supplied_and_sign_is_correct():
-    # 东偏+5°：磁北方位350°相当于真北355°，坐175°（丙山），向子。
+    # 东偏+5°：磁北方位350°相当于真北355°，坐175°（午山），向子。
     a=cast_fengshui(350,"facing","magnetic_north",5)
     assert a["true_bearing_degrees"]==355
-    assert a["axis_label"]=="坐丙向子"
+    assert a["axis_label"]=="坐午向子"
     assert a["reference_status"]=="manual_declination_unverified"
     assert a["input"]["declination_convention"]=="east_positive_west_negative"
     assert any("手动" in w for w in a["warnings"])
@@ -131,7 +131,7 @@ def test_api_rejects_bad_scope_and_converts_verified_structure():
         "bearing_degrees":350,"north_reference":"magnetic_north",
         "magnetic_declination_degrees":5})
     assert magnetic.status_code==200,magnetic.text
-    assert magnetic.json()["axis_label"]=="坐丙向子"
+    assert magnetic.json()["axis_label"]=="坐午向子"
     invalid=[
         {},{"bearing_degrees":-1},{"bearing_degrees":361},
         {"bearing_degrees":0,"bearing_role":"wrong"},
