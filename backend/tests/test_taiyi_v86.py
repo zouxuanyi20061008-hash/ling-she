@@ -57,7 +57,9 @@ def test_yin_third_ji_52_ju_yimao_conflict_must_not_be_silently_repaired():
 def test_v86_real_api_keeps_v84_qiying_fields_unfilled(date_value,clock):
     c=hour_basic_board(date_value,clock)
     proof=c["hour_v86_classical_examples"]
-    assert c["hour_source_review_version"]=="V86"
+    assert proof["version"]=="V86"  # 历史卷九例课仍保留原V86来源
+    assert c["hour_source_review_version"]=="V87"  # 新一层校勘版本，不是旧例课消失
+    assert c["hour_v87_modular_source_audit"]["triple_intersection"]==[]
     assert proof["has_ancient_example_crosschecks"]
     assert not proof["has_verified_unique_modern_qiying_epoch"]
     assert proof["cannot_import_historical_guest_general_to_qiying"]
