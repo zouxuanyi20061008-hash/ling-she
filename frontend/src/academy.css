@@ -1360,3 +1360,8 @@
 .taiyi-v67-middle-items{display:flex;gap:7px;flex-wrap:wrap}
 .taiyi-v67-middle-items span{padding:8px;border:1px solid #cfb58a;background:#fff7e6;color:#785321;font-size:12px}
 @media(max-width:630px){.taiyi-v67-totals{grid-template-columns:repeat(3,minmax(0,1fr))}.taiyi-v67-totals span strong{font-size:17px}.taiyi-v67-rotated>div{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.qimen-v73-audit{margin:16px 0;padding:15px 18px;border:1px solid #9daeb9;border-radius:10px;background:linear-gradient(115deg,#eff2f7,#f5f2e8);line-height:1.85;color:#33435a}
+.qimen-v73-audit h3{margin:0 0 9px;font-size:17px;color:#253f5a}
+.qimen-v73-audit p{margin:6px 0}
+.qimen-v73-audit a{color:#2c5c79;text-decoration:underline}

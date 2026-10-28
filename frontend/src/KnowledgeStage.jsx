@@ -117,9 +117,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       <section className="academy-stage-banner"><div>
         <small className="method-theme-identity">{({qimen:"玄夜九宫 · 星轨阵图",bazi:"赤金四柱 · 干支命简",liuren:"沧海六壬 · 天地盘式",taiyi:"青穹太乙 · 九宫行数",ziwei:"紫夜星垣 · 十二宫曜",fengshui:"苍山堪舆 · 山水形势"})[mode]}</small>
         <p>{isQimen?'时家奇门 · 先算十八局与地盘':isBazi?'四柱八字 · 真实节令排盘':isLiuren?'大六壬 · 中气月将与四课':isTaiyi?'太乙神数 · 古籍岁计真实入局':isZiwei?'紫微斗数 · 北京时间与农历安星':isFengshui?'堪舆风水 · 二十四山与坐向实算':'古典文献 · 入门导览'}</p>
-        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V54 已补三奇入墓及三奇得使，古籍六甲遁仪与值使门同宫两种口径分开判断；完整断课仍待校勘。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V63 已按起课日的六甲旬排出旬空、遁干，并标记十二宫、四课和三传的空亡状态；天将“天空”与旬空不会混淆。':isTaiyi?'V67 已补岁计定计目、六合旋盘及定计大小将实算，明确标注主客定计将落中五不出，并保留 V66 同宫双口径。':isZiwei?'V69 已实算十二颗辅煞及生年四化，壬年化科分两套流派口径核验；流年四化、其余杂曜仍待实现。':isFengshui?'V71 以真实立春时刻定三元九运，按下卦法排运、山、向三星；兼向替卦、临近山界暂不出星盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
+        <h1>{art.title}</h1><span>{art.brief}　{art.detail}。<br/>{isQimen?'V73 已对地盘、天盘九星、八门、八神做逐宫一致性审计，保留三奇双口径和未核验的暗干、流派及断课边界。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V63 已按起课日的六甲旬排出旬空、遁干，并标记十二宫、四课和三传的空亡状态；天将“天空”与旬空不会混淆。':isTaiyi?'V67 已补岁计定计目、六合旋盘及定计大小将实算，明确标注主客定计将落中五不出，并保留 V66 同宫双口径。':isZiwei?'V69 已实算十二颗辅煞及生年四化，壬年化科分两套流派口径核验；流年四化、其余杂曜仍待实现。':isFengshui?'V71 以真实立春时刻定三元九运，按下卦法排运、山、向三星；兼向替卦、临近山界暂不出星盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
-      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V54 三奇格局 · 流派分栏盘':isBazi?'V57 四柱大运 · 流年流月':isLiuren?'V63 日旬遁干 · 旬空可核验':isTaiyi?'V67 定计目 · 中五将核验':isZiwei?'V69 十四正曜 · 十二辅煞 · 生年四化':isFengshui?'V71 三元九运 · 玄空下卦':'古籍导览 · 按章研习'}</b><small>{isQimen?'三奇入墓 · 古籍三奇得使 · 值使门同宫分栏':isBazi?'十二节令流月 · 交节流年 · 大运时段定位':isLiuren?'六甲旬 · 天地盘空亡分层 · 三传遁干':isTaiyi?'六合加太岁 · 定计目 · 主客定计大参将':isZiwei?'十二辅煞 · 生年四化 · 异文分栏' :isFengshui?'立春定运 · 玄空三盘 · 山界替卦保护':'独立主题 · 后续按本门术法逐步完善'}</small></div>
+      <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V73 四层转盘 · 逐宫校核':isBazi?'V57 四柱大运 · 流年流月':isLiuren?'V63 日旬遁干 · 旬空可核验':isTaiyi?'V67 定计目 · 中五将核验':isZiwei?'V69 十四正曜 · 十二辅煞 · 生年四化':isFengshui?'V71 三元九运 · 玄空下卦':'古籍导览 · 按章研习'}</b><small>{isQimen?'值符值使 · 星门神一致性 · 未决流派显式保留':isBazi?'十二节令流月 · 交节流年 · 大运时段定位':isLiuren?'六甲旬 · 天地盘空亡分层 · 三传遁干':isTaiyi?'六合加太岁 · 定计目 · 主客定计大参将':isZiwei?'十二辅煞 · 生年四化 · 异文分栏' :isFengshui?'立春定运 · 玄空三盘 · 山界替卦保护':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isLiuren&&<LiurenV58/>}
       {isTaiyi&&<TaiyiV64/>}
       {isZiwei&&<ZiweiV68/>}
@@ -172,12 +172,38 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             {qimenChart.dark_stem_plate&&<span>V53 暗干：{qimenChart.dark_stem_plate.method}；
               {qimenChart.dark_stem_plate.origin_reason}，从{qimenChart.dark_stem_plate.origin_logical_palace}宫起；
               尚缺同流派完整古籍例盘独立校验。</span>}
+            {qimenChart.core_plate_audit&&<span>
+              V73 核心四层一致性审计：{qimenChart.core_plate_audit.core_layers
+                .map(layer=>layer.name+' '+layer.verified_positions+'/'+layer.expected_positions+'宫')
+                .join('；')}；
+              中五天禽随芮寄、值符星与值使门时序、时旬空马星均已交叉核对。
+              这表示四层核心盘结构一致，绝不等于完整多流派断课。
+            </span>}
             {qimenChart.wonder_rule_review&&<span>
               V54 三奇入墓：{qimenChart.wonder_rule_review.burial_positions.join('、')||'本盘未见'}；
               古籍六甲式三奇得使：{qimenChart.wonder_rule_review.classical_six_jia_positions.join('、')||'本盘未见'}；
               值使门同宫另一口径：{qimenChart.wonder_rule_review.chief_door_overlap_positions.join('、')||'本盘未见'}。
               分歧宫位：{qimenChart.wonder_rule_review.interpretation_disagreements.join('、')||'无'}。</span>}
           </div>
+          {qimenChart.core_plate_audit&&<section className="qimen-v73-audit"
+              aria-label="V73 奇门四层整盘交叉审计">
+              <h3>V73 · 四层转盘完整性校核</h3>
+              <p>经核对的核心层：
+                {qimenChart.core_plate_audit.core_layers.map(x=>
+                  x.name+'（'+x.verified_positions+'/'+x.expected_positions+'）').join('、')}。
+                值符原宫{qimenChart.core_plate_audit.duty.chief_star_original}，
+                星盘实落{qimenChart.core_plate_audit.duty.chief_star_logical}
+                （显示{qimenChart.core_plate_audit.duty.chief_star_display}）宫；
+                值使门第{qimenChart.core_plate_audit.duty.hourly_steps}步，
+                实落{qimenChart.core_plate_audit.duty.chief_gate_logical}
+                （显示{qimenChart.core_plate_audit.duty.chief_gate_display}）宫。</p>
+              <p>尚待独立核验：{qimenChart.core_plate_audit.unverified_modules.join('、')}。
+                保留已有盘式与流派边界，不自动断吉凶。</p>
+              <a href={qimenChart.core_plate_audit.source.full_external_worked_chart}
+                target="_blank" rel="noopener noreferrer">
+                查阅完整九宫独立例盘依据
+              </a>
+            </section>}
           <div className="academy-nine qimen-v50-nine" role="group"
             aria-label={qimenChart.has_rotated_stars_and_gates?'V51 奇门九宫星门转盘':'V50 奇门九宫真实地盘'}>
             {qimenChart.palaces.map(p=><button type="button" key={p.number}

@@ -67,7 +67,7 @@ def test_pokes_in_stars_gates_spirits_and_hour_markers_fail_closed(field,number,
     c=_pre_audit()
     row=next(x for x in c["palaces"] if x["number"]==number)
     row[field]=value
-    with pytest.raises(ValueError,match="V73.*不一致"):
+    with pytest.raises(ValueError,match="V73.*不成立"):
         audit_qimen_v73(c)
 
 
@@ -81,7 +81,7 @@ def test_tampering_with_origin_hour_xun_and_center_uses_no_forged_success():
     a=deepcopy(original);next(p for p in a["palaces"] if p["number"]==5)["actual_gate"]="休门";cases.append(a)
     a=deepcopy(original);a["dark_stem_plate"]["independently_verified_from_classic_example"]=True;cases.append(a)
     for c in cases:
-        with pytest.raises(ValueError,match="V73.*不一致"):
+        with pytest.raises(ValueError,match="V73.*不成立"):
             audit_qimen_v73(c)
 
 
