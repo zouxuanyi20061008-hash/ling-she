@@ -314,6 +314,17 @@ jobs:
           name: eight-arts-v72-cross-school-core-audit
           path: backend/acceptance-output/eight-arts-v72.json
           if-no-files-found: error
+      - name: Run V73 Qimen independent eight-palace full-layer witness
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/qimen_v73_acceptance.py --output backend/acceptance-output/qimen-v73.json
+      - name: Upload V73 Qimen cross-layer palace witness
+        uses: actions/upload-artifact@v4
+        with:
+          name: qimen-v73-four-layers-guyujian-q1
+          path: backend/acceptance-output/qimen-v73.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
