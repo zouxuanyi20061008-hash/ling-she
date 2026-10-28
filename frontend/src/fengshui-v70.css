@@ -1,0 +1,39 @@
+.fengshui-v70{margin:20px 0 30px;padding:clamp(15px,3vw,30px);border:1px solid #b9a67d;border-radius:18px;background:linear-gradient(120deg,#f7f1e4,#e9ede3);color:#2e3731}
+.fengshui-v70 header small{letter-spacing:.12em;color:#687a55}
+.fengshui-v70 header h2{font-family:serif;font-size:clamp(24px,3vw,33px);margin:10px 0;color:#355443}
+.fengshui-v70 header p{max-width:760px;line-height:1.85}
+.fengshui-v70 h3{font-family:serif;color:#365343;margin:16px 0 10px}
+.fengshui-v70-form{margin:18px 0;padding:17px;border:1px solid #c1b08c;border-radius:12px;background:#fffaf0;display:flex;flex-wrap:wrap;gap:13px;align-items:end}
+.fengshui-v70-form label{display:flex;flex:1 1 180px;flex-direction:column;gap:7px;font-size:13px;font-weight:650}
+.fengshui-v70-form select,.fengshui-v70-form input{box-sizing:border-box;width:100%;font-size:15px;padding:10px;border:1px solid #aea38c;border-radius:7px;background:#fff;color:#24382e}
+.fengshui-v70-form label small{font-weight:400;color:#705e47}
+.fengshui-v70-form button{background:#325f49;color:#fff;padding:12px 15px;border:0;border-radius:8px;font-weight:700;min-height:44px;cursor:pointer}
+.fengshui-v70-form button:disabled{opacity:.58}
+.fengshui-v70-error{color:#992d25;border:1px solid #bf8481;border-radius:8px;padding:12px}
+.fengshui-v70-summary{border-left:4px solid #416951;padding:16px;background:#fcfaf3;border-radius:7px;line-height:1.7}
+.fengshui-v70-summary h3{font-size:27px;margin:3px 0 13px}
+.fengshui-v70-axis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fengshui-v70-axis article{display:flex;flex-direction:column;gap:7px;background:#edf1e8;padding:12px;border:1px solid #c6d0c2;border-radius:8px}
+.fengshui-v70-axis strong{font-size:18px;color:#315440;overflow-wrap:anywhere}
+.fengshui-v70-axis article small{color:#607765}
+.fengshui-v70-palace-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-width:730px;padding:5px;background:#bac9b6;border-radius:10px}
+.fengshui-v70-cell{min-height:112px;display:flex;flex-direction:column;gap:7px;padding:13px;background:#fffaf0;color:#385040;justify-content:flex-start;border:1px solid #d6dece}
+.fengshui-v70-cell strong{font-size:18px}
+.fengshui-v70-cell small,.fengshui-v70-cell span{font-size:12px}
+.fengshui-v70-cell b{font-size:12px;margin-top:auto}
+.fengshui-v70-cell.sitting{background:#e6e9d1;border-color:#ab994f}
+.fengshui-v70-cell.facing{background:#d7eee5;border-color:#518570}
+.fengshui-v70-cell.center{background:#e6e7e2}
+.fengshui-v70-note{color:#5c705e;font-size:13px;line-height:1.7}
+.fengshui-v70-mountains{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;max-width:720px}
+.fengshui-v70-mountains button{border:1px solid #b9b9a6;border-radius:7px;background:#fffaf0;color:#314c3f;display:flex;flex-direction:column;align-items:center;padding:8px 3px;gap:4px;cursor:pointer;min-width:0}
+.fengshui-v70-mountains button strong{font-size:17px}
+.fengshui-v70-mountains button small{font-size:11px}
+.fengshui-v70-mountains button.sitting{border-color:#ac9154;background:#f6f0dc}
+.fengshui-v70-mountains button.facing{border-color:#538872;background:#e1f0e7}
+.fengshui-v70-mountains button.selected{outline:3px solid #4c765b;outline-offset:-3px}
+.fengshui-v70-picked,.fengshui-v70-rules{padding:13px 17px;margin-top:14px;border-radius:10px;border:1px solid #c9c7ad;background:#fffaf0;line-height:1.8}
+.fengshui-v70-picked h3,.fengshui-v70-rules h3{margin:0 0 6px}
+.fengshui-v70-picked p,.fengshui-v70-rules p{margin:5px 0}
+.fengshui-v70-warning{color:#795c28;line-height:1.7}
+@media(max-width:650px){.fengshui-v70-form{flex-direction:column;align-items:stretch}.fengshui-v70-form label{flex:auto}.fengshui-v70-axis{grid-template-columns:1fr}.fengshui-v70-cell{padding:8px;min-height:103px}.fengshui-v70-mountains{grid-template-columns:repeat(6,minmax(0,1fr))}}
