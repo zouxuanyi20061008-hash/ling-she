@@ -88,6 +88,19 @@ def source_scoped_eight_door_candidates(chart:dict)->dict:
     if m["taiyi_palace"]!=classic["taiyi_palace"]["number"] or (
         d["dingji_eye"]!=old["candidate_eye"]):
         raise ValueError("V82 太乙和定计目锚点不一致")
+    eye=d["dingji_eye"]
+    i=eye.get("index")
+    if (isinstance(i,bool) or not isinstance(i,int) or i not in range(16)
+        or (eye.get("direction"),eye.get("god"),eye.get("palace"),
+            eye.get("is_intermediate")) !=
+           (DIRECTIONS[i],GODS[i],GONG.get(DIRECTIONS[i]),
+            DIRECTIONS[i] not in GONG)):
+        raise ValueError("V82 真实十六神定计目索引/神名/间位/宫位不吻合")
+    if (old.get("candidate_index")!=i or
+        old.get("candidate_direction")!=DIRECTIONS[i] or
+        old.get("candidate_god")!=GODS[i] or
+        old.get("candidate_palace")!=GONG.get(DIRECTIONS[i])):
+        raise ValueError("V82 V81候选定计目与十六神真实位置不一致")
     alternatives=[]
     missing=[]
     def append(key,palace,why):
