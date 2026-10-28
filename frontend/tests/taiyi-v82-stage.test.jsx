@@ -61,7 +61,7 @@ it('V82 distinguishes mathematically complete candidate map from independently v
  const section=await screen.findByRole('group',{name:'V82 太乙时计四派八门古籍旋宫候选'})
  expect(section.textContent).toContain('生门')
  expect(section.textContent).toContain('门内第17时')
- expect(section.textContent).toContain('非唯一已验真的完整时计式')
+ expect(section.textContent).toContain('不得把任一候选直接当作统一时计盘')
  const grid=within(section).getByRole('group',{name:'V82 当前古法候选八门九宫布局'})
  expect(grid.querySelectorAll('.taiyi-v82-cell')).toHaveLength(9)
  expect(grid.querySelectorAll('.is-center')).toHaveLength(1)
