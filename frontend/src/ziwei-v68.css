@@ -27,3 +27,10 @@
 .ziwei-v68-picked p,.ziwei-v68-trace p{margin:4px 0}
 .ziwei-v68-warning{color:#805e25;font-size:13px;line-height:1.7}
 @media(max-width:600px){.ziwei-v68-form{flex-direction:column;align-items:stretch}.ziwei-v68-form label{flex:auto}}
+
+.ziwei-v69-transform-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:11px 0 4px}
+.ziwei-v69-transform-summary span{border:1px solid #b6a1c1;background:#f5eaf6;padding:9px;border-radius:8px;font-size:13px}
+.ziwei-v69-transform-summary b{color:#653d74}
+.ziwei-v68-palace .ziwei-v69-aux{color:#426458;line-height:1.5;font-size:12px}
+.ziwei-v68-palace .ziwei-v69-four{color:#76384e;background:#f3e3e9;font-size:11px;border-radius:4px;padding:3px 4px;line-height:1.5}
+.ziwei-v68-grid:has(.ziwei-v69-aux){grid-template-rows:repeat(4,minmax(155px,auto))}

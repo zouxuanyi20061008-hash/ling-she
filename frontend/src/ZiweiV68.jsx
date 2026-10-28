@@ -15,6 +15,7 @@ export default function ZiweiV68(){
  const [clock,setClock]=useState('09:00')
  const [gender,setGender]=useState('unspecified')
  const [leapRule,setLeapRule]=useState('same_month')
+ const [fourSchool,setFourSchool]=useState('quanshu')
  const [chart,setChart]=useState(null)
  const [selected,setSelected]=useState(null)
  const [busy,setBusy]=useState(false)
@@ -23,6 +24,7 @@ export default function ZiweiV68(){
    e.preventDefault()
    setBusy(true);setError('');setChart(null);setSelected(null)
    const body={calendar_type:calendarType,clock,gender,leap_month_rule:leapRule,
+     ...(fourSchool==='common'?{four_transform_school:'common'}:{}),
      ...(calendarType==='solar'?{solar_date:solarDate}:{
        lunar_year:Number(lunarYear),lunar_month:Number(lunarMonth),
        lunar_day:Number(lunarDay),is_leap_month:leap})}
@@ -37,10 +39,11 @@ export default function ZiweiV68(){
    finally{setBusy(false)}
  }
  const chosen=chart?.palaces?.find(p=>p.branch===selected)
- return <section className="ziwei-v68" aria-label="V68 紫微真实基础排盘">
-   <header><small>V68 · 紫微斗数 / 十四正曜</small>
-     <h2>安命身 · 定五行局 · 布十四主星</h2>
-     <p>真实农历生日转换与十二宫命盘。本版暂不包含四化、辅煞及实务论断。</p>
+ return <section className="ziwei-v68" aria-label="V69 紫微四化与辅曜真实排盘">
+   <header><small>V69 · 紫微斗数 / 四化与辅曜</small>
+     <h2>十四正曜 · 十二辅煞 · 生年四化</h2>
+     <p>按《紫微斗数全书》卷二安星，生年四化附在真实星曜落宫。
+       壬年化科口径可切换；本版不作实务吉凶判断。</p>
    </header>
    <form onSubmit={submit} className="ziwei-v68-form">
      <label>日期历法
@@ -79,6 +82,13 @@ export default function ZiweiV68(){
          <option value="next_month">闰月按下月（异法）</option>
        </select>
      </label>
+     <label>生年四化流派
+       <select aria-label="紫微四化流派" value={fourSchool}
+         onChange={e=>setFourSchool(e.target.value)}>
+         <option value="quanshu">《紫微斗数全书》（壬年天府化科）</option>
+         <option value="common">现代通行表（壬年左辅化科）</option>
+       </select>
+     </label>
      <button type="submit" disabled={busy}>{busy?'正在起盘…':'计算紫微命盘'}</button>
    </form>
    {error&&<p role="alert" className="ziwei-v68-error">{error}</p>}
@@ -91,9 +101,17 @@ export default function ZiweiV68(){
          · 紫微 {chart.ziwei_branch} · 天府 {chart.tianfu_branch}</p>
        <p>大限 {chart.great_limit_direction||'未排（未填写性别）'}
          · 闰月口径 {chart.rules.leap_month}</p>
+       {chart.four_transformations&&<>
+         <p>四化口径：<strong>{chart.four_transform_school_label}</strong></p>
+         <div className="ziwei-v69-transform-summary" role="group" aria-label="V69 生年四化落宫">
+           {chart.four_transformations.map(t=><span key={t.name}>
+             <b>{t.name}</b> · {t.star} · {t.branch}（{t.palace_name}）
+           </span>)}
+         </div>
+       </>}
      </div>
      <div className="ziwei-v68-scroll">
-       <div className="ziwei-v68-grid" role="group" aria-label="V68 紫微十二宫星盘">
+       <div className="ziwei-v68-grid" role="group" aria-label="V69 紫微十二宫星盘">
          {chart.palaces.map(p=><button key={p.branch} type="button"
            style={{gridRow:POS[p.branch][0],gridColumn:POS[p.branch][1]}}
            className={['ziwei-v68-palace',p.is_ming?'ming':'',
@@ -101,6 +119,10 @@ export default function ZiweiV68(){
            aria-pressed={selected===p.branch} onClick={()=>setSelected(p.branch)}>
            <small>{p.ganzhi} · {p.name}</small>
            <strong>{p.main_stars.join(' · ')||'无十四主星'}</strong>
+           {p.auxiliary_stars?.length>0&&<small className="ziwei-v69-aux">
+             {p.auxiliary_stars.join(' · ')}</small>}
+           {p.four_transformations?.length>0&&<small className="ziwei-v69-four">
+             {p.four_transformations.map(t=>t.star+t.name).join(' · ')}</small>}
            <span>{p.is_ming?'命宫 ':''}{p.is_shen?'身宫 ':''}
              {p.great_limit?'大限'+p.great_limit.start_age+'–'+p.great_limit.end_age:''}</span>
          </button>)}
@@ -113,6 +135,10 @@ export default function ZiweiV68(){
      {chosen&&<section className="ziwei-v68-picked" aria-label="当前选中的紫微宫位">
        <h3>{chosen.ganzhi} · {chosen.name}</h3>
        <p>十四正曜：{chosen.main_stars.join('、')||'本宫无十四主星，不代表没有其他星曜'}。</p>
+       {chart.auxiliary_star_positions&&<p>已安辅煞：
+         {chosen.auxiliary_stars?.join('、')||'本宫未见本版十二颗辅煞星'}。</p>}
+       {chosen.four_transformations?.length>0&&<p>
+         生年四化：{chosen.four_transformations.map(x=>x.star+x.name).join('、')}。</p>
        {chosen.great_limit&&<p>大限：{chosen.great_limit.start_age}–{chosen.great_limit.end_age}岁（传统虚岁）</p>}
      </section>}
      <section className="ziwei-v68-trace" aria-label="紫微安星核对步骤">
@@ -123,6 +149,18 @@ export default function ZiweiV68(){
        <p>{chart.rules.year_boundary}；{chart.rules.ming_shen}。</p>
        <p>历法来源：{chart.calendar.verification}。非官方历书；不校正地方真太阳时。</p>
      </section>
+     {chart.auxiliary_rules&&<section className="ziwei-v68-trace"
+        aria-label="V69 辅曜安星计算依据">
+       <h3>辅煞安星与四化口径</h3>
+       <p>{chart.auxiliary_rules.month}；{chart.auxiliary_rules.hour}。</p>
+       <p>{chart.auxiliary_rules.year_stem}；{chart.auxiliary_rules.year_branch}。</p>
+       <p>{chart.auxiliary_rules.variant}。四化仅显示星曜落宫，不据此自动断吉凶。</p>
+       {chart.four_transform_disagreement&&<p className="ziwei-v68-warning">
+         壬年异文：本次化科采用{chart.four_transform_disagreement.chosen_star}。
+         《全书》作{chart.four_transform_disagreement.quanshu_star}，
+         现代通行表作{chart.four_transform_disagreement.common_star}。
+       </p>}
+     </section>}
      {chart.warnings?.map((w,i)=><p key={i} className="ziwei-v68-warning">{w}</p>)}
      <p className="ziwei-v68-warning">仍未实现：{chart.not_implemented.join('、')}。</p>
    </div>}

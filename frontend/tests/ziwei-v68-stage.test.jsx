@@ -30,7 +30,7 @@ it('V68 actual Ziwei entrance posts birth time and shows twelve selectable stars
  expect(JSON.parse(spy.mock.calls[0][1].body)).toEqual({
   calendar_type:'solar',solar_date:'1980-02-19',clock:'09:00',gender:'male',
   leap_month_rule:'same_month'})
- const grid=screen.getByRole('group',{name:'V68 紫微十二宫星盘'})
+ const grid=screen.getByRole('group',{name:'V69 紫微十二宫星盘'})
  expect(within(grid).getAllByRole('button')).toHaveLength(12)
  expect(within(grid).getByText('紫微 · 贪狼')).toBeTruthy()
  fireEvent.click(within(grid).getByRole('button',{name:/甲卯/}))
@@ -58,5 +58,5 @@ it('V68 invalid calendar error shown without fabricated chart',async()=>{
  render(<KnowledgeStage mode="ziwei" onBack={()=>{}} onStudy={()=>{}}/>)
  fireEvent.click(screen.getByRole('button',{name:'计算紫微命盘'}))
  expect((await screen.findByRole('alert')).textContent).toContain('闰月')
- expect(screen.queryByRole('group',{name:'V68 紫微十二宫星盘'})).toBeNull()
+ expect(screen.queryByRole('group',{name:'V69 紫微十二宫星盘'})).toBeNull()
 })
