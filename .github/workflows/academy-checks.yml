@@ -358,6 +358,17 @@ jobs:
           name: liuren-v76-classical-evidence-scope-24-tied-plates
           path: backend/acceptance-output/liuren-v76.json
           if-no-files-found: error
+      - name: Run V77 Taiyi independent solstice and 48 hour-pair ring evidence
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v77_acceptance.py --output backend/acceptance-output/taiyi-v77.json
+      - name: Upload V77 Taiyi genuine solstice-hour palace and time JiShen proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v77-solstice-hourly-palace-jishen
+          path: backend/acceptance-output/taiyi-v77.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest
