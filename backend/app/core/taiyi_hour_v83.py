@@ -114,6 +114,11 @@ def decorate_taiyi_v83(chart:dict)->dict:
         old["no_verified_unified_school"] is not True or
         old["which_school_is_default"] is not None):
         raise ValueError("V83 V82不同起宫候选须保持来源与无默认判定")
+    for variant in old["candidates"]:
+        if (variant["chief"]!=result["jiazi_chief"] or
+            variant["by_door"].get(variant["chief"])!=variant["anchor_palace"] or
+            variant["verified_as_single_complete_hour_chart"] is not False):
+            raise ValueError("V83 不能将被篡改的八门候选映射到另一历元")
     chart["hour_v83_chief_epoch_comparison"]=result
     chart["hour_door_epoch_version"]="V83"
     chart["has_verified_hour_door_location"]=False

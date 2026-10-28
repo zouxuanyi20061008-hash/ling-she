@@ -125,9 +125,15 @@ def test_tampered_v80_or_v82_not_promoted_into_wangximing_school():
     with pytest.raises(ValueError,match="V83"):
         decorate_taiyi_v83(a)
     b=deepcopy(c)
-    b["hour_v82_eight_door_schools"]["chief"]="休"
+    b["hour_v82_eight_door_schools"]["chief"]=(
+        "生" if c["hour_v82_eight_door_schools"]["chief"]!="生" else "休")
     with pytest.raises(ValueError,match="V83"):
         decorate_taiyi_v83(b)
+    e=deepcopy(c)
+    e["hour_v82_eight_door_schools"]["candidates"][0]["by_door"][
+        e["hour_v82_eight_door_schools"]["candidates"][0]["chief"]]=5
+    with pytest.raises(ValueError,match="V83"):
+        decorate_taiyi_v83(e)
     d=deepcopy(c)
     d["classical_jiazi_hour_v78"]["compared_to_v77"]["offset_in_double_hours"]+=1
     with pytest.raises(ValueError,match="V83"):
