@@ -352,7 +352,17 @@ it('V90 shows only the nine reviewed NCL scan pages and does not guess the Volum
 
 it('V90 legacy V89 response without scan locator remains compatible',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v89_digitized_witness_census:{version:'V89'}
+  ...base,hour_v89_digitized_witness_census:{
+   version:'V89',
+   catalogue_category_resource_count:7,
+   source_family_counts:{
+    catalogued_ming_manuscript_candidate:1,siku_transmission:4,unattributed_scan:2
+   },
+   resources:[],
+   lineage_conclusion:{verified_independent_textual_witnesses:0},
+   ncl_ming_manuscript:{target_leaf_or_scan_page:null},
+   can_resolve_v87_conflict:false,may_emend_text:false,preferred_correction:null
+  }
  })}))
  render(<TaiyiV77Hour/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
