@@ -512,6 +512,17 @@ jobs:
           name: taiyi-v90-ncl-ming-manuscript-scan-page-locator
           path: backend/acceptance-output/taiyi-v90.json
           if-no-files-found: error
+      - name: Run V91 Taiyi CADAL volume five-to-ten locator acceptance
+        env:
+          PYTHONPATH: backend
+        run: |
+          python backend/scripts/taiyi_v91_acceptance.py --output backend/acceptance-output/taiyi-v91.json
+      - name: Upload V91 CADAL volume nine search-scope record
+        uses: actions/upload-artifact@v4
+        with:
+          name: taiyi-v91-cadal-volume-nine-search-scope
+          path: backend/acceptance-output/taiyi-v91.json
+          if-no-files-found: error
   docker_build:
     name: Docker image build and in-image regression
     runs-on: ubuntu-latest

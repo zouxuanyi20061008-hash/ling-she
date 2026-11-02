@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.core.taiyi_hour_v77 import hour_basic_board
 from app.core.taiyi_hour_v90 import audit_ming_scan_page_locator, decorate_taiyi_v90
+from app.core.taiyi_hour_v91 import audit_cadal_volume_five_to_ten, decorate_taiyi_v91
 
 
 def test_v90_maps_only_the_nine_visually_reviewed_scan_pages():
@@ -85,3 +86,46 @@ def test_v90_hour_api_exposes_scan_locator_without_changing_annual_endpoint():
     annual = client.post("/api/taiyi/cast", json={"gregorian_year": 2026})
     assert annual.status_code == 200
     assert "hour_v90_scan_locator" not in annual.json()
+
+
+
+def test_v91_registers_cadal_volume_five_to_ten_as_siku_scan_only():
+    data = audit_cadal_volume_five_to_ten()
+    scan = data["candidate_scan"]
+    assert data["version"] == "V91" and data["target_volume"] == 9
+    assert scan["id"] == "cadal_06056495"
+    assert scan["volumes_included"] == [5, 6, 7, 8, 9, 10]
+    assert scan["volume_nine_included"] is True and scan["scan_page_count"] == 120
+    assert scan["edition_family"] == "四库全书系统"
+    assert scan["volume_nine_scan_page"] is None and scan["target_passage_page"] is None
+    assert scan["visually_reviewed_pages"] == []
+    assert scan["independent_ming_witness"] is False
+    assert data["historical_conflict_resolved"] is False
+
+
+def test_v91_decorates_hour_chart_without_claiming_ming_collation():
+    chart = hour_basic_board(date(2026, 10, 28), time(17, 30))
+    result = decorate_taiyi_v91(chart)
+    assert result["hour_v91_cadal_volume_locator"]["candidate_scan"]["volume_nine_included"]
+    assert result["hour_v91_cadal_volume_locator"]["candidate_scan"]["target_passage_page"] is None
+    assert result["has_verified_independent_yin_variant"] is False
+    assert result["has_full_hour_chart"] is False
+
+
+def test_v91_rejects_non_v90_input():
+    with pytest.raises(ValueError, match="V91"):
+        decorate_taiyi_v91({"hour_scan_locator_version": "V89"})
+
+
+def test_v91_hour_api_exposes_cadal_locator_only_on_hour_endpoint():
+    client = TestClient(app)
+    response = client.post("/api/taiyi/hour/cast", json={
+        "solar_date": "2026-10-28", "clock": "17:30"
+    })
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["hour_v91_cadal_volume_locator"]["candidate_scan"]["volume_nine_included"]
+    assert data["hour_v91_cadal_volume_locator"]["candidate_scan"]["target_passage_page"] is None
+    annual = client.post("/api/taiyi/cast", json={"gregorian_year": 2026})
+    assert annual.status_code == 200
+    assert "hour_v91_cadal_volume_locator" not in annual.json()

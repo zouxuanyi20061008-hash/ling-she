@@ -44,6 +44,7 @@ export default function TaiyiV77Hour(){
   const v88=chart?.hour_v88_manuscript_witness_registry
   const v89=chart?.hour_v89_digitized_witness_census
   const v90=chart?.hour_v90_scan_locator
+  const v91=chart?.hour_v91_cadal_volume_locator
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -467,6 +468,19 @@ export default function TaiyiV77Hour(){
             {' · '}{resource.classification_label}
           </li>)}
         </ul>
+      </section>}
+      {v91&&<section className="taiyi-v90-scan-locator" role="group"
+          aria-label="V91 CADAL 卷九扫描入口">
+        <h4>V91 · 卷九扫描入口新增</h4>
+        <p>已找到浙江大学 CADAL 数字化文件 <strong>CADAL06056495</strong>，
+          覆盖卷五至卷十，共120页；卷九确定包含在该文件中。</p>
+        <p className="academy-caution">此文件属于四库全书系统，不是独立明钞本。
+          卷九具体扫描页与“推敌国动静”目标页尚未逐页定位，不得据此校改明钞本。</p>
+        <a href={v91.candidate_scan.catalog_url} target="_blank" rel="noopener noreferrer">
+          打开 CADAL 卷五至卷十扫描文件</a>
+        <span> · </span>
+        <a href={v91.candidate_scan.source_record_url} target="_blank" rel="noopener noreferrer">
+          查看同书数字化文件目录</a>
       </section>}
       {v90&&<section className="taiyi-v90-scan-locator" role="group"
           aria-label="V90 太乙明钞本扫描页序定位">

@@ -158,4 +158,5 @@ def decorate_taiyi_v90(chart: dict) -> dict:
         "V90 已视觉核验NCL-06604扫描第1—9页：卷一目录见第5—8页、"
         "卷一正文起于第9页；卷九目标叶仍未定位，四库转录不是明钞本读文。"
     )
-    return chart
+    from .taiyi_hour_v91 import decorate_taiyi_v91
+    return decorate_taiyi_v91(chart)

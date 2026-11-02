@@ -76,3 +76,17 @@
 - GitHub Actions 增加 V90 专项验收和 JSON 证据归档。
 
 V90 不修改V77—V89排盘算法、纪局、时柱或现代气应推演。
+
+
+# V91 · CADAL 卷五至卷十扫描入口登记
+
+Wikimedia Commons 的《太乙金镜式经》馆藏分类列出 CADAL06056494（卷一至卷四）与 CADAL06056495（卷五至卷十）两份数字化文件。后者来自大学数字图书馆国际合作计划，文件为120页 DjVu，元数据标注“四库全书”。
+
+- [CADAL06056495：卷五至卷十扫描文件](https://commons.wikimedia.org/wiki/File:CADAL06056495_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93%C2%B7%E5%8D%B7%E4%BA%94~%E5%8D%B7%E5%8D%81.djvu)
+- [《太乙金镜式经》数字化文件总目录](https://commons.wikimedia.org/wiki/Category:%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93)
+
+该文件覆盖卷五至卷十，因此卷九目标在此文件范围内。但尚未逐页检查120页，卷九扫描页和目标段落页码均留空。该文件属于四库全书系统，不是独立明钞本，不能据此裁定V87冲突。
+
+V91状态：卷九所在扫描文件已找到；具体扫描页未定位；目标段落未转录；独立明钞本异文未增加；V87冲突继续待判；完整时计盘未完成。
+
+工程新增：backend/app/core/taiyi_hour_v91.py、backend/scripts/taiyi_v91_acceptance.py；扩展V90测试、时计前端、CI专项验收与证据归档。V91不修改V77—V90排盘算法。
