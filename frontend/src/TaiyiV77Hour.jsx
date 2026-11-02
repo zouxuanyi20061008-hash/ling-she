@@ -473,10 +473,10 @@ export default function TaiyiV77Hour(){
         <h4>V90 · NCL-06604 明钞本扫描页序定位</h4>
         <p>已逐页核验扫描前 <strong>{v90.scan_structure.visually_reviewed_page_count} 页</strong>：
           第1—3页为序文，第4页为空白，第5页为卷一题名与目录，
-          第6—8页为目录，第9页进入卷一正文。</p>
+          第6—8页为目录，第9页开始卷一正文，第10—12页继续卷一正文。</p>
         <div className="taiyi-v85-witness" role="group"
              aria-label="V90 明钞本卷九定位状态">
-          <span>已核扫描页：<strong>9 / 124</strong></span>
+          <span>已核扫描页：<strong>{v90.scan_structure.visually_reviewed_page_count} / 124</strong></span>
           <span>卷一正文起页：<strong>PDF第9页</strong></span>
           <span>卷九目标叶：<strong>尚未定位</strong></span>
           <span>明钞本转录：<strong>0字</strong></span>
@@ -486,7 +486,7 @@ export default function TaiyiV77Hour(){
           下方四库转录仅为检索底文，不是明钞本读文；V87冲突继续保持待判。
         </p>
         <details>
-          <summary>逐页复核已检查的明钞本影像（PDF第1—9页）</summary>
+          <summary>逐页复核已检查的明钞本影像（PDF第1—12页）</summary>
           <ul>
             {v90.scan_page_map.map(page=><li key={page.scan_page}>
               <a href={page.viewer_url} target="_blank" rel="noopener noreferrer">

@@ -313,7 +313,7 @@ it('V90 shows only the nine reviewed NCL scan pages and does not guess the Volum
  const pageMap=[
   [1,'序文开篇'],[2,'序文续页'],[3,'序文续页'],[4,'空白页'],
   [5,'卷一题名与目录起页'],[6,'卷一目录续页'],[7,'卷一目录续页'],
-  [8,'卷一目录末页'],[9,'卷一正文起页']
+  [8,'卷一目录末页'],[9,'卷一正文起页'],[10,'卷一正文续页'],[11,'卷一正文续页'],[12,'卷一正文续页']
  ].map(([scan_page,classification])=>({
   scan_page,classification,visual_observation:'已视觉核验',
   viewer_url:scan_page===1?'https://commons.wikimedia.org/wiki/File:NCL-06604.pdf':
@@ -323,7 +323,7 @@ it('V90 shows only the nine reviewed NCL scan pages and does not guess the Volum
  const locator={
   version:'V90',
   scan_structure:{
-   visually_reviewed_page_count:9,volume_one_body_start_page:9,
+   visually_reviewed_page_count:12,volume_one_body_start_page:9,
    volume_nine_start_page:null
   },
   scan_page_map:pageMap,
@@ -342,11 +342,12 @@ it('V90 shows only the nine reviewed NCL scan pages and does not guess the Volum
  render(<TaiyiV77Hour/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
  const area=await screen.findByRole('group',{name:'V90 太乙明钞本扫描页序定位'})
- expect(area.textContent).toContain('9 / 124')
+ expect(area.textContent).toContain('12 / 124')
  expect(area.textContent).toContain('PDF第9页')
  expect(area.textContent).toContain('卷九目标叶：尚未定位')
  expect(area.textContent).toContain('四库转录仅为检索底文')
  expect(within(area).getByRole('link',{name:/PDF第5页/})).toBeTruthy()
+ expect(within(area).getByRole('link',{name:/PDF第12页/})).toBeTruthy()
  expect(within(area).getByRole('link',{name:'维基文库·四库全书本卷九'})).toBeTruthy()
 })
 

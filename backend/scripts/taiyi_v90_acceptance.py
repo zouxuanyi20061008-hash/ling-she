@@ -18,7 +18,7 @@ def audit():
         chart = hour_basic_board(d, clock)
         locator = chart["hour_v90_scan_locator"]
         structure = locator["scan_structure"]
-        assert structure["visually_reviewed_page_numbers"] == list(range(1, 10))
+        assert structure["visually_reviewed_page_numbers"] == list(range(1, 13))
         assert structure["volume_one_body_start_page"] == 9
         assert structure["volume_nine_start_page"] is None
         assert structure["page_sequence_extrapolated_beyond_reviewed_pages"] is False
@@ -43,7 +43,7 @@ def audit():
         "git_sha": os.getenv("GITHUB_SHA"),
         "case_count": len(cases),
         "cases": cases,
-        "visually_reviewed_scan_pages": 9,
+        "visually_reviewed_scan_pages": 12,
         "volume_one_body_start_page": 9,
         "volume_nine_start_page": None,
         "target_leaf_located": False,

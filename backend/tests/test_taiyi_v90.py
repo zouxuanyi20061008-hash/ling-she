@@ -21,16 +21,17 @@ def test_v90_maps_only_the_nine_visually_reviewed_scan_pages():
     assert witness["volume_count"] == 10 and witness["bound_volume_count"] == 4
     assert witness["scan_page_count"] == 124
     assert witness["scan_sha1"] == "46b2774f6d66fb61db3617673672ec721bdc0904"
-    assert structure["visually_reviewed_page_numbers"] == list(range(1, 10))
-    assert structure["visually_reviewed_page_count"] == 9
+    assert structure["visually_reviewed_page_numbers"] == list(range(1, 13))
+    assert structure["visually_reviewed_page_count"] == 12
     assert structure["opening_preface_pages"] == [1, 2, 3]
     assert structure["blank_page_numbers"] == [4]
     assert structure["volume_one_title_and_contents_start_page"] == 5
     assert structure["volume_one_contents_pages"] == [6, 7, 8]
     assert structure["volume_one_body_start_page"] == 9
+    assert structure["volume_one_body_reviewed_pages"] == [9, 10, 11, 12]
     assert structure["volume_nine_start_page"] is None
     assert structure["page_sequence_extrapolated_beyond_reviewed_pages"] is False
-    assert [p["scan_page"] for p in locator["scan_page_map"]] == list(range(1, 10))
+    assert [p["scan_page"] for p in locator["scan_page_map"]] == list(range(1, 13))
     assert all(p["visually_reviewed"] for p in locator["scan_page_map"])
     assert locator["target_passage"]["target_leaf_or_scan_page"] is None
     assert locator["target_passage"]["full_text_collation_status"] == "not_started"

@@ -2,7 +2,7 @@
 
 ## 本轮实际核验范围
 
-本轮通过 Wikimedia Commons 的逐页预览，视觉检查了 NCL-06604 明钞本扫描第1—9页。该文件共124页，2350×1700像素，23,669,039字节，SHA-1 为 \`46b2774f6d66fb61db3617673672ec721bdc0904\`。
+本轮通过 Wikimedia Commons 的逐页预览，视觉检查了 NCL-06604 明钞本扫描第1—12页。该文件共124页，2350×1700像素，23,669,039字节，SHA-1 为 \`46b2774f6d66fb61db3617673672ec721bdc0904\`。
 
 | PDF扫描页 | 实际看到的内容 | 判断 |
 |---:|---|---|
@@ -15,8 +15,11 @@
 | 7 | 卷一目录续页 | 目录 |
 | 8 | 卷一目录末页 | 目录 |
 | 9 | 可辨“推月计法”等篇目 | 卷一正文起页 |
+| 10 | 可辨“推太乙月计差法”等篇目 | 卷一正文续页 |
+| 11 | 可辨“推天目所在”等篇目 | 卷一正文续页 |
+| 12 | 可辨“推日计太乙所在”等篇目 | 卷一正文续页 |
 
-**关键进展：** 已确定这份PDF的前九页并非卷九正文；卷一正文从扫描第9页开始。卷九所在册、所在扫描页和叶码仍未定位。没有依据把扫描页9以后的页数按十卷平均分配，因此不推算卷九页码。
+**关键进展：** 已确定这份PDF的前十二页并非卷九正文；卷一正文从扫描第9页开始，第10—12页仍属卷一正文。卷九所在册、所在扫描页和叶码仍未定位。没有依据把扫描页9以后的页数按十卷平均分配，因此不推算卷九页码。
 
 ## 可逐页复核的原始影像
 
@@ -29,6 +32,9 @@
 - [PDF第7页](https://commons.wikimedia.org/w/index.php?page=7&title=File%3ANCL-06604_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93.pdf)
 - [PDF第8页](https://commons.wikimedia.org/w/index.php?page=8&title=File%3ANCL-06604_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93.pdf)
 - [PDF第9页](https://commons.wikimedia.org/w/index.php?page=9&title=File%3ANCL-06604_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93.pdf)
+- [PDF第10页](https://commons.wikimedia.org/w/index.php?page=10&title=File%3ANCL-06604_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93.pdf)
+- [PDF第11页](https://commons.wikimedia.org/w/index.php?page=11&title=File%3ANCL-06604_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93.pdf)
+- [PDF第12页](https://commons.wikimedia.org/w/index.php?page=12&title=File%3ANCL-06604_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93.pdf)
 
 ## 卷九目标文字的待校底文（不是明钞本读文）
 
@@ -45,7 +51,7 @@
 
 ## 当前严格结论
 
-- 已视觉核验扫描页：9/124
+- 已视觉核验扫描页：12/124
 - 卷一正文起页：PDF第9页
 - 卷九起页：未知
 - “推敌国动静”目标叶：未定位

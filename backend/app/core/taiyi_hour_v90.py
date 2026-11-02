@@ -29,6 +29,9 @@ _PAGE_OBSERVATIONS = (
     (7, "卷一目录续页", "卷一目录继续"),
     (8, "卷一目录末页", "卷一目录继续，尚未进入卷九"),
     (9, "卷一正文起页", "可辨“推月计法”等卷一正文篇目"),
+    (10, "卷一正文续页", "可辨“推太乙月计差法”等卷一正文篇目"),
+    (11, "卷一正文续页", "可辨“推天目所在”等卷一正文篇目"),
+    (12, "卷一正文续页", "可辨“推日计太乙所在”等卷一正文篇目"),
 )
 
 
@@ -80,6 +83,7 @@ def audit_ming_scan_page_locator() -> dict:
         "scan_structure": {
             "visually_reviewed_page_numbers": [p["scan_page"] for p in pages],
             "visually_reviewed_page_count": len(pages),
+            "volume_one_body_reviewed_pages": [9, 10, 11, 12],
             "opening_preface_pages": [1, 2, 3],
             "blank_page_numbers": [4],
             "volume_one_title_and_contents_start_page": 5,
@@ -123,9 +127,9 @@ def audit_ming_scan_page_locator() -> dict:
         "has_verified_independent_yin_variant": False,
         "has_full_hour_chart": False,
         "scope_note": (
-            "本轮只视觉核验NCL扫描第1—9页：第1—3页为序文，第4页为空白，"
-            "第5页为卷一题名与目录起页，第6—8页为卷一目录，第9页进入卷一正文。"
-            "没有查看第10页以后，因此卷九所在册、所在页和具体叶码仍全部未知。"
+            "本轮只视觉核验NCL扫描第1—12页：第1—3页为序文，第4页为空白，"
+            "第5页为卷一题名与目录起页，第6—8页为卷一目录，第9—12页为卷一正文。"
+            "没有查看第13页以后，因此卷九所在册、所在页和具体叶码仍全部未知。"
             "四库全书网页转录只用于建立检索底文，不得当作明钞本异文。"
         ),
     }
