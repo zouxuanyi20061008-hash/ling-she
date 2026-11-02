@@ -1139,3 +1139,86 @@ button:disabled{cursor:not-allowed}
 .case-v34-consent input{width:18px;height:18px;flex:none;margin-top:2px;accent-color:#2b6243}
 .case-v34-actions{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:580px){.case-v34-transfer{padding:11px}.case-v34-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.case-v34-actions button{flex:1 1 135px}}
+
+
+/* ThreeUI-inspired interaction pass: accessible, lightweight trigram exploration. */
+.atlas-trigram-explorer{
+  display:flex;flex-direction:column;gap:8px;width:100%;max-width:410px;margin:0 auto;
+}
+.atlas-trigram-instruction{
+  margin:0;text-align:center;font-size:11px;line-height:1.7;letter-spacing:.06em;color:#536b59;
+}
+.atlas-trigram-explorer .atlas-orbit{
+  width:100%;max-width:352px;aspect-ratio:1;margin:0 auto;position:relative;
+}
+.atlas-trigram-explorer .atlas-orbit-ring{pointer-events:none}
+.atlas-trigram-explorer .atlas-orbit-gua{
+  position:absolute;left:var(--orbit-x);top:var(--orbit-y);z-index:3;
+  display:grid;place-items:center;width:42px;height:42px;padding:0;
+  transform:translate(-50%,-50%);border:1px solid #b9ad91;border-radius:50%;
+  background:#f8f1df;color:#315b49;font-family:inherit;font-size:16px;font-weight:750;
+  cursor:pointer;box-shadow:0 3px 9px rgba(50,67,47,.13);
+  transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.atlas-trigram-explorer .atlas-orbit-gua:hover{
+  transform:translate(-50%,-50%) scale(1.09);border-color:#527b62;
+  box-shadow:0 6px 13px rgba(50,67,47,.19);
+}
+.atlas-trigram-explorer .atlas-orbit-gua[aria-pressed="true"]{
+  transform:translate(-50%,-50%) scale(1.13);background:#245344;color:#fff4df;
+  border-color:#245344;box-shadow:0 0 0 4px rgba(53,103,75,.14),0 6px 13px rgba(38,68,50,.2);
+}
+.atlas-trigram-explorer .atlas-orbit-gua:focus-visible{
+  outline:3px solid #a76b48;outline-offset:4px;
+}
+.atlas-trigram-explorer .atlas-yinyang{
+  inset:31%;pointer-events:none;
+}
+.atlas-trigram-explorer .atlas-taiji{width:70%}
+.atlas-trigram-explorer .atlas-trigram-detail{
+  width:min(100%,386px);margin:0 auto;padding:12px 14px;
+  border:1px solid #b8b39c;border-radius:13px;
+  background:rgba(250,247,236,.95);color:#344b3b;
+  box-shadow:0 8px 20px rgba(45,59,42,.09);
+}
+.atlas-trigram-detail-head{display:flex;align-items:center;gap:11px}
+.atlas-trigram-detail-symbol{
+  display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;
+  border:1px solid #b9c5ac;border-radius:10px;background:#e8eee2;
+  color:#245344;font-size:27px;line-height:1;
+}
+.atlas-trigram-detail-title small{display:block;color:#7b725d;font-size:10px;letter-spacing:.1em}
+.atlas-trigram-detail-title h3{margin:3px 0 0;color:#244d3a;font-size:19px;font-weight:700}
+.atlas-trigram-hint{margin:9px 0 8px;color:#465c4b;font-size:12px;line-height:1.7}
+.atlas-trigram-facts{display:flex;gap:6px;flex-wrap:wrap}
+.atlas-trigram-facts span{
+  padding:4px 8px;border:1px solid #c9cbb6;border-radius:999px;
+  background:#f4f2e6;color:#4d604e;font-size:10px;line-height:1.5;
+}
+.atlas-trigram-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:9px;
+  margin-top:10px;padding-top:9px;border-top:1px solid #e0ddcc;
+}
+.atlas-trigram-footer small{color:#7c765f;font-size:10px;line-height:1.5}
+.atlas-trigram-footer button{
+  flex:0 0 auto;min-height:34px;padding:6px 11px;border:1px solid #8da18c;
+  border-radius:8px;background:#e8eee2;color:#28543e;font-size:11px;font-weight:700;
+  cursor:pointer;transition:background .16s ease,transform .16s ease;
+}
+.atlas-trigram-footer button:hover{background:#dce8d8;transform:translateY(-1px)}
+.atlas-trigram-footer button:focus-visible{outline:3px solid #a76b48;outline-offset:3px}
+@media(max-width:760px){
+  .atlas-trigram-explorer{max-width:360px}
+  .atlas-trigram-explorer .atlas-orbit{max-width:316px}
+  .atlas-trigram-explorer .atlas-orbit-gua{width:39px;height:39px}
+  .atlas-trigram-detail{padding:11px 12px}
+}
+@media(max-width:380px){
+  .atlas-trigram-explorer .atlas-orbit{max-width:286px}
+  .atlas-trigram-explorer .atlas-orbit-gua{width:36px;height:36px;font-size:14px}
+  .atlas-trigram-footer{align-items:flex-start;flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  .atlas-trigram-explorer .atlas-yinyang{animation:none}
+  .atlas-trigram-explorer .atlas-orbit-gua,.atlas-trigram-footer button{transition:none}
+}
