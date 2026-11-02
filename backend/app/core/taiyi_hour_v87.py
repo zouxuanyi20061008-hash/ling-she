@@ -108,4 +108,6 @@ def decorate_taiyi_v87(chart:dict)->dict:
         "V87 完整360时同余穷举证实《金镜式经》卷九阴遁第三纪52局乙卯三项无法同真；"
         "三份数字转录均属同一四库全书本，尚无独立异本证据，不对古籍擅自改字。"
         "现代气应文昌、始击、主客将及绝对上元仍待证。")
-    return chart
+
+    from .taiyi_hour_v88 import decorate_taiyi_v88
+    return decorate_taiyi_v88(chart)

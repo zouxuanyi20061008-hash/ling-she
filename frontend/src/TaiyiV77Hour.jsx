@@ -41,6 +41,7 @@ export default function TaiyiV77Hour(){
   const v84=chart?.hour_v84_qiying_plate
   const v85=chart?.hour_v85_phase_hypotheses
   const v87=chart?.hour_v87_modular_source_audit
+  const v88=chart?.hour_v88_manuscript_witness_registry
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -415,6 +416,31 @@ export default function TaiyiV77Hour(){
         </details>
         <p>现代二至气应文昌、始击和主客将、完整八门落宫、古代上元积时，
           以及《金钥匙》定计32/33冲突仍然待判。</p>
+      </section>}
+      {v88&&<section className="taiyi-v88-witness" role="group"
+          aria-label="V88 太乙明钞本候选校勘线索">
+        <h4>V88 · 新发现的明代馆藏抄本线索</h4>
+        <p>台湾国家图书馆著录《太乙金镜式经》为<strong>{v88.witness.edition}</strong>，
+          十卷、线装四册，索书号 <strong>{v88.witness.shelfmark}</strong>；
+          对应数字扫描共 <strong>{v88.witness.scan_page_count} 页</strong>。</p>
+        <div className="taiyi-v85-witness" role="group"
+             aria-label="V88 明钞本证据状态">
+          <span>馆藏目录：<strong>已核实</strong></span>
+          <span>扫描元数据：<strong>已核实</strong></span>
+          <span>卷九目标叶：<strong>尚未定位</strong></span>
+          <span>逐字校勘：<strong>未开始（0字）</strong></span>
+        </div>
+        <p className="academy-caution">
+          <strong>这是一件不同于四库本转录的馆藏抄本线索，不是已验证的文本异文。</strong>
+          目前尚未定位卷九“推敌国动静”对应叶，也未逐字转录；
+          因此 V87 的三项同余冲突仍维持待判，不能据此修改原文。
+        </p>
+        <p><a href={v88.witness.catalog_url} target="_blank" rel="noopener noreferrer">
+          台湾国家图书馆馆藏目录</a>
+          {' · '}
+          <a href={v88.witness.scan_url} target="_blank" rel="noopener noreferrer">
+          明钞本124页数字扫描</a>
+        </p>
       </section>}
       {v86&&<section className="taiyi-v85-ji-phase" role="group"
           aria-label="V86 金镜式经卷九三例核验与阴遁原文冲突">
