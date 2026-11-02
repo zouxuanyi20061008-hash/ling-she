@@ -24,15 +24,15 @@ it('首页呈现八个可访问卦象，默认选中乾卦并明确说明体验�
     button.getAttribute('aria-label')?.includes('卦：')
   )
   expect(trigramButtons).toHaveLength(8)
-  expect(screen.getByRole('button',{name:/乾卦/}).getAttribute('aria-pressed')).toBe('true')
+  expect(screen.getByRole('button',{name:'1 · 乾卦：天，西北，五行属金'}).getAttribute('aria-pressed')).toBe('true')
   expect(screen.getByText('乾 · 天')).toBeTruthy()
   expect(screen.getByText(/不参与正式起卦/)).toBeTruthy()
 })
 
 it('点选兑卦后，选中态、自然之象、后天方位和五行同步更新',()=>{
   renderHome()
-  const qian=screen.getByRole('button',{name:/乾卦/})
-  const dui=screen.getByRole('button',{name:/兑卦/})
+  const qian=screen.getByRole('button',{name:'1 · 乾卦：天，西北，五行属金'})
+  const dui=screen.getByRole('button',{name:'2 · 兑卦：泽，西，五行属金'})
   expect(qian.getAttribute('aria-pressed')).toBe('true')
   fireEvent.click(dui)
   expect(dui.getAttribute('aria-pressed')).toBe('true')
@@ -54,7 +54,7 @@ it('随机观象从既有八卦资料中选取，并保留非正式起卦提示'
 it('旋转卦环只改变方位，不改变当前所选卦象，并且可以复位',()=>{
   const {container}=renderHome()
   const orbit=container.querySelector('.atlas-orbit')
-  const qian=screen.getByRole('button',{name:/乾卦/})
+  const qian=screen.getByRole('button',{name:'1 · 乾卦：天，西北，五行属金'})
   const before=qian.style.getPropertyValue('--orbit-x')
   fireEvent.click(screen.getByRole('button',{name:'顺时针旋转45度'}))
   expect(orbit.getAttribute('data-rotation')).toBe('45')
@@ -68,7 +68,7 @@ it('旋转卦环只改变方位，不改变当前所选卦象，并且可以复�
 it('可把当前卦设为上卦或下卦，并用六条阴阳线显示组合卦',()=>{
   renderHome()
   expect(screen.getByText('天地 · 否')).toBeTruthy()
-  fireEvent.click(screen.getByRole('button',{name:/兑卦/}))
+  fireEvent.click(screen.getByRole('button',{name:'2 · 兑卦：泽，西，五行属金'}))
   fireEvent.click(screen.getByRole('button',{name:'将兑卦设为上卦'}))
   expect(screen.getByText('泽地 · 萃')).toBeTruthy()
   expect(screen.getByRole('img',{name:/六爻卦形/})).toBeTruthy()
