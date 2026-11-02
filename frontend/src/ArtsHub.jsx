@@ -1,5 +1,6 @@
 import { useMemo, useRef } from 'react'
 import './academy.css'
+import EightTrigramExplorer from './EightTrigramExplorer.jsx'
 
 export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
@@ -53,26 +54,6 @@ function InkLandscape() {
       <path d="M8 54V31Q18 23 28 31V54" fill="#ebdfc4"/>
     </g>
   </svg>
-}
-
-function OrbitArtwork() {
-  return <div className="atlas-orbit" aria-hidden="true">
-    <div className="atlas-orbit-ring outer"/>
-    <div className="atlas-orbit-ring inner"/>
-    {['乾','兑','离','震','巽','坎','艮','坤'].map((x,i)=>
-      <span key={x} className="atlas-orbit-gua" style={{'--i':i}}>{x}</span>)}
-    <div className="atlas-yinyang">
-      <div className="atlas-taiji">
-        <svg viewBox="0 0 100 100" width="100%" aria-hidden="true">
-          <circle cx="50" cy="50" r="49" fill="#d1bf94" stroke="#e6d4aa"/>
-          <path d="M50 1A49 49 0 0 0 50 99 A24.5 24.5 0 0 1 50 50 A24.5 24.5 0 0 0 50 1Z" fill="#173d35"/>
-          <circle cx="50" cy="25.5" r="7" fill="#173d35"/>
-          <circle cx="50" cy="74.5" r="7" fill="#d1bf94"/>
-        </svg>
-      </div>
-      <small>象 · 数 · 理</small>
-    </div>
-  </div>
 }
 
 function MethodCard({method,onSelect}) {
@@ -142,7 +123,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               <span><b>叁</b> 参诸象</span>
             </div>
           </div>
-          <OrbitArtwork/>
+          <EightTrigramExplorer/>
           <p className="atlas-cover-corner" aria-hidden="true">八 门 初 开 · 各 循 其 法</p>
         </section>
       :
