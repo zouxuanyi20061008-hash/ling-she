@@ -90,3 +90,41 @@ Wikimedia Commons 的《太乙金镜式经》馆藏分类列出 CADAL06056494（
 V91状态：卷九所在扫描文件已找到；具体扫描页未定位；目标段落未转录；独立明钞本异文未增加；V87冲突继续待判；完整时计盘未完成。
 
 工程新增：backend/app/core/taiyi_hour_v91.py、backend/scripts/taiyi_v91_acceptance.py；扩展V90测试、时计前端、CI专项验收与证据归档。V91不修改V77—V90排盘算法。
+
+
+# V92 · 卷九目标段落文字定位（四库文渊阁转录）
+
+## 本轮找到的文字位置
+
+Kanripo《太乙金鏡式經》卷九转录文件 KR3g0047_009.txt 标记底本为 WYG（文渊阁四库全书）。其页码标记显示：
+
+- KR3g0047_WYG_009-1a：卷九题名、篇目目录及“推敌国动静”标题。
+- KR3g0047_WYG_009-1b：该篇正文及“隂遁第三紀第五十二局乙夘時”案例。
+
+[Kanripo 卷九转录文件](https://github.com/kanripo/KR3g0047/blob/master/KR3g0047_009.txt)
+
+## 与扫描 OCR 的交叉入口
+
+- [CText 卷五至卷十扫描 OCR 章节（367760）](https://ctext.org/wiki.pl?chapter=367760&if=gb)：页面说明为影像自动 OCR；其卷九片段可用于检索，但没有提供可核实的 CADAL 物理页号。
+- [CText 卷九文字章节（435698）](https://ctext.org/wiki.pl?chapter=435698&if=en)：卷九文本转录。
+- [CADAL06056495 原始扫描文件](https://commons.wikimedia.org/wiki/File:CADAL06056495_%E5%A4%AA%E4%B9%99%E9%87%91%E9%8F%A1%E5%BC%8F%E7%B6%93%C2%B7%E5%8D%B7%E4%BA%94~%E5%8D%B7%E5%8D%81.djvu)。
+
+## 证据边界
+
+1a/1b 是 WYG 文字转录的叶码标记，不是 CADAL DjVu 页号，更不是 NCL-06604 明钞本页码。CText 自动 OCR、CText 卷九转录与 Kanripo WYG 转录属于四库文本检索材料，不能冒充独立版本或明钞本读文。
+
+因此 V92 只将目标段落定位到四库文字转录的卷九第1b叶。CADAL 物理扫描页、明钞本对应叶及逐字对校仍未完成；V87 原文冲突继续待判，不作任何校改。
+
+## V92 状态
+
+- 四库转录卷九题名叶：已定位（WYG 1a）
+- 四库转录目标段落叶：已定位（WYG 1b）
+- 目标案例文字：已从 WYG 转录提取
+- CADAL 物理扫描页号：未知
+- NCL 明钞本对应扫描页：未知
+- 明钞本目标段落转录：0字
+- 独立异本：未新增
+- V87 冲突：未解决
+- 完整时计盘：未完成
+
+工程新增：V92 文字定位模块、专项测试、专项验收脚本、前端证据面板和 CI JSON 归档。排盘算法不变。

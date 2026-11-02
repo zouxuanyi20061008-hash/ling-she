@@ -59,4 +59,5 @@ def decorate_taiyi_v91(chart: dict) -> dict:
         "V91 找到CADAL四库系统卷五至卷十扫描入口，卷九具体页码尚未逐页核定；"
         "该扫描不是独立明钞本，不能据此改定V87原文冲突。"
     )
-    return chart
+    from .taiyi_hour_v92 import decorate_taiyi_v92
+    return decorate_taiyi_v92(chart)

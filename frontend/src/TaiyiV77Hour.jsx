@@ -45,6 +45,7 @@ export default function TaiyiV77Hour(){
   const v89=chart?.hour_v89_digitized_witness_census
   const v90=chart?.hour_v90_scan_locator
   const v91=chart?.hour_v91_cadal_volume_locator
+  const v92=chart?.hour_v92_textual_locator
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -468,6 +469,23 @@ export default function TaiyiV77Hour(){
             {' · '}{resource.classification_label}
           </li>)}
         </ul>
+      </section>}
+      {v92&&<section className="taiyi-v90-scan-locator" role="group"
+          aria-label="V92 太乙卷九目标段落文字定位">
+        <h4>V92 · 卷九目标段落已定位到文字叶</h4>
+        <p>四库文渊阁本卷九转录标记显示：卷九题名及目录在 <strong>1a</strong>，
+          “推敌国动静”正文及乙卯时案例在 <strong>1b</strong>。</p>
+        <blockquote>{v92.target_passage.excerpt}</blockquote>
+        <p className="academy-caution">1a/1b 是文字转录的叶码标记，不是 CADAL 扫描页号，
+          也不是 NCL-06604 明钞本页码。四库转录不能作为明钞本异文，V87 冲突仍待核。</p>
+        <a href={v92.sources.kanripo.url} target="_blank" rel="noopener noreferrer">
+          查看 Kanripo 卷九转录</a>
+        <span> · </span>
+        <a href={v92.sources.cadal_ocr.url} target="_blank" rel="noopener noreferrer">
+          查看卷五至卷十扫描 OCR</a>
+        <span> · </span>
+        <a href={v92.sources.cadal_scan.url} target="_blank" rel="noopener noreferrer">
+          打开 CADAL 原始扫描</a>
       </section>}
       {v91&&<section className="taiyi-v90-scan-locator" role="group"
           aria-label="V91 CADAL 卷九扫描入口">
