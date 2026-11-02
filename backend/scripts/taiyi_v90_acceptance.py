@@ -62,4 +62,4 @@ if __name__ == "__main__":
     report = audit()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("V90：NCL-06604扫描前9页页序定位通过；卷九目标叶仍未定位，未冒充完成逐字校勘")
+    print("V90：NCL-06604扫描前12页页序定位通过；卷九目标叶仍未定位，未冒充完成逐字校勘")
