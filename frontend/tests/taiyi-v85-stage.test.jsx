@@ -245,7 +245,22 @@ it('V88 displays the catalogued Ming manuscript candidate without claiming its t
 
 it('V88 legacy V87 response without a manuscript registry remains compatible',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v87_modular_source_audit:{period_hours:360,pairwise_intersections:[]}
+  ...base,hour_v87_modular_source_audit:{
+   period_hours:360,
+   pairwise_intersections:[
+    {candidate_hour:124,constraints:['six_ji_number','ju'],
+     conflicting_field:'hour_ganzhi_from_jiazi_start',source_value:'乙卯',calculated_value:'丁卯'},
+    {candidate_hour:172,constraints:['six_ji_number','hour_ganzhi_from_jiazi_start'],
+     conflicting_field:'ju',source_value:52,calculated_value:28},
+    {candidate_hour:52,constraints:['ju','hour_ganzhi_from_jiazi_start'],
+     conflicting_field:'six_ji_number',source_value:3,calculated_value:1}
+   ],
+   same_edition_transcriptions:[
+    {label:'维基文库·四库全书本卷九',url:'https://zh.wikisource.org/zh-hans/太乙金鏡式經_(四庫全書本)/卷09'},
+    {label:'中国哲学书电子化计划·卷九',url:'https://ctext.org/wiki.pl?chapter=435698&if=en'},
+    {label:'知命书院·卷九转录',url:'https://shuyuan.zhiming.life/read/太乙金镜式经/13'}
+   ]
+  }
  })}))
  render(<TaiyiV77Hour/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
