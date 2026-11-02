@@ -418,7 +418,7 @@ export default function TaiyiV77Hour(){
         <p>现代二至气应文昌、始击和主客将、完整八门落宫、古代上元积时，
           以及《金钥匙》定计32/33冲突仍然待判。</p>
       </section>}
-      {v88&&<section className="taiyi-v88-witness" role="group"
+      {v88?.witness&&<section className="taiyi-v88-witness" role="group"
           aria-label="V88 太乙明钞本候选校勘线索">
         <h4>V88 · 新发现的明代馆藏抄本线索</h4>
         <p>台湾国家图书馆著录《太乙金镜式经》为<strong>{v88.witness.edition}</strong>，

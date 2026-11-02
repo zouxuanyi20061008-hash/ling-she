@@ -301,7 +301,7 @@ it('V89 displays source-family census and does not promote Siku or unattributed 
 
 it('V89 legacy response without a source census remains compatible',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v88_manuscript_witness_registry:{version:'V88'}
+  ...base,hour_v87_modular_source_audit:{period_hours:360,pairwise_intersections:[]}
  })}))
  render(<TaiyiV77Hour/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
