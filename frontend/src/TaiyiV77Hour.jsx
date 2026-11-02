@@ -391,7 +391,7 @@ export default function TaiyiV77Hour(){
           <strong> 无共同成立的时数</strong>。
           这是该计数体系下的数学结论，不是已经证实原籍有误字。</p>
         <div className="taiyi-v85-phases">
-          {v87.pairwise_intersections.map(item=><article key={item.candidate_hour}>
+          {(v87.pairwise_intersections||[]).map(item=><article key={item.candidate_hour}>
             <h5>周内第{item.candidate_hour}时</h5>
             <p>同时吻合：<strong>{item.constraints.map(k=>({
               six_ji_number:'第三纪',ju:'第52局',
@@ -411,7 +411,7 @@ export default function TaiyiV77Hour(){
           <summary>核对原典数字转录与版本独立性</summary>
           <p>以下网页均为《太乙金镜式经》四库全书本卷九的转录，
             不是三个已验真、相互独立的刻本证据：</p>
-          {v87.same_edition_transcriptions.map(s=>
+          {(v87.same_edition_transcriptions||[]).map(s=>
             <p key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">
               {s.label}</a> · 独立版本校验：未完成</p>)}
         </details>
