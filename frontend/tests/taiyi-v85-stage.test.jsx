@@ -1,310 +1,52 @@
-// @vitest-environment jsdom
-import React from 'react'
-import {it,afterEach,expect,vi} from 'vitest'
-import {render,screen,fireEvent,within,cleanup} from '@testing-library/react'
-import TaiyiV77Hour from '../src/TaiyiV77Hour.jsx'
-afterEach(()=>{cleanup();vi.unstubAllGlobals()})
-
-const source='https://zh.wikisource.org/zh-hans/太乙金鏡式經_(四庫全書本)/卷01'
-const trig={9:'巽',2:'离',7:'坤',4:'震',5:'中',6:'兑',3:'艮',8:'坎',1:'乾'}
-const base={
- version:'V77',
- input:{solar_date:'2026-06-22',clock:'09:30:00',hour_branch:'巳'},
- solstice:{name:'夏至',started_at_beijing:'2026-06-21T16:20:00+08:00',near_15_minutes:false},
- time_cycle:{dun:'阴遁',relative_time_count:9,relative_count_in_24:9,hours_in_current_palace:3},
- taiyi_palace:{number:7,trigram:'坤'},
- jishen:{branch:'午',direction:'逆行十二支',movement:'一时一移'},
- nine_palaces:[9,2,7,4,5,6,3,8,1].map(number=>({
-   number,trigram:trig[number],is_taiyi:number===7,is_middle_unvisited:number===5
- })),
- sources:{zhou:'https://zh.wikisource.org/zh/太乙金鏡式經',
-   hour_example:'https://www.shidianguji.com/book/NGJ89241199902106666022/chapter/1lq8dkylq3yn8'}
-}
-const witness={source,actual:{
- taiyi_palace:9,wenchang_god:'大武',shiji_god:'高丛',
- main_count:29,guest_count:4,main_general:9,main_assistant:7,
- guest_general:4,guest_assistant:2
-}}
-const trace=[{order:1,direction:'坤',god:'大武',added:7},
-             {order:2,direction:'申',god:'武德',added:0}]
-const phase=(n,first,wen,shiji,pending=false)=>({
- phase:n,hypothetical_ji_numbers:[n,n+3],
- first_eye_in_historical_ji:first,
- wenchang:{direction:'坤',god:wen},
- shiji:{direction:'卯',god:shiji},
- main:pending?{status:'pending',count:null,big_general:null,
-               assistant_general:null,trace:[]}:
-              {status:'computed',count:29,big_general:9,
-               assistant_general:7,trace},
- guest:{status:'computed',count:4,big_general:4,
-        assistant_general:2,trace}
-})
-const historicalOrigins={
- status:'verified_historical_zhangliang_six_ji_starts',
- modern_solstice_ji_phase_verified:false,
- may_be_used_as_modern_qiying_anchor:false,
- rows:[[1,9,'吕申'],[2,4,'大威'],[3,9,'阴德'],
-       [4,4,'吕申'],[5,9,'大威'],[6,4,'阴德']]
-       .map(([ji_number,taiyi_palace,wenchang_god])=>({
-         ji_number,taiyi_palace,wenchang_god,jishen:'申'
-       }))
-}
-const hypothesis={
- version:'V85',historical_three_seeds:['吕申','大威','阴德'],
- historical_ji_origin_witness:historicalOrigins,
- hypotheses:[
-   phase(1,'吕申','吕申','武德'),
-   phase(2,'大威','大威','地主',true),
-   phase(3,'阴德','阴德','高丛')],
- preferred_phase:null,confirmed_qiying_main_general:null
-}
-
-it('V85 displays the original Yin 315 29/4 and four generals as historical witness, not modern qiying',async()=>{
- const spy=vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v85_independent_yin_witness:witness,
-  hour_v85_phase_hypotheses:hypothesis
- })})
- vi.stubGlobal('fetch',spy)
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const area=await screen.findByRole('group',{name:'V85 太乙阴遁315原典真值与气应天目三种纪相位'})
- expect(area.textContent).toContain('第六纪·壬子元27局')
- expect(area.textContent).toContain('315时')
- expect(area.textContent).toContain('主算29')
- expect(area.textContent).toContain('客算4')
- const original=within(area).getByRole('group',{name:'V85 金镜式经阴遁第315时主客将独立真值'})
- expect(original.textContent).toContain('大武')
- expect(original.textContent).toContain('高丛')
- expect(original.textContent).toContain('主大/参：9/7宫')
- expect(original.textContent).toContain('客大/参：4/2宫')
- expect(area.textContent).toContain('现代气应派真实纪首相位尚未判定')
- expect(area.textContent).toContain('不能穷尽任意未知历元偏移')
- expect(within(area).getByRole('link').getAttribute('href')).toBe(source)
- expect(spy.mock.calls[0][0]).toBe('/api/taiyi/hour/cast')
-})
-
-it('V85 shows three separate phase cards and still conservatively handles same-palace pending',async()=>{
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-   ...base,hour_v85_independent_yin_witness:witness,
-   hour_v85_phase_hypotheses:hypothesis
- })}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const area=await screen.findByRole('group',{name:'V85 太乙阴遁315原典真值与气应天目三种纪相位'})
- expect(area.querySelectorAll('.taiyi-v85-phases article')).toHaveLength(3)
- expect(area.textContent).toContain('纪1／4')
- expect(area.textContent).toContain('纪2／5')
- expect(area.textContent).toContain('纪3／6')
- expect(area.textContent).toContain('同宫待判，不编造大将')
- fireEvent.click(within(area).getByText('核对相位1主客逐宫投算轨迹'))
- const detail=within(area).getByRole('group',{name:'V85 相位1主客逐宫投算'})
- expect(detail.textContent).toContain('坤·大武 ＋7')
- fireEvent.click(within(area).getByText('核对相位2主客逐宫投算轨迹'))
- const other=within(area).getByRole('group',{name:'V85 相位2主客逐宫投算'})
- expect(other.textContent).toContain('此方起算目与太乙同宫')
-})
-
-it('V85 lists six old-Ji primary-text origins without treating them as actual solstice anchors',async()=>{
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v85_independent_yin_witness:witness,
-  hour_v85_phase_hypotheses:hypothesis
- })}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const area=await screen.findByRole('group',{name:'V85 太乙阴遁315原典真值与气应天目三种纪相位'})
- fireEvent.click(within(area).getByText(/核对张良旧六纪/))
- const origin=within(area).getByRole('group',{name:'V85 张良旧六纪太乙天目计神独立对照'})
- const entries=origin.querySelectorAll('span')
- expect(entries).toHaveLength(6)
- expect(entries[0].textContent).toContain('太乙9宫')
- expect(entries[1].textContent).toContain('太乙4宫')
- expect(entries[5].textContent).toContain('天目阴德')
- expect(area.textContent).toContain('不得据此指定当代文昌、始击或主客大将')
-})
-
-it('V85 legacy V84 hourly API does not invent a Yin315 historical example or phases',async()=>{
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>base}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
- expect(screen.queryByRole('group',{name:'V85 太乙阴遁315原典真值与气应天目三种纪相位'})).toBeNull()
-})
-
-it('V86 exposes three source-checked Yang examples and Yin contradictory candidates without selecting a correction',async()=>{
- const v86={yang_examples:{
-   source:'https://zh.wikisource.org/zh-hans/太乙金鏡式經_(四庫全書本)/卷09',
-   cases:[
-    {id:'j2',attested_expected:{ju:2,hour_ganzhi_from_jiazi_start:'乙丑',guest_count:1,guest_general:1},
-     actual_on_attested_fields:{taiyi_palace:1,wenchang_god:'太簇',shiji_god:'阴主',guest_count:1},
-     guest_count_trace:[{direction:'戌',god:'阴主',added:1}]},
-    {id:'j8',attested_expected:{ju:8,hour_ganzhi_from_jiazi_start:'辛未',guest_count:22},
-     actual_on_attested_fields:{taiyi_palace:3,wenchang_god:'阳德',shiji_god:'大武',guest_count:22},
-     guest_count_trace:[]},
-    {id:'j25',attested_expected:{ju:25,hour_ganzhi_from_jiazi_start:'戊子',guest_count:40,guest_general:4},
-     actual_on_attested_fields:{taiyi_palace:1,wenchang_god:'地主',shiji_god:'大义',guest_count:40},
-     guest_count_trace:[]},
-   ]},
-   yin_source_conflict:{hypotheses:[
-    {in_cycle_360:52,interpretation:'cycle_52_ju_and_yimao',mismatched_source_fields:['six_ji_number']},
-    {in_cycle_360:124,interpretation:'third_ji_ju52',mismatched_source_fields:['hour_ganzhi_from_jiazi_start']},
-    {in_cycle_360:172,interpretation:'third_ji_hour52_yimao',mismatched_source_fields:['ju']},
-   ],preferred_interpretation:null}}
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-   ...base,hour_v86_classical_examples:v86
- })}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const area=await screen.findByRole('group',{name:'V86 金镜式经卷九三例核验与阴遁原文冲突'})
- expect(area.querySelectorAll('.taiyi-v85-phases article')).toHaveLength(3)
- expect(area.textContent).toContain('客算1')
- expect(area.textContent).toContain('客算22')
- expect(area.textContent).toContain('客算40')
- expect(area.textContent).toContain('未选择任何修订方案')
- fireEvent.click(within(area).getByText('展开阴遁古籍三种积时解释和不符字段'))
- const errors=within(area).getByRole('group',{name:'V86 阴遁第三纪52局乙卯逐条件差异'})
- expect(errors.textContent).toContain('第52时')
- expect(errors.textContent).toContain('第124时')
- expect(errors.textContent).toContain('第172时')
- expect(area.textContent).toContain('不可据此建立现代气应文昌或主客将')
-})
-
-it('V87 displays three pairwise-hour contradictions and does not claim independent manuscripts',async()=>{
- const sources=[
-  {label:'维基文库·四库全书本卷九',url:'https://zh.wikisource.org/zh-hans/太乙金鏡式經_(四庫全書本)/卷09'},
-  {label:'中国哲学书电子化计划·卷九',url:'https://ctext.org/wiki.pl?chapter=435698&if=en'},
-  {label:'知命书院·卷九转录',url:'https://shuyuan.zhiming.life/read/太乙金镜式经/13'},
- ]
- const audit={
-  period_hours:360,
-  pairwise_intersections:[
-   {candidate_hour:124,constraints:['six_ji_number','ju'],
-    conflicting_field:'hour_ganzhi_from_jiazi_start',source_value:'乙卯',calculated_value:'丁卯'},
-   {candidate_hour:172,constraints:['six_ji_number','hour_ganzhi_from_jiazi_start'],
-    conflicting_field:'ju',source_value:52,calculated_value:28},
-   {candidate_hour:52,constraints:['ju','hour_ganzhi_from_jiazi_start'],
-    conflicting_field:'six_ji_number',source_value:3,calculated_value:1},
-  ],
-  same_edition_transcriptions:sources,
- }
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v87_modular_source_audit:audit
- })}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const area=await screen.findByRole('group',{name:'V87 阴遁古例360时同余冲突与原文来源'})
- expect(area.querySelectorAll('.taiyi-v85-phases article')).toHaveLength(3)
- expect(area.textContent).toContain('第124时')
- expect(area.textContent).toContain('第172时')
- expect(area.textContent).toContain('第52时')
- expect(area.textContent).toContain('原文乙卯，按本口径计算丁卯')
- expect(area.textContent).toContain('原文52，按本口径计算28')
- expect(area.textContent).toContain('没有一个是原文完整时计真盘')
- fireEvent.click(within(area).getByText('核对原典数字转录与版本独立性'))
- expect(within(area).getAllByRole('link')).toHaveLength(3)
- expect(area.textContent).toContain('不是三个已验真、相互独立的刻本')
-})
-
-it('V87 legacy V86 response has no synthetic modular source proof',async()=>{
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>base}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
- expect(screen.queryByRole('group',{name:'V87 阴遁古例360时同余冲突与原文来源'})).toBeNull()
-})
 
 
-it('V88 displays the catalogued Ming manuscript candidate without claiming its text was collated',async()=>{
- const registry={
-  version:'V88',
-  status:'catalog_and_scan_identified_text_not_collated',
-  witness:{
-   edition:'明钞本',shelfmark:'306.6 06604',volume_count:10,
-   bound_volume_count:4,scan_page_count:124,
-   catalog_url:'https://rbook.ncl.edu.tw/NCLSearch/Search/SearchDetail?item=06604',
-   scan_url:'https://commons.wikimedia.org/wiki/File:NCL-06604_taiyi.pdf'
+it('V90 shows only the nine reviewed NCL scan pages and does not guess the Volume 9 leaf',async()=>{
+ const pageMap=[
+  [1,'序文开篇'],[2,'序文续页'],[3,'序文续页'],[4,'空白页'],
+  [5,'卷一题名与目录起页'],[6,'卷一目录续页'],[7,'卷一目录续页'],
+  [8,'卷一目录末页'],[9,'卷一正文起页']
+ ].map(([scan_page,classification])=>({
+  scan_page,classification,visual_observation:'已视觉核验',
+  viewer_url:scan_page===1?'https://commons.wikimedia.org/wiki/File:NCL-06604.pdf':
+   'https://commons.wikimedia.org/w/index.php?page='+scan_page+'&title=File%3ANCL-06604.pdf',
+  visually_reviewed:true
+ }))
+ const locator={
+  version:'V90',
+  scan_structure:{
+   visually_reviewed_page_count:9,volume_one_body_start_page:9,
+   volume_nine_start_page:null
   },
-  collation:{target_leaf_or_page:null,transcribed_reading:null,compared_character_count:0},
-  lineage:{textual_independence_established:false,is_verified_independent_variant:false},
-  can_resolve_v87_conflict:false,may_emend_text:false,preferred_correction:null
- }
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v88_manuscript_witness_registry:registry
- })}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const area=await screen.findByRole('group',{name:'V88 太乙明钞本候选校勘线索'})
- expect(area.textContent).toContain('明钞本')
- expect(area.textContent).toContain('尚未定位')
- expect(area.textContent).toContain('未开始（0字）')
- expect(area.textContent).toContain('不是已验证的文本异文')
- const links=within(area).getAllByRole('link')
- expect(links).toHaveLength(2)
- expect(links[0].getAttribute('href')).toBe(registry.witness.catalog_url)
- expect(links[1].getAttribute('href')).toBe(registry.witness.scan_url)
-})
-
-it('V88 legacy V87 response without a manuscript registry remains compatible',async()=>{
- vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v87_modular_source_audit:{
-   period_hours:360,
-   pairwise_intersections:[
-    {candidate_hour:124,constraints:['six_ji_number','ju'],
-     conflicting_field:'hour_ganzhi_from_jiazi_start',source_value:'乙卯',calculated_value:'丁卯'},
-    {candidate_hour:172,constraints:['six_ji_number','hour_ganzhi_from_jiazi_start'],
-     conflicting_field:'ju',source_value:52,calculated_value:28},
-    {candidate_hour:52,constraints:['ju','hour_ganzhi_from_jiazi_start'],
-     conflicting_field:'six_ji_number',source_value:3,calculated_value:1}
-   ],
-   same_edition_transcriptions:[
-    {label:'维基文库·四库全书本卷九',url:'https://zh.wikisource.org/zh-hans/太乙金鏡式經_(四庫全書本)/卷09'},
+  scan_page_map:pageMap,
+  siku_transcription_baseline:{
+   text:'假令阴遁第三纪第五十二局乙卯时太乙在八宫阳德为天目巳为计神',
+   transcription_sources:[
+    {label:'维基文库·四库全书本卷九',url:'https://zh.wikisource.org/zh-hans/test'},
     {label:'中国哲学书电子化计划·卷九',url:'https://ctext.org/wiki.pl?chapter=435698&if=en'},
-    {label:'知命书院·卷九转录',url:'https://shuyuan.zhiming.life/read/太乙金镜式经/13'}
+    {label:'知命书院·卷九转录',url:'https://shuyuan.zhiming.life/read/test'}
    ]
   }
- })}))
- render(<TaiyiV77Hour/>)
- fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
- expect(screen.queryByRole('group',{name:'V88 太乙明钞本候选校勘线索'})).toBeNull()
-})
-
-
-it('V89 displays source-family census and does not promote Siku or unattributed scans to independent witnesses',async()=>{
- const census={
-  version:'V89',
-  status:'source_family_census_complete_target_leaf_not_located',
-  catalogue_category_resource_count:7,
-  source_family_counts:{
-   catalogued_ming_manuscript_candidate:1,siku_transmission:4,unattributed_scan:2
-  },
-  resources:[
-   {id:'ncl',title:'NCL-06604 明钞本',classification_label:'国图著录明钞本候选',url:'https://commons.wikimedia.org/wiki/File:NCL-06604.pdf'},
-   {id:'cadal',title:'CADAL 卷五至十',classification_label:'四库全书系统',url:'https://commons.wikimedia.org/wiki/File:CADAL.djvu'},
-   {id:'ssid',title:'SSID 扫描',classification_label:'来源待考扫描',url:'https://commons.wikimedia.org/wiki/File:SSID.pdf'}
-  ],
-  lineage_conclusion:{verified_independent_textual_witnesses:0},
-  can_resolve_v87_conflict:false,may_emend_text:false,preferred_correction:null
  }
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v89_digitized_witness_census:census
+  ...base,hour_v90_scan_locator:locator
  })}))
  render(<TaiyiV77Hour/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const area=await screen.findByRole('group',{name:'V89 太乙古籍数字化来源谱系清点'})
- expect(area.textContent).toContain('7 个')
- expect(area.textContent).toContain('四库系统扫描')
- expect(area.textContent).toContain('来源待考扫描')
- expect(area.textContent).toContain('已核实独立异本：0')
- expect(area.textContent).toContain('尚未定位')
- expect(within(area).getAllByRole('link')).toHaveLength(3)
+ const area=await screen.findByRole('group',{name:'V90 太乙明钞本扫描页序定位'})
+ expect(area.textContent).toContain('9 / 124')
+ expect(area.textContent).toContain('PDF第9页')
+ expect(area.textContent).toContain('卷九目标叶：尚未定位')
+ expect(area.textContent).toContain('四库转录仅为检索底文')
+ expect(within(area).getByRole('link',{name:/PDF第5页/})).toBeTruthy()
+ expect(within(area).getByRole('link',{name:'维基文库·四库全书本卷九'})).toBeTruthy()
 })
 
-it('V89 legacy response without a source census remains compatible',async()=>{
+it('V90 legacy V89 response without scan locator remains compatible',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
-  ...base,hour_v87_modular_source_audit:{period_hours:360,pairwise_intersections:[]}
+  ...base,hour_v89_digitized_witness_census:{version:'V89'}
  })}))
  render(<TaiyiV77Hour/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
  expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
- expect(screen.queryByRole('group',{name:'V89 太乙古籍数字化来源谱系清点'})).toBeNull()
+ expect(screen.queryByRole('group',{name:'V90 太乙明钞本扫描页序定位'})).toBeNull()
 })

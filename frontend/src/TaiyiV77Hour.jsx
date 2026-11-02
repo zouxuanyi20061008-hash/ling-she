@@ -43,6 +43,7 @@ export default function TaiyiV77Hour(){
   const v87=chart?.hour_v87_modular_source_audit
   const v88=chart?.hour_v88_manuscript_witness_registry
   const v89=chart?.hour_v89_digitized_witness_census
+  const v90=chart?.hour_v90_scan_locator
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -466,6 +467,43 @@ export default function TaiyiV77Hour(){
             {' · '}{resource.classification_label}
           </li>)}
         </ul>
+      </section>}
+      {v90&&<section className="taiyi-v90-scan-locator" role="group"
+          aria-label="V90 太乙明钞本扫描页序定位">
+        <h4>V90 · NCL-06604 明钞本扫描页序定位</h4>
+        <p>已逐页核验扫描前 <strong>{v90.scan_structure.visually_reviewed_page_count} 页</strong>：
+          第1—3页为序文，第4页为空白，第5页为卷一题名与目录，
+          第6—8页为目录，第9页进入卷一正文。</p>
+        <div className="taiyi-v85-witness" role="group"
+             aria-label="V90 明钞本卷九定位状态">
+          <span>已核扫描页：<strong>9 / 124</strong></span>
+          <span>卷一正文起页：<strong>PDF第9页</strong></span>
+          <span>卷九目标叶：<strong>尚未定位</strong></span>
+          <span>明钞本转录：<strong>0字</strong></span>
+        </div>
+        <p className="academy-caution">
+          前九页只覆盖序文、卷一目录和卷一正文开端，不能据此平均推算卷九页码。
+          下方四库转录仅为检索底文，不是明钞本读文；V87冲突继续保持待判。
+        </p>
+        <details>
+          <summary>逐页复核已检查的明钞本影像（PDF第1—9页）</summary>
+          <ul>
+            {v90.scan_page_map.map(page=><li key={page.scan_page}>
+              <a href={page.viewer_url} target="_blank" rel="noopener noreferrer">
+                PDF第{page.scan_page}页 · {page.classification}
+              </a>
+              {' · '}{page.visual_observation}
+            </li>)}
+          </ul>
+        </details>
+        <details>
+          <summary>查看四库全书本卷九待校底文（非明钞本读文）</summary>
+          <p>{v90.siku_transcription_baseline.text}</p>
+          <p>“巳为计神”等字段必须回到明钞本影像核实，网页转录不能替代原件。</p>
+          {v90.siku_transcription_baseline.transcription_sources.map(source=>
+            <p key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">
+              {source.label}</a> · 四库全书本转录</p>)}
+        </details>
       </section>}
       {v86&&<section className="taiyi-v85-ji-phase" role="group"
           aria-label="V86 金镜式经卷九三例核验与阴遁原文冲突">

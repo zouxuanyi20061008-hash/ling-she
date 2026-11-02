@@ -150,4 +150,5 @@ def decorate_taiyi_v89(chart: dict) -> dict:
         "V89 已清点7个数字化文件：4个明确属四库系统、2个来源待考、"
         "1件国图明钞本候选；卷九目标叶仍未定位，未完成逐字校勘。"
     )
-    return chart
+    from .taiyi_hour_v90 import decorate_taiyi_v90
+    return decorate_taiyi_v90(chart)
