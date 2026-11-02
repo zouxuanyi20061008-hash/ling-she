@@ -42,6 +42,7 @@ export default function TaiyiV77Hour(){
   const v85=chart?.hour_v85_phase_hypotheses
   const v87=chart?.hour_v87_modular_source_audit
   const v88=chart?.hour_v88_manuscript_witness_registry
+  const v89=chart?.hour_v89_digitized_witness_census
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -441,6 +442,30 @@ export default function TaiyiV77Hour(){
           <a href={v88.witness.scan_url} target="_blank" rel="noopener noreferrer">
           明钞本124页数字扫描</a>
         </p>
+      </section>}
+      {v89&&<section className="taiyi-v89-census" role="group"
+          aria-label="V89 太乙古籍数字化来源谱系清点">
+        <h4>V89 · 太乙古籍数字化来源谱系清点</h4>
+        <p>本轮清点分类页列出的 <strong>{v89.catalogue_category_resource_count} 个</strong>数字文件：
+          明钞本馆藏候选 <strong>{v89.source_family_counts.catalogued_ming_manuscript_candidate}</strong> 件，
+          四库系统扫描 <strong>{v89.source_family_counts.siku_transmission}</strong> 份，
+          来源待考扫描 <strong>{v89.source_family_counts.unattributed_scan}</strong> 份。</p>
+        <div className="taiyi-v85-witness" role="group"
+             aria-label="V89 独立文本证据状态">
+          <span>已核实独立异本：<strong>0</strong></span>
+          <span>卷九目标叶：<strong>尚未定位</strong></span>
+          <span>逐字校勘：<strong>未开始</strong></span>
+        </div>
+        <p className="academy-caution">
+          四库系统的多份扫描不能算作多个独立底本；两个SSID文件因来源不明也不能算作独立异本。
+          目前只有NCL-06604被馆藏目录明确著录为明钞本候选，仍须定位卷九目标叶并逐字比对。
+        </p>
+        <ul>
+          {v89.resources.map(resource=><li key={resource.id}>
+            <a href={resource.url} target="_blank" rel="noopener noreferrer">{resource.title}</a>
+            {' · '}{resource.classification_label}
+          </li>)}
+        </ul>
       </section>}
       {v86&&<section className="taiyi-v85-ji-phase" role="group"
           aria-label="V86 金镜式经卷九三例核验与阴遁原文冲突">

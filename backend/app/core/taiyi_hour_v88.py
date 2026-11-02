@@ -92,4 +92,6 @@ def decorate_taiyi_v88(chart: dict) -> dict:
         "V88 新登记国图明钞本及124页扫描线索；卷九目标叶尚未定位、"
         "未逐字校勘，不能据馆藏元数据解决V87阴遁原文冲突。"
     )
-    return chart
+
+    from .taiyi_hour_v89 import decorate_taiyi_v89
+    return decorate_taiyi_v89(chart)

@@ -267,3 +267,44 @@ it('V88 legacy V87 response without a manuscript registry remains compatible',as
  expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
  expect(screen.queryByRole('group',{name:'V88 太乙明钞本候选校勘线索'})).toBeNull()
 })
+
+
+it('V89 displays source-family census and does not promote Siku or unattributed scans to independent witnesses',async()=>{
+ const census={
+  version:'V89',
+  status:'source_family_census_complete_target_leaf_not_located',
+  catalogue_category_resource_count:7,
+  source_family_counts:{
+   catalogued_ming_manuscript_candidate:1,siku_transmission:4,unattributed_scan:2
+  },
+  resources:[
+   {id:'ncl',title:'NCL-06604 明钞本',classification_label:'国图著录明钞本候选',url:'https://commons.wikimedia.org/wiki/File:NCL-06604.pdf'},
+   {id:'cadal',title:'CADAL 卷五至十',classification_label:'四库全书系统',url:'https://commons.wikimedia.org/wiki/File:CADAL.djvu'},
+   {id:'ssid',title:'SSID 扫描',classification_label:'来源待考扫描',url:'https://commons.wikimedia.org/wiki/File:SSID.pdf'}
+  ],
+  lineage_conclusion:{verified_independent_textual_witnesses:0},
+  can_resolve_v87_conflict:false,may_emend_text:false,preferred_correction:null
+ }
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
+  ...base,hour_v89_digitized_witness_census:census
+ })}))
+ render(<TaiyiV77Hour/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ const area=await screen.findByRole('group',{name:'V89 太乙古籍数字化来源谱系清点'})
+ expect(area.textContent).toContain('7 个')
+ expect(area.textContent).toContain('四库系统扫描')
+ expect(area.textContent).toContain('来源待考扫描')
+ expect(area.textContent).toContain('已核实独立异本：0')
+ expect(area.textContent).toContain('尚未定位')
+ expect(within(area).getAllByRole('link')).toHaveLength(3)
+})
+
+it('V89 legacy response without a source census remains compatible',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
+  ...base,hour_v88_manuscript_witness_registry:{version:'V88'}
+ })}))
+ render(<TaiyiV77Hour/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
+ expect(screen.queryByRole('group',{name:'V89 太乙古籍数字化来源谱系清点'})).toBeNull()
+})
