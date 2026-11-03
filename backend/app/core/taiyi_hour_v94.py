@@ -112,4 +112,5 @@ def decorate_taiyi_v94(chart: dict) -> dict:
         "两者序号均为文本行号而非扫描页号，OCR存在明显识字错误，"
         "实际Image链接、CADAL页码和明钞本页码均未核实。"
     )
-    return chart
+    from .taiyi_hour_v95 import decorate_taiyi_v95
+    return decorate_taiyi_v95(chart)

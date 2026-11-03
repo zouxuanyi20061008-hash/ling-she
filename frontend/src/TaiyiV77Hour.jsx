@@ -48,6 +48,7 @@ export default function TaiyiV77Hour(){
   const v92=chart?.hour_v92_textual_locator
   const v93=chart?.hour_v93_scan_anchor
   const v94=chart?.hour_v94_ocr_row_audit
+  const v95=chart?.hour_v95_scan_candidate_audit
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -471,6 +472,37 @@ export default function TaiyiV77Hour(){
             {' · '}{resource.classification_label}
           </li>)}
         </ul>
+      </section>}
+      {v95&&<section className="taiyi-v90-scan-locator" role="group"
+          aria-label="V95 太乙卷九扫描候选与实体页定位">
+        <h4>V95 · 卷九扫描候选扩展与实体页定位指纹</h4>
+        <p>目前登记 <strong>{v95.candidate_count}</strong> 条扫描或电子书目候选：
+          明钞本 1 条、四库系统 5 条、商务印书馆版本待考 2 条。</p>
+        <div className="taiyi-v85-witness" role="group" aria-label="V95 证据状态">
+          <span>NCL-06604：<strong>124页</strong></span>
+          <span>已核看：<strong>第1—12页</strong></span>
+          <span>卷九实体页：<strong>尚未定位</strong></span>
+          <span>新增独立异本：<strong>0</strong></span>
+        </div>
+        <p><strong>卷九目标检索指纹：</strong>「推敵國動靜」→「經曰欲知敵國動靜者」→
+          「假令隂遁第三紀第五十二局乙夘時」→「太乙在八宮陽徳為天目」。</p>
+        <p className="academy-caution">WYG 1b 只是四库文字转录叶码，不是扫描页号。
+          CADAL 两份文件、NTUT 两份商务印书馆书目均尚未逐页核验；
+          不把扫描候选数量当成独立版本数量。</p>
+        <a href={v95.candidate_sources.find(x=>x.id==="ncl_06604_ming_manuscript").scan_url}
+          target="_blank" rel="noopener noreferrer">打开 NCL-06604 明钞本124页扫描</a>
+        <span> · </span>
+        <a href={v95.candidate_sources.find(x=>x.id==="cadal_06056495").url}
+          target="_blank" rel="noopener noreferrer">CADAL 06056495</a>
+        <span> · </span>
+        <a href={v95.candidate_sources.find(x=>x.id==="cadal_06066055").url}
+          target="_blank" rel="noopener noreferrer">CADAL 06066055</a>
+        <span> · </span>
+        <a href={v95.candidate_sources.find(x=>x.id==="ntut_3100478").reader_url}
+          target="_blank" rel="noopener noreferrer">商务印书馆148页本</a>
+        <span> · </span>
+        <a href={v95.candidate_sources.find(x=>x.id==="ntut_3100479").reader_url}
+          target="_blank" rel="noopener noreferrer">商务印书馆122页本</a>
       </section>}
       {v94&&<section className="taiyi-v90-scan-locator" role="group"
           aria-label="V94 太乙卷九OCR文本行校核">
