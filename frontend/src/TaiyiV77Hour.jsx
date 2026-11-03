@@ -47,6 +47,7 @@ export default function TaiyiV77Hour(){
   const v91=chart?.hour_v91_cadal_volume_locator
   const v92=chart?.hour_v92_textual_locator
   const v93=chart?.hour_v93_scan_anchor
+  const v94=chart?.hour_v94_ocr_row_audit
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -471,31 +472,54 @@ export default function TaiyiV77Hour(){
           </li>)}
         </ul>
       </section>}
-      {v93&&<section className="taiyi-v90-scan-locator" role="group"
-          aria-label="V93 太乙卷九影像关联入口定位">
-        <h4>V93 · 卷九扫描影像关联入口已找到</h4>
-        <p>已锁定 CText 图书馆资源 <strong>5784</strong>：浙江大学图书馆提供、CADAL 扫描，
-          包含卷五至卷十。目标段落在扫描 OCR 第 <strong>7</strong> 个文字区块，
-          对应卷九四库文字转录第 <strong>5</strong> 个文字区块。</p>
-        <div className="taiyi-v85-witness" role="group" aria-label="V93 扫描定位状态">
-          <span>OCR 影像入口：<strong>已发现</strong></span>
-          <span>CADAL 实体页：<strong>尚未核实</strong></span>
-          <span>明钞本实体页：<strong>尚未定位</strong></span>
-          <span>逐字校勘：<strong>未开始</strong></span>
+      {v94&&<section className="taiyi-v90-scan-locator" role="group"
+          aria-label="V94 太乙卷九OCR文本行校核">
+        <h4>V94 · 卷九正文双源文字定位与 OCR 误识别核对</h4>
+        <p>影像 OCR 章节 <strong>367760</strong>：第4行是卷九题名，第5行是作者，第6行是目录，
+          第7行是「推敌国动静」正文。四库卷九文字章节 <strong>435698</strong>：第5行是对应正文。</p>
+        <div className="taiyi-v85-witness" role="group" aria-label="V94 文献定位状态">
+          <span>OCR 文本行：<strong>已定位</strong></span>
+          <span>四库正文行：<strong>已交叉对应</strong></span>
+          <span>实际影像链接：<strong>未核实</strong></span>
+          <span>实体扫描页：<strong>未知</strong></span>
         </div>
-        <p className="academy-caution">OCR 区块序号不是扫描页码。实际影像地址尚未从交互入口中读出，
-          因此不推测 CADAL 页号，也不据四库本改动明钞本。</p>
+        <p><strong>OCR 识别示例：</strong>「乙叩时」「太乙石讷歎宫」；四库转录对应作
+          「乙夘时」「太乙在八宫」。OCR 只能辅助定位，不能作为校勘定本。</p>
+        <blockquote>{v94.transcriptions.wyg_reference_excerpt}</blockquote>
+        <p className="academy-caution">第7行和第5行都是网页文字呈现中的行序号，不是 CADAL 页码、图像 ID 或明钞本叶码。
+          目前没有取得 Image 链接实际 href，也没有视觉核验目标扫描影像。</p>
+        <a href={v94.ctext_ocr.url} target="_blank" rel="noopener noreferrer">
+          查看卷五至卷十自动 OCR</a>
+        <span> · </span>
+        <a href={v94.ctext_wyg_transcription.url} target="_blank" rel="noopener noreferrer">
+          查看卷九四库文字转录</a>
+        <span> · </span>
+        <a href={v93.ctext.library_resource.url} target="_blank" rel="noopener noreferrer">
+          打开 CText 图书馆影印资源</a>
+        <span> · </span>
+        <a href={v93.scan_candidates.cadal_06056495.url} target="_blank" rel="noopener noreferrer">
+          打开 CADAL 120页原始文件</a>
+      </section>}
+      {v93&&<section className="taiyi-v90-scan-locator" role="group"
+          aria-label="V93 太乙卷九CText文本定位">
+        <h4>V93 · 卷九文字来源与扫描候选登记</h4>
+        <p>已登记 CText 图书馆资源 <strong>5784</strong>：原书来源浙江大学图书馆，
+          由 CADAL 扫描，收录卷五至卷十；对应 CADAL06056495 共120页。</p>
+        <p>卷九正文在自动 OCR 文本呈现中标为第7行，在四库卷九转录中标为第5行。
+          这两个编号仅用于文本定位，不代表实体页码。</p>
+        <p className="academy-caution">Image 链接的实际 href、CADAL 扫描页和 NCL-06604 明钞本页均未核实；
+          不根据 OCR 行号推算页码，也不据四库转录改动明钞本。</p>
         <a href={v93.ctext.library_resource.url} target="_blank" rel="noopener noreferrer">
           打开 CText 图书馆影印资源</a>
         <span> · </span>
         <a href={v93.ctext.ocr_chapter.url} target="_blank" rel="noopener noreferrer">
-          打开卷五至卷十 OCR 第7区块</a>
+          打开卷五至卷十 OCR</a>
         <span> · </span>
         <a href={v93.ctext.wyg_text_chapter.url} target="_blank" rel="noopener noreferrer">
-          打开卷九文字第5区块</a>
+          打开卷九四库转录</a>
         <span> · </span>
         <a href={v93.scan_candidates.cadal_06056495.url} target="_blank" rel="noopener noreferrer">
-          打开 CADAL 120页原始文件</a>
+          打开 CADAL 原始文件</a>
       </section>}
       {v92&&<section className="taiyi-v90-scan-locator" role="group"
           aria-label="V92 太乙卷九目标段落文字定位">

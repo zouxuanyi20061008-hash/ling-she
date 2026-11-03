@@ -1,10 +1,10 @@
-"""V93：定位CText卷九OCR段落的影像关联入口；不将区块序号冒充扫描页码。"""
+"""V93：校正CText卷九OCR文本行定位；不将文本行号冒充扫描页码。"""
 from __future__ import annotations
 
 V93_SCAN_ANCHOR = {
     "id": "taiyi_volume_nine_ctext_scan_anchor",
     "version": "V93",
-    "status": "ctext_image_link_anchor_identified_physical_scan_page_unresolved",
+    "status": "ctext_ocr_text_rows_located_image_href_unverified_physical_scan_page_unresolved",
     "target": {
         "volume": 9,
         "section": "推敵國動靜",
@@ -29,20 +29,22 @@ V93_SCAN_ANCHOR = {
             "chapter_id": 367760,
             "url": "https://ctext.org/wiki.pl?chapter=367760&if=gb",
             "description": "卷五至卷十掃描影像自動OCR章節",
-            "target_block_index": 7,
-            "image_anchor_visible": True,
+            "target_row_number": 7,
+            "row_number_semantics": "CText OCR文本呈现中的行序号，不是扫描页号",
+            "image_href_verified": False,
             "ocr_text_is_error_prone": True,
         },
         "wyg_text_chapter": {
             "chapter_id": 435698,
             "url": "https://ctext.org/wiki.pl?chapter=435698&if=gb",
             "description": "四庫本卷九文字轉錄",
-            "target_block_index": 5,
+            "target_row_number": 5,
+            "row_number_semantics": "CText四库卷九文字呈现中的行序号，不是扫描页号",
             "leaf_marker": "KR3g0047_WYG_009-1b",
         },
         "interaction_note": (
-            "CText頁面在目標OCR區塊旁顯示Image入口；站外文字擷取未暴露該入口的實際href/"
-            "圖像URL，須在CText圖書館介面中打開該影像後讀取頁碼。"
+            "CText搜尋索引可定位卷九OCR文本第7行及四庫文字第5行；但目前未取得Image入口的實際href/"
+            "圖像URL，因此影像連結尚未獨立核實，不能據此推定實體掃描頁碼。"
         ),
     },
     "scan_candidates": {
@@ -98,15 +100,15 @@ V93_SCAN_ANCHOR = {
         "may_emend_ming_text": False,
     },
     "next_action": (
-        "在CText圖書館資源5784中打開卷五至卷十影印文件，從卷九OCR第7區塊的Image入口"
-        "取得實際圖像URL與頁碼；再以卷九題名和1a/1b葉碼核對CADAL原始120頁文件，"
+        "取得CText圖書館卷五至卷十掃描文件的實際影像URL，或直接逐頁檢查CADAL原始120頁文件；"
+        "以卷九題名、作者、目錄及目標正文的連續版面定位實體頁，再用1a/1b葉碼作輔助核對，"
         "最後獨立定位NCL-06604明鈔本。"
     ),
 }
 
 
 def audit_volume_nine_scan_anchor() -> dict:
-    """Return a defensive copy of the V93 scan-link anchor registry."""
+    """Return a defensive copy of the V93 OCR text-row locator registry."""
     from copy import deepcopy
     return deepcopy(V93_SCAN_ANCHOR)
 
@@ -127,7 +129,7 @@ def decorate_taiyi_v93(chart: dict) -> dict:
     chart["has_verified_independent_yin_variant"] = False
     chart["has_full_hour_chart"] = False
     chart["warnings"].append(
-        "V93 已定位CText卷九OCR第7区块的Image影像入口及图书馆资源5784；"
-        "实际图像href、CADAL实体页和明钞本页码仍未核实，V87冲突继续待判。"
+        "V93 已定位CText卷九OCR文本第7行及图书馆资源5784；Image实际href、CADAL实体页和明钞本页码均未核实，V87冲突继续待判。"
     )
-    return chart
+    from .taiyi_hour_v94 import decorate_taiyi_v94
+    return decorate_taiyi_v94(chart)

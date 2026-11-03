@@ -1,4 +1,4 @@
-"""V93 CText scan-linked OCR anchor acceptance."""
+"""V93 CText OCR text-row locator acceptance."""
 from pathlib import Path
 import argparse
 import json
@@ -14,10 +14,10 @@ def audit():
     ctext = anchor["ctext"]
     assert ctext["library_resource"]["resource_id"] == 5784
     assert ctext["ocr_chapter"]["chapter_id"] == 367760
-    assert ctext["ocr_chapter"]["target_block_index"] == 7
-    assert ctext["ocr_chapter"]["image_anchor_visible"] is True
+    assert ctext["ocr_chapter"]["target_row_number"] == 7
+    assert ctext["ocr_chapter"]["image_href_verified"] is False
     assert ctext["wyg_text_chapter"]["chapter_id"] == 435698
-    assert ctext["wyg_text_chapter"]["target_block_index"] == 5
+    assert ctext["wyg_text_chapter"]["target_row_number"] == 5
     assert anchor["physical_mapping"]["cadal_physical_page"] is None
     assert anchor["physical_mapping"]["ncl_ming_physical_page"] is None
     assert anchor["collation"]["can_resolve_v87_conflict"] is False
@@ -30,13 +30,13 @@ def audit():
     ):
         chart = hour_basic_board(d, clock)
         result = chart["hour_v93_scan_anchor"]
-        assert result["ctext"]["ocr_chapter"]["target_block_index"] == 7
+        assert result["ctext"]["ocr_chapter"]["target_row_number"] == 7
         assert result["physical_mapping"]["cadal_physical_page"] is None
         assert chart["has_full_hour_chart"] is False
         cases.append({
             "date": d.isoformat(),
             "clock": clock.strftime("%H:%M"),
-            "ctext_ocr_block": 7,
+            "ctext_ocr_row": 7,
             "cadal_physical_page_located": False,
             "ncl_ming_page_located": False,
         })
@@ -49,9 +49,9 @@ def audit():
         "cases": cases,
         "ctext_library_resource_id": 5784,
         "ctext_ocr_chapter": 367760,
-        "ctext_ocr_target_block": 7,
+        "ctext_ocr_target_row": 7,
         "ctext_wyg_chapter": 435698,
-        "ctext_wyg_target_block": 5,
+        "ctext_wyg_target_row": 5,
         "cadal_physical_page": None,
         "ncl_ming_physical_page": None,
         "target_scan_image_visually_reviewed": False,
@@ -68,4 +68,4 @@ if __name__ == "__main__":
     report = audit()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("V93：CText卷九影像关联入口定位通过；实体扫描页仍待影像核验")
+    print("V93：CText卷九OCR文本行定位通过；实体扫描页仍待影像核验")

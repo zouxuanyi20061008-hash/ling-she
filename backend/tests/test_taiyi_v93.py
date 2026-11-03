@@ -1,4 +1,4 @@
-"""V93 CText OCR影像关联入口与实体页码证据边界。"""
+"""V93 CText OCR文本行定位与实体页码证据边界。"""
 from datetime import date, time
 
 import pytest
@@ -9,7 +9,7 @@ from app.core.taiyi_hour_v77 import hour_basic_board
 from app.core.taiyi_hour_v93 import audit_volume_nine_scan_anchor, decorate_taiyi_v93
 
 
-def test_v93_locates_ctext_library_resource_and_ocr_image_anchor():
+def test_v93_locates_ctext_library_resource_and_ocr_text_rows():
     anchor = audit_volume_nine_scan_anchor()
     ctext = anchor["ctext"]
     assert anchor["version"] == "V93"
@@ -17,10 +17,10 @@ def test_v93_locates_ctext_library_resource_and_ocr_image_anchor():
     assert ctext["library_resource"]["volume_five_to_ten_included"] is True
     assert ctext["library_resource"]["scanned_by"] == "CADAL"
     assert ctext["ocr_chapter"]["chapter_id"] == 367760
-    assert ctext["ocr_chapter"]["target_block_index"] == 7
-    assert ctext["ocr_chapter"]["image_anchor_visible"] is True
+    assert ctext["ocr_chapter"]["target_row_number"] == 7
+    assert ctext["ocr_chapter"]["image_href_verified"] is False
     assert ctext["wyg_text_chapter"]["chapter_id"] == 435698
-    assert ctext["wyg_text_chapter"]["target_block_index"] == 5
+    assert ctext["wyg_text_chapter"]["target_row_number"] == 5
     assert ctext["wyg_text_chapter"]["leaf_marker"] == "KR3g0047_WYG_009-1b"
 
 
@@ -54,7 +54,7 @@ def test_v93_decorates_hour_board_without_changing_core_calculation():
     chart = hour_basic_board(date(2026, 10, 28), time(17, 30))
     anchor = chart["hour_v93_scan_anchor"]
     assert anchor["physical_mapping"]["cadal_physical_page"] is None
-    assert anchor["ctext"]["ocr_chapter"]["target_block_index"] == 7
+    assert anchor["ctext"]["ocr_chapter"]["target_row_number"] == 7
     assert chart["hour_scan_anchor_version"] == "V93"
     assert chart["has_verified_independent_yin_variant"] is False
     assert chart["has_full_hour_chart"] is False
@@ -65,7 +65,7 @@ def test_v93_rejects_missing_v92_textual_locator():
         decorate_taiyi_v93({"hour_textual_locator_version": "V91"})
 
 
-def test_v93_hour_api_exposes_image_anchor_but_not_fake_physical_page():
+def test_v93_hour_api_exposes_text_rows_but_not_fake_physical_page():
     client = TestClient(app)
     response = client.post("/api/taiyi/hour/cast", json={
         "solar_date": "2026-10-28", "clock": "17:30"
@@ -73,7 +73,7 @@ def test_v93_hour_api_exposes_image_anchor_but_not_fake_physical_page():
     assert response.status_code == 200, response.text
     data = response.json()
     anchor = data["hour_v93_scan_anchor"]
-    assert anchor["ctext"]["ocr_chapter"]["target_block_index"] == 7
+    assert anchor["ctext"]["ocr_chapter"]["target_row_number"] == 7
     assert anchor["physical_mapping"]["cadal_physical_page"] is None
     annual = client.post("/api/taiyi/cast", json={"gregorian_year": 2026})
     assert annual.status_code == 200
