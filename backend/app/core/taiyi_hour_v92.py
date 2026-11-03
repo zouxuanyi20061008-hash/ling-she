@@ -106,4 +106,5 @@ def decorate_taiyi_v92(chart: dict) -> dict:
         "V92 已将四库文渊阁本目标段落定位到转录叶1b；该叶码不是CADAL或明钞本扫描页，"
         "明钞本逐字校勘与V87冲突裁定仍未完成。"
     )
-    return chart
+    from .taiyi_hour_v93 import decorate_taiyi_v93
+    return decorate_taiyi_v93(chart)

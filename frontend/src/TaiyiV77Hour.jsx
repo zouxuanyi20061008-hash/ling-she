@@ -46,6 +46,7 @@ export default function TaiyiV77Hour(){
   const v90=chart?.hour_v90_scan_locator
   const v91=chart?.hour_v91_cadal_volume_locator
   const v92=chart?.hour_v92_textual_locator
+  const v93=chart?.hour_v93_scan_anchor
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
   const doorChoices=v82?.candidates||[]
@@ -469,6 +470,32 @@ export default function TaiyiV77Hour(){
             {' · '}{resource.classification_label}
           </li>)}
         </ul>
+      </section>}
+      {v93&&<section className="taiyi-v90-scan-locator" role="group"
+          aria-label="V93 太乙卷九影像关联入口定位">
+        <h4>V93 · 卷九扫描影像关联入口已找到</h4>
+        <p>已锁定 CText 图书馆资源 <strong>5784</strong>：浙江大学图书馆提供、CADAL 扫描，
+          包含卷五至卷十。目标段落在扫描 OCR 第 <strong>7</strong> 个文字区块，
+          对应卷九四库文字转录第 <strong>5</strong> 个文字区块。</p>
+        <div className="taiyi-v85-witness" role="group" aria-label="V93 扫描定位状态">
+          <span>OCR 影像入口：<strong>已发现</strong></span>
+          <span>CADAL 实体页：<strong>尚未核实</strong></span>
+          <span>明钞本实体页：<strong>尚未定位</strong></span>
+          <span>逐字校勘：<strong>未开始</strong></span>
+        </div>
+        <p className="academy-caution">OCR 区块序号不是扫描页码。实际影像地址尚未从交互入口中读出，
+          因此不推测 CADAL 页号，也不据四库本改动明钞本。</p>
+        <a href={v93.ctext.library_resource.url} target="_blank" rel="noopener noreferrer">
+          打开 CText 图书馆影印资源</a>
+        <span> · </span>
+        <a href={v93.ctext.ocr_chapter.url} target="_blank" rel="noopener noreferrer">
+          打开卷五至卷十 OCR 第7区块</a>
+        <span> · </span>
+        <a href={v93.ctext.wyg_text_chapter.url} target="_blank" rel="noopener noreferrer">
+          打开卷九文字第5区块</a>
+        <span> · </span>
+        <a href={v93.scan_candidates.cadal_06056495.url} target="_blank" rel="noopener noreferrer">
+          打开 CADAL 120页原始文件</a>
       </section>}
       {v92&&<section className="taiyi-v90-scan-locator" role="group"
           aria-label="V92 太乙卷九目标段落文字定位">
