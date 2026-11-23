@@ -1251,8 +1251,8 @@
 
 /* V64 Taiyi annual number plate: dedicated octagonal palace names, not Lo-Shu */
 .taiyi-v64{padding:22px;margin:22px 0;border:1px solid #9db9ad;color:#304f46;background:linear-gradient(140deg,#eef6f0,#e3f0e9)}
-.taiyi-year-mode>header small{color:#457d66;letter-spacing:.12em}
-.taiyi-year-mode>header h2{font-size:23px;color:#295c48;margin:7px 0 11px}
+.taiyi-year-mode .cast-page-pane>header small{color:#457d66;letter-spacing:.12em}
+.taiyi-year-mode .cast-page-pane>header h2{font-size:23px;color:#295c48;margin:7px 0 11px}
 .taiyi-v64-form{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:20px 0}
 .taiyi-v64-form label{display:flex;flex-direction:column;gap:6px;flex:1 1 160px;max-width:310px;font-size:12px}
 .taiyi-v64-form input{box-sizing:border-box;width:100%;min-height:42px;padding:9px;border:1px solid #a7b9ab;color:#234d41;background:#fbfefa}

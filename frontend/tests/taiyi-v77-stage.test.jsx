@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {it,afterEach,expect,vi} from 'vitest'
-import {render,screen,fireEvent,cleanup,act,within} from '@testing-library/react'
+import {render,screen,fireEvent,cleanup,act,within,waitFor} from '@testing-library/react'
 import TaiyiV77Hour from '../src/TaiyiV77Hour.jsx'
 import TaiyiV64 from '../src/TaiyiV64.jsx'
 
-afterEach(()=>{cleanup();vi.unstubAllGlobals()})
+afterEach(()=>{cleanup();vi.unstubAllGlobals();window.history.replaceState(null,'','/')})
 const palaceMap={
   9:['巽','东南'],2:['离','南'],7:['坤','西南'],4:['震','东'],
   5:['中','中央'],6:['兑','西'],3:['艮','东北'],8:['坎','北'],1:['乾','西北']
@@ -58,9 +58,11 @@ it('V77 renders separate genuine hour board without mixing annual Taiyi structur
  expect(screen.queryByRole('group',{name:'太乙式九宫岁计盘'})).toBeNull()
 })
 
-it('keeps the hour inputs across mobile mode switches and focuses the new chart',async()=>{
+it('keeps the hour inputs across mobile mode switches and returns from the chart page',async()=>{
  vi.stubGlobal('matchMedia',vi.fn().mockReturnValue({matches:true}))
+ vi.stubGlobal('scrollTo',vi.fn())
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>chart}))
+ window.history.replaceState(null,'','#taiyi')
  render(<TaiyiV64/>)
  const hourMode=screen.getByRole('button',{name:'时计排盘'})
  const yearMode=screen.getByRole('button',{name:'岁计排盘'})
@@ -75,8 +77,18 @@ it('keeps the hour inputs across mobile mode switches and focuses the new chart'
  expect(timeField.value).toBe('17:30')
 
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
- const result=await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})
- expect(document.activeElement).toBe(result)
+ await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})
+ const navigation=within(screen.getByRole('navigation',{name:'太乙时计排盘页面'}))
+ expect(document.activeElement).toBe(navigation.getByRole('button',{name:'排盘结果'}))
+ expect(window.location.hash).toBe('#taiyi/result')
+ expect(screen.queryByRole('button',{name:'计算太乙时计基础盘'})).toBeNull()
+
+ fireEvent.click(navigation.getByRole('button',{name:'← 返回排盘'}))
+ await waitFor(()=>expect(window.location.hash).toBe('#taiyi'))
+ expect(screen.getByLabelText('太乙时计北京时间').value).toBe('17:30')
+ expect(screen.queryByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeNull()
+ fireEvent.click(navigation.getByRole('button',{name:'排盘结果'}))
+ expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
 })
 
 it('V77 near actual solstice always warns about boundary',async()=>{

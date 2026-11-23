@@ -14,9 +14,13 @@ import './casting-art.css'
 import './academy-interface.css'
 
 const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))
-const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...ARTS.map(a=>a.id)])
+const CAST_ROUTES=new Set(ARTS.map(art=>art.id))
+const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...CAST_ROUTES])
+const CAST_RESULT_SUFFIX='/result'
 function routeFromUrl(){
   const route=window.location.hash.slice(1)
+  const method=route.endsWith(CAST_RESULT_SUFFIX)?route.slice(0,-CAST_RESULT_SUFFIX.length):null
+  if(CAST_ROUTES.has(method))return method
   return VALID_ROUTES.has(route)?route:'home'
 }
 
@@ -89,7 +93,7 @@ function Academy(){
   }
 
   function goBackTo(target){
-    if(window.history.state?.academyRoute===mode&&window.history.state?.from===target){
+    if(!window.location.hash.endsWith(CAST_RESULT_SUFFIX)&&window.history.state?.academyRoute===mode&&window.history.state?.from===target){
       window.history.back()
     }else{
       navigate(target,true)

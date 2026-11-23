@@ -1,12 +1,26 @@
 .knowledge-cast-notes,
-.knowledge-back-to-chart { display: none; }
+.knowledge-back-to-chart,
+.knowledge-board-cue,
+.bazi-v55-row-picker,
+.bazi-v55-form .bazi-v55-options-toggle { display: none; }
+
+.bazi-v55-extra-options { display: contents; }
+.qimen-cell-star-door { display: contents; }
+.bazi-v55-day-master {
+  margin: 10px 0;
+  color: var(--room-accent-dark, #80503b);
+  font-size: 15px;
+}
+
+.knowledge-cast-teaching { margin-top: 10px; }
+.knowledge-cast-teaching > summary { display: none; }
 
 @media (max-width: 650px) {
   .academy-knowledge-mode :is(.qimen-v50, .bazi-v55) { margin-top: 8px; padding: 10px; }
-  .academy-knowledge-mode :is(.qimen-v50, .bazi-v55) > header :is(small, .knowledge-cast-intro) {
+  .academy-knowledge-mode .knowledge-cast-heading :is(small, .knowledge-cast-intro) {
     display: none;
   }
-  .academy-knowledge-mode :is(.qimen-v50, .bazi-v55) > header h2 {
+  .academy-knowledge-mode .knowledge-cast-heading h2 {
     margin: 0;
     font-size: 18px;
     line-height: 1.4;
@@ -21,6 +35,7 @@
   }
   :is(.qimen-v50-form, .bazi-v55-form) label { gap: 4px; }
   .qimen-v50-form > label:last-of-type,
+  .bazi-v55-form > label:last-of-type,
   :is(.qimen-v50-form, .bazi-v55-form) > button,
   .bazi-v55-form .bazi-v57-flow-enable { grid-column: 1 / -1; }
   :is(.qimen-v50-form, .bazi-v55-form) :is(input:not([type='checkbox']), select, button) {
@@ -38,6 +53,25 @@
     min-height: 44px;
     padding: 4px 7px;
   }
+  .bazi-v55-form .bazi-v55-options-toggle {
+    display: block;
+    min-height: 44px;
+    border: 1px solid var(--casting-rule, #bfa282);
+    background: var(--casting-paper, #fffcf2);
+    color: var(--room-accent-dark, #563d2e);
+    font-size: 14px;
+    text-align: left;
+  }
+  .bazi-v55-options-toggle::after { content: '＋'; float: right; }
+  .bazi-v55-options-toggle[aria-expanded='true']::after { content: '−'; }
+  .bazi-v55-extra-options {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+  .bazi-v55-extra-options > label:first-child { grid-column: 1 / -1; }
+  .bazi-v55-extra-options[data-open='false'] { display: none; }
 
   .knowledge-cast-notes { display: block; }
   .knowledge-cast-notes summary {
@@ -48,9 +82,12 @@
   }
   .knowledge-cast-notes p { margin: 0 4px 10px; font-size: 13px; line-height: 1.65; }
 
-  .qimen-v50 .qimen-v50-nine { gap: 5px; }
-  .qimen-v50 .qimen-v50-nine button { min-height: 110px; padding: 5px 3px; gap: 3px; }
-  .qimen-v50 .qimen-v50-nine, .qimen-v50-palace { scroll-margin-top: 58px; }
+  .knowledge-board-cue { display: block; margin: 6px 0; }
+  .qimen-v50 .qimen-v50-nine { gap: 5px; margin: 6px 0; }
+  .qimen-v50 .qimen-v50-nine button { min-height: 78px; padding: 4px 3px; gap: 2px; }
+  .qimen-v50 .qimen-cell-star-door { display: flex; align-items: baseline; justify-content: center; gap: 4px; }
+  .qimen-v50-nine :is(.qimen-v53-stems, .qimen-v54-wonder) { display: none; }
+  .qimen-v50-palace { margin-top: 8px; }
   .knowledge-back-to-chart {
     display: inline-flex;
     align-items: center;
@@ -64,11 +101,46 @@
     font-size: 14px;
   }
   .bazi-v55 .bazi-v55-meta { padding: 9px; }
+  .bazi-v55 .bazi-v55-pillar-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  .bazi-v55 .bazi-v55-pillar { padding: 9px 3px; gap: 4px; }
+  .bazi-v55 .bazi-v55-pillar strong { font-size: 20px; letter-spacing: 0; }
+  .bazi-v55 .bazi-v55-pillar :is(small, span, b) { font-size: 11px; }
+  .bazi-v55 .bazi-v55-hidden { gap: 3px; padding-top: 5px; }
   .bazi-v55 :is(.bazi-v56-luck, .bazi-v57-flow) { margin-top: 10px; padding-top: 8px; }
+  .bazi-v55-row-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 650;
+  }
+  .bazi-v55-row-picker select {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 4px 8px;
+    border: 1px solid var(--casting-rule, #bfa282);
+    border-radius: 6px;
+    background: var(--casting-paper, #fffcf2);
+    color: var(--room-accent-dark, #563d2e);
+    font-size: 16px;
+  }
+  .bazi-v55 :is(.bazi-v56-cycles, .bazi-v57-months) > article[data-bazi-row-visible='false'] { display: none; }
   .qimen-v50-result .qimen-v50-source, .bazi-v55-result .bazi-v55-source {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
     font-size: 14px;
   }
+  .knowledge-cast-teaching > summary {
+    display: list-item;
+    padding: 10px;
+    min-height: 44px;
+    border: 1px solid var(--casting-rule, #789c8d);
+    border-radius: 6px;
+    background: var(--casting-paper, #fafdf8);
+    color: var(--room-accent-dark, #234f41);
+    cursor: pointer;
+  }
+  .knowledge-cast-teaching[data-cast-result='true'] { display: none; }
 }

@@ -1,10 +1,10 @@
 @media (max-width: 650px) {
   .taiyi-v64-overview { padding: 9px 10px; }
-  .taiyi-v64-overview > div { gap: 4px 8px; margin: 4px 0; }
-  .taiyi-v64-overview > p { margin-top: 4px; }
-  .taiyi-v64-result .cast-result-panel > h3 { margin: 8px 0; }
+  .taiyi-v64-overview > strong { font-size: 16px; line-height: 1.35; }
+  .taiyi-v64-overview > p { margin-top: 4px; font-size: 13px; line-height: 1.35; }
+  .taiyi-v64-result .cast-result-panel > h3 { margin: 4px 0 6px; font-size: 14px; line-height: 1.4; }
   .taiyi-v64-palaces { gap: 6px; }
-  .taiyi-v64-palaces button { gap: 4px; min-height: 70px; padding: 6px 3px; }
+  .taiyi-v64-palaces button { gap: 3px; min-height: 61px; padding: 5px 3px; justify-content: center; line-height: 1.3; }
   .taiyi-v64-palaces small:empty { display: none; }
   .taiyi-v64-result .cast-result-panel > a {
     display: flex;

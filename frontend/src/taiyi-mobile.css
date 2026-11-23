@@ -5,6 +5,8 @@
 .taiyi-year-mode .taiyi-cast-notes p { font-size: 12px; line-height: 1.95; }
 .taiyi-v64-result:focus-visible,
 .taiyi-v77-result:focus-visible { outline: 2px solid #356879; outline-offset: 3px; }
+.taiyi-v77-board-page,
+.taiyi-v77-board-notes { display: contents; }
 
 @media (max-width: 650px) {
   .academy-stage.academy-stage--taiyi { overflow-x: clip; }
@@ -31,7 +33,7 @@
   .academy-stage--taiyi .academy-knowledge-status,
   .taiyi-cast-header small { display: none; }
 
-  .taiyi-v64 { --cast-result-nav-top: 56px; padding: 8px; margin: 12px 0; }
+  .taiyi-v64 { --cast-page-nav-top: 56px; padding: 8px; margin: 12px 0; }
   .taiyi-cast-switch {
     position: sticky;
     z-index: 2;
@@ -62,7 +64,7 @@
   .taiyi-year-mode { padding: 6px 4px; }
   .taiyi-v77-hour { margin: 4px 0 0; padding: 10px; }
   .taiyi-v77-hour h3,
-  .taiyi-year-mode > header h2 { margin: 0; font-size: 18px; }
+  .taiyi-year-mode .taiyi-cast-header h2 { margin: 0; font-size: 18px; }
 
   .taiyi-v64-form,
   .taiyi-v77-form {
@@ -98,6 +100,9 @@
   .taiyi-v83-clocks { grid-template-columns: minmax(0, 1fr); }
   .taiyi-v77-result > h4 { margin-block: 6px 4px; line-height: 1.4; }
   .taiyi-v77-result .cast-result-panel > p { margin-block: 4px 8px; line-height: 1.55; }
+  .taiyi-v77-board-page { display: flex; flex-direction: column; gap: 8px; }
+  .taiyi-v77-board-notes { display: block; order: 1; font-size: 13px; line-height: 1.55; }
+  .taiyi-v77-board-notes p { margin: 0 0 6px; }
   .taiyi-v77-result .taiyi-v77-cell {
     min-height: 64px;
     justify-content: center;

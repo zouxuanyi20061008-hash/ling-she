@@ -5,6 +5,8 @@
 }
 .liuren-v58-options { display: contents; }
 .liuren-v58-result .liuren-v58-source { color: #295e73; font-size: 12px; text-decoration: underline; }
+.liuren-v58-board-cue { margin: 8px 0; color: var(--room-accent-dark, #296370); font-weight: 700; }
+.liuren-v58-board-cue small { display: none; }
 
 @media (max-width: 650px) {
   .liuren-v58 { margin: 10px 0; padding: 12px; }
@@ -46,9 +48,13 @@
   .liuren-v58-result[data-has-review='true'] .liuren-v58-transmissions-heading { display: block; }
   .liuren-v58-result .liuren-v58-meta { gap: 3px; padding: 9px; }
   .liuren-v58-result h3 { margin: 10px 0 8px; }
-  .liuren-v58-plate { gap: 5px; }
-  .liuren-v58-plate button { justify-content: center; min-height: 74px; padding: 5px; gap: 3px; }
+  .liuren-v58-result .liuren-v58-board-heading { display: none; }
+  .liuren-v58-board-cue { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 5px; font-size: 14px; }
+  .liuren-v58-board-cue small { display: inline; font-size: 11px; font-weight: 600; }
+  .liuren-v58 .liuren-v58-plate { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  .liuren-v58-plate button { justify-content: center; min-height: 74px; padding: 4px 2px; gap: 3px; }
   .liuren-v58-plate button strong { font-size: 16px; }
+  .liuren-v58-selected { margin-top: 4px; }
   .liuren-v58-plate button span:empty { display: none; }
   .liuren-v58-result .liuren-v58-source { display: inline-flex; min-height: 44px; align-items: center; }
 }

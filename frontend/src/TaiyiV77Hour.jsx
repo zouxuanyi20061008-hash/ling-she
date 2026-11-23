@@ -1,13 +1,14 @@
 import {useRef,useState} from 'react'
 import './academy.css'
-import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
+import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
+import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 
 const CN_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const CN_CLOCK=()=>new Intl.DateTimeFormat('en-GB',{
   timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false
 }).format(new Date())
 
-export default function TaiyiV77Hour({id}){
+export default function TaiyiV77Hour({id,active=true}){
   const [date,setDate]=useState(CN_DATE)
   const [clock,setClock]=useState(CN_CLOCK)
   const [chart,setChart]=useState(null)
@@ -15,6 +16,7 @@ export default function TaiyiV77Hour({id}){
   const [error,setError]=useState('')
   const [doorSchool,setDoorSchool]=useState('jinjing_taiyi')
   const version=useRef(0)
+  const castPage=useCastPage('taiyi',!!chart,{enabled:active})
   function invalidate(){
     version.current+=1
     setChart(null);setBusy(false);setError('')
@@ -31,7 +33,7 @@ export default function TaiyiV77Hour({id}){
       const data=await r.json()
       if(!r.ok)throw new Error(typeof data.detail==='string'?data.detail:
         '时计起算失败，请核对北京时间及节气历法。')
-      if(ticket===version.current)setChart(data)
+      if(ticket===version.current){setChart(data);castPage.showResult()}
     }catch(err){
       if(ticket===version.current)setError(err?.message||'时计起算失败')
     }finally{
@@ -61,6 +63,8 @@ export default function TaiyiV77Hour({id}){
     jinyao_dingji_eye:'《太乙金钥匙》·直使加定计目'
   }
   return <section className="taiyi-v77-hour" id={id} aria-label="V85 太乙时计阴遁独立原典与气应三种天目相位">
+    <CastPageNav title="太乙时计" hasResult={!!chart} {...castPage}/>
+    <CastPagePane name="form" {...castPage}>
     <header className="taiyi-cast-header">
       <small>V85 · 太乙时计 / 金镜式经阴遁原典315与六纪天目相位</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
@@ -95,12 +99,15 @@ export default function TaiyiV77Hour({id}){
         V85 新增《金镜式经》阴遁第六纪壬子元27局独立真例，
         并列六纪三种天目相位条件计算；现代气应纪首未定，不选择主客将。</p>
     </details>
-    {chart&&<section className="taiyi-v77-result" tabIndex={-1} ref={focusCastResultOnMobile}
-        role="region" aria-label="V77 太乙时计八宫与计神结果">
+    </CastPagePane>
+    <CastPagePane name="result" {...castPage}>
+    {chart&&<section className="taiyi-v77-result" role="region" aria-label="V77 太乙时计八宫与计神结果">
       <h4>{chart.solstice.name}后 · {chart.time_cycle.dun} ·
         太乙{chart.taiyi_palace.number}宫{chart.taiyi_palace.trigram}</h4>
       <CastResultPanels label="选择时计结果" variant="select">
       <CastResultPanel value="board" label="基础九宫盘">
+      <div className="taiyi-v77-board-page">
+      <div className="taiyi-v77-board-notes">
       <p>本次北京时间 {chart.input.solar_date} {chart.input.clock}（{chart.input.hour_branch}时）；
         二至真实交节：{chart.solstice.started_at_beijing.replace('T',' ')}。
         二至以来相对第 <strong>{chart.time_cycle.relative_time_count}</strong> 时，
@@ -109,6 +116,7 @@ export default function TaiyiV77Hour({id}){
       <p>时计计神：<strong>{chart.jishen.branch}</strong> ·
         {chart.jishen.direction} · {chart.jishen.movement}。
         时计与岁计的计神采用各自的输入规则。</p>
+      </div>
       <div className="taiyi-v77-palace-grid" role="group" aria-label="太乙时计九宫位置">
         {chart.nine_palaces.map(p=><div key={p.number}
           className={'taiyi-v77-cell'+(p.is_taiyi?' is-taiyi':'')+
@@ -117,6 +125,7 @@ export default function TaiyiV77Hour({id}){
           <span>{p.is_taiyi?'太乙所在':
             p.is_middle_unvisited?'中五不游':'—'}</span>
         </div>)}
+      </div>
       </div>
       {chart.solstice.near_15_minutes&&
         <p className="academy-caution" role="note">
@@ -931,5 +940,6 @@ export default function TaiyiV77Hour({id}){
       </CastResultPanel>
       </CastResultPanels>
     </section>}
+    </CastPagePane>
   </section>
 }

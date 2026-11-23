@@ -1,5 +1,6 @@
 import {useState,useRef} from 'react'
-import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
+import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
+import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import './fengshui-v70.css'
 
 const CAST_NOTES='按罗盘角度实际换算坐向、二十四山和后天八卦九宫。输入方位角从正北顺时针测量，0°为北、90°为东、180°为南、270°为西。选填真实立极或入住日期后，另按立春起三元九运及下卦运、山、向三星盘；不声称已经实地测定房屋坐向，也不代替玄空替卦规则。'
@@ -18,6 +19,7 @@ export default function FengshuiV70(){
   const [busy,setBusy]=useState(false)
   const [error,setError]=useState('')
   const requestVersion=useRef(0)
+  const castPage=useCastPage('fengshui',!!chart)
   function invalidate(){
     requestVersion.current+=1
     setChart(null);setSelectedMountain(null);setError('');setBusy(false)
@@ -55,6 +57,7 @@ export default function FengshuiV70(){
       if(ticket===requestVersion.current){
         setChart(result)
         setSelectedMountain(result.facing.mountain)
+        castPage.showResult()
       }
     }catch(e){
       if(ticket===requestVersion.current)setError(e?.message||'二十四山计算失败，请核对输入。')
@@ -64,12 +67,14 @@ export default function FengshuiV70(){
   }
   const picked=chart?.twenty_four_mountains?.find(x=>x.mountain===selectedMountain)
   return <section className="fengshui-v70" aria-label="V71 堪舆二十四山与玄空飞星计算">
-    <header>
+    <CastPageNav title="堪舆风水" hasResult={!!chart} {...castPage}/>
+    <CastPagePane name="form" {...castPage}>
+    <header className="fengshui-cast-title">
       <small>V71 · 堪舆风水 / 二十四山与玄空下卦</small>
       <h2>二十四山坐向 · 三元九运 · 玄空三盘</h2>
       <p className="cast-form-desktop-notes">{CAST_NOTES}</p>
     </header>
-    <form onSubmit={calculate} className="fengshui-v70-form">
+    <form onSubmit={calculate} className="fengshui-v70-form" data-north-reference={north}>
       <label>量得方位角（0°～360°）
         <input type="number" aria-label="堪舆方位角" min="0" max="360"
           step="any" required value={bearing} onChange={e=>{setBearing(e.target.value);invalidate()}}/>
@@ -115,8 +120,10 @@ export default function FengshuiV70(){
     </form>
     {error&&<p className="fengshui-v70-error" role="alert">{error}</p>}
     <details className="cast-form-mobile-notes"><summary>堪舆排盘说明</summary><p>{CAST_NOTES}</p></details>
-    {chart&&<div className="fengshui-v70-result" tabIndex={-1} ref={focusCastResultOnMobile}>
-      <CastResultPanels label="堪舆结果分类" variant={chart.flying_stars?'select':'buttons'}>
+    </CastPagePane>
+    <CastPagePane name="result" {...castPage}>
+    {chart&&<div className="fengshui-v70-result">
+      <CastResultPanels label="堪舆结果分类" defaultValue="board" variant={chart.flying_stars?'select':'buttons'}>
       <CastResultPanel value="direction" label="坐向运期">
       <section className="fengshui-v70-summary" aria-label="堪舆计算结果">
         <small>当前坐向 · {chart.version}</small>
@@ -161,6 +168,15 @@ export default function FengshuiV70(){
       </section>}
       </CastResultPanel>
       <CastResultPanel value="board" label="九宫盘">
+      {castPage.compact&&<div className="fengshui-v70-board-summary">
+        <strong>{chart.axis_label}</strong>
+        <span>{chart.sitting.degrees}°坐 · {chart.facing.degrees}°向
+          {chart.period&&` · ${chart.period.yuan}${chart.period.label}`}</span>
+        {chart.near_boundary&&<p className="fengshui-v70-warning">临近二十四山界，请复测。</p>}
+        {chart.period&&!chart.flying_stars&&<p className="fengshui-v70-warning">
+          {chart.flying_status==='blocked_mountain_boundary'?'山界附近，三盘待复测。':'可能需兼向替卦，本次只定元运。'}
+        </p>}
+      </div>}
       <h3>{chart.flying_stars?'玄空飞星 · 运/山/向三盘':'后天九宫坐向定位'}</h3>
       <div className="fengshui-v70-palace-grid" role="group"
         aria-label="V70 堪舆后天九宫">
@@ -242,5 +258,6 @@ export default function FengshuiV70(){
       </CastResultPanel>
       </CastResultPanels>
     </div>}
+    </CastPagePane>
   </section>
 }

@@ -1,4 +1,5 @@
 import { Children, cloneElement, useId, useLayoutEffect, useRef, useState } from 'react'
+import { useCompactCastLayout } from './CastPage.jsx'
 import './cast-result-panels.css'
 
 export function focusCastResultOnMobile(result) {
@@ -34,25 +35,30 @@ export function CastResultPanel({ label, id, active, panelRef, children }) {
   </div>
 }
 
-export default function CastResultPanels({ label, variant = 'buttons', defaultValue, children }) {
-  const panels = Children.toArray(children)
+export default function CastResultPanels({ label, variant = 'buttons', defaultValue, value, onValueChange, children }) {
+  const compact = useCompactCastLayout()
+  const panels = Children.toArray(children).filter(panel => compact || !panel.props.mobileOnly)
   const id = useId()
   const [selection, setSelection] = useState(defaultValue)
-  const selected = panels.find(panel => panel.props.value === selection)?.props.value ?? panels[0]?.props.value
+  const selected = panels.find(panel => panel.props.value === (value ?? selection))?.props.value ?? panels[0]?.props.value
+  const previous = useRef(selected)
   const selectedPanel = useRef(null)
   const scrollOnSelection = useRef(false)
 
   function select(value) {
     if (value === selected) return
     scrollOnSelection.current = true
-    setSelection(value)
+    if (onValueChange) onValueChange(value)
+    else setSelection(value)
   }
 
   useLayoutEffect(() => {
-    if (!scrollOnSelection.current) return
+    if (previous.current === selected) return
+    previous.current = selected
+    if (compact) window.scrollTo({ top: 0, behavior: 'instant' })
+    else if (scrollOnSelection.current) selectedPanel.current?.scrollIntoView?.({ block: 'start', behavior: 'instant' })
     scrollOnSelection.current = false
-    selectedPanel.current?.scrollIntoView?.({ block: 'start', behavior: 'instant' })
-  }, [selected])
+  }, [compact, selected])
 
   if (!panels.length) return null
   if (panels.length === 1) return cloneElement(panels[0], { active: true })

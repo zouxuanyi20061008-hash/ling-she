@@ -101,8 +101,8 @@
   box-shadow: 0 5px 16px var(--casting-shadow);
 }
 
-.academy-knowledge-mode :is(.qimen-v50, .bazi-v55, .liuren-v58, .taiyi-v64, .ziwei-v68, .fengshui-v70) > header :is(h2, h3),
-.academy-knowledge-mode .taiyi-v64 :is(.taiyi-year-mode, .taiyi-v77-hour) > header :is(h2, h3) { color: var(--room-accent-dark); }
+.academy-knowledge-mode :is(.qimen-v50, .bazi-v55, .liuren-v58, .taiyi-year-mode, .taiyi-v77-hour, .ziwei-v68, .fengshui-v70)
+  .cast-page-pane > header :is(h2, h3) { color: var(--room-accent-dark); }
 
 .academy-knowledge-mode .cast-result-navigation select,
 .academy-stage--liuyao .liuyao-mobile-result-navigation select {

@@ -25,6 +25,8 @@
 .ziwei-v68-picked,.ziwei-v68-trace{margin-top:12px;padding:14px 18px;background:#fffaf3;border:1px solid #d7c8b6;border-radius:9px;line-height:1.8}
 .ziwei-v68-picked h3,.ziwei-v68-trace h3{color:#55375f;margin:0}
 .ziwei-v68-picked p,.ziwei-v68-trace p{margin:4px 0}
+.ziwei-v68-picked h3:focus-visible{outline:2px solid #725083;outline-offset:3px}
+.ziwei-v68-back-to-palaces{min-height:44px;padding:6px 9px;margin-bottom:8px;border:1px solid #a98eb5;border-radius:7px;background:#f4e8f5;color:#55375f;font-size:14px;font-weight:700}
 .ziwei-v68-warning{color:#805e25;font-size:13px;line-height:1.7}
 @media(max-width:600px){.ziwei-v68-form{flex-direction:column;align-items:stretch}.ziwei-v68-form label{flex:auto}}
 
@@ -37,8 +39,8 @@
 
 @media(max-width:650px){
   .ziwei-v68{margin:10px 0;padding:10px}
-  .ziwei-v68 > header small{display:none}
-  .ziwei-v68 > header h2{font-size:18px;margin:0 0 6px}
+  .ziwei-cast-title small{display:none}
+  .ziwei-v68 .ziwei-cast-title h2{font-size:18px;margin:0 0 6px}
   .ziwei-v68-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:6px 0;padding:8px}
   .ziwei-v68-form label{min-width:0;gap:4px;line-height:1.4}
   .ziwei-v68-form :is(input:not([type=checkbox]),select){min-width:0;min-height:44px;padding:5px 6px;font-size:16px;text-overflow:ellipsis}

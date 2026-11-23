@@ -1,7 +1,11 @@
 .liuyao-navigation,
-.liuyao-result-panel { display: contents; }
+.liuyao-result-panel,
+.liuyao-study-page:not(.academy-ai-section),
+.liuyao-extra-pages { display: contents; }
 .liuyao-mobile-guide,
-.liuyao-mobile-result-navigation { display: none; }
+.liuyao-mobile-result-navigation,
+.liuyao-extra-pages[hidden],
+.liuyao-extra-pages[data-desktop-current='false'] { display: none; }
 .academy-stage--liuyao .liuyao-moving-summary {
   margin: 14px 0;
   color: #3d493d;
@@ -17,6 +21,7 @@
     margin-top: 6px;
     padding: 3px 9px;
   }
+  .academy-stage.academy-stage--liuyao[data-studio-view='analysis'] .academy-stage-banner { display: none; }
   .academy-stage--liuyao .academy-stage-banner > div:first-child {
     display: flex;
     width: 100%;
@@ -64,7 +69,10 @@
     padding: 4px 6px;
     gap: 1px;
   }
+  .academy-stage--liuyao[data-studio-view='analysis'] .liuyao-studio-switch small { display: none; }
   .academy-stage--liuyao .liuyao-mobile-result-navigation { display: block; padding: 4px; }
+  .academy-stage--liuyao[data-studio-view='analysis'] .liuyao-navigation .liuyao-studio-switch { padding-block: 2px; }
+  .academy-stage--liuyao[data-studio-view='analysis'] .liuyao-mobile-result-navigation { padding-block: 2px; }
   .liuyao-mobile-result-navigation label {
     display: flex;
     align-items: center;
@@ -86,11 +94,42 @@
   }
   .academy-stage--liuyao .academy-computed .review-flow-nav { display: none; }
   .academy-stage--liuyao .liuyao-workbench-lead { display: none; }
+  .academy-stage--liuyao .liuyao-extra-pages:not([hidden]) { display: contents; }
+  .liuyao-study-page:not(.academy-ai-section),
   .liuyao-result-panel { display: flow-root; }
-  :is(.liuyao-result-panel, .liuyao-ai-panel)[data-current='false'] { display: none; }
-  .academy-stage--liuyao .academy-casting-result[data-mobile-result='ai'] {
+  .academy-stage--liuyao :is(.liuyao-result-panel,.liuyao-study-page,.review-flow-message)[data-current='false'] { display: none; }
+  .academy-stage--liuyao .liuyao-study-page .liuyao-page-details { margin: 0; padding: 0; border: 0; background: transparent; }
+  .liuyao-study-page .liuyao-page-details > summary { display: none; }
+  .academy-stage--liuyao .academy-casting-result:is([data-mobile-result='ai'],[data-mobile-result='notebook']) {
     display: none;
   }
+  .academy-stage--liuyao .academy-casting-result[data-mobile-result='board'] > .academy-panel-head { display: none; }
+  .academy-stage--liuyao .academy-ai-section,
+  .academy-stage--liuyao .liuyao-notebook-page .academy-casebook { margin-top: 6px; }
+  .academy-stage--liuyao .academy-ai-section h2 { font-size: 18px; }
+  .academy-stage--liuyao .academy-ai-section>p { margin: 5px 0 10px; }
+  .academy-stage--liuyao .academy-ai-inputs textarea { min-height: 58px; padding: 7px 8px; font-size: 16px; }
+
+  .academy-stage--liuyao .six-full-chart { margin: 0; padding: 7px; }
+  .academy-stage--liuyao .six-full-head { gap: 4px; padding-bottom: 5px; }
+  .academy-stage--liuyao .six-full-head small { display: none; }
+  .academy-stage--liuyao .six-full-head h3 { font-size: 14px; margin: 0; }
+  .academy-stage--liuyao .six-full-seal { font-size: 11px; padding: 4px 6px; }
+  .academy-stage--liuyao .six-full-summary { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 3px; margin: 5px 0; }
+  .academy-stage--liuyao .six-full-summary div { display: flex; align-items: baseline; gap: 4px; padding: 3px 4px; line-height: 1.25; }
+  .academy-stage--liuyao .six-full-summary small { flex: none; }
+  .academy-stage--liuyao .six-full-summary strong { margin: 0; font-size: 12px; }
+  .academy-stage--liuyao .six-full-calendar { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin: 5px 0; }
+  .academy-stage--liuyao .six-full-calendar span { padding: 2px 4px; line-height: 1.3; }
+  .academy-stage--liuyao .six-full-scrollhint { margin: 4px 0; line-height: 1.35; }
+  .academy-stage--liuyao .six-full-scroll :is(th,td,small) { line-height: 1.2; }
+  .academy-stage--liuyao .six-full-scroll :is(th,td) { padding: 3px 5px; }
+  .academy-stage--liuyao .six-full-scroll th:first-child { position: sticky; left: 0; }
+  .academy-stage--liuyao .six-full-scroll thead th:first-child { background: #315d47; }
+  .academy-stage--liuyao .six-full-scroll tbody th:first-child { background: #fcf8ed; }
+  .academy-stage--liuyao .six-full-scroll tbody tr:nth-child(even) th:first-child { background: #f0eddf; }
+  .academy-stage--liuyao .six-full-scroll tbody tr.six-full-moving th:first-child { background: #f7e9d9; }
+  .academy-stage--liuyao .six-full-stroke { margin-bottom: 2px; }
 
   .academy-stage--liuyao .liuyao-studio-grid.academy-stage-grid { margin-top: 6px; }
   .academy-stage--liuyao .academy-quick-question { margin: 6px 0 4px; }

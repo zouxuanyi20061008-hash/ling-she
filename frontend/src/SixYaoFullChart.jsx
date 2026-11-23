@@ -37,7 +37,7 @@ export default function SixYaoFullChart({chart}){
       <span><b>旬空：</b>{day?.xunkong?.join('、')||'须先核实日辰'}</span>
       <span><b>日月来源：</b>{proven?'服务器中国历法库重算，边界仍需核对':day||month?'手动录入，未自动核对':'未核对'}</span>
     </div>
-    <p className="six-full-scrollhint">完整装卦表 · 从上爻到初爻显示；手机可左右滚动查看全部字段。</p>
+    <p className="six-full-scrollhint">从上爻到初爻 · 左右滑看全部字段</p>
     <div className="six-full-scroll" role="region" tabIndex={0} aria-label="六爻纳甲全表，横向滚动查看">
       <table>
         <thead><tr>

@@ -178,7 +178,20 @@ body { background:#ded6c3; }
 }
 .book-settings-hint button{color:#205c49;text-decoration:underline;text-underline-offset:3px;font-size:11px}
 .book-mobile-nav{display:contents}
-.book-reading-links{display:none}
+.book-reading-links{margin:0 7px 14px}
+.book-reading-links label{display:none}
+.book-reading-buttons{display:flex;flex-wrap:wrap;gap:5px}
+.book-reading-links button,.book-reading-links select{min-height:44px;padding:5px 10px;border:1px solid #9ba990;border-radius:6px;
+  background:#f8f5ea;color:#244a37;font-size:13px;font-weight:650}
+.book-app--meihua .book-reading-links button[aria-current='page']{background:#244a37;color:#fffdf1;border-color:#244a37}
+.book-reading-pane[hidden]{display:none}
+.book-reading-pane.book-ai,.book-reading-pane .academy-casebook{margin-top:0}
+.book-reading-pane[aria-label='原始取数']>div:first-child,.book-reading-pane[aria-label='完整卦解']>section:first-child{margin-top:0}
+.book-cast-options{padding:0 10px 4px}
+.book-cast-options summary{min-height:44px;padding:12px 2px;font-size:13px}
+.book-form-tools{display:flex;flex-wrap:wrap;gap:0 12px}
+.book-form-tools button{min-height:44px}
+.book-chart-page .book-h1{font-size:clamp(26px,4vw,39px)}
 @media(max-width:620px){
   .book-head-actions{gap:5px}
   .book-settings{padding:8px;gap:5px;font-size:11px;min-height:38px}
@@ -197,10 +210,10 @@ body { background:#ded6c3; }
     padding:4px 0;background:#eae4d7}
   .book-app--meihua .book-steps{margin:0;gap:4px}
   .book-app--meihua .book-steps .book-step span,.book-app--meihua .book-top-flip{display:none}
-  .book-app--meihua .book-reading-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:4px}
-  .book-reading-links button{min-height:44px;padding:4px;border:1px solid #9ba990;border-radius:4px;
-    background:#f8f5ea;color:#244a37;font-size:13px;font-weight:650}
-  .book-app--meihua .book-reading-target{scroll-margin-top:108px}
+  .book-app--meihua .book-reading-links{margin:4px 0 0}
+  .book-reading-links label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:650;color:#244a37}
+  .book-reading-links select{flex:1;min-width:0;font-size:16px}
+  .book-reading-buttons{display:none}
   .book-app--meihua .book-leaf.next,.book-app--meihua .book-leaf.prev{animation:none}
   .book-app--meihua .book-leaf,.book-app--meihua .book-page{min-height:0}
   .book-app--meihua .book-page{padding:14px 16px 18px}
@@ -215,7 +228,13 @@ body { background:#ded6c3; }
   .book-app--meihua .book-inputs textarea.field{height:58px}
   .book-app--meihua .book-aux{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:10px}
   .book-app--meihua .book-aux :is(.book-main-action,.book-second-action){padding:8px 4px;letter-spacing:0;font-size:14px}
-  .book-app--meihua :is(.book-aux .book-minor,.book-settings-hint button,.book-tab){min-height:44px}
-  .book-app--meihua .book-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}
-  .book-app--meihua .book-tab{white-space:normal;padding:5px 1px}
+  .book-app--meihua .book-settings-hint button{min-height:44px}
+  .book-chart-page :is(.book-kicker,.book-intro,.hexmeaning,.tag){display:none}
+  .book-chart-page .book-h1{font-size:clamp(21px,6.5vw,30px);letter-spacing:0}
+  .book-chart-page .book-charts{margin-top:8px}
+  .book-chart-page .book-hex{padding:8px 4px}
+  .book-chart-page .six-lines{margin:8px auto}
+  .book-chart-page .book-summary{margin-top:7px;padding:8px 10px}
+  .book-chart-page .book-page-footer,.book-reading-page .book-page-footer{margin-top:9px;padding-top:7px}
+  .book-chart-page .book-page-mark,.book-reading-page .book-page-mark{display:none}
 }

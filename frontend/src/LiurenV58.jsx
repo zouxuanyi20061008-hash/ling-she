@@ -1,7 +1,8 @@
 import {useId,useState,useRef} from 'react'
 import './academy.css'
 import './liuren-mobile.css'
-import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
+import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
+import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 
 const BEIJING_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const METHOD_DESCRIPTION='月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。'
@@ -15,10 +16,14 @@ export default function LiurenV58(){
   const [nobleMode,setNobleMode]=useState('hour_branch')
   const [fanyinTieSchool,setFanyinTieSchool]=useState('pending')
   const [chart,setChart]=useState(null)
+  const castPage=useCastPage('liuren',!!chart)
   const [selected,setSelected]=useState('子')
+  const [resultPanel,setResultPanel]=useState('palaces')
   const [error,setError]=useState('')
   const [busy,setBusy]=useState(false)
   const requestVersion=useRef(0)
+  const palaceBoard=useRef(null)
+  const palaceDetails=useRef(null)
   function invalidate(){
     requestVersion.current+=1
     setChart(null);setError('');setBusy(false)
@@ -41,6 +46,8 @@ export default function LiurenV58(){
       if(ticket===requestVersion.current){
         setChart(result)
         setSelected(result.hour_branch)
+        setResultPanel('palaces')
+        castPage.showResult()
       }
     }catch(e){
       if(ticket===requestVersion.current)setError(e?.message||'大六壬起课失败')
@@ -53,6 +60,8 @@ export default function LiurenV58(){
     chart?.fanyin_shehai_v75?.applied||Boolean(chart?.pending_branch_review||chart?.transmission_review||
       chart?.shehai_v61?.full_path_witnesses)
   return <section className="liuren-v58" aria-label="V76 大六壬真实起课">
+    <CastPageNav title="大六壬" hasResult={!!chart} {...castPage}/>
+    <CastPagePane name="form" {...castPage}>
     <header className="liuren-v58-heading"><small>V76 · 大六壬 / 反吟复等原典证据与严谨取传</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
       <p>{METHOD_DESCRIPTION}</p>
@@ -98,17 +107,10 @@ export default function LiurenV58(){
       <button type="submit" disabled={busy}>{busy?'起课中…':'起大六壬天地盘'}</button>
     </form>
     {error&&<p role="alert" className="academy-caution">{error}</p>}
-    {chart&&<div className="liuren-v58-result" role="region" aria-label="大六壬课盘结果" data-has-review={hasTransmissionReview}
-      ref={focusCastResultOnMobile} tabIndex={-1}>
-      <div className="liuren-v58-meta">
-        <strong>{chart.day_ganzhi}日 · {chart.hour_branch}时 · {chart.month_general}{chart.month_general_name}将</strong>
-        <span>上一中气：{chart.calendar_provenance.previous_middle_term.name}，
-          {chart.calendar_provenance.previous_middle_term.beijing_time.replace('T',' ')}</span>
-        <span>下一中气：{chart.calendar_provenance.next_middle_term.name}，
-          {chart.calendar_provenance.next_middle_term.beijing_time.replace('T',' ')}</span>
-        <span>日干寄宫：{chart.day_stem_lodge}；月将按中气、八字月柱按节，两者不同。</span>
-      </div>
-      <CastResultPanels label="查看六壬结果" variant="select" defaultValue="palaces">
+    </CastPagePane>
+    <CastPagePane name="result" {...castPage}>
+    {chart&&<div className="liuren-v58-result" role="region" aria-label="大六壬课盘结果" data-has-review={hasTransmissionReview}>
+      <CastResultPanels label="查看六壬结果" variant="select" value={resultPanel} onValueChange={setResultPanel}>
       {(chart.heavenly_generals||chart.xun_void_and_dun)&&
         <CastResultPanel value="cycles" label="天将与旬空" group="课盘">
       {chart.heavenly_generals&&<section className="liuren-v62-generals"
@@ -156,11 +158,19 @@ export default function LiurenV58(){
       </section>}
       </CastResultPanel>}
       <CastResultPanel value="palaces" label="天地盘" group="课盘">
-      <h3>十二宫 · 天盘在上、地盘在下</h3>
-      <div role="group" aria-label="大六壬十二宫天地盘" className="liuren-v58-plate">
+      <p className="liuren-v58-board-cue">{chart.day_ganzhi}日 · {chart.hour_branch}时 · {chart.month_general}{chart.month_general_name}将
+        <small>点宫查明细</small></p>
+      <h3 className="liuren-v58-board-heading">十二宫 · 天盘在上、地盘在下</h3>
+      <div role="group" aria-label="大六壬十二宫天地盘" className="liuren-v58-plate" ref={palaceBoard}>
         {chart.palaces.map(p=><button type="button" key={p.earth}
           className={selected===p.earth?'active':''} aria-pressed={selected===p.earth}
-          onClick={()=>setSelected(p.earth)}>
+          onClick={()=>{
+            setSelected(p.earth)
+            if(castPage.compact){
+              setResultPanel('palace')
+              window.requestAnimationFrame(()=>palaceDetails.current?.focus({preventScroll:true}))
+            }
+          }}>
           <small>地盘 {p.earth}</small><strong>天盘 {p.heaven}</strong>
           {chart.xun_void_and_dun&&<small className={p.heaven_is_void?'liuren-v63-empty':''}>
             天盘{p.heaven_is_void?'旬空':('遁'+p.heaven_xun_dun)}
@@ -171,6 +181,13 @@ export default function LiurenV58(){
             {p.heaven===chart.month_general?' · 月将':''}</span>
         </button>)}
       </div>
+      </CastResultPanel>
+      <CastResultPanel value="palace" label="宫位细节" group="课盘">
+      <div ref={palaceDetails} tabIndex={-1}>
+      <button type="button" className="knowledge-back-to-chart" onClick={()=>{
+        setResultPanel('palaces')
+        window.requestAnimationFrame(()=>palaceBoard.current?.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true}))
+      }}>← 返回天地盘</button>
       <p className="liuren-v58-selected">所选地盘 {selected} · 上临天盘
         <strong> {chart.heaven_plate[selected]}</strong>
         {chart.heavenly_generals&&<span> · 乘
@@ -178,6 +195,7 @@ export default function LiurenV58(){
         {chart.xun_void_and_dun&&<span> · 天盘
           {chart.xun_void_and_dun.by_branch[chart.heaven_plate[selected]]||'旬空'}，
           地盘本位{chart.xun_void_and_dun.by_branch[selected]||'旬空'}</span>}</p>
+      </div>
       </CastResultPanel>
       <CastResultPanel value="lessons" label="四课" group="课盘">
       <h3>四课 · 上神与下神</h3>
@@ -372,6 +390,13 @@ export default function LiurenV58(){
         </div>}
       </CastResultPanel>
       <CastResultPanel value="sources" label="出处与提示" group="依据">
+      <div className="liuren-v58-meta">
+        <span>上一中气：{chart.calendar_provenance.previous_middle_term.name}，
+          {chart.calendar_provenance.previous_middle_term.beijing_time.replace('T',' ')}</span>
+        <span>下一中气：{chart.calendar_provenance.next_middle_term.name}，
+          {chart.calendar_provenance.next_middle_term.beijing_time.replace('T',' ')}</span>
+        <span>日干寄宫：{chart.day_stem_lodge}；月将按中气、八字月柱按节，两者不同。</span>
+      </div>
       {chart.calendar_provenance.warnings.map((w,i)=>
         <p key={i} className="academy-caution">{w}</p>)}
       <p className="academy-caution">V74 已保留 V62 十二天将、V63 日旬遁干与旬空实算，并修正丁卯、己卯、辛卯伏吟互刑杜传。
@@ -381,5 +406,6 @@ export default function LiurenV58(){
       </CastResultPanel>
       </CastResultPanels>
     </div>}
+    </CastPagePane>
   </section>
 }

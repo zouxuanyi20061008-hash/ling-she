@@ -1,10 +1,11 @@
-import {useState,useRef} from 'react'
+import {useId,useState,useRef} from 'react'
 import {ARTS} from './ArtsHub.jsx'
 import LiurenV58 from './LiurenV58.jsx'
 import TaiyiV64 from './TaiyiV64.jsx'
 import ZiweiV68 from './ZiweiV68.jsx'
 import FengshuiV70 from './FengshuiV70.jsx'
-import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
+import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
+import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import './academy.css'
 import './knowledge-mobile.css'
 import './knowledge-cast-mobile.css'
@@ -30,6 +31,24 @@ const BRANCHES=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌
 const PILLARS=['年柱','月柱','日柱','时柱']
 const QIMEN_CAST_NOTES='真实九宫地盘、星门神盘保持不变；增加三奇入墓与古籍六甲式三奇得使，并单独列出另一种值使门同宫口径，绝不合并判定。'
 const BAZI_CAST_NOTES='出生四柱按立春、十二节交接计算；大运可选传统规则或手动顺逆。也可另外选择任意北京时间，查看那一刻的流年、流月及整年十二节令月表。'
+
+function BaziResultRows({rows,selectedIndex=0,label,rangeLabel,gridClass,renderRow}){
+  const pageSize=4
+  const [page,setPage]=useState(Math.floor(Math.max(0,selectedIndex)/pageSize))
+  return <>
+    {rows.length>pageSize&&<label className="bazi-v55-row-picker">{rangeLabel}
+      <select value={page} onChange={e=>setPage(Number(e.target.value))}>
+        {Array.from({length:Math.ceil(rows.length/pageSize)},(_,index)=><option key={index} value={index}>
+          第 {index*pageSize+1}–{Math.min(rows.length,(index+1)*pageSize)} 项
+        </option>)}
+      </select>
+    </label>}
+    <div role="group" aria-label={label} className={gridClass}>
+      {rows.map((row,index)=>renderRow(row,Math.floor(index/pageSize)===page))}
+    </div>
+  </>
+}
+
 export default function KnowledgeStage({mode,onBack,onStudy}) {
   const art=ARTS.find(a=>a.id===mode)||ARTS[2]
   const isQimen=mode==='qimen',isBazi=mode==='bazi',isLiuren=mode==='liuren',isTaiyi=mode==='taiyi',isZiwei=mode==='ziwei',isFengshui=mode==='fengshui'
@@ -44,6 +63,8 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [qimenChart,setQimenChart]=useState(null)
   const [qimenBusy,setQimenBusy]=useState(false)
   const [qimenError,setQimenError]=useState('')
+  const [qimenResultPanel,setQimenResultPanel]=useState('plate')
+  const qimenPage=useCastPage('qimen',!!qimenChart,{enabled:isQimen})
   const qimenRequest=useRef(0)
   const qimenPalaceBoard=useRef(null)
   const qimenPalaceDetail=useRef(null)
@@ -65,7 +86,11 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       })
       const body=await response.json()
       if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'请核实日期与时辰')
-      if(ticket===qimenRequest.current)setQimenChart(body)
+      if(ticket===qimenRequest.current){
+        setQimenChart(body)
+        setQimenResultPanel('plate')
+        qimenPage.showResult()
+      }
     }catch(error){
       if(ticket===qimenRequest.current)setQimenError(error.message||'奇门定局失败，请核实输入')
     }finally{
@@ -80,6 +105,8 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [baziClock,setBaziClock]=useState('12:00')
   const [baziBoundary,setBaziBoundary]=useState('midnight')
   const [baziLuckMode,setBaziLuckMode]=useState('none')
+  const [baziOptionsOpen,setBaziOptionsOpen]=useState(false)
+  const baziOptionsId=useId()
   const [baziFlowEnabled,setBaziFlowEnabled]=useState(false)
   const [baziFlowDate,setBaziFlowDate]=useState(()=>
     new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date()))
@@ -87,6 +114,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [baziChart,setBaziChart]=useState(null)
   const [baziBusy,setBaziBusy]=useState(false)
   const [baziError,setBaziError]=useState('')
+  const baziPage=useCastPage('bazi',!!baziChart,{enabled:isBazi})
   const baziRequest=useRef(0)
   function invalidateBazi(){
     baziRequest.current+=1
@@ -110,7 +138,10 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       })
       const body=await response.json()
       if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'请核实出生日期与时间')
-      if(ticket===baziRequest.current)setBaziChart(body)
+      if(ticket===baziRequest.current){
+        setBaziChart(body)
+        baziPage.showResult()
+      }
     }catch(error){
       if(ticket===baziRequest.current)setBaziError(error.message||'四柱计算失败，请核实输入')
     }finally{
@@ -142,7 +173,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       {isZiwei&&<ZiweiV68/>}
       {isFengshui&&<FengshuiV70/>}
       {isQimen&&<section className="qimen-v50">
-        <header><small>V54 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
+        <CastPageNav title="奇门遁甲" hasResult={!!qimenChart} {...qimenPage}/>
+        <CastPagePane name="form" {...qimenPage}>
+        <header className="knowledge-cast-heading"><small>V54 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
           <p className="knowledge-cast-intro">{QIMEN_CAST_NOTES}</p>
         </header>
         <form onSubmit={castActualQimen} className="qimen-v50-form">
@@ -165,11 +198,14 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
         </form>
         {qimenError&&<p role="alert" className="academy-caution">{qimenError}</p>}
         <details className="knowledge-cast-notes"><summary>查看奇门排盘说明</summary><p>{QIMEN_CAST_NOTES}</p></details>
-        {qimenChart&&<div className="qimen-v50-result" tabIndex={-1} ref={focusCastResultOnMobile}>
+        </CastPagePane>
+        <CastPagePane name="result" {...qimenPage}>
+        {qimenChart&&<div className="qimen-v50-result">
+          <CastResultPanels label="奇门结果分类" variant={qimenPage.compact?'select':'buttons'}
+            value={qimenResultPanel} onValueChange={setQimenResultPanel}>
+          <CastResultPanel value="summary" label="定局摘要">
           {qimenChart.input_provenance?.warnings?.map((w,i)=>
             <p key={i} className="academy-caution">{w}</p>)}
-          <CastResultPanels label="奇门结果分类" defaultValue="plate">
-          <CastResultPanel value="summary" label="定局摘要">
           <div className="qimen-v50-summary">
             <strong>{qimenChart.ju_label} · {qimenChart.yuan}</strong>
             <span>节气：{qimenChart.solar_term} · 日柱 {qimenChart.day_ganzhi} · 时柱 {qimenChart.hour_ganzhi}</span>
@@ -230,19 +266,26 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             </section>
           </CastResultPanel>}
           <CastResultPanel value="plate" label="九宫盘">
-          <div className="academy-nine qimen-v50-nine" role="group" tabIndex={-1} ref={qimenPalaceBoard}
+          <p className="knowledge-board-cue">{qimenChart.ju_label} · {qimenChart.day_ganzhi}日 {qimenChart.hour_ganzhi}时 · 点宫位看细节</p>
+          <div className="academy-nine qimen-v50-nine" role="group" ref={qimenPalaceBoard}
             aria-label={qimenChart.has_rotated_stars_and_gates?'V51 奇门九宫星门转盘':'V50 奇门九宫真实地盘'}>
             {qimenChart.palaces.map(p=><button type="button" key={p.number}
               className={palaceNum===p.number?'active':''}
               aria-pressed={palaceNum===p.number}
               onClick={()=>{
                 setPalaceNum(p.number)
-                focusCastResultOnMobile(qimenPalaceDetail.current)
+                if(qimenPage.compact){
+                  setQimenResultPanel('palace')
+                  window.requestAnimationFrame(()=>qimenPalaceDetail.current?.focus({preventScroll:true}))
+                }
               }}>
               <small>{p.name}宫 · {p.number}</small>
               {qimenChart.has_eight_spirits&&<small className="qimen-v52-spirit">{p.actual_spirit||'中宫无神'}</small>}
               {qimenChart.has_rotated_stars_and_gates?
-                <><strong>{p.actual_star||'中宫'}</strong><b>{p.actual_gate||'无独立八门'}</b>
+                <><span className="qimen-cell-star-door">
+                    <strong>{p.actual_star||'中宫'}</strong>
+                    <b>{p.actual_gate||(qimenPage.compact?'无八门':'无独立八门')}</b>
+                  </span>
                   <small>地{p.earth_stem} · 天{p.sky_stem}
                     {p.attached_center_stem?' · 寄'+p.attached_center_stem:''}</small>
                   {qimenChart.has_ten_stem_lookup&&<small className="qimen-v53-stems">
@@ -252,13 +295,18 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                       {p.wonder_rule_review.candidates.map(w=>w.title).join(' · ')}</small>}
                   {qimenChart.has_hourly_void_and_horse&&<small className="qimen-v52-marks">
                     {[p.hour_horse?'马':'',p.has_hour_void?'空'+p.hour_xunkong_branches_here.join(''):'',
-                      ...(p.structural_tags||[])].filter(Boolean).join(' · ')}</small>}</>:
+                      ...(qimenPage.compact?[]:p.structural_tags||[])].filter(Boolean).join(' · ')}</small>}</>:
                 <><strong>{p.earth_stem}</strong><b>地盘</b></>}
             </button>)}
           </div>
-          <div className="qimen-v50-palace" tabIndex={-1} ref={qimenPalaceDetail}>
+          </CastResultPanel>
+          <CastResultPanel value="palace" label="宫位细节">
+          <div className="qimen-v50-palace" ref={qimenPalaceDetail} tabIndex={-1}>
             <button type="button" className="knowledge-back-to-chart"
-              onClick={()=>focusCastResultOnMobile(qimenPalaceBoard.current)}>返回九宫选宫</button>
+              onClick={()=>{
+                setQimenResultPanel('plate')
+                window.requestAnimationFrame(()=>qimenPalaceBoard.current?.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true}))
+              }}>← 返回九宫盘</button>
             {qimenChart.palaces.filter(p=>p.number===palaceNum).map(p=>
               <p key={p.number}><b>{p.name}{p.number}宫</b> · 地盘 {p.earth_stem}。
                 {qimenChart.has_rotated_stars_and_gates?
@@ -319,9 +367,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           </CastResultPanel>
           </CastResultPanels>
         </div>}
+        </CastPagePane>
       </section>}
       {isBazi&&<section className="bazi-v55" aria-label="V55 四柱八字真实排盘">
-        <header>
+        <CastPageNav title="四柱八字" hasResult={!!baziChart} {...baziPage}/>
+        <CastPagePane name="form" {...baziPage}>
+        <header className="knowledge-cast-heading">
           <small>V57 · 节令四柱、大运与流年流月</small>
           <h2>输入出生时刻 · 计算真实四柱</h2>
           <p className="knowledge-cast-intro">{BAZI_CAST_NOTES}</p>
@@ -343,6 +394,11 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               <option value="zi_hour">子初 23:00 换日</option>
             </select>
           </label>
+          <button type="button" className="bazi-v55-options-toggle" aria-controls={baziOptionsId}
+            aria-expanded={baziOptionsOpen} onClick={()=>setBaziOptionsOpen(open=>!open)}>
+            大运与流年设置{baziLuckMode!=='none'||baziFlowEnabled?' · 已选':''}
+          </button>
+          <div id={baziOptionsId} className="bazi-v55-extra-options" data-open={baziOptionsOpen}>
           <label>大运顺逆（可选，不推断性别）
             <select aria-label="大运顺逆规则" value={baziLuckMode}
               onChange={e=>{setBaziLuckMode(e.target.value);invalidateBazi()}}>
@@ -370,6 +426,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                 onChange={e=>{setBaziFlowClock(e.target.value);invalidateBazi()}} required/>
             </label>
           </>}
+          </div>
           <button type="submit" disabled={baziBusy}>
             {baziBusy?'正在计算…':baziFlowEnabled?'排四柱 · 查流年流月':
               baziLuckMode==='none'?'按出生时间排四柱':'排四柱及十年大运'}
@@ -377,19 +434,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
         </form>
         {baziError&&<p role="alert" className="academy-caution">{baziError}</p>}
         <details className="knowledge-cast-notes"><summary>查看四柱排盘说明</summary><p>{BAZI_CAST_NOTES}</p></details>
-        {baziChart&&<div className="bazi-v55-result" tabIndex={-1} ref={focusCastResultOnMobile}>
-          {baziChart.warnings.map((w,i)=>
-            <p key={i} className="academy-caution">{w}</p>)}
+        </CastPagePane>
+        <CastPagePane name="result" {...baziPage}>
+        {baziChart&&<div className="bazi-v55-result">
           <CastResultPanels label="八字结果分类">
           <CastResultPanel value="pillars" label="四柱">
-          <div className="bazi-v55-meta">
-            <strong>日主 {baziChart.day_master} · {baziChart.day_master_element}</strong>
-            <span>北京时间：{baziChart.beijing_time.replace('T',' ')}</span>
-            <span>换日：{baziChart.day_boundary_label}</span>
-            <span>当前节令月支：{baziChart.solar_term_boundary.solar_month_branch}；
-              上一节 {baziChart.solar_term_boundary.previous_jie.name}；
-              下一节 {baziChart.solar_term_boundary.next_jie.name}</span>
-          </div>
+          <p className="bazi-v55-day-master"><strong>日主 {baziChart.day_master} · {baziChart.day_master_element}</strong></p>
           <div role="group" aria-label="V55 真实八字四柱" className="bazi-v55-pillar-grid">
             {baziChart.pillars.map(p=><article key={p.kind}
               className={'bazi-v55-pillar bazi-v55-pillar--'+p.kind}>
@@ -425,8 +475,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               <strong>推算起运时间：{baziChart.luck.start_at_beijing.replace('T',' ')}</strong>
               <small>三天折一年；下方年份不是周岁，也不代表实际事件的应期。</small>
             </div>
-            <div role="group" aria-label="十年大运干支表" className="bazi-v56-cycles">
-              {baziChart.luck.luck_decades.map(phase=><article key={phase.order}>
+            <BaziResultRows rows={baziChart.luck.luck_decades} label="十年大运干支表"
+              rangeLabel="选择大运范围" gridClass="bazi-v56-cycles" renderRow={(phase,visible)=><article key={phase.order}
+                data-bazi-row-visible={visible}>
                 <small>第 {phase.order} 步</small>
                 <strong>{phase.ganzhi}</strong>
                 <span>{phase.stem_element} · {phase.branch_element}</span>
@@ -434,8 +485,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                 <small>{phase.start_calendar_year}—{phase.end_calendar_year_exclusive}（末年为下一运起点）</small>
                 <small>始于 {phase.begins_at_beijing.slice(0,16).replace('T',' ')}</small>
                 <span>藏干：{phase.hidden_stems.map(h=>h.stem).join('、')}</span>
-              </article>)}
-            </div>
+              </article>}/>
             <p className="academy-caution">大运只是传统干支时间结构，不代表个人健康、事业、婚姻或财富的预测；没有进行出生地真太阳时、流年和完整断课。</p>
           </section>
           </CastResultPanel>}
@@ -453,8 +503,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               <span>大运对应：{baziChart.flow.luck_at_target.label}</span>
               {baziChart.flow.near_jie&&<span>接近交节15分钟，请复核历书交节时刻。</span>}
             </div>
-            <div className="bazi-v57-months" role="group" aria-label="十二节令流月表">
-              {baziChart.flow.months.map(m=><article key={m.order}
+            <BaziResultRows rows={baziChart.flow.months} selectedIndex={baziChart.flow.months.findIndex(m=>m.selected)}
+              label="十二节令流月表" rangeLabel="选择流月范围" gridClass="bazi-v57-months"
+              renderRow={(m,visible)=><article key={m.order} data-bazi-row-visible={visible}
                 className={m.selected?'selected':''}>
                 <small>第 {m.order} 月 · {m.jie_name}起</small>
                 <strong>{m.ganzhi}</strong>
@@ -462,12 +513,19 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                 <small>从 {m.begins_at_beijing.slice(0,16).replace('T',' ')}</small>
                 <small>至 {m.ends_before_beijing.slice(0,16).replace('T',' ')}（不含）</small>
                 <span>藏干 {m.hidden_stems.map(h=>h.stem).join('、')}</span>
-              </article>)}
-            </div>
+              </article>}/>
             <p className="academy-caution">十二流月按真实节气“节”分割，不是农历月初或每月1日。大运对应只是时间包含关系，不判断财富、婚姻、健康、事业或事件应期。</p>
           </section>
           </CastResultPanel>}
           <CastResultPanel value="references" label="说明与出处">
+          <div className="bazi-v55-meta">
+            <span>北京时间：{baziChart.beijing_time.replace('T',' ')}</span>
+            <span>换日：{baziChart.day_boundary_label}</span>
+            <span>当前节令月支：{baziChart.solar_term_boundary.solar_month_branch}；
+              上一节 {baziChart.solar_term_boundary.previous_jie.name}；
+              下一节 {baziChart.solar_term_boundary.next_jie.name}</span>
+          </div>
+          {baziChart.warnings.map((w,i)=><p key={i} className="academy-caution">{w}</p>)}
           <p className="academy-caution">年柱依立春、月柱依交节；本盘使用北京时间而非出生地真太阳时。
             {baziChart.luck?'所选大运已经推算；':'未选择大运规则；'}{baziChart.flow?'流年和十二节令流月已按北京时间计算；':'流年流月未选择；'}完整命理分析尚未完成，十神仅说明传统五行结构。</p>
           <a className="bazi-v55-source" href={baziChart.source.independent_fixed_cases_reference}
@@ -475,8 +533,13 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           </CastResultPanel>
           </CastResultPanels>
         </div>}
+        </CastPagePane>
       </section>}
-      {(isLiuren||isTaiyi||isFengshui)?null:isQimen?<section className="academy-learning-layout">
+      {(isQimen||isBazi)?<details className="knowledge-cast-teaching"
+        open={!(isQimen?qimenPage:baziPage).compact}
+        data-cast-result={(isQimen?qimenPage:baziPage).page==='result'}>
+        <summary>{isQimen?'查看九宫与八门教学图':'查看干支四柱教学图'}</summary>
+      {isQimen?<section className="academy-learning-layout">
         <div className="academy-learning-surface">
           <span>洛书九宫 · 上南下北</span>
           <div className="academy-nine" role="group" aria-label="后天九宫方位教学图">
@@ -494,7 +557,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           <blockquote>{DOORS[door][0]}常被联系到{DOORS[door][1]}等传统象义。</blockquote>
           <p className="academy-caution">此区仅为固定九宫文化教学图；上方 V51 才是按时辰起出的九星与八门盘。此处的八门是原始名称索引，不等于这一时刻的落宫。</p>
         </article>
-      </section>:isBazi?<section className="academy-learning-layout">
+      </section>:<section className="academy-learning-layout">
         <div className="academy-learning-surface">
           <span>年、月、日、时，各有一干一支</span>
           <div className="academy-pillars">{PILLARS.map((p,i)=><button key={p} className={activePillar===i?'active':''} onClick={()=>setActivePillar(i)}>
@@ -508,7 +571,8 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           <h3>选择地支</h3><div className="academy-small-picker">{BRANCHES.map((name,i)=><button key={name} className={branch[activePillar]===i?'selected':''} onClick={()=>setBranch(a=>a.map((v,j)=>j===activePillar?i:v))}>{name}</button>)}</div>
           <p className="academy-caution">这里只帮助认识天干地支，不是上方 V55 出生时间排出的实盘；教学选择不会修改实际排盘。</p>
         </article>
-      </section>:<section className="academy-prelude">
+      </section>}
+      </details>:(isLiuren||isTaiyi||isFengshui)?null:<section className="academy-prelude">
         <span>{art.symbol}</span>
         <div><h2>这门古术，先从读懂它开始。</h2><p>各门术数对历法、象数、盘式有各自的规范。我们会分别校勘，不为了凑齐菜单就给出没有依据的排盘。</p>
           <button className="academy-primary" onClick={onStudy}>去藏经阁查典籍与学习入口 ↗</button></div>

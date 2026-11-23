@@ -3,10 +3,24 @@ import './academy.css'
 import './taiyi-mobile.css'
 import './taiyi-result-panels.css'
 import TaiyiV77Hour from './TaiyiV77Hour.jsx'
-import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
+import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
+import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
   year:'numeric'}).format(new Date()))
+
+function palaceMarkers(palace){
+  return [
+    palace.dingji_eye_here&&'定计目',
+    palace.dingji_big_general_here&&'定计大将',
+    palace.dingji_assistant_here&&'定计参将',
+    palace.any_general_five&&'有大参将居中五',
+    palace.wenchang_here&&'文昌临宫',
+    palace.shiji_here&&'始击临宫',
+    palace.main_general_here&&'主大将',
+    palace.guest_general_here&&'客大将',
+  ].filter(Boolean)
+}
 
 export default function TaiyiV64(){
   const castId=useId()
@@ -23,12 +37,12 @@ export default function TaiyiV64(){
       <button type="button" aria-pressed={activeCast==='year'} aria-controls={`${castId}-year`}
         onClick={()=>selectCast('year')}>岁计排盘</button>
     </div>
-    <TaiyiYear id={`${castId}-year`}/>
-    <TaiyiV77Hour id={`${castId}-hour`}/>
+    <TaiyiYear id={`${castId}-year`} active={activeCast==='year'}/>
+    <TaiyiV77Hour id={`${castId}-hour`} active={activeCast==='hour'}/>
   </div>
 }
 
-function TaiyiYear({id}){
+function TaiyiYear({id,active}){
   const [year,setYear]=useState(YEAR_NOW)
   const [chart,setChart]=useState(null)
   const [busy,setBusy]=useState(false)
@@ -36,12 +50,19 @@ function TaiyiYear({id}){
   const [picked,setPicked]=useState(null)
   const [pickedSpirit,setPickedSpirit]=useState(null)
   const [samePalaceRule,setSamePalaceRule]=useState('wubeizhi')
+  const requestVersion=useRef(0)
+  const castPage=useCastPage('taiyi',!!chart,{enabled:active})
+  function invalidate(){
+    requestVersion.current+=1
+    setChart(null);setBusy(false);setError('')
+  }
   async function cast(event){
     event.preventDefault()
+    const ticket=++requestVersion.current
     const n=Number(year)
     if(!Number.isInteger(n)||n<1901||n>2099){
       setError('请选择 1901 至 2099 年之间的整数公历年份。')
-      setChart(null)
+      setChart(null);setBusy(false)
       return
     }
     setBusy(true);setError('');setChart(null)
@@ -54,25 +75,33 @@ function TaiyiYear({id}){
       const result=await response.json()
       if(!response.ok)throw new Error(typeof result.detail==='string'?
         result.detail:'请核对公历年份和选用的太乙岁计历元。')
-      setChart(result);setPicked(result.year.taiyi_palace.number)
-      setPickedSpirit(result.main_guest?.heaven_eye_wenchang?.index??null)
-    }catch(e){setError(e?.message||'太乙岁计失败')}
-    finally{setBusy(false)}
+      if(ticket===requestVersion.current){
+        setChart(result);setPicked(result.year.taiyi_palace.number)
+        setPickedSpirit(result.main_guest?.heaven_eye_wenchang?.index??null)
+        castPage.showResult()
+      }
+    }catch(e){
+      if(ticket===requestVersion.current)setError(e?.message||'太乙岁计失败')
+    }finally{
+      if(ticket===requestVersion.current)setBusy(false)
+    }
   }
   const chosen=chart?.nine_palaces.find(p=>p.number===picked)
   const spirit=chart?.sixteen_spirits?.find(s=>s.index===pickedSpirit)
   return <section className="taiyi-year-mode" id={id} aria-label="V67 太乙真实岁计">
+    <CastPageNav title="太乙岁计" hasResult={!!chart} {...castPage}/>
+    <CastPagePane name="form" {...castPage}>
     <header className="taiyi-cast-header"><small>V67 · 太乙神数 / 定计与中五将</small>
       <h2>积年推局 · 太乙八宫行次</h2>
     </header>
     <form onSubmit={cast} className="taiyi-v64-form">
       <label>公历年份
         <input type="number" aria-label="太乙岁计公历年" min="1901" max="2099" step="1"
-          value={year} onChange={e=>setYear(e.target.value)} required/>
+          value={year} onChange={e=>{setYear(e.target.value);invalidate()}} required/>
       </label>
       <label>同宫特殊取算口径
         <select aria-label="太乙同宫计算口径" value={samePalaceRule}
-          onChange={e=>setSamePalaceRule(e.target.value)}>
+          onChange={e=>{setSamePalaceRule(e.target.value);invalidate()}}>
           <option value="wubeizhi">《武备志》同宫取本宫数（默认）</option>
           <option value="conservative">谨慎口径：同宫待校勘（V65）</option>
         </select>
@@ -86,16 +115,19 @@ function TaiyiYear({id}){
         实算五元、七十二局、太乙行宫、理天理地理人及岁计计神。此为岁计，
         不把冬夏至转换的时计阴阳规则混入。V67 已实算岁计定计目、定计大将与参将，并记录中五不出；仍可切换《武备志》同宫取算与 V65 谨慎待算口径。</p>
     </details>
-    {chart&&<section className="taiyi-v64-result" aria-label="太乙岁计排盘结果"
-        tabIndex={-1} ref={focusCastResultOnMobile}>
+    </CastPagePane>
+    <CastPagePane name="result" {...castPage}>
+    {chart&&<section className="taiyi-v64-result" aria-label="太乙岁计排盘结果">
       <div className="taiyi-v64-overview">
         <strong>{chart.year.gregorian_year}年 · {chart.year.five_yuan_name} · {chart.year.ju_label}</strong>
-        <div><span>历史积年：{chart.year.accumulated_years.toLocaleString('zh-CN')}</span>
+        {!castPage.compact&&<div><span>历史积年：{chart.year.accumulated_years.toLocaleString('zh-CN')}</span>
           <span>周纪余数：{chart.year.in_cycle_number} / 360</span>
-          <span>计神：{chart.year.jishen} · 岁干支 {chart.year.sexagenary_year}</span></div>
+          <span>计神：{chart.year.jishen} · 岁干支 {chart.year.sexagenary_year}</span></div>}
+        {castPage.compact?<p>太乙 {chart.year.taiyi_palace.number}宫{chart.year.taiyi_palace.trigram}
+          {' · '}{chart.year.year_governing} · 宫内第 {chart.year.year_of_palace} 年</p>:
         <p>太乙在 {chart.year.taiyi_palace.number}宫
           {chart.year.taiyi_palace.trigram}（{chart.year.taiyi_palace.direction}）
-          · {chart.year.year_governing} · 本宫第 {chart.year.year_of_palace} 年</p>
+          · {chart.year.year_governing} · 本宫第 {chart.year.year_of_palace} 年</p>}
       </div>
       <CastResultPanels label="岁计结果分类">
       <CastResultPanel value="board" label="盘面">
@@ -104,30 +136,31 @@ function TaiyiYear({id}){
         {chart.nine_palaces.map(p=><button type="button" key={p.number}
            className={[p.is_taiyi?'taiyi':'',p.is_center_unoccupied?'center':'',
              picked===p.number?'selected':''].join(' ')}
-           onClick={()=>setPicked(p.number)}>
+           aria-pressed={picked===p.number} onClick={()=>setPicked(p.number)}>
           <small>{p.direction}</small>
           <strong>{p.number}宫 · {p.trigram}</strong>
-          <span>{p.is_taiyi?'太乙在此':p.is_center_unoccupied?'太乙中五不游':'查看宫位'}</span>
-          {chart.dingji_v67&&<small>
-            {p.dingji_eye_here?'定计目 ':''}
-            {p.dingji_big_general_here?'定计大将 ':''}
-            {p.dingji_assistant_here?'定计参将 ':''}
-            {p.any_general_five?'有大参将居中五 ':''}
-          </small>}
-          {chart.sixteen_spirits&&<small>
-            {p.wenchang_here?'文昌临宫 ':''}{p.shiji_here?'始击临宫 ':''}
-            {p.main_general_here?'主大将 ':''}{p.guest_general_here?'客大将 ':''}
-          </small>}
+          {(p.is_taiyi||p.is_center_unoccupied||!castPage.compact)&&
+            <span>{p.is_taiyi?'太乙在此':p.is_center_unoccupied?'太乙中五不游':'查看宫位'}</span>}
+          {!castPage.compact&&<small>{palaceMarkers(p).join(' ')}</small>}
         </button>)}
       </div>
       {chosen&&<p className="taiyi-v64-picked">
         当前查看：{chosen.number}宫 · {chosen.trigram} · {chosen.direction}。
         {chosen.is_taiyi?'本年太乙入此宫。':
           chosen.is_center_unoccupied?'太乙不进入中五宫。':'本年太乙不在此宫。'}
+        {castPage.compact&&palaceMarkers(chosen).length>0&&
+          <span>{palaceMarkers(chosen).join(' · ')}。</span>}
       </p>}
+      </CastResultPanel>
+      <CastResultPanel value="cycles" label="周期">
       <section aria-label="太乙五元及周期拆解" className="taiyi-v64-cycles">
         <h3>五元、三年与二十四年循环</h3>
         <div className="taiyi-v64-summary">
+          {castPage.compact&&<>
+            <span>历史积年：{chart.year.accumulated_years.toLocaleString('zh-CN')}</span>
+            <span>周纪余数：{chart.year.in_cycle_number} / 360</span>
+            <span>计神：{chart.year.jishen} · 岁干支 {chart.year.sexagenary_year}</span>
+          </>}
           <span>五元序号：第 {chart.year.five_yuan_number} 元</span>
           <span>周纪第 {chart.year.full_360_year_cycles+1} 周</span>
           <span>元内第 {chart.year.ju} / 72 局</span>
@@ -300,7 +333,7 @@ function TaiyiYear({id}){
         <p>“中五不出”是古籍排盘中的术语，不代表现实情况的预测。</p>
       </section>}
       </CastResultPanel>}
-      <CastResultPanel value="sources" label="古籍原文">
+      <CastResultPanel value="sources" label={castPage.compact?'古籍':'古籍原文'}>
       <p className="academy-caution">V67 为古典岁计结构推演，不包含月计、日计、时计或现代事件预测。
         不同太乙历元传承不能混用；同宫主客异派口径并列，不将未核准的主客将数字充当默认排盘结论。</p>
       <a href={chart.sources.historical_1624} target="_blank" rel="noopener noreferrer">
@@ -311,5 +344,6 @@ function TaiyiYear({id}){
       </CastResultPanel>
       </CastResultPanels>
     </section>}
+    </CastPagePane>
   </section>
 }

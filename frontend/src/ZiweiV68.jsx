@@ -1,5 +1,6 @@
-import {useState,useRef} from 'react'
-import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
+import {useLayoutEffect,useState,useRef} from 'react'
+import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
+import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import './ziwei-v68.css'
 
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
@@ -20,9 +21,22 @@ export default function ZiweiV68(){
  const [fourSchool,setFourSchool]=useState('quanshu')
  const [chart,setChart]=useState(null)
  const [selected,setSelected]=useState(null)
+ const [resultSection,setResultSection]=useState('palaces')
  const [busy,setBusy]=useState(false)
  const [error,setError]=useState('')
  const requestVersion=useRef(0)
+ const palaceDetailHeading=useRef(null)
+ const chosenPalaceButton=useRef(null)
+ const restorePalaceFocus=useRef(false)
+ const castPage=useCastPage('ziwei',!!chart)
+ useLayoutEffect(()=>{
+   if(!castPage.compact||castPage.page!=='result')return
+   if(resultSection==='palace')palaceDetailHeading.current?.focus({preventScroll:true})
+   if(resultSection==='palaces'&&restorePalaceFocus.current){
+     restorePalaceFocus.current=false
+     chosenPalaceButton.current?.focus({preventScroll:true})
+   }
+ },[castPage.compact,castPage.page,resultSection])
  function invalidate(){
    requestVersion.current+=1
    setChart(null);setSelected(null);setError('');setBusy(false)
@@ -43,7 +57,8 @@ export default function ZiweiV68(){
      if(!res.ok)throw new Error(typeof result.detail==='string'?
        result.detail:'出生日期、闰月或时辰无效')
      if(ticket===requestVersion.current){
-       setChart(result);setSelected(result.ming_branch)
+       setChart(result);setSelected(result.ming_branch);setResultSection('palaces')
+       castPage.showResult()
      }
    }catch(e){
      if(ticket===requestVersion.current)setError(e.message||'排盘失败')
@@ -53,7 +68,9 @@ export default function ZiweiV68(){
  }
  const chosen=chart?.palaces?.find(p=>p.branch===selected)
  return <section className="ziwei-v68" aria-label="V69 紫微四化与辅曜真实排盘">
-   <header><small>V69 · 紫微斗数 / 四化与辅曜</small>
+   <CastPageNav title="紫微斗数" hasResult={!!chart} {...castPage}/>
+   <CastPagePane name="form" {...castPage}>
+   <header className="ziwei-cast-title"><small>V69 · 紫微斗数 / 四化与辅曜</small>
      <h2>十四正曜 · 十二辅煞 · 生年四化</h2>
      <p className="cast-form-desktop-notes">{CAST_NOTES}</p>
    </header>
@@ -105,8 +122,10 @@ export default function ZiweiV68(){
    </form>
    {error&&<p role="alert" className="ziwei-v68-error">{error}</p>}
    <details className="cast-form-mobile-notes"><summary>紫微排盘说明</summary><p>{CAST_NOTES}</p></details>
-   {chart&&<div className="ziwei-v68-result" tabIndex={-1} ref={focusCastResultOnMobile}>
-     <CastResultPanels label="紫微结果分类" defaultValue="palaces">
+   </CastPagePane>
+   <CastPagePane name="result" {...castPage}>
+   {chart&&<div className="ziwei-v68-result">
+     <CastResultPanels label="紫微结果分类" value={resultSection} onValueChange={setResultSection}>
      <CastResultPanel value="summary" label="命盘四化">
      <div className="ziwei-v68-summary">
        <h3>{chart.year_ganzhi}年 · {chart.five_element_bureau.label}</h3>
@@ -133,7 +152,11 @@ export default function ZiweiV68(){
            style={{gridRow:POS[p.branch][0],gridColumn:POS[p.branch][1]}}
            className={['ziwei-v68-palace',p.is_ming?'ming':'',
               p.is_shen?'shen':'',selected===p.branch?'selected':''].join(' ')}
-           aria-pressed={selected===p.branch} onClick={()=>setSelected(p.branch)}>
+           ref={selected===p.branch?chosenPalaceButton:undefined}
+           aria-pressed={selected===p.branch} onClick={()=>{
+             setSelected(p.branch)
+             if(castPage.compact)setResultSection('palace')
+           }}>
            <small>{p.ganzhi} · {p.name}</small>
            <strong>{p.main_stars.join(' · ')||'无十四主星'}</strong>
            {p.auxiliary_stars?.length>0&&<small className="ziwei-v69-aux">
@@ -149,8 +172,14 @@ export default function ZiweiV68(){
          </div>
        </div>
      </div>
+     </CastResultPanel>
+     <CastResultPanel value="palace" label="宫位详情">
      {chosen&&<section className="ziwei-v68-picked" aria-label="当前选中的紫微宫位" aria-live="polite">
-       <h3>{chosen.ganzhi} · {chosen.name}</h3>
+       {castPage.compact&&<button type="button" className="ziwei-v68-back-to-palaces" onClick={()=>{
+         restorePalaceFocus.current=true
+         setResultSection('palaces')
+       }}>← 返回十二宫</button>}
+       <h3 ref={palaceDetailHeading} tabIndex={-1}>{chosen.ganzhi} · {chosen.name}</h3>
        <p>十四正曜：{chosen.main_stars.join('、')||'本宫无十四主星，不代表没有其他星曜'}。</p>
        {chart.auxiliary_star_positions&&<p>已安辅煞：
          {chosen.auxiliary_stars?.join('、')||'本宫未见本版十二颗辅煞星'}。</p>}
@@ -185,5 +214,6 @@ export default function ZiweiV68(){
      </CastResultPanel>
      </CastResultPanels>
    </div>}
+   </CastPagePane>
  </section>
 }

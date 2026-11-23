@@ -4,6 +4,7 @@ import './liuyao-mobile.css'
 import SixYaoFullChart from './SixYaoFullChart.jsx'
 import SixYaoJointOverview from './SixYaoJointOverview.jsx'
 import SixYaoCombinationPanel from './SixYaoCombinationPanel.jsx'
+import {useCastPage} from './CastPage.jsx'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 import {shareCaseFromArchive} from './case-exchange.js'
 import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
@@ -1513,6 +1514,20 @@ const REVIEW_STEPS=[
   {id:'conflicts',title:'参空破',no:'四'},
   {id:'report',title:'成研究案',no:'五'}
 ]
+const REVIEW_SECTIONS=[
+  {id:'focus',title:'用神与飞伏',pages:[
+    ['focus-decision','研习主爻'],['focus-comparison','用神候选对照'],['fushen','飞伏神']
+  ]},
+  {id:'conflicts',title:'日月与空破',pages:[
+    ['cross-conditions','旺衰空破交叉核验'],['void-context','真假旬空'],
+    ['temporal','时序核对'],['void-interactions','旬空、冲空与化空']
+  ]},
+  {id:'report',title:'报告与复盘',pages:[
+    ['workbook','研判草稿'],['archive','本机案例簿']
+  ]},
+]
+const REVIEW_PARENT=Object.fromEntries(REVIEW_SECTIONS.flatMap(section=>
+  section.pages.map(([id])=>[id,section.id])))
 const LIUYAO_CAST_GUIDE=<>
   本工坊按《增删卜易》三钱六掷法演示。先取初爻，再从下向上记到上爻。
   <a href="https://zh.wikisource.org/zh-hans/增删卜易/2" target="_blank" rel="noopener noreferrer">阅读古籍来源 ↗</a>
@@ -2110,12 +2125,18 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   const [mobileResult,setMobileResult]=useState('board')
   const [relationsView,setRelationsView]=useState('summary')
   const [studioView,setStudioView]=useState('casting')
+  const castPage=useCastPage('liuyao',Boolean(chart))
   const resultPanelId=useId()
   const requestNumber=useRef(0)
   const reviewNavRef=useRef(null)
   const timer=useRef(null)
   useEffect(()=>()=>clearTimeout(timer.current),[])
+  useEffect(()=>{
+    if(castPage.compact)setStudioView(castPage.page==='result'?'analysis':'casting')
+  },[castPage.compact,castPage.page])
   function openStudio(target) {
+    if(target==='analysis')castPage.showResult()
+    else castPage.showForm()
     setStudioView(target)
     window.requestAnimationFrame?.(()=>window.scrollTo({
       top:0,behavior:window.matchMedia?.('(max-width: 650px), (prefers-reduced-motion: reduce)').matches?'auto':'smooth'
@@ -2206,10 +2227,16 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   }
   function selectMobileResult(event){
     const result=event.target.value
-    if(result==='ai')setReviewStage('report')
+    if(REVIEW_PARENT[result])setReviewStage(REVIEW_PARENT[result])
     if(REVIEW_STEPS.some(step=>step.id===result))setReviewStage(result)
     setMobileResult(result)
     window.requestAnimationFrame?.(()=>window.scrollTo({top:0,behavior:'auto'}))
+  }
+  function studyPage(id,children,available=true){
+    return <section id={id===reviewStage?undefined:`${resultPanelId}-${id}`}
+      className="liuyao-study-page" data-current={mobileResult===id}>
+      {available?children:mobileResult===id&&<p className="liuyao-state-message" role="status">本次排盘暂无这项结果。</p>}
+    </section>
   }
   async function interpret(){
     if(!chart||busy||calendarBusy)return
@@ -2231,7 +2258,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
     }catch(e){setError(e.message)}
     finally{setBusy(false)}
   }
-  return <main className="academy-stage academy-stage--liuyao">
+  return <main className="academy-stage academy-stage--liuyao" data-studio-view={studioView}>
     <div className="academy-container">
       <header className="academy-stage-nav"><button onClick={onBack}>← 返回万象书院</button><b>铜钱六爻 · 六次成卦</b><button onClick={onStudy}>藏经阁 ◎</button></header>
       <section className="academy-stage-banner"><div>
@@ -2262,12 +2289,19 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
               value={mobileResult} onChange={selectMobileResult} disabled={calendarBusy}>
               <optgroup label="卦盘总览">
                 <option value="board">本卦与完整装卦</option>
+                <option value="hexagrams">本卦和之卦图</option>
                 <option value="joint">用神与动变合参</option>
                 <option value="combinations">三合与六合</option>
               </optgroup>
               <optgroup label="五步研判">{REVIEW_STEPS.map(step=>
                 <option key={step.id} value={step.id}>{step.title}</option>)}</optgroup>
-              <option value="ai">AI 解读与卦例笔记</option>
+              {REVIEW_SECTIONS.map(section=><optgroup key={section.id} label={section.title}>
+                {section.pages.map(([id,label])=><option key={id} value={id}>{label}</option>)}
+              </optgroup>)}
+              <optgroup label="其他">
+                <option value="ai">AI 解读</option>
+                <option value="notebook">卦例笔记</option>
+              </optgroup>
             </select>
           </label>
         </div>}
@@ -2320,9 +2354,11 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
           })}</div>
           {chart?<div className="academy-computed">
             <p className="liuyao-workbench-lead">研判台 · 先看本卦与之卦，再选一个步骤。想修改六爻，可返回「起卦台」。</p>
-            <div id={`${resultPanelId}-board`} className="liuyao-result-panel" data-current={mobileResult==='board'}>
+            <div id={`${resultPanelId}-hexagrams`} className="liuyao-result-panel" data-current={mobileResult==='hexagrams'}>
               <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
               <p className="liuyao-moving-summary">动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>
+            </div>
+            <div id={`${resultPanelId}-board`} className="liuyao-result-panel" data-current={mobileResult==='board'}>
               <SixYaoFullChart chart={chart}/>
             </div>
             <div id={`${resultPanelId}-joint`} className="liuyao-result-panel" data-current={mobileResult==='joint'}>
@@ -2343,9 +2379,10 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
                 </button>
               })}
             </nav>
-            <div id={`${resultPanelId}-${reviewStage}`} className="liuyao-result-panel" data-current={mobileResult===reviewStage}>
+            <div id={`${resultPanelId}-${reviewStage}`} className="liuyao-result-panel liuyao-review-page"
+              data-current={mobileResult===reviewStage||REVIEW_PARENT[mobileResult]===reviewStage}>
             {chart.review_flow?.stages?.filter(x=>x.id===reviewStage).map(step=>
-              <p className="review-flow-message" key={step.id} role="status">
+              <p className="review-flow-message" key={step.id} role="status" data-current={mobileResult===reviewStage}>
                 <b>{step.summary}</b><span>{step.action}</span>
               </p>)}
             {reviewStage==='calendar'&&<>
@@ -2360,15 +2397,15 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
               </details>
             </>}
             {reviewStage==='focus'&&<>
-              <YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>
-              <FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>
-              <FocusComparisonStudy chart={chart}/>
-              {chart.focus_decision?.status==='not_visible'?
+              {studyPage('focus',<YongshenGuide chart={chart} chosen={focusLiugin} onChoose={chooseFocus} busy={calendarBusy}/>)}
+              {studyPage('focus-decision',<FocusDecisionStudy chart={chart} onChoose={chooseStudyPosition} busy={calendarBusy}/>,Boolean(chart.focus_decision))}
+              {studyPage('focus-comparison',<FocusComparisonStudy chart={chart}/>,Boolean(chart.focus_comparison))}
+              {studyPage('fushen',chart.focus_decision?.status==='not_visible'?
                 <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>:
-                <details className="liuyao-depth-panel">
+                <details className="liuyao-depth-panel liuyao-page-details" open={castPage.compact||undefined}>
                   <summary>飞伏神装配详情（需要时展开）</summary>
                   <FuShenStudy chart={chart} onChoose={chooseFocus} busy={calendarBusy}/>
-                </details>}
+                </details>,Boolean(chart.fushen))}
             </>}
             {reviewStage==='relations'&&<>
               <p className="relations-view-hint">左右滑动切换研习专题，已排好的卦盘不会改变。</p>
@@ -2416,23 +2453,25 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
               }
             </>}
             {reviewStage==='conflicts'&&<>
-              <DayMonthReview chart={chart}/>
-              <CrossConditionAuditStudy chart={chart}/>
-              <VoidContextStudy chart={chart}/>
-              <TemporalReviewStudy chart={chart}/>
-              <details className="liuyao-depth-panel">
+              {studyPage('conflicts',<DayMonthReview chart={chart}/>)}
+              {studyPage('cross-conditions',<CrossConditionAuditStudy chart={chart}/>,Boolean(chart.cross_condition_audit))}
+              {studyPage('void-context',<VoidContextStudy chart={chart}/>,Boolean(chart.void_context_review))}
+              {studyPage('temporal',<TemporalReviewStudy chart={chart}/>,Boolean(chart.temporal_review))}
+              {studyPage('void-interactions',<details className="liuyao-depth-panel liuyao-page-details" open={castPage.compact||undefined}>
                 <summary>进一步核对：旬空、冲空、化空与伏神合参</summary>
                 <VoidInteractionsStudy chart={chart}/>
-              </details>
+              </details>,Boolean(chart.void_interactions))}
             </>}
             {reviewStage==='report'&&<>
-              <HumanReviewWorkbook chart={chart} question={question}/>
-              <ReviewReport chart={chart} question={question}/>
-              <details className="liuyao-depth-panel">
+              {studyPage('workbook',<HumanReviewWorkbook chart={chart} question={question}/>,Boolean(chart.review_sheet))}
+              {studyPage('report',<>
+                <ReviewReport chart={chart} question={question}/>
+                <div className="academy-scope">{chart.review_flow?.workflow_note}</div>
+              </>)}
+              {studyPage('archive',<details className="liuyao-depth-panel liuyao-page-details" open={castPage.compact||undefined}>
                 <summary>案例簿 · 封存事前研习与事后复盘</summary>
                 <ChineseLocalCaseArchive chart={chart} question={question}/>
-              </details>
-              <div className="academy-scope">{chart.review_flow?.workflow_note}</div>
+              </details>,Boolean(chart.review_flow?.report))}
             </>}
             <div className="review-flow-footer">
               <button type="button" disabled={reviewStage==='calendar'||calendarBusy}
@@ -2445,10 +2484,10 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
           </div>:<div className="academy-empty-result">铜钱逐次成爻，六爻齐备后展示完整本卦、之卦、动爻与传统象义。</div>}
         </section>
       </div>
-      {chart&&studioView==='analysis'&&reviewStage==='report'&&<section id={`${resultPanelId}-ai`}
-        className="academy-ai-section liuyao-ai-panel" data-current={mobileResult==='ai'}>
-        <h2>AI 解读与卦例笔记</h2>
-        <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲；如果你确认日辰和月支，还能参考六神、旬空和月建辅助标记。原神忌神仇神已能按静态五行关系定位；缺失六亲的伏神也能按本宫首卦装配；日月作用与动变回头生克冲合已按规则计算。动爻对本卦其他爻的作用以及月令旺相余气分类也已计算，但自动农历／公历换算预览已支持北京时间；精细用神取舍及完整旺衰仍未实现；旬空、冲空、化空以及空破交互已经逐项标记，不能凭此确定吉凶与应期。两现候选现可逐条对照，并由求测者选择研习主爻，但不会自动择优。你手动选择的关注对象会交给 AI 作为讨论线索，而非确定判断。</p>
+      {chart&&<div className="liuyao-extra-pages" hidden={studioView!=='analysis'} data-desktop-current={reviewStage==='report'}>
+      <section id={`${resultPanelId}-ai`} className="academy-ai-section liuyao-ai-panel liuyao-study-page" data-current={mobileResult==='ai'}>
+        <h2>AI 解读</h2>
+        <p>补充所问和现实背景，结合已完成的排盘讨论卦意。</p>
         <div className="academy-ai-inputs">
           <label>你想问什么<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如我和朋友的合作是否适合继续？"/></label>
           <label>补充一次现实背景<textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="目前到了哪一步？现实障碍是什么？"/></label>
@@ -2457,8 +2496,15 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
           <button onClick={onStudy}>设置 DeepSeek API</button></div>
         {error&&<p className="academy-error" role="alert">{error}</p>}
         {answer&&<div className="academy-answer"><h3>卦象研究笔记</h3><p>{answer}</p></div>}
+        <details className="liuyao-depth-panel">
+          <summary>查看解读依据</summary>
+          <p>AI 可结合实际问题讨论已计算的八宫世应、纳甲六亲。确认日辰和月支后，还能参考六神、旬空和月建。原神、忌神、仇神按五行关系定位，伏神按本宫首卦装配。可查日月、动变、节令旺相余气和空破交互的计算记录。你手动选择的关注对象也会作为讨论线索。用神取舍、完整旺衰、吉凶和应期仍需结合具体情况研习。</p>
+        </details>
+      </section>
+      <section id={`${resultPanelId}-notebook`} className="liuyao-study-page liuyao-notebook-page" data-current={mobileResult==='notebook'}>
         <CaseNotebook method="六爻三钱起卦" question={question} chart={chart}/>
-      </section>}
+      </section>
+      </div>}
       <footer className="academy-bottom">一门一法，不以梅花体用硬套六爻 · 观象研究，不作确定预测</footer>
     </div>
   </main>
