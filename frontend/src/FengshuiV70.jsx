@@ -33,7 +33,7 @@ function FengshuiCompass({chart}){
   </div>
 }
 
-function FengshuiAxisGuide({chart,collapsed}){
+function FengshuiAxisGuide({chart,collapsed,enteredBearing}){
   const input=chart.input
   const isMagnetic=input.north_reference==='magnetic_north'
   const enteredEnd=input.bearing_role==='sitting'?'坐山':'朝向'
@@ -49,7 +49,7 @@ function FengshuiAxisGuide({chart,collapsed}){
         `这次输入的是${enteredEnd}，读数已按真北记，可直接在罗盘上找这一端。`,
       layout:'sequence',
       items:[
-        {label:`输入${enteredEnd}`,value:`${input.bearing_degrees}°`},
+        {label:`输入${enteredEnd}`,value:`${enteredBearing}°`},
         ...(isMagnetic?[{label:'手填磁偏角',value:`${input.magnetic_declination_degrees}°`}]:[]),
         {label:'真北角度',value:`${chart.true_bearing_degrees}°`,active:true},
       ],
@@ -124,6 +124,7 @@ export default function FengshuiV70(){
     }
   }
   const picked=chart?.twenty_four_mountains?.find(x=>x.mountain===selectedMountain)
+  const enteredBearing=Number(bearing)
   return <section className="fengshui-v70" aria-label="V71 堪舆二十四山与玄空飞星计算">
     <CastPageNav title="堪舆风水" hasResult={!!chart} {...castPage}/>
     <CastPagePane name="form" {...castPage}>
@@ -201,7 +202,7 @@ export default function FengshuiV70(){
             <small>{chart.facing.direction} · {chart.facing.element}</small>
           </article>
         </div>
-        <p>输入 {chart.input.bearing_degrees}°（{chart.input.bearing_role==='facing'?'朝向':'坐山'}）；
+        <p>输入 {enteredBearing}°（{chart.input.bearing_role==='facing'?'朝向':'坐山'}）；
           {chart.input.north_reference==='true_north'?'真北角度':'磁北角度（手输磁偏角 '+chart.input.magnetic_declination_degrees+'°）'}；
           换算真北角 {chart.true_bearing_degrees}°。</p>
         {chart.near_boundary&&<p className="fengshui-v70-warning" role="status">
@@ -257,10 +258,12 @@ export default function FengshuiV70(){
         </article>)}
       </div>
       <p className="fengshui-v70-note">九宫上南下北、左东右西；中五不对应二十四山。
-        {chart.flying_stars?'每宫三数字为实际计算的运星、山星、向星；不会自动判断吉凶。':'此处只显示固定后天方位；没有立极日期就不显示飞星盘。'}</p>
+        {chart.flying_stars?'每宫三数字为实际计算的运星、山星、向星；不会自动判断吉凶。':
+          chart.period?'本次已按立极日期定运。上方有角度复核提示，可在「坐向运期」查看详情。':
+          '这里显示固定后天方位。启用玄空三盘并填写实际立极日期可进一步定运。'}</p>
       </CastResultPanel>
       <CastResultPanel value="guide" label="跟着看">
-        <FengshuiAxisGuide chart={chart} collapsed={!castPage.compact}/>
+        <FengshuiAxisGuide chart={chart} collapsed={!castPage.compact} enteredBearing={enteredBearing}/>
       </CastResultPanel>
       {chart.flying_stars&&<CastResultPanel value="flight" label="飞布路径">
       <section className="fengshui-v71-trace"
@@ -312,7 +315,7 @@ export default function FengshuiV70(){
           {chart.compass_convention.magnetic_declination}。</p>
         {chart.warnings.map((w,i)=><p key={i} className="fengshui-v70-warning">{w}</p>)}
         <p>暂未实现：{chart.not_implemented.join('、')}。</p>
-        {chart.sources.period_and_lower_chart&&<a
+        {chart.period&&chart.sources.period_and_lower_chart&&<a
           href={chart.sources.period_and_lower_chart.independent_period8_zi_wu}
           target="_blank" rel="noopener noreferrer">查看玄空三盘独立验收例课 ↗</a>}
         <a href={chart.sources.mountain_chart} target="_blank" rel="noopener noreferrer">

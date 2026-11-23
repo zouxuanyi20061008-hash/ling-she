@@ -1,4 +1,4 @@
-import {useRef,useState} from 'react'
+import {useLayoutEffect,useRef,useState} from 'react'
 import './academy.css'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
@@ -34,7 +34,7 @@ function TaiyiHourLesson({chart,compact}){
   ]}/>
 }
 
-export default function TaiyiV77Hour({id,active=true}){
+export default function TaiyiV77Hour({id,active=true,onResultAvailability}){
   const [date,setDate]=useState(CN_DATE)
   const [clock,setClock]=useState(CN_CLOCK)
   const [chart,setChart]=useState(null)
@@ -43,6 +43,7 @@ export default function TaiyiV77Hour({id,active=true}){
   const [doorSchool,setDoorSchool]=useState('jinjing_taiyi')
   const version=useRef(0)
   const castPage=useCastPage('taiyi',!!chart,{enabled:active})
+  useLayoutEffect(()=>{onResultAvailability?.(!!chart)},[chart,onResultAvailability])
   function invalidate(){
     version.current+=1
     setChart(null);setBusy(false);setError('')

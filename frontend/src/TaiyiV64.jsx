@@ -1,10 +1,10 @@
-import {useId,useRef,useState} from 'react'
+import {useEffect,useId,useLayoutEffect,useRef,useState} from 'react'
 import './academy.css'
 import './taiyi-mobile.css'
 import './taiyi-result-panels.css'
 import TaiyiV77Hour from './TaiyiV77Hour.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
-import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
+import {useCastPage,useCompactCastLayout,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
@@ -51,8 +51,29 @@ function TaiyiYearLesson({chart,compact}){
 export default function TaiyiV64(){
   const castId=useId()
   const castPanel=useRef(null)
+  const hasResult=useRef({hour:false,year:false})
+  const pendingCast=useRef(null)
+  const compact=useCompactCastLayout()
   const [activeCast,setActiveCast]=useState('hour')
+  useEffect(()=>{
+    function finishModeSwitch(){
+      if(pendingCast.current===null||window.location.hash!=='#taiyi')return
+      const mode=pendingCast.current
+      pendingCast.current=null
+      setActiveCast(mode)
+    }
+    window.addEventListener('popstate',finishModeSwitch)
+    return ()=>window.removeEventListener('popstate',finishModeSwitch)
+  },[])
   function selectCast(mode){
+    if(pendingCast.current!==null)return
+    // 回到已有的参数历史项，让尚无盘面的模式接续该页。
+    if(compact&&mode!==activeCast&&!hasResult.current[mode]&&
+      window.location.hash==='#taiyi/result'&&window.history.state?.castInput==='taiyi'){
+      pendingCast.current=mode
+      window.history.back()
+      return
+    }
     setActiveCast(mode)
     castPanel.current?.scrollIntoView?.({block:'start'})
   }
@@ -63,12 +84,14 @@ export default function TaiyiV64(){
       <button type="button" aria-pressed={activeCast==='year'} aria-controls={`${castId}-year`}
         onClick={()=>selectCast('year')}>岁计排盘</button>
     </div>
-    <TaiyiYear id={`${castId}-year`} active={activeCast==='year'}/>
-    <TaiyiV77Hour id={`${castId}-hour`} active={activeCast==='hour'}/>
+    <TaiyiYear id={`${castId}-year`} active={activeCast==='year'}
+      onResultAvailability={available=>{hasResult.current.year=available}}/>
+    <TaiyiV77Hour id={`${castId}-hour`} active={activeCast==='hour'}
+      onResultAvailability={available=>{hasResult.current.hour=available}}/>
   </div>
 }
 
-function TaiyiYear({id,active}){
+function TaiyiYear({id,active,onResultAvailability}){
   const [year,setYear]=useState(YEAR_NOW)
   const [chart,setChart]=useState(null)
   const [busy,setBusy]=useState(false)
@@ -78,6 +101,7 @@ function TaiyiYear({id,active}){
   const [samePalaceRule,setSamePalaceRule]=useState('wubeizhi')
   const requestVersion=useRef(0)
   const castPage=useCastPage('taiyi',!!chart,{enabled:active})
+  useLayoutEffect(()=>{onResultAvailability(!!chart)},[chart,onResultAvailability])
   function invalidate(){
     requestVersion.current+=1
     setChart(null);setBusy(false);setError('')

@@ -122,3 +122,14 @@ def test_v71_api_calendar_validation_and_old_v70_compatibility():
         assert res.status_code==422,(patch,res.text)
     assert client.post("/api/fengshui/cast",json={
       **body,"north_reference":"magnetic_north"}).status_code==422
+
+
+def test_v71_sources_do_not_leak_into_later_basic_casts():
+    client=TestClient(app)
+    advanced=client.post("/api/fengshui/cast",json={
+        "bearing_degrees":180,"foundation_date":"2019-06-01","foundation_clock":"12:00",
+    })
+    basic=client.post("/api/fengshui/cast",json={"bearing_degrees":180})
+    assert advanced.status_code==basic.status_code==200
+    assert "period_and_lower_chart" in advanced.json()["sources"]
+    assert "period_and_lower_chart" not in basic.json()["sources"]

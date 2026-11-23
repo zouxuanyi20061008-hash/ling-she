@@ -366,6 +366,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
   const [turnVersion, setTurnVersion] = useState(0)
   const [readingTab, setReadingTab] = useState('xiantian')
   const touchOrigin = useRef(null)
+  const requestVersion = useRef(0)
   const readingNavId = useId()
   const lastResultPage = useRef(1)
   const hasChart = Boolean(chart)
@@ -374,6 +375,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
   useEffect(()=>{
     if(castPage.compact) setPage(castPage.page==='result'&&hasChart?lastResultPage.current:0)
   },[castPage.compact,castPage.page,hasChart])
+  useEffect(()=>()=>{requestVersion.current+=1},[])
 
   function showReadingSection(id) {
     setReadingTab(id)
@@ -412,6 +414,8 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
   }
 
   function clearResult() {
+    requestVersion.current+=1
+    setBusy(false)
     setChart(null)
     setInterpretation('')
     setError('')
@@ -437,6 +441,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
     setObservationOpen(true)
   }
   async function submit(withAi, override = manualOverride, confirmedContext = false, numbers = observationOverride) {
+    const requestId=++requestVersion.current
     setBusy(true)
     setError('')
     setInterpretation('')
@@ -474,6 +479,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         }, body: JSON.stringify(req)
       })
       const data = await response.json()
+      if(requestId!==requestVersion.current)return
       if (!response.ok) {
         const detail = data.detail
         if (detail?.code === 'NUMBERS_REQUIRED') {
@@ -500,8 +506,10 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
       }
       if (requestInterpretation) setInterpretation(data.interpretation)
     } catch (e) {
-      setError(e.message || '网络错误')
-    } finally { setBusy(false) }
+      if(requestId===requestVersion.current)setError(e.message || '网络错误')
+    } finally {
+      if(requestId===requestVersion.current)setBusy(false)
+    }
   }
 
   function confirmObservation() {

@@ -67,3 +67,27 @@ it('V57 default response V55 remains usable and no unsolicited flow dates',async
  expect(screen.queryByRole('group',{name:'十二节令流月表'})).toBeNull()
  expect(screen.queryByRole('button',{name:'流年流月'})).toBeNull()
 })
+
+it.each([
+ ['八字流年日期','',/流年流月日期/],
+ ['八字流年日期','2100-01-01',/流年流月日期/],
+ ['八字流年北京时间','',/流年流月北京时间/],
+])('手机收起无效的 %s 后可见提示并聚焦该字段',async(label,value,message)=>{
+ const request=vi.fn()
+ vi.stubGlobal('fetch',request)
+ vi.stubGlobal('scrollTo',vi.fn())
+ vi.stubGlobal('matchMedia',()=>({matches:true,addEventListener:()=>{},removeEventListener:()=>{}}))
+ render(<KnowledgeStage mode="bazi" onBack={()=>{}} onStudy={()=>{}}/>)
+ const options=screen.getByRole('button',{name:/大运与流年设置/})
+ fireEvent.click(options)
+ fireEvent.click(screen.getByLabelText('启用流年流月'))
+ const field=screen.getByLabelText(label)
+ fireEvent.change(field,{target:{value}})
+ fireEvent.click(options)
+ expect(options.getAttribute('aria-expanded')).toBe('false')
+ fireEvent.click(screen.getByRole('button',{name:'排四柱 · 查流年流月'}))
+ expect(request).not.toHaveBeenCalled()
+ expect(options.getAttribute('aria-expanded')).toBe('true')
+ expect(screen.getByRole('alert').textContent).toMatch(message)
+ await waitFor(()=>expect(document.activeElement).toBe(field))
+})

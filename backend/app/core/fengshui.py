@@ -155,7 +155,7 @@ def cast_fengshui(bearing_degrees: float, bearing_role: str = "facing",
         "warnings": warnings, "not_implemented": [
             "实地真北测量或设备定位", "自动地磁偏角查询", "玄空飞星和三元九运",
             "兼向与分金流派细算", "形势判断及吉凶断语"
-        ], "sources": SOURCES,
+        ], "sources": SOURCES.copy(),
     }
 
     if foundation_date is not None:

@@ -197,6 +197,19 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
     baziRequest.current+=1
     setBaziChart(null);setBaziBusy(false);setBaziError('')
   }
+  function revealInvalidBaziFlow(event){
+    if(!baziPage.compact||baziOptionsOpen)return
+    // Native validation cannot focus a field inside the folded mobile options.
+    event.preventDefault()
+    const field=event.target
+    const firstInvalid=Array.from(field.form.elements).find(control=>control.willValidate&&!control.validity.valid)
+    if(firstInvalid!==field)return
+    setBaziOptionsOpen(true)
+    setBaziError(field.type==='date'
+      ?'请填写有效的流年流月日期（1901—2099 年）。'
+      :'请填写有效的流年流月北京时间。')
+    window.requestAnimationFrame(()=>field.focus())
+  }
   async function castActualBazi(event){
     event.preventDefault()
     if(!baziDate||!baziClock)return
@@ -480,7 +493,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             aria-expanded={baziOptionsOpen} onClick={()=>setBaziOptionsOpen(open=>!open)}>
             大运与流年设置{baziLuckMode!=='none'||baziFlowEnabled?' · 已选':''}
           </button>
-          <div id={baziOptionsId} className="bazi-v55-extra-options" data-open={baziOptionsOpen}>
+          <div id={baziOptionsId} className="bazi-v55-extra-options" data-open={baziOptionsOpen} onInvalid={revealInvalidBaziFlow}>
           <label>大运顺逆（可选，不推断性别）
             <select aria-label="大运顺逆规则" value={baziLuckMode}
               onChange={e=>{setBaziLuckMode(e.target.value);invalidateBazi()}}>

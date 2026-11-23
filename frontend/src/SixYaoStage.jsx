@@ -52,9 +52,12 @@ function SolarDateAssist({day,month,onApply,busy}){
   const [preview,setPreview]=useState(null)
   const [error,setError]=useState('')
   const request=useRef(0)
-  const change=(setter,value)=>{
+  function invalidatePreview(){
     request.current+=1
-    setter(value);setPreview(null);setError('')
+    setLoading(false);setPreview(null);setError('')
+  }
+  const change=(setter,value)=>{
+    setter(value);invalidatePreview()
   }
   function currentTime(){
     const parts=new Intl.DateTimeFormat('en-GB',{
@@ -62,10 +65,10 @@ function SolarDateAssist({day,month,onApply,busy}){
       hour:'2-digit',minute:'2-digit',hourCycle:'h23'
     }).formatToParts(new Date())
     const v=x=>parts.find(p=>p.type===x)?.value||'00'
-    request.current+=1;setMode('solar')
+    setMode('solar')
     setDate(v('year')+'-'+v('month')+'-'+v('day'))
     setClock(v('hour')+':'+v('minute'))
-    setPreview(null);setError('')
+    invalidatePreview()
   }
   async function calculate(){
     if(mode==='solar'&&!date){setError('请选择公历（阳历）日期。');return}
