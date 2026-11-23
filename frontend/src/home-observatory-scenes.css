@@ -199,7 +199,7 @@
   background: radial-gradient(circle at 50% 0, #70684e, #3e3f2c 58%, #343a2e);
 }
 
-.home-diorama .home-ziwei-grid .home-experience-pick:has([data-origin]) {
+.home-diorama .home-ziwei-grid .home-experience-pick:has([data-origin]):not([aria-pressed="true"]) {
   border-color: #d9bc86;
   background: linear-gradient(147deg, #655470, #3c385d 53%, #2d314e);
   box-shadow: inset 0 0 0 1px #f9bd6f5c, 0 3px 0 #252340, 0 0 11px #f7ca7263;
@@ -243,7 +243,9 @@
   transform: rotate(31deg) rotateY(33deg);
 }
 
-.home-diorama .home-ziwei-grid::after {
+.home-diorama .home-ziwei-grid[data-axis="falling"] { --ziwei-axis-angle: 15deg; }
+
+.home-diorama .home-ziwei-grid[data-axis]::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -254,13 +256,13 @@
   opacity: 0;
   background: linear-gradient(90deg, #fff1bb, #f8ce79 23%, transparent 44% 56%, #f8ce79 77%, #fff1bb);
   box-shadow: 0 0 12px #f0bf73;
-  transform: translateZ(3px) rotate(-15deg) scaleX(.3);
+  transform: translateZ(3px) rotate(var(--ziwei-axis-angle, -15deg)) scaleX(.3);
   transition: opacity 240ms ease, transform 240ms ease;
 }
 
-.home-diorama[data-scene="ziwei"][data-solved="true"] .home-ziwei-grid::after {
+.home-diorama[data-scene="ziwei"][data-solved="true"] .home-ziwei-grid[data-axis]::after {
   opacity: .94;
-  transform: translateZ(3px) rotate(-15deg) scaleX(1);
+  transform: translateZ(3px) rotate(var(--ziwei-axis-angle, -15deg)) scaleX(1);
 }
 
 .home-diorama[data-scene="ziwei"][data-solved="true"] .home-ziwei-center::before,
@@ -282,5 +284,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick,
-  .home-diorama .home-ziwei-grid::after { transition: none; }
+  .home-diorama .home-ziwei-grid[data-axis]::after { transition: none; }
 }

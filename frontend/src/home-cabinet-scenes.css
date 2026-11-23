@@ -123,6 +123,14 @@
   font: 750 clamp(23px, 6.5vw, 31px)/1.15 'Noto Serif SC', 'Songti SC', SimSun, serif;
 }
 
+.home-diorama[data-scene='bazi'] .home-experience-pick:has(small) {
+  gap: 0;
+}
+
+.home-diorama[data-scene='bazi'] .home-experience-pick:has(small) strong {
+  font-size: clamp(22px, 5.5vw, 25px);
+}
+
 .home-diorama[data-scene='bazi'] .home-experience-pick + .home-experience-pick {
   border-top-color: #a27d4538;
 }
@@ -169,8 +177,12 @@
 }
 
 .home-diorama[data-scene='fengshui'][data-pick='北'] { --needle-heading: 0deg; }
+.home-diorama[data-scene='fengshui'][data-pick='东北'] { --needle-heading: 45deg; }
+.home-diorama[data-scene='fengshui'][data-pick='东南'] { --needle-heading: 135deg; }
 .home-diorama[data-scene='fengshui'][data-pick='南'] { --needle-heading: 180deg; }
+.home-diorama[data-scene='fengshui'][data-pick='西南'] { --needle-heading: 225deg; }
 .home-diorama[data-scene='fengshui'][data-pick='西'] { --needle-heading: 270deg; }
+.home-diorama[data-scene='fengshui'][data-pick='西北'] { --needle-heading: 315deg; }
 .home-diorama[data-scene='fengshui'][data-solved='true'] { --needle-tip: #c6ecb9; }
 
 .cabinet-luopan-block {
@@ -268,6 +280,14 @@
   width: min(100%, 218px);
   margin: 0 auto;
   isolation: auto;
+}
+
+.home-diorama[data-scene='fengshui'] .home-compass[data-diagonal] {
+  grid-template:
+    "direction-315 direction-0 direction-45"
+    "direction-270 . direction-90"
+    "direction-225 direction-180 direction-135" / 48px 48px 48px;
+  justify-content: center;
 }
 
 .home-diorama[data-scene='fengshui'] .home-experience-pick {

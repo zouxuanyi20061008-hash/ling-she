@@ -5,7 +5,11 @@ import {afterEach,it,expect,vi} from 'vitest'
 import {cleanup,fireEvent,render,screen,within} from '@testing-library/react'
 import ArtsHub from '../src/ArtsHub.jsx'
 
-afterEach(()=>{cleanup();vi.restoreAllMocks()})
+afterEach(()=>{
+  cleanup()
+  localStorage.removeItem('lingshe.home-challenges.v1')
+  vi.restoreAllMocks()
+})
 
 function renderHome(overrides={}) {
   const props={
@@ -126,4 +130,48 @@ it('可直达各术数小玩法，改动只发生在样盘，并能进入对应�
     fireEvent.click(card.getByRole('button',{name:`进入${name}工坊`}))
     expect(props.onSelect).toHaveBeenLastCalledWith(route)
   }
+},15000)
+
+it('八卦挑战能提示、重试、从存档继续、通关和重玩',()=>{
+  const explorer=()=>within(screen.getByRole('region',{name:'八卦探象互动体验'}))
+  const press=(name)=>fireEvent.click(explorer().getByRole('button',{name}))
+  const first=renderHome()
+  press('看提示')
+  expect(screen.getByText(/上面一条实线/)).toBeTruthy()
+  press('收起提示')
+  press(/兑卦：/)
+  expect(screen.getByText(/再找代表山的卦/)).toBeTruthy()
+  expect(screen.queryByRole('button',{name:'下一关'})).toBeNull()
+  press(/艮卦：/)
+  press('下一关')
+  press('检查合卦')
+  expect(screen.getByText(/按题目核对/)).toBeTruthy()
+  press(/巽卦：/)
+  press('将巽卦设为上卦')
+  press(/震卦：/)
+  press('将震卦设为下卦')
+  press('检查合卦')
+  expect(screen.getByText(/巽上、震下合为风雷益/)).toBeTruthy()
+  press('下一关')
+  first.unmount()
+
+  const resumed=renderHome()
+  expect(explorer().getByText('第 3 / 3 关')).toBeTruthy()
+  press(/震卦：/)
+  press('将震卦设为上卦')
+  press(/巽卦：/)
+  press('将巽卦设为下卦')
+  press('检查合卦')
+  expect(screen.getByText(/震上、巽下合为雷风恒/)).toBeTruthy()
+  press('完成挑战')
+  expect(screen.getByText('通关了')).toBeTruthy()
+  resumed.unmount()
+
+  renderHome()
+  expect(screen.getByText('通关了')).toBeTruthy()
+  expect(screen.getByRole('button',{name:'体验梅花心易'}).getAttribute('aria-description')).toBe('已通关')
+  press('再玩一次')
+  expect(explorer().getByText('第 1 / 3 关')).toBeTruthy()
+  expect(screen.getByText('天地 · 否')).toBeTruthy()
+  expect(screen.getByText(/已通关 1\/8 门/)).toBeTruthy()
 },15000)

@@ -1,0 +1,52 @@
+.atlas-trigram-explorer {
+  --home-play-ink: #234a3b;
+  --home-play-wash: #e6eadb;
+}
+
+.home-challenge-heading { display: grid; gap: 4px; }
+.home-challenge-title { display: flex; justify-content: space-between; align-items: center; gap: 6px 10px; flex-wrap: wrap; }
+.home-challenge-title > h3 { scroll-margin-top: 12px; }
+.home-challenge-progress { display: inline-flex; align-items: center; gap: 5px; color: var(--home-play-ink); font-size: 12px; font-weight: 750; white-space: nowrap; }
+.home-challenge-marks { display: inline-flex; align-items: center; gap: 3px; }
+.home-challenge-marks > i { width: 6px; height: 6px; border: 1px solid currentColor; border-radius: 50%; }
+.home-challenge-marks > i[data-cleared] { background: currentColor; }
+.home-challenge-marks > i[data-current] { width: 10px; border-radius: 5px; background: #b27a34; border-color: #895a26; }
+.home-challenge-panel { display: grid; gap: 5px; }
+.home-challenge-panel .home-experience-feedback { min-height: 0; }
+.home-challenge-panel[data-state='correct'] .home-experience-feedback,
+.home-challenge-panel[data-state='complete'] .home-experience-feedback { background: var(--home-play-wash); }
+.home-challenge-hint { border-top: 1px solid #a997704d; padding-top: 4px; }
+.home-challenge-hint strong { color: var(--home-play-ink); }
+.home-challenge-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+.home-challenge-actions button {
+  min-height: 44px;
+  flex: 1 1 auto;
+  padding: 4px 11px;
+  border: 1px solid color-mix(in srgb, var(--home-play-ink) 56%, transparent);
+  border-radius: 7px;
+  background: #fffaf1;
+  color: var(--home-play-ink);
+  font-size: 14px;
+  font-weight: 750;
+}
+.home-challenge-actions button[data-primary] { border-color: var(--home-play-ink); background: var(--home-play-ink); color: #fffaf1; }
+.home-challenge-actions button[aria-expanded='true'] { background: var(--home-play-wash); }
+.home-experience-rail button:has(.home-challenge-badge) { padding-inline: 5px; }
+.home-challenge-badge { margin-inline-start: 2px; font-size: 10px; }
+.home-challenge-explore > summary {
+  min-height: 44px;
+  display: list-item;
+  align-content: center;
+  padding-inline: 9px;
+  border: 1px solid var(--home-rule);
+  border-radius: 7px;
+  color: var(--home-play-ink);
+  font-size: 14px;
+  cursor: pointer;
+}
+.home-challenge-explore[open] > * + * { margin-top: 5px; }
+@media (max-width: 650px) {
+  .home-experiences .atlas-trigram-explorer[data-compose] .home-diorama .atlas-orbit {
+    width: min(100%, 242px);
+  }
+}
