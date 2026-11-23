@@ -53,6 +53,7 @@ function MethodCard({method,onSelect}) {
     <p>{method.brief}</p>
     <small>{method.detail}</small>
     <span className="atlas-method-arrow">入此门 <b>↗</b></span>
+    <span className="atlas-method-chevron" aria-hidden="true"/>
   </button>
 }
 

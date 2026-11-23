@@ -74,7 +74,9 @@ function PageControls({index,total,onBack,onNext,firstLabel='上一页',lastLabe
     <button type="button" className="library-prev" disabled={index===0||disabled} onClick={onBack}>← {firstLabel}</button>
     <div className="library-page-count" aria-live="polite">
       <strong>{String(index+1).padStart(2,'0')}</strong><span> / {String(total).padStart(2,'0')}</span>
-      <div className="library-page-track"><span style={{width:((index+1)/Math.max(1,total)*100)+'%'}}/></div>
+      <div className="library-page-track" role="progressbar" aria-label="翻阅进度" aria-valuemin={0} aria-valuemax={total} aria-valuenow={index+1}>
+        <span style={{width:((index+1)/Math.max(1,total)*100)+'%'}}/>
+      </div>
     </div>
     {end?<button type="button" className="library-next" onClick={onFinish} disabled={disabled}>{doneLabel} ↗</button>:
       <button type="button" className="library-next" onClick={onNext} disabled={disabled}>{lastLabel} →</button>}
@@ -311,16 +313,23 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
               </div>
             </article>:<article className="library-quiz-paper">
               <p className="library-eyebrow">第 {index+1} 问 · 共 {items.length} 问</p>
-              <div className="library-quiz-progress"><span style={{width:(index+1)/items.length*100+'%'}}/></div>
+              <div className="library-quiz-progress" role="progressbar" aria-label="练习进度" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={index+1}>
+                <span style={{width:(index+1)/items.length*100+'%'}}/>
+              </div>
               <h2>{quiz.question}</h2>
               <div className="library-quiz-options">
                 {quiz.options.map((option,i)=><button type="button" key={i} disabled={answered}
                   className={answered?(i===quiz.answer?'right':choice===i?'wrong':''):''}
                   onClick={()=>{setChoice(i);if(i===quiz.answer)setCorrect(s=>s+1)}}>
-                  <span>{QUAD[i]||i+1}</span>{option}
+                  <span className="library-answer-key">{QUAD[i]||i+1}</span>
+                  <span className="library-answer-copy">{option}
+                    {answered&&(i===quiz.answer||i===choice)&&<small className="library-answer-state">
+                      {i===choice?(i===quiz.answer?'已选 · 正确':'已选 · 错误'):'正确答案'}
+                    </small>}
+                  </span>
                 </button>)}
               </div>
-              {answered?<div className="library-quiz-explanation" role="status">
+              {answered?<div className="library-quiz-explanation" data-correct={choice===quiz.answer} role="status">
                 <b>{choice===quiz.answer?'答对了 · 取象得法':'再思考 · 已显示正确答案'}</b>
                 <p>{quiz.why}</p>
               </div>:<p className="library-quiz-hint">请选择一个答案，系统会立即显示判断与原因。</p>}
@@ -344,14 +353,14 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
                   <strong>个人临时 API 密钥</strong>
                   <span className={apiKey?'filled':''}>{apiKey?'已填写 · 尚未验证':'尚未填写'}</span>
                 </div>
-                <label className="library-setting-label">DeepSeek API Key
+                <div className="library-setting-label"><label htmlFor="library-api-key">DeepSeek API Key</label>
                   <div className="library-key-input">
-                    <input type={reveal?'text':'password'} autoComplete="off" spellCheck={false}
+                    <input id="library-api-key" type={reveal?'text':'password'} autoComplete="off" spellCheck={false}
                       value={apiKey} onChange={e=>{setApiKey(e.target.value);setNotice(e.target.value?'密钥已在本次会话填写，尚未验证':'已清空密钥')}}
                       placeholder="sk-••••••••••" aria-label="个人 DeepSeek API Key"/>
-                    <button type="button" onClick={()=>setReveal(r=>!r)}>{reveal?'隐藏':'显示'}</button>
+                    <button type="button" aria-controls="library-api-key" onClick={()=>setReveal(r=>!r)}>{reveal?'隐藏':'显示'}</button>
                   </div>
-                </label>
+                </div>
                 <label className="library-setting-label">选择模型
                   <select value={aiModel} onChange={e=>{setAiModel(e.target.value);setNotice('已选择 '+e.target.value)}}>
                     <option value="deepseek-chat">DeepSeek Chat</option>

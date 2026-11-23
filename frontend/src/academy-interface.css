@@ -1,0 +1,190 @@
+:where(.atlas-screen, .academy-stage, .book-app--meihua) {
+  --ui-accent: var(--room-accent-dark, #214b3b);
+  --ui-text: 'PingFang SC', 'Microsoft YaHei UI', 'Noto Sans CJK SC', system-ui, sans-serif;
+  --ui-field: #fffdf6;
+  --ui-guide: color-mix(in srgb, var(--ui-accent) 11%, #faf7ec);
+  --ui-line: color-mix(in srgb, var(--ui-accent) 37%, #e1dac7);
+  --ui-current: #fffdf1;
+  --ui-disabled: #665f53;
+}
+
+.atlas-screen :is(.atlas-library, .atlas-return, .atlas-hero-actions button, .atlas-filter button,
+  .atlas-page-controls button, .atlas-trigram-explorer button),
+.academy-stage .academy-stage-nav button,
+.academy-stage :is(.cast-result-navigation, .taiyi-cast-switch, .liuyao-studio-switch,
+  .liuyao-mobile-result-navigation) :is(button, select),
+.book-app--meihua :is(.book-step, .book-tabs button, .book-reading-links button, .book-top-flip button) {
+  font-family: var(--ui-text);
+  letter-spacing: 0;
+}
+
+.atlas-screen .atlas-library,
+.academy-stage .academy-stage-nav button {
+  border: 1px solid var(--ui-line);
+  border-radius: 8px;
+  background: var(--ui-field);
+  color: var(--ui-accent);
+}
+.academy-stage .academy-stage-nav button { padding-inline: 8px; }
+.academy-stage .academy-stage-nav > b { overflow-wrap: anywhere; text-align: center; }
+
+.atlas-choose .atlas-filter button {
+  background: var(--ui-field);
+  border-color: var(--ui-line);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.atlas-choose .atlas-page-arrow { min-height: 44px; border-radius: 8px; border-color: var(--ui-line); }
+.atlas-choose .atlas-page-indicators button { border-radius: 5px; }
+.atlas-choose .atlas-page-indicators button[aria-current='page'] {
+  background: var(--ui-guide);
+  border-color: var(--ui-accent);
+}
+.atlas-method-chevron { display: none; }
+
+.atlas-trigram-explorer .atlas-trigram-random {
+  border-color: var(--ui-line);
+  background: var(--ui-field);
+}
+.atlas-trigram-explorer .atlas-trigram-toolbar {
+  border-radius: 9px;
+  background: var(--ui-guide);
+  box-shadow: inset 0 0 0 1px var(--ui-line);
+  gap: 3px;
+}
+.atlas-trigram-explorer .atlas-trigram-toolbar button {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ui-accent);
+}
+.atlas-trigram-explorer .atlas-trigram-toolbar button + button {
+  box-shadow: -1px 0 var(--ui-line);
+}
+.atlas-trigram-explorer .atlas-trigram-set-actions button {
+  border-color: var(--ui-line);
+  background: var(--ui-field);
+}
+
+.academy-stage .liuyao-studio-switch,
+.book-app--meihua .book-steps,
+.book-app--meihua .book-tabs {
+  background: var(--ui-guide);
+  border-color: var(--ui-line);
+  border-radius: 9px;
+  box-shadow: inset 0 0 0 1px var(--ui-line);
+}
+.academy-stage .liuyao-studio-switch button,
+.book-app--meihua .book-steps .book-step,
+.book-app--meihua .book-tabs .book-tab {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--ui-accent);
+}
+.book-app--meihua .book-tabs .book-tab { min-height: 44px; }
+.book-app--meihua .book-reading-links button {
+  border-radius: 7px;
+  background: var(--ui-field);
+  border-color: var(--ui-line);
+}
+
+.atlas-choose .atlas-filter button[aria-pressed='true'],
+.atlas-trigram-explorer .atlas-trigram-set-actions button[aria-pressed='true'],
+.academy-stage .liuyao-studio-switch button[aria-current='page'],
+.book-app--meihua .book-steps .book-step[aria-current='step'],
+.book-app--meihua .book-tabs .book-tab[aria-selected='true'] {
+  border-color: var(--ui-accent);
+  background: var(--ui-accent);
+  color: var(--ui-current);
+  box-shadow: inset 0 -2px #ffffff3d;
+}
+.book-app--meihua .book-steps .book-step:disabled,
+.academy-stage .liuyao-studio-switch button:disabled,
+.atlas-choose .atlas-page-arrow:disabled {
+  border-color: transparent;
+  background: #efede4;
+  color: var(--ui-disabled);
+  opacity: 1;
+}
+.academy-stage .liuyao-studio-switch button:disabled small { color: inherit; }
+
+@media (max-width: 650px) {
+  .atlas-choose .atlas-method { padding-inline-end: 16px; }
+  .atlas-choose .atlas-method-chevron {
+    position: absolute;
+    inset-inline-end: 7px;
+    top: 50%;
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-block-start: 1px solid currentColor;
+    border-inline-end: 1px solid currentColor;
+    color: var(--accent);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .academy-stage .cast-result-navigation .cast-result-buttons,
+  .academy-stage .taiyi-cast-switch {
+    border-radius: 9px;
+    background: var(--ui-guide);
+    box-shadow: inset 0 0 0 1px var(--ui-line);
+    gap: 3px;
+  }
+  .academy-stage .cast-result-navigation .cast-result-buttons button,
+  .academy-stage .taiyi-cast-switch button {
+    border-color: transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ui-accent);
+  }
+  .academy-stage .cast-result-navigation .cast-result-buttons button[aria-pressed='true'],
+  .academy-stage .taiyi-cast-switch button[aria-pressed='true'] {
+    border-color: var(--ui-accent);
+    background: var(--ui-accent);
+    color: var(--ui-current);
+    box-shadow: inset 0 -2px #ffffff3d;
+  }
+  .academy-stage :is(.cast-result-select, .liuyao-mobile-result-navigation label) {
+    color: var(--ui-accent);
+    font-family: var(--ui-text);
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .academy-stage :is(.cast-result-navigation, .liuyao-mobile-result-navigation) select {
+    border-color: var(--ui-line);
+    border-radius: 8px;
+    background-color: var(--ui-field);
+    color: var(--ui-accent);
+    appearance: none;
+    padding-inline-end: 28px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ui-accent) 50%),
+      linear-gradient(135deg, var(--ui-accent) 50%, transparent 50%);
+    background-position: right 15px center, right 10px center;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .academy-stage .academy-stage-nav button:hover,
+  .atlas-screen .atlas-library:hover,
+  .atlas-trigram-explorer .atlas-trigram-toolbar button:hover {
+    border-color: var(--ui-accent);
+    background: var(--ui-guide);
+  }
+}
+
+@media (forced-colors: active) {
+  .academy-stage :is(.cast-result-navigation, .liuyao-mobile-result-navigation) select {
+    appearance: auto;
+    background-image: none;
+  }
+  :is(.atlas-filter, .atlas-trigram-set-actions, .cast-result-navigation, .taiyi-cast-switch,
+      .liuyao-studio-switch, .book-steps, .book-tabs) button:is(
+        [aria-pressed='true'], [aria-current='page'], [aria-current='step'], [aria-selected='true']) {
+    border-color: Highlight !important;
+    background: Highlight !important;
+    color: HighlightText !important;
+    forced-color-adjust: none;
+  }
+}

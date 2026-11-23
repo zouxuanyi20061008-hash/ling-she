@@ -11,6 +11,7 @@ import './style.css'
 import './theme-refresh.css'
 import './academy-art.css'
 import './casting-art.css'
+import './academy-interface.css'
 
 const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...ARTS.map(a=>a.id)])
 function routeFromUrl(){
