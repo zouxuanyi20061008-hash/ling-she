@@ -1,0 +1,286 @@
+.home-diorama:is([data-scene="qimen"], [data-scene="ziwei"]) {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  min-width: 0;
+  padding: 8px 12px 12px;
+  isolation: isolate;
+  perspective: 820px;
+  border: 1px solid var(--observatory-edge);
+  border-radius: 12px;
+  background: var(--observatory-room);
+  box-shadow: inset 0 1px 0 var(--observatory-sheen), inset 0 0 24px #040b1396;
+}
+
+.home-diorama[data-scene="qimen"] {
+  --observatory-edge: #766b4c;
+  --observatory-sheen: #ccb17444;
+  --observatory-room:
+    radial-gradient(ellipse at 29% 8%, #59786280, transparent 61%),
+    repeating-linear-gradient(104deg, #badbc204 0 1px, transparent 1px 7px),
+    linear-gradient(160deg, #304b3d, #112621 62%, #101c18);
+  --observatory-metal: linear-gradient(150deg, #e1c180 0%, #645035 25%, #a78851 45%, #887047 65%, #c0a36e 100%);
+  --observatory-edge-shadow: #4e3827;
+  --observatory-tile: linear-gradient(159deg, #526b59 0%, #3d5648 39%, #1d372e 80%, #283d33 100%);
+  --observatory-tile-border: #b29763;
+  --observatory-tile-side: #223629;
+  --observatory-tile-text: #fff2d3;
+  --observatory-tile-detail: #ffe5b1;
+}
+
+.home-diorama[data-scene="ziwei"] {
+  --observatory-edge: #776c77;
+  --observatory-sheen: #b1b3e34c;
+  --observatory-room:
+    radial-gradient(ellipse at 45% -8%, #4c497382, transparent 63%),
+    radial-gradient(ellipse at 84% 75%, #46425c66, transparent 58%),
+    linear-gradient(152deg, #252b47, #111831 52%, #0c1225);
+  --observatory-metal: linear-gradient(145deg, #c9af7d 0%, #5c4d59 23%, #7c6b6e 45%, #534857 67%, #a6926c 100%);
+  --observatory-edge-shadow: #231c31;
+  --observatory-tile: linear-gradient(151deg, #464b70, #303555 45%, #1f2846 79%, #292d48);
+  --observatory-tile-border: #9b8b6c;
+  --observatory-tile-side: #181c33;
+  --observatory-tile-text: #fff2df;
+  --observatory-tile-detail: #ead1a0;
+}
+
+.home-diorama:is([data-scene="qimen"], [data-scene="ziwei"]) > .home-diorama-set {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  transform: none;
+  z-index: 0;
+}
+
+.home-diorama:is([data-scene="qimen"], [data-scene="ziwei"]) > .home-diorama-set::before,
+.home-diorama:is([data-scene="qimen"], [data-scene="ziwei"]) > .home-diorama-set::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.home-diorama[data-scene="qimen"] > .home-diorama-set::before {
+  left: 50%;
+  top: 48%;
+  width: 110%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 2deg, #c7ae766f 0deg 1deg, #c7ae7600 1deg 7.5deg);
+  mask-image: radial-gradient(circle, transparent 52%, #000 53% 61%, transparent 62% 64%, #000 65% 66%, transparent 67%);
+  transform: translate(-50%, -50%) rotateX(56deg) rotate(-14deg);
+}
+
+.home-diorama[data-scene="qimen"] > .home-diorama-set::after {
+  inset: 8px;
+  border: 1px solid #c3ad7347;
+  border-radius: 7px;
+  background:
+    radial-gradient(circle at 2% 5%, #e2ce8fa8 0 1px, transparent 1.7px),
+    radial-gradient(circle at 98% 5%, #e2ce8fa8 0 1px, transparent 1.7px),
+    radial-gradient(circle at 2% 95%, #e2ce8fa8 0 1px, transparent 1.7px),
+    radial-gradient(circle at 98% 95%, #e2ce8fa8 0 1px, transparent 1.7px);
+}
+
+.home-diorama[data-scene="ziwei"] > .home-diorama-set::before {
+  inset: 0;
+  opacity: .8;
+  background:
+    radial-gradient(circle at 5% 29%, #cfbee7 0 1px, transparent 1.7px),
+    radial-gradient(circle at 9% 60%, #edc77d 0 1.3px, transparent 2px),
+    radial-gradient(circle at 6% 74%, #c4c8e9 0 .7px, transparent 1.3px),
+    radial-gradient(circle at 17% 9%, #c4c8e9 0 .7px, transparent 1.3px),
+    radial-gradient(circle at 82% 94%, #c4c8e9 0 .8px, transparent 1.5px),
+    radial-gradient(circle at 92% 20%, #edc77d 0 1.2px, transparent 1.9px),
+    radial-gradient(circle at 96% 64%, #d9c8e9 0 .9px, transparent 1.6px),
+    radial-gradient(circle at 94% 86%, #aeb9e3 0 .7px, transparent 1.3px);
+}
+
+.home-diorama[data-scene="ziwei"] > .home-diorama-set::after {
+  left: 50%;
+  top: 49%;
+  width: 112%;
+  aspect-ratio: 1;
+  border: 1px solid #ad9da265;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 11px #e8bee609, inset 0 0 0 12px #d4b39e5c, 0 0 0 9px #e8bee609, 0 0 0 10px #ad9da235;
+  transform: translate(-50%, -50%) rotateX(55deg) rotateZ(-14deg);
+}
+
+.home-diorama:is([data-scene="qimen"], [data-scene="ziwei"]) > .home-diorama-controls {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+  perspective: 820px;
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) {
+  position: relative;
+  width: min(100%, var(--observatory-board-width));
+  margin: 0 auto;
+  gap: 5px;
+  padding: 6px;
+  border: 1px solid var(--observatory-tile-border);
+  border-radius: 8px;
+  background: var(--observatory-metal);
+  transform: rotateX(7deg) rotateY(-4deg);
+  transform-style: preserve-3d;
+  box-shadow:
+    inset 0 1px 0 #fff0b87a,
+    inset 0 0 0 2px #130b1838,
+    0 4px 0 var(--observatory-edge-shadow),
+    0 10px 16px #070814b5;
+}
+
+.home-diorama .home-qimen-grid { --observatory-board-width: 242px; }
+.home-diorama .home-ziwei-grid { --observatory-board-width: 271px; }
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick {
+  position: relative;
+  min-height: 46px;
+  min-width: 0;
+  border: 1px solid var(--observatory-tile-border);
+  border-radius: 4px;
+  color: var(--observatory-tile-text);
+  background: var(--observatory-tile);
+  box-shadow: inset 0 1px #fff2bf48, inset 0 -5px 9px #090c1731, 0 3px 0 var(--observatory-tile-side), 0 4px 5px #07081289;
+  transform: translateZ(4px);
+  transition: transform 175ms cubic-bezier(.22,.85,.3,1.25), box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  pointer-events: none;
+  border: 1px solid #ffdb955c;
+  border-radius: 2px;
+  opacity: .46;
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick small {
+  color: var(--observatory-tile-detail);
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick strong {
+  color: inherit;
+  font-size: 15px;
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick[aria-pressed="true"]:not([data-correct]) {
+  border-color: #efb08b;
+  background: linear-gradient(160deg, #725047, #433640);
+  box-shadow: inset 0 1px #ffd4a65c, 0 3px 0 #28212d, 0 4px 8px #07081280;
+  transform: translateZ(6px);
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick[data-correct] {
+  --observatory-tile-detail: #fff0b9;
+  border-color: #ffe0a0;
+  color: #fff8e4;
+  background: linear-gradient(153deg, #8b5530, #6a492f 46%, #513b2b);
+  box-shadow: inset 0 1px #fff0c8ac, 0 4px 0 #70472b, 0 0 16px #ffd17a99, 0 7px 10px #070812b0;
+  transform: translateZ(11px) translateY(-2px);
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick:focus-visible {
+  outline: 2px solid #fff1ba;
+  outline-offset: 2px;
+}
+
+.home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick:active {
+  transform: translateZ(1px) translateY(2px);
+}
+
+.home-diorama .home-qimen-grid .home-experience-pick:nth-child(5):not([aria-pressed="true"]) {
+  background: radial-gradient(circle at 50% 0, #70684e, #3e3f2c 58%, #343a2e);
+}
+
+.home-diorama .home-ziwei-grid .home-experience-pick:has([data-origin]) {
+  border-color: #d9bc86;
+  background: linear-gradient(147deg, #655470, #3c385d 53%, #2d314e);
+  box-shadow: inset 0 0 0 1px #f9bd6f5c, 0 3px 0 #252340, 0 0 11px #f7ca7263;
+}
+
+.home-diorama .home-ziwei-grid .home-ziwei-center {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid #938371;
+  border-radius: 6px;
+  color: #f6e3b5;
+  background:
+    radial-gradient(circle at 19% 67%, #efcb8394 0 1px, transparent 1.6px),
+    radial-gradient(circle at 22% 30%, #d7c6dfc7 0 .8px, transparent 1.4px),
+    radial-gradient(circle at 34% 79%, #b0afd5b3 0 .7px, transparent 1.3px),
+    radial-gradient(circle at 71% 20%, #f1ce86c7 0 1px, transparent 1.6px),
+    radial-gradient(circle at 81% 64%, #dad0e396 0 .9px, transparent 1.6px),
+    radial-gradient(circle at 50% 50%, #80758d42, #161e39 65%),
+    #1e243e;
+  box-shadow: inset 0 0 13px #071327d8;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.35;
+  transform: translateZ(0);
+}
+
+.home-diorama .home-ziwei-grid .home-ziwei-center::before,
+.home-diorama .home-ziwei-grid .home-ziwei-center::after {
+  content: "";
+  position: absolute;
+  inset: 18% 15%;
+  z-index: -1;
+  pointer-events: none;
+  border: 1px solid #e1c58e94;
+  border-radius: 50%;
+  transform: rotate(-27deg) rotateX(38deg);
+}
+
+.home-diorama .home-ziwei-grid .home-ziwei-center::after {
+  border-color: #9c99c78a;
+  transform: rotate(31deg) rotateY(33deg);
+}
+
+.home-diorama .home-ziwei-grid::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 13%;
+  width: 74%;
+  height: 2px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, #fff1bb, #f8ce79 23%, transparent 44% 56%, #f8ce79 77%, #fff1bb);
+  box-shadow: 0 0 12px #f0bf73;
+  transform: translateZ(3px) rotate(-15deg) scaleX(.3);
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.home-diorama[data-scene="ziwei"][data-solved="true"] .home-ziwei-grid::after {
+  opacity: .94;
+  transform: translateZ(3px) rotate(-15deg) scaleX(1);
+}
+
+.home-diorama[data-scene="ziwei"][data-solved="true"] .home-ziwei-center::before,
+.home-diorama[data-scene="ziwei"][data-solved="true"] .home-ziwei-center::after {
+  border-color: #f6d793;
+}
+
+@media (hover: hover) {
+  .home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick:hover:not([aria-pressed="true"]) {
+    border-color: #f1cc90;
+    transform: translateZ(8px);
+  }
+}
+
+@media (max-width: 350px) {
+  .home-diorama:is([data-scene="qimen"], [data-scene="ziwei"]) { padding-inline: 8px; }
+  .home-diorama .home-ziwei-grid { gap: 4px; padding-inline: 5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-diorama :is(.home-qimen-grid, .home-ziwei-grid) .home-experience-pick,
+  .home-diorama .home-ziwei-grid::after { transition: none; }
+}

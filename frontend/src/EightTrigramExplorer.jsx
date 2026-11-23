@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { EIGHT_TRIGRAMS, hexagramForLines } from './casting-lessons.js'
+import HomeDiorama from './HomeDiorama.jsx'
 
 export default function EightTrigramExplorer() {
   const [activeName, setActiveName] = useState('乾')
@@ -35,35 +36,45 @@ export default function EightTrigramExplorer() {
       </div>
       <button type="button" className="atlas-trigram-random" onClick={chooseRandom}>随机观象</button>
     </header>
-    <div className="atlas-orbit" role="group" aria-label="选择八卦" data-rotation={rotationDegrees}>
-      <div className="atlas-orbit-ring outer"/>
-      <div className="atlas-orbit-ring inner"/>
-      {EIGHT_TRIGRAMS.map((trigram, index) => {
-        const angle = index * Math.PI / 4 - Math.PI / 2 + rotationDegrees * Math.PI / 180
-        const x = 50 + 42 * Math.cos(angle)
-        const y = 50 + 42 * Math.sin(angle)
-        return <button
-          type="button"
-          key={trigram.name}
-          className="atlas-orbit-gua"
-          style={{ '--orbit-x': x + '%', '--orbit-y': y + '%' }}
-          aria-label={trigram.number + ' · ' + trigram.name + '卦：' + trigram.image + '，' + trigram.direction + '，五行属' + trigram.element}
-          aria-pressed={active.name === trigram.name}
-          onClick={() => setActiveName(trigram.name)}
-          title={trigram.name + ' · ' + trigram.image}
-        >{trigram.name}</button>
-      })}
-      <div className="atlas-yinyang" aria-hidden="true">
-        <div className="atlas-taiji">
-          <svg viewBox="0 0 100 100" width="100%">
-            <circle cx="50" cy="50" r="49" fill="#d1bf94" stroke="#e6d4aa"/>
-            <path d="M50 1A49 49 0 0 0 50 99 A24.5 24.5 0 0 1 50 50 A24.5 24.5 0 0 0 50 1Z" fill="#173d35"/>
-            <circle cx="50" cy="25.5" r="7" fill="#173d35"/>
-            <circle cx="50" cy="74.5" r="7" fill="#d1bf94"/>
-          </svg>
+    <HomeDiorama kind="meihua" picked={active.name}>
+      <div className="atlas-orbit" role="group" aria-label="选择八卦" data-rotation={rotationDegrees}>
+        <div className="atlas-orbit-plinth" aria-hidden="true">
+          <div className="atlas-orbit-foundation"/>
+          <div className="atlas-orbit-engraving"><div className="atlas-orbit-ring outer"/><div className="atlas-orbit-ring inner"/></div>
+        </div>
+        {EIGHT_TRIGRAMS.map((trigram, index) => {
+          const angle = index * Math.PI / 4 - Math.PI / 2 + rotationDegrees * Math.PI / 180
+          const x = 50 + 41 * Math.cos(angle)
+          const y = 49 + 41 * Math.sin(angle)
+          return <button
+            type="button"
+            key={trigram.name}
+            className="atlas-orbit-gua"
+            style={{ '--orbit-x': x + '%', '--orbit-y': y + '%' }}
+            aria-label={trigram.number + ' · ' + trigram.name + '卦：' + trigram.image + '，' + trigram.direction + '，五行属' + trigram.element}
+            aria-pressed={active.name === trigram.name}
+            onClick={() => setActiveName(trigram.name)}
+            title={trigram.name + ' · ' + trigram.image}
+          >
+            <span className="atlas-orbit-glyph" aria-hidden="true">
+              {trigram.lines.slice().reverse().map((line,position)=>
+                <span key={position} data-yang={line===1||undefined}/>)}
+            </span>
+            <span>{trigram.name}</span>
+          </button>
+        })}
+        <div className="atlas-yinyang" aria-hidden="true">
+          <div className="atlas-taiji">
+            <svg viewBox="0 0 100 100" width="100%">
+              <circle cx="50" cy="50" r="49" fill="#d1bf94" stroke="#e6d4aa"/>
+              <path d="M50 1A49 49 0 0 0 50 99 A24.5 24.5 0 0 1 50 50 A24.5 24.5 0 0 0 50 1Z" fill="#173d35"/>
+              <circle cx="50" cy="25.5" r="7" fill="#173d35"/>
+              <circle cx="50" cy="74.5" r="7" fill="#d1bf94"/>
+            </svg>
+          </div>
         </div>
       </div>
-    </div>
+    </HomeDiorama>
 
     <div className="atlas-trigram-detail" role="status">
       <span className="atlas-trigram-detail-symbol" aria-hidden="true">{active.symbol}</span>

@@ -177,40 +177,7 @@
   width: min(100%, 172px);
   margin: 0 auto;
 }
-.home-compass-dial {
-  position: absolute;
-  inset: 5px 10px;
-  z-index: -1;
-  display: grid;
-  place-items: center;
-  border: 1px solid #9ead96;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fdecc9 0 10%, #ebefdf 10% 37%, #b6c0a5 38%, #e7ecd9 39%);
-}
-.home-compass-dial::before {
-  content: '';
-  width: 90%;
-  height: 6px;
-  background: linear-gradient(90deg,#aba287 50%, #52755e 50%);
-  clip-path: polygon(0 50%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%);
-}
 .home-coins { justify-items: center; padding-block: 5px; }
-.home-coin-pick {
-  display: grid;
-  place-items: center;
-  place-content: center;
-  gap: 2px;
-  min-width: 55px;
-  min-height: 55px;
-  border: 2px solid #9a733b;
-  border-radius: 50%;
-  background: radial-gradient(circle, #f3e5ba 58%, #b58b4b 60%, #f8e5a8 66%);
-  color: #593919;
-  box-shadow: 0 3px 0 #795f38;
-  line-height: 1.2;
-}
-.home-coin-pick[data-back] { border-color: #706657; background: radial-gradient(circle,#e8e1cb 58%,#9d9280 60%,#e2d5ba 66%); }
-.home-coin-pick b { font: 700 13px/1 system-ui,sans-serif; }
 .home-liuren-chain, .home-taiyi-plates {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto 1fr;

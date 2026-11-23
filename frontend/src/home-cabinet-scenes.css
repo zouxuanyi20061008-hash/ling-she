@@ -1,0 +1,322 @@
+.home-diorama[data-scene='bazi'] {
+  --scene-dark: #24160f;
+  --scene-light: #795034;
+  --scene-rim: #976747;
+  background:
+    radial-gradient(ellipse at 27% -26%, #e6a36177, transparent 68%),
+    linear-gradient(155deg, #4b2d22, #231a14 68%, #120e0b);
+}
+
+.cabinet-bazi-tray {
+  position: absolute;
+  inset: 13px 10px 15px;
+  transform: perspective(600px) rotateX(15deg);
+  border: 1px solid #a26943;
+  border-radius: 11px;
+  background: linear-gradient(162deg, #a06743, #5b3324 46%, #311b18 86%);
+  box-shadow:
+    0 3px 0 #4b2b1d,
+    0 8px 0 #2e1c16,
+    0 9px 0 #795634,
+    0 17px 17px #100b08c9,
+    inset 0 1px 0 #e1ae746b;
+}
+
+.cabinet-tray-floor {
+  position: absolute;
+  inset: 7px;
+  border: 1px solid #bb865837;
+  border-radius: 5px;
+  background:
+    radial-gradient(ellipse at 48% 35%, #83543544, #120903ab),
+    repeating-linear-gradient(91deg, #e5b27e12 0 2px, transparent 2px 8px),
+    linear-gradient(140deg, #483125, #37221a);
+  box-shadow: inset 0 5px 12px #140a08c9, 0 1px 0 #e0ab6442;
+}
+
+.cabinet-tray-pin {
+  position: absolute;
+  width: 7px;
+  aspect-ratio: 1;
+  border: 1px solid #835332;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 29%, #f0d094, #af7a43 46%, #513421 83%);
+  box-shadow: 0 1px 2px #190d09;
+}
+
+.cabinet-tray-pin.top-start { top: 3px; left: 4px; }
+.cabinet-tray-pin.top-end { top: 3px; right: 4px; }
+.cabinet-tray-pin.bottom-start { bottom: 3px; left: 4px; }
+.cabinet-tray-pin.bottom-end { bottom: 3px; right: 4px; }
+
+.home-diorama[data-scene='bazi'] .home-bazi-grid {
+  width: min(100%, 345px);
+  margin: 0 auto;
+  padding: 5px 7px 12px;
+  gap: clamp(5px, 2vw, 10px);
+  perspective: 720px;
+}
+
+.home-diorama[data-scene='bazi'] .home-bazi-pillar {
+  --slip-tilt: -3deg;
+  --slip-lift: 0px;
+  position: relative;
+  grid-template-rows: 20px 47px 47px;
+  gap: 2px;
+  padding: 7px 3px 9px;
+  min-width: 0;
+  border: 1px solid #b89a6b;
+  border-radius: 5px;
+  transform: translateY(var(--slip-lift)) translateZ(12px) rotateX(5deg) rotateY(var(--slip-tilt));
+  background:
+    linear-gradient(109deg, #ffffff48, transparent 24% 70%, #795c2e38),
+    repeating-linear-gradient(83deg, #98733a0c 0 1px, transparent 1px 5px),
+    linear-gradient(#e7cb8c, #f2dca2 24%, #dec18b 85%, #c9a56f);
+  box-shadow:
+    1px 2px 0 #9f7b48,
+    2px 5px 0 #6e492a,
+    3px 6px 0 #513121,
+    4px 10px 10px #1b100bbf,
+    inset 0 1px 0 #fff1b6;
+  color: #543923;
+  transition: transform .32s cubic-bezier(.2,.75,.3,1), box-shadow .32s ease, border-color .2s ease;
+}
+
+.home-diorama[data-scene='bazi'] .home-bazi-pillar:nth-child(1) { --slip-tilt: -7deg; }
+.home-diorama[data-scene='bazi'] .home-bazi-pillar:nth-child(3) { --slip-tilt: 3deg; }
+.home-diorama[data-scene='bazi'] .home-bazi-pillar:nth-child(4) { --slip-tilt: 7deg; }
+
+.home-diorama[data-scene='bazi'] .home-bazi-pillar::after {
+  content: '';
+  position: absolute;
+  inset: auto 25% 4px;
+  height: 1px;
+  background: #8f432d9c;
+  box-shadow: 0 1px #f3e1b588;
+  pointer-events: none;
+}
+
+.home-diorama[data-scene='bazi'] .home-bazi-pillar > span {
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid #93674080;
+  color: #674631;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .1em;
+  line-height: 1.15;
+}
+
+.home-diorama[data-scene='bazi'] .home-experience-pick {
+  min-width: 44px;
+  min-height: 46px;
+  padding: 1px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: #432917;
+  text-shadow: 0 1px #fff0c18f;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.home-diorama[data-scene='bazi'] .home-experience-pick strong {
+  font: 750 clamp(23px, 6.5vw, 31px)/1.15 'Noto Serif SC', 'Songti SC', SimSun, serif;
+}
+
+.home-diorama[data-scene='bazi'] .home-experience-pick + .home-experience-pick {
+  border-top-color: #a27d4538;
+}
+
+.home-diorama[data-scene='bazi'] .home-experience-pick[aria-pressed='true']:not([data-correct]) {
+  border-color: #a05c39;
+  background: #b669472f;
+  box-shadow: inset 0 1px 2px #8051363d;
+}
+
+.home-diorama[data-scene='bazi'] .home-bazi-pillar:has([data-correct]) {
+  --slip-lift: -6px;
+  border-color: #f6df9b;
+  box-shadow:
+    1px 2px 0 #b69054,
+    2px 6px 0 #71522f,
+    0 0 11px #f6d78166,
+    3px 15px 12px #170f0bbf;
+}
+
+.home-diorama[data-scene='bazi'] .home-experience-pick[data-correct] {
+  border-color: #547a5b;
+  color: #fbecb9;
+  background: linear-gradient(142deg, #4e6f56, #26453a 70%, #18392f);
+  box-shadow: inset 0 1px 1px #abc9a65c, 0 1px 2px #58492757;
+  text-shadow: 0 1px 2px #0f281e;
+}
+
+.home-diorama[data-scene='bazi'] .home-experience-pick:focus-visible {
+  outline: 2px solid #873e26;
+  outline-offset: -3px;
+}
+
+.home-diorama[data-scene='fengshui'] {
+  --scene-dark: #132522;
+  --scene-light: #406356;
+  --scene-rim: #61795c;
+  --needle-heading: 90deg;
+  --needle-tip: #ffe5a1;
+  background:
+    radial-gradient(ellipse at 50% 34%, #5a947654, transparent 72%),
+    repeating-linear-gradient(115deg, transparent 0 4px, #75937b09 4px 5px),
+    linear-gradient(155deg, #29443a, #122723 58%, #10201d);
+}
+
+.home-diorama[data-scene='fengshui'][data-pick='北'] { --needle-heading: 0deg; }
+.home-diorama[data-scene='fengshui'][data-pick='南'] { --needle-heading: 180deg; }
+.home-diorama[data-scene='fengshui'][data-pick='西'] { --needle-heading: 270deg; }
+.home-diorama[data-scene='fengshui'][data-solved='true'] { --needle-tip: #c6ecb9; }
+
+.cabinet-luopan-block {
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  width: min(67%, 170px);
+  max-height: calc(100% - 18px);
+  aspect-ratio: 1;
+  transform: translate(-50%,-50%) perspective(580px) rotateX(22deg);
+  border: 1px solid #aa8050;
+  border-radius: 11px;
+  background:
+    repeating-linear-gradient(103deg, #f5deac0f 0 1px, transparent 1px 6px),
+    linear-gradient(145deg, #a27851, #5e3b27 52%, #332319 94%);
+  box-shadow:
+    0 3px 0 #46291d,
+    0 7px 0 #2c2018,
+    0 8px 0 #745237,
+    0 15px 16px #08100dbf,
+    inset 0 1px #f5ce8c9c;
+}
+
+.cabinet-luopan-rim,
+.cabinet-luopan-scale,
+.cabinet-luopan-inner,
+.cabinet-luopan-needle {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+
+.cabinet-luopan-rim {
+  inset: 6%;
+  border: 1px solid #b78f55;
+  background:
+    radial-gradient(circle at 28% 23%, #d7bb7473, transparent 45%),
+    conic-gradient(from 38deg, #896332, #d6b778 16%, #674627 35%, #e0bf7b 52%, #715030 70%, #ac814c 84%, #896332);
+  box-shadow: 0 2px 4px #26160f, inset 0 1px 1px #ffde8a;
+}
+
+.cabinet-luopan-scale {
+  inset: 5%;
+  border: 1px solid #e9d09b;
+  background:
+    repeating-conic-gradient(from -.6deg, #ddbc76 0 1.3deg, transparent 1.3deg 15deg),
+    repeating-conic-gradient(from -.3deg, #b59151 0 .6deg, transparent .6deg 5deg),
+    #312c20;
+  box-shadow: inset 0 0 0 2px #23160db5, 0 1px 2px #342616;
+}
+
+.cabinet-luopan-inner {
+  inset: 23%;
+  border: 1px solid #bb9657;
+  background:
+    radial-gradient(circle, transparent 30%, #bb9c633a 31% 32%, transparent 33% 53%, #c3aa7542 54% 55%, transparent 56%),
+    conic-gradient(from 0deg, #e6ce781d 0deg 1deg, transparent 1deg 89deg, #e6ce781d 89deg 91deg, transparent 91deg 179deg, #e6ce781d 179deg 181deg, transparent 181deg 269deg, #e6ce781d 269deg 271deg, transparent 271deg 359deg, #e6ce781d 359deg),
+    radial-gradient(circle at 40% 26%, #425746, #24352b 65%, #101e1a);
+  box-shadow: 0 0 0 3px #6e4e2f, 0 0 0 4px #d1ad70, inset 0 2px 8px #18271b;
+}
+
+.cabinet-luopan-needle {
+  inset: 24%;
+  transform: rotate(var(--needle-heading));
+  filter: drop-shadow(1px 2px 1px #0e1a12) drop-shadow(0 0 5px #d3b77040);
+  transition: transform .52s cubic-bezier(.22,.8,.2,1);
+}
+
+.cabinet-luopan-needle::before {
+  content: '';
+  position: absolute;
+  inset: 6% 41%;
+  background:
+    linear-gradient(90deg, #272a102b 50%, transparent 50%),
+    linear-gradient(var(--needle-tip) 0 50%, #936145 50% 100%);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.cabinet-luopan-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  aspect-ratio: 1;
+  border: 1px solid #b8985d;
+  border-radius: 50%;
+  transform: translate(-50%,-50%) translateZ(4px);
+  background: radial-gradient(circle at 34% 29%, #fff1b6, #c69a56 54%, #604128);
+  box-shadow: 0 1px 3px #181108;
+}
+
+.home-diorama[data-scene='fengshui'] .home-compass {
+  grid-template: ". direction-0 ." "direction-270 . direction-90" ". direction-180 ." / 48px 1fr 48px;
+  gap: 5px;
+  width: min(100%, 218px);
+  margin: 0 auto;
+  isolation: auto;
+}
+
+.home-diorama[data-scene='fengshui'] .home-experience-pick {
+  justify-self: center;
+  width: 48px;
+  min-height: 46px;
+  gap: 0;
+  border: 1px solid #a08a5b;
+  border-radius: 7px;
+  background: linear-gradient(155deg, #30463d, #26382e 55%, #1f2c26);
+  color: #fff0c1;
+  text-shadow: 0 1px 2px #100f0a;
+  box-shadow: 0 2px 0 #17221a, 0 4px 7px #101714a8, inset 0 1px 0 #ead09e35;
+  transition: background .22s ease, border-color .22s ease;
+}
+
+.home-diorama[data-scene='fengshui'] .home-experience-pick > strong {
+  font-size: 17px;
+}
+
+.home-diorama[data-scene='fengshui'] .home-experience-pick:has([data-origin]):not([data-correct]) {
+  border-color: #d0a36a;
+  background: linear-gradient(150deg, #8a603c, #5e412d 63%, #4a3527);
+  color: #fff2cf;
+  box-shadow: 0 2px 0 #39281d, 0 4px 7px #101714a8, inset 0 1px 0 #eed1a878;
+}
+
+.home-diorama[data-scene='fengshui'] .home-experience-pick[aria-pressed='true']:not([data-correct]) {
+  border-color: #f8d998;
+  box-shadow: 0 0 0 1px #eac37c8f, 0 3px 7px #151911aa;
+}
+
+.home-diorama[data-scene='fengshui'] .home-experience-pick[data-correct] {
+  border-color: #bdcc91;
+  background: linear-gradient(155deg, #567556, #395c4a 62%, #29483e);
+  color: #fff6d7;
+  box-shadow: 0 2px 0 #1a382a, 0 0 9px #c9e39355, inset 0 1px 0 #eaefd778;
+}
+
+.home-diorama[data-scene='fengshui'] .home-experience-pick:focus-visible {
+  outline: 2px solid #ffe1a1;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-diorama[data-scene='bazi'] .home-bazi-pillar,
+  .home-diorama[data-scene='bazi'] .home-experience-pick,
+  .home-diorama[data-scene='fengshui'] .home-experience-pick,
+  .cabinet-luopan-needle {
+    transition: none;
+  }
+}

@@ -1,0 +1,166 @@
+.home-experience-stage { --home-slide-from: 12px; }
+.home-experience-stage[data-entry-side='left'] { --home-slide-from: -12px; }
+.home-experience-stage > .home-experience-page:not([hidden]) {
+  animation: home-scene-enter .28s cubic-bezier(.2,.7,.3,1) both;
+}
+@keyframes home-scene-enter {
+  from { opacity: .55; transform: translateX(var(--home-slide-from)); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.home-diorama {
+  --scene-dark: #15201c;
+  --scene-light: #506450;
+  --scene-rim: #8b7756;
+  position: relative;
+  isolation: isolate;
+  perspective: 700px;
+  min-width: 0;
+  padding: clamp(10px, 2.6vw, 14px);
+  border: 1px solid var(--scene-rim);
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 50% -25%, var(--scene-light), transparent 71%),
+    linear-gradient(160deg, var(--scene-dark), #101714);
+  box-shadow: inset 0 1px #f0dc9460, inset 0 -10px 24px #070c0a74, 0 3px 8px #342c2228;
+}
+.home-diorama::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  border: 1px solid #e3c78b38;
+  border-radius: 7px;
+}
+.home-diorama-set { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; }
+.home-diorama-controls { position: relative; z-index: 1; display: grid; gap: 8px; min-width: 0; }
+.home-diorama button:focus-visible {
+  outline: 2px solid #fff2be;
+  outline-offset: 2px;
+  position: relative;
+  z-index: 4;
+}
+.home-experience-card {
+  border-color: #bec3ae;
+  background: radial-gradient(ellipse at 40% 0, var(--home-play-wash), transparent 68%), #fbf7ea;
+  box-shadow: 0 7px 22px #4c372319;
+}
+.home-experience-card > header { gap: 9px; }
+.home-experience-card > header > span {
+  border-radius: 5px;
+  box-shadow: inset 0 1px #fff9e8, 0 2px 0 #3e342827;
+}
+.home-experience-feedback { border-inline-start-width: 2px; }
+.home-diorama[data-scene='meihua'] {
+  --scene-dark: #122a23;
+  --scene-light: #657359;
+  --scene-rim: #947d56;
+  padding: 8px 7px 9px;
+  background:
+    radial-gradient(ellipse 74% 62% at 48% 21%, #57654e 0, #354d3c 34%, transparent 100%),
+    linear-gradient(165deg, #203c2e, #101e1a 87%);
+}
+.home-diorama[data-scene='meihua'] .home-diorama-set {
+  background:
+    radial-gradient(ellipse at 50% 84%, #090d0aa6, transparent 62%),
+    repeating-linear-gradient(112deg, transparent 0 12px, #e7d9a110 13px, transparent 15px 23px);
+}
+.home-experiences .atlas-trigram-explorer .home-diorama .atlas-orbit {
+  position: relative;
+  inset: auto;
+  width: min(100%, 278px);
+  max-width: none;
+  aspect-ratio: 1.26;
+  filter: none;
+  perspective: 530px;
+  opacity: 1;
+}
+.home-diorama .atlas-orbit::before { content: none; }
+.atlas-orbit-plinth {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  width: 89%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) rotateX(45deg) rotateZ(-8deg);
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.atlas-orbit-foundation,
+.atlas-orbit-engraving {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.atlas-orbit-foundation {
+  transform: translateZ(-10px);
+  border: 2px solid #59472d;
+  background: linear-gradient(180deg,#654f33,#372e22 65%,#211e16);
+  box-shadow: 0 0 0 2px #110f0b, 0 13px 15px #030706cb;
+}
+.atlas-orbit-engraving {
+  transform: translateZ(3px);
+  border: 3px solid #9a875c;
+  background:
+    radial-gradient(circle, #182e25 0 23%, #b39a65 23.5% 24%, #344b39 24.5% 48%, transparent 49%),
+    repeating-conic-gradient(from 3deg, #c4aa7269 0deg 1deg, transparent 2deg 6deg),
+    linear-gradient(140deg,#738064,#3a5140 67%,#22362d);
+  box-shadow: inset 0 0 0 3px #d0b57d64, inset 0 0 24px #161d13a0, 0 4px 0 #4c3e2a;
+}
+.home-experiences .atlas-trigram-explorer .home-diorama .atlas-orbit-ring {
+  border-color: #d9bd806e;
+  background: none;
+}
+.home-diorama .atlas-orbit-ring.outer::before,
+.home-diorama .atlas-orbit-ring.outer::after { border-color: #e1c28362; }
+.home-diorama .atlas-orbit-ring.inner { box-shadow: 0 0 0 5px #d6b67a14; }
+.home-experiences .atlas-trigram-explorer .home-diorama .atlas-orbit-gua {
+  border-color: #c7b07c;
+  color: #254638;
+  background: radial-gradient(ellipse at 36% 22%,#fff9df,#d6d7ad 78%);
+  box-shadow: inset 0 1px #ffedb5, 0 4px 0 #695333, 0 7px 8px #081310b8;
+  place-content: center;
+  gap: 3px;
+  font-size: 15px;
+  line-height: 1;
+  transition: left .24s ease, top .24s ease, box-shadow .2s ease, background .2s ease, transform .2s ease;
+}
+.atlas-orbit-glyph {
+  display: grid;
+  gap: 2px;
+  inline-size: 15px;
+}
+.atlas-orbit-glyph > span {
+  height: 2px;
+  border-radius: .5px;
+  background: linear-gradient(to right, currentColor 0 39%, transparent 39% 61%, currentColor 61%);
+}
+.atlas-orbit-glyph > span[data-yang] { background: currentColor; }
+.home-experiences .atlas-trigram-explorer .home-diorama .atlas-orbit-gua[aria-pressed='true'] {
+  border-color: #f0d996;
+  background: radial-gradient(ellipse at 35% 18%,#54927a,#205340 74%);
+  color: #fff5d6;
+  transform: translate(-50%, calc(-50% - 3px));
+  box-shadow: inset 0 1px #c5e0b4ac, 0 5px 0 #423b28, 0 0 14px #f0d89578, 0 9px 8px #091711b3;
+}
+.home-experiences .atlas-trigram-explorer .home-diorama .atlas-orbit-gua:focus-visible {
+  position: absolute;
+  outline: 2px solid #fff3c6;
+  outline-offset: 2px;
+}
+.home-diorama .atlas-yinyang { inset: 31% 34% 33%; }
+.home-diorama .atlas-taiji {
+  width: 74%;
+  padding: 3px;
+  transform: rotateX(18deg);
+  border: 1px solid #e9c989;
+  border-radius: 50%;
+  background: linear-gradient(142deg,#d0ac70,#69573d 74%,#be9a67);
+  box-shadow: 0 3px 0 #695237, 0 7px 14px #0c1a14cc, 0 0 14px #ccaa644e;
+}
+.home-diorama .atlas-taiji svg { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .home-experience-stage > .home-experience-page:not([hidden]) { animation: none; }
+  .home-experiences .atlas-trigram-explorer .home-diorama .atlas-orbit-gua { transition: none; }
+}

@@ -1,0 +1,379 @@
+.home-diorama:is([data-scene="liuyao"], [data-scene="liuren"], [data-scene="taiyi"]) {
+  --exhibit-rim: #97724d;
+  padding: 7px;
+  border-color: var(--exhibit-rim);
+  background: radial-gradient(ellipse at 44% 8%,#3f3025,#1d1d18 72%);
+  box-shadow: inset 0 1px 1px #f0ce9b68,inset 0 -5px 15px #040b095c,0 4px 8px #341e231a;
+}
+
+.home-diorama:is([data-scene="liuyao"], [data-scene="liuren"], [data-scene="taiyi"]) .home-diorama-set {
+  pointer-events: none;
+}
+
+.home-diorama[data-scene="liuyao"] {
+  background:
+    radial-gradient(ellipse at 47% 9%,#bb84613f,transparent 58%),
+    repeating-linear-gradient(88deg,#92734a10 0 1px,#0c141200 2px 7px),
+    linear-gradient(155deg,#4f3224,#211d18 71%,#2e281b);
+}
+
+.home-diorama[data-scene="liuyao"] .home-diorama-set::before {
+  position: absolute;
+  inset: 6px 5px 8px;
+  content: "";
+  border: 1px solid #d4b77a58;
+  border-radius: 9px;
+  background:
+    repeating-radial-gradient(ellipse at 50% 60%,transparent 0 24px,#d4b77a0d 25px 26px,transparent 27px 41px),
+    radial-gradient(ellipse at 50% 8%,#b891541d,#1c2b2354 75%);
+  transform: perspective(550px) rotateX(12deg);
+  box-shadow: 0 3px 0 #111610c9,inset 0 0 0 3px #1e2e2270;
+}
+
+.home-diorama[data-scene="liuyao"][data-solved="true"] .home-diorama-set::before {
+  border-color: #efcc878c;
+  box-shadow: 0 3px 0 #111610c9,inset 0 0 0 3px #1e2e2270,inset 0 0 18px #ae845353;
+}
+
+.home-diorama[data-scene="liuyao"] .home-coins {
+  width: min(100%,340px);
+  margin-inline: auto;
+  padding: 6px 3px 5px;
+  gap: 7px;
+}
+
+.home-diorama[data-scene="liuyao"] .home-coin-pick {
+  --home-coin-pitch: 26deg;
+  --home-coin-yaw: -8deg;
+  --home-face-turn: 0deg;
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  place-content: stretch;
+  gap: 2px;
+  line-height: 1.2;
+  width: min(100%,90px);
+  min-width: 0;
+  min-height: 90px;
+  padding: 4px 1px 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.home-diorama[data-scene="liuyao"] .home-coin-pick:nth-child(2) { --home-coin-pitch: 15deg; --home-coin-yaw: 5deg; }
+.home-diorama[data-scene="liuyao"] .home-coin-pick:nth-child(3) { --home-coin-pitch: 22deg; --home-coin-yaw: -2deg; }
+.home-diorama[data-scene="liuyao"] .home-coin-pick[data-back] { --home-face-turn: 180deg; }
+
+.home-coin-display {
+  position: relative;
+  display: block;
+  width: clamp(59px,17vw,68px);
+  aspect-ratio: 1;
+  perspective: 500px;
+}
+
+.home-coin-display::after {
+  position: absolute;
+  inset: auto -12% -3px;
+  height: 37%;
+  z-index: -1;
+  content: "";
+  border-radius: 50%;
+  background: radial-gradient(ellipse,#070905d9 12%,#08090545 53%,transparent 72%);
+  transform: rotate(-5deg);
+}
+
+.home-coin-object {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--home-coin-yaw)) rotateX(calc(var(--home-face-turn) + var(--home-coin-pitch)));
+  transition: transform 590ms cubic-bezier(.2,.78,.22,1.15);
+}
+
+.home-coin-edge,.home-coin-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.home-coin-edge,.home-coin-face::before {
+  -webkit-mask: linear-gradient(#fff 0 0),linear-gradient(#fff 0 0) center/23% 23% no-repeat;
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0),linear-gradient(#fff 0 0) center/23% 23% no-repeat;
+  mask-composite: exclude;
+}
+
+.home-coin-edge {
+  transform: translateZ(calc(var(--home-rim-layer) * 1.15px));
+  background: conic-gradient(from -11deg,#846245,#513617,#b58d51,#60451e,#d8ac65,#846245);
+}
+
+.home-coin-face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(3px);
+}
+
+.home-coin-face--reverse { transform: rotateX(180deg) translateZ(3px); }
+
+.home-coin-face::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  border: 1px solid #e9cc84;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle,transparent 50%,#66451b80 53% 56%,#ffecab88 58% 61%,transparent 62% 66%,#7d5527 67% 69%),
+    repeating-conic-gradient(from 19deg,#fff4ba1d 0deg 1deg,#38280d17 1deg 2deg,transparent 2deg 4deg),
+    radial-gradient(ellipse at 76% 73%,#466c4c78,transparent 63%),
+    conic-gradient(from -9deg,#b98b48,#f4d692,#b1813f,#967044,#c9ac66,#f2ce87,#b98b48);
+  box-shadow: inset 0 0 0 1px #8a6637,inset 0 0 4px 3px #5c421a7d;
+}
+
+.home-coin-face--reverse::before {
+  border-color: #c4ad7f;
+  background:
+    radial-gradient(circle,transparent 35%,#52655870 37% 40%,#ddc59a8f 43% 44%,transparent 47% 58%,#3f523d73 61% 63%,#dcc49b60 64% 66%,#64604a 68%),
+    repeating-conic-gradient(from 22deg,#faf0c529 0deg 1deg,transparent 1deg 4deg),
+    conic-gradient(from -10deg,#9b8253,#d7c496,#a38f62,#687965,#a89a71,#c7b78d,#9b8253);
+}
+
+.home-coin-cutout {
+  position: absolute;
+  inset: 38%;
+  border: 1px solid #644813;
+  box-shadow: 0 0 0 1px #e0c37a9e,inset 0 0 0 1px #594426b8;
+}
+
+.home-coin-stamp,.home-coin-mark {
+  position: absolute;
+  display: grid;
+  width: 25%;
+  height: 23%;
+  place-items: center;
+  color: #462e11;
+  font: 800 clamp(11px,3.3vw,16px)/1 'KaiTi','Songti SC',serif;
+  text-shadow: 0 1px #f6dfa2a3;
+}
+
+.home-coin-stamp--north { top: 11%; left: 37.5%; }
+.home-coin-stamp--south { bottom: 11%; left: 37.5%; }
+.home-coin-stamp--east { top: 38.5%; right: 11%; }
+.home-coin-stamp--west { top: 38.5%; left: 11%; }
+.home-coin-mark::before {
+  width: 38%;
+  aspect-ratio: 1;
+  content: "";
+  border: 1px solid #5e573a;
+  border-radius: 25%;
+  transform: rotate(45deg);
+  box-shadow: 0 1px #eedaa6a3,inset 0 1px #ede1ad6e;
+}
+
+.home-diorama[data-scene="liuyao"] .home-coin-caption {
+  min-width: 54px;
+  padding: 3px 6px;
+  border: 1px solid #a38152;
+  border-radius: 5px;
+  color: #ffe8b7;
+  background: linear-gradient(#463826,#2a281e);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-diorama[data-scene="liuren"] {
+  --exhibit-rim: #758878;
+  background:
+    radial-gradient(ellipse at 52% 12%,#677c674d,transparent 72%),
+    repeating-linear-gradient(24deg,#b1d4b808 0 1px,transparent 1px 4px),
+    linear-gradient(155deg,#273e38,#141f20 80%);
+}
+
+.home-diorama[data-scene="liuren"] .home-diorama-set::before {
+  position: absolute;
+  inset: 9px 7px 5px;
+  content: "";
+  border: 1px solid #aabd9b46;
+  border-radius: 9px;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 18px,#dac3a219 19px 20px),
+    radial-gradient(ellipse at 50% 45%,#abbe9552,transparent 66%);
+  transform: perspective(600px) rotateX(16deg);
+  box-shadow: 0 4px 0 #111b1b,inset 0 0 0 3px #1b272286;
+}
+
+.home-diorama[data-scene="liuren"] .home-liuren-chain {
+  position: relative;
+  gap: clamp(3px,1.4vw,7px);
+  margin: 4px 4px 7px;
+  perspective: 520px;
+}
+
+.home-diorama[data-scene="liuren"] .home-liuren-chain > span:not([aria-hidden]) {
+  display: grid;
+  min-width: 0;
+  min-height: 50px;
+  align-content: center;
+  padding: 6px 2px;
+  border: 1px solid #7d987f;
+  border-radius: 8px;
+  color: #e4d9b7;
+  background:
+    repeating-linear-gradient(60deg,transparent 0 3px,#b8cfa80b 3px 4px),
+    linear-gradient(145deg,#557568,#293f35 68%);
+  transform: rotateX(12deg) translateZ(1px);
+  transition: transform 230ms ease,box-shadow 230ms ease,background-color 230ms ease;
+  box-shadow: inset 0 0 0 2px #263d35,inset 0 0 0 3px #a1b99b6e,0 3px 0 #344837,0 7px 0 #14231f,0 10px 11px #040909a9;
+}
+
+.home-diorama[data-scene="liuren"] .home-liuren-chain > span:first-child,
+.home-diorama[data-scene="liuren"][data-solved="true"] .home-liuren-chain > span:not([aria-hidden]) {
+  border-color: #efd59b;
+  color: #fff0cd;
+  background:
+    linear-gradient(38deg,transparent 20%,#bbd1a839 60%,transparent 75%),
+    radial-gradient(ellipse at 50% 16%,#8ba687,#466855 74%);
+  transform: rotateX(9deg) translate3d(0,-3px,7px);
+  box-shadow: inset 0 0 0 2px #5e795e,inset 0 0 0 3px #e2cb916e,0 3px 0 #415b45,0 7px 0 #182c25,0 10px 13px #040909b9;
+}
+
+.home-diorama[data-scene="liuren"][data-solved="true"] .home-liuren-chain > span:last-child { transition-delay: 55ms; }
+.home-diorama[data-scene="liuren"] .home-liuren-chain > span[aria-hidden] { color: #b4bc9a; font-size: 15px; }
+.home-diorama[data-scene="liuren"][data-solved="true"] .home-liuren-chain > span[aria-hidden] { color: #ffe5a5; text-shadow: 0 0 8px #eacc808a; }
+.home-diorama[data-scene="liuren"] .home-liuren-chain b { font-size: 24px; line-height: 1.12; text-shadow: 0 1px 1px #24392f; }
+.home-diorama[data-scene="liuren"] .home-liuren-chain small { line-height: 1.4; }
+
+.home-diorama:is([data-scene="liuren"], [data-scene="taiyi"]) :is(.home-option-three,.home-option-four) {
+  margin: 2px 3px 3px;
+  gap: 7px;
+}
+
+.home-diorama:is([data-scene="liuren"], [data-scene="taiyi"]) .home-experience-pick {
+  min-height: 46px;
+  border-color: #a59671;
+  color: #203e35;
+  background: linear-gradient(158deg,#f0e8c9,#c9d4ba 69%,#acb79a);
+  box-shadow: 0 3px 0 #52624e,0 5px 0 #152521,inset 0 1px 1px #fff5cf;
+  transform: translateY(-2px);
+  transition: transform 170ms ease,box-shadow 170ms ease;
+}
+
+.home-diorama:is([data-scene="liuren"], [data-scene="taiyi"]) .home-experience-pick[aria-pressed="true"] {
+  color: #fff4d1;
+  border-color: #e5cc8e;
+  background: linear-gradient(150deg,#587357,#304a3b);
+  box-shadow: 0 2px 0 #192a23,inset 0 1px 0 #edcb8d77;
+  transform: translateY(1px);
+}
+
+.home-diorama[data-scene="taiyi"] {
+  --exhibit-rim: #7d8871;
+  background:
+    radial-gradient(ellipse at 48% 14%,#496b5485,transparent 73%),
+    linear-gradient(151deg,#233d37,#182d29 74%,#142321);
+}
+
+.home-diorama[data-scene="taiyi"] .home-diorama-set::before {
+  position: absolute;
+  inset: 9px -6px 34px;
+  content: "";
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(ellipse at 50% 40%,transparent 0 17px,#cad5a92a 18px 19px,transparent 20px 28px),
+    linear-gradient(90deg,transparent 49%,#c7d6b040 50%,transparent 51%);
+  transform: perspective(460px) rotateX(35deg);
+  opacity: .66;
+}
+
+.home-diorama[data-scene="taiyi"] .home-taiyi-plates {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+  align-items: end;
+  margin: 0 4px 4px;
+  color: #e3cf9c;
+}
+
+.home-diorama[data-scene="taiyi"] .home-taiyi-plates > span:not(:nth-child(2)) {
+  display: grid;
+  position: relative;
+  min-height: 71px;
+  align-content: end;
+  justify-items: center;
+  padding: 0 2px 1px;
+  border: 0;
+  color: #dfd9b3;
+  background: none;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.home-diorama[data-scene="taiyi"] .home-taiyi-plates > span:not(:nth-child(2))::before {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  width: min(80%,86px);
+  height: 22px;
+  border: 1px solid #a39771;
+  border-radius: 50%;
+  content: "";
+  background:
+    radial-gradient(ellipse,transparent 39%,#b9b28685 40% 42%,#355848 44% 59%,#879a758f 60% 64%,#375b44 68%),
+    linear-gradient(133deg,#917c55,#38584b 65%);
+  transform: translateX(-50%) perspective(300px) rotateX(12deg);
+  box-shadow: 0 3px 0 #5d6247,0 5px 0 #293c30,0 9px 6px #070d0cbb;
+  transition: box-shadow 250ms ease,border-color 250ms ease;
+}
+
+.home-diorama[data-scene="taiyi"] .home-taiyi-plates > span[data-palace-active] { color: #fff0b8; text-shadow: 0 0 9px #ffea8c60; }
+.home-diorama[data-scene="taiyi"] .home-taiyi-plates > span[data-palace-active]::before {
+  border-color: #edd39d;
+  box-shadow: 0 3px 0 #80734b,0 5px 0 #293c30,0 9px 6px #070d0cbb,0 0 15px #d3e4a659;
+}
+
+.home-diorama[data-scene="taiyi"] .home-taiyi-plates > span:nth-child(2) { margin-bottom: 15px; }
+
+.home-diorama[data-scene="taiyi"] .home-taiyi-plates::after {
+  position: absolute;
+  top: 4px;
+  left: calc(25% - 5px);
+  z-index: 1;
+  width: 34px;
+  aspect-ratio: 1;
+  border: 1px solid #a4b188;
+  border-radius: 50%;
+  content: "";
+  background:
+    radial-gradient(ellipse at 32% 26%,#fff7c1a6,transparent 32%),
+    radial-gradient(ellipse at 32% 23%,#ede6aa 1%,#a9ba83 32%,#618868 57%,#254e42 77%,#173931 88%);
+  transform: translateX(-50%);
+  transition: transform 490ms cubic-bezier(.22,.78,.2,1),left 490ms cubic-bezier(.22,.78,.2,1);
+  box-shadow: inset -2px -4px 5px #09282073,0 0 8px #dadd9e45,0 9px 10px -3px #102117c9;
+  pointer-events: none;
+}
+
+.home-diorama[data-scene="taiyi"][data-pick="4"] .home-taiyi-plates::after {
+  left: calc(75% + 5px);
+  transform: translateX(-50%) rotate(38deg);
+}
+
+.home-diorama:is([data-scene="liuyao"], [data-scene="liuren"], [data-scene="taiyi"]) button:focus-visible {
+  outline-color: #ffe2a9;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .home-coin-object,
+  .home-diorama[data-scene="liuren"] .home-liuren-chain > span,
+  .home-diorama[data-scene="taiyi"] .home-taiyi-plates::after,
+  .home-diorama[data-scene="taiyi"] .home-taiyi-plates > span::before,
+  .home-diorama:is([data-scene="liuren"], [data-scene="taiyi"]) .home-experience-pick {
+    transition: none;
+  }
+}
