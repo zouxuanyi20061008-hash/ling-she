@@ -4,6 +4,7 @@ import './liuyao-mobile.css'
 import SixYaoFullChart from './SixYaoFullChart.jsx'
 import SixYaoJointOverview from './SixYaoJointOverview.jsx'
 import SixYaoCombinationPanel from './SixYaoCombinationPanel.jsx'
+import LiuyaoCoinTray,{COIN_TOSS_MS} from './LiuyaoCoinTray.jsx'
 import {useCastPage} from './CastPage.jsx'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 import {shareCaseFromArchive} from './case-exchange.js'
@@ -12,6 +13,7 @@ import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choic
 const api=import.meta.env.VITE_API_URL ?? (import.meta.env.PROD?'':window.location.protocol+'//'+window.location.hostname+':8000')
 const K={6:{name:'老阴',yin:0,move:true},7:{name:'少阳',yin:1,move:false},8:{name:'少阴',yin:0,move:false},9:{name:'老阳',yin:1,move:true}}
 const POS=['初','二','三','四','五','上']
+const INITIAL_COINS=[2,3,2]
 
 function Diagram({label,hex,moving=[]}) {
   return <article className="academy-hex">
@@ -2105,9 +2107,10 @@ export function ReviewReport({chart,question}) {
 }
 
 export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
-  const [coins,setCoins]=useState([2,3,2])
+  const [coins,setCoins]=useState(INITIAL_COINS)
+  const [landingCoins,setLandingCoins]=useState(null)
+  const [lastCoinTotal,setLastCoinTotal]=useState(null)
   const [lines,setLines]=useState([])
-  const [isSpinning,setIsSpinning]=useState(false)
   const [chart,setChart]=useState(null)
   const [question,setQuestion]=useState('')
   const [background,setBackground]=useState('')
@@ -2130,6 +2133,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   const requestNumber=useRef(0)
   const reviewNavRef=useRef(null)
   const timer=useRef(null)
+  const isSpinning=landingCoins!==null
   useEffect(()=>()=>clearTimeout(timer.current),[])
   useEffect(()=>{
     if(castPage.compact)setStudioView(castPage.page==='result'?'analysis':'casting')
@@ -2182,6 +2186,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   function addLine(value,faces){
     if(lines.length>=6||busy||calendarBusy)return
     if(faces)setCoins(faces)
+    setLastCoinTotal(faces?value:null)
     const seq=[...lines,value];setLines(seq);setChart(null);setAnswer('');setError('')
     if(seq.length===6){
       setReviewStage('calendar')
@@ -2190,26 +2195,41 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
     }
   }
   function cast(){
-    if(isSpinning||lines.length>=6)return
-    setIsSpinning(true)
+    if(timer.current!==null||lines.length>=6||busy||calendarBusy)return
+    const entropy=window.crypto?.getRandomValues?window.crypto.getRandomValues(new Uint32Array(3)):null
+    const faces=INITIAL_COINS.map((_,i)=>entropy?((entropy[i]&1)?3:2):Math.random()<.5?2:3)
+    const total=faces[0]+faces[1]+faces[2]
+    if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+      addLine(total,faces)
+      return
+    }
+    setLandingCoins(faces)
     timer.current=setTimeout(()=>{
-      const entropy=window.crypto?.getRandomValues?window.crypto.getRandomValues(new Uint32Array(3)):null
-      const faces=[0,1,2].map(i=>entropy?((entropy[i]&1)?3:2):Math.random()<.5?2:3)
-      setIsSpinning(false);addLine(faces[0]+faces[1]+faces[2],faces)
-    },800)
+      timer.current=null
+      setLandingCoins(null)
+      addLine(total,faces)
+    },COIN_TOSS_MS)
   }
   function undoLastLine(){
     if(!lines.length||busy||isSpinning)return
-    clearTimeout(timer.current)
     requestNumber.current+=1
     setCalendarBusy(false)
-    setIsSpinning(false)
+    setLastCoinTotal(null)
     setLines(old=>old.slice(0,-1))
     setChart(null);setAnswer('');setError('')
     setFocusLiugin('');setStudyPosition(null);setRoleView('用神')
     setReviewStage('calendar');setStudioView('casting')
   }
-  function restart(){clearTimeout(timer.current);requestNumber.current+=1;setCalendarBusy(false);setIsSpinning(false);setCoins([2,3,2]);setLines([]);setChart(null);setAnswer('');setError('');setFocusLiugin('');setStudyPosition(null);setRoleView('用神');setReviewStage('calendar');setStudioView('casting')}
+  function restart(){
+    clearTimeout(timer.current)
+    timer.current=null
+    requestNumber.current+=1
+    setCalendarBusy(false)
+    setLandingCoins(null);setCoins(INITIAL_COINS);setLastCoinTotal(null)
+    setLines([]);setChart(null);setAnswer('');setError('')
+    setFocusLiugin('');setStudyPosition(null);setRoleView('用神')
+    setReviewStage('calendar');setStudioView('casting')
+  }
   function goReviewStep(target){
     if(calendarBusy)return
     setReviewStage(target)
@@ -2317,11 +2337,13 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
               placeholder="认真求测，请先写下问题。只为学习摇卦，也可以暂时留空。"/>
           </label>
           <div className="academy-coin-altar">
-            <div className="academy-coins">{coins.map((value,i)=><div className={'academy-coin '+(isSpinning?'spinning':'')} key={i} style={{animationDelay:(i*.085)+'s'}}>
-              <div className="academy-coin-inside"><span>{value===3?'背':'字'}</span><b>{value===3?'乾元':'通宝'}</b></div>
-            </div>)}</div>
-            <p>字面记二 · 背面记三</p>
-            <button className="academy-primary" onClick={cast} disabled={isSpinning||lines.length>=6}>
+            <LiuyaoCoinTray faces={coins} landingFaces={landingCoins}/>
+            <p className="liuyao-coin-note" role="status">
+              {isSpinning||lastCoinTotal===null?'字面记二 · 背面记三':<>
+                本掷 <strong>{coins.join(' ＋ ')} ＝ {lastCoinTotal}</strong> · {K[lastCoinTotal].name}
+              </>}
+            </p>
+            <button type="button" className="academy-primary" onClick={cast} disabled={isSpinning||lines.length>=6}>
               {isSpinning?'铜钱翻转中…':lines.length===6?'六爻已成':'摇第'+['一','二','三','四','五','六'][lines.length]+'爻'} ↗
             </button>
           </div>

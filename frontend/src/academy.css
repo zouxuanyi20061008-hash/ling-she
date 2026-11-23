@@ -76,15 +76,7 @@
 .academy-casting-table,.academy-casting-result,.academy-ai-section,.academy-learning-surface,.academy-learning-panel,.academy-prelude{background:#f7f1e5;border:1px solid #cabb9c;box-shadow:3px 4px 0 rgba(108,89,63,.12);padding:25px}
 .academy-panel-head{display:flex;justify-content:space-between;gap:15px;color:#8c755b;font-size:12px;letter-spacing:.1em}
 .academy-panel-head b{color:#285944;font-size:16px}
-.academy-coin-altar{position:relative;margin:21px 0 15px;background:radial-gradient(circle,rgba(233,210,168,.65) 0,rgba(213,196,164,.2) 47%,transparent 71%);border:1px dashed rgba(166,142,95,.43);padding:27px 15px 19px;text-align:center}
-.academy-coins{display:flex;justify-content:center;gap:19px;align-items:center;min-height:113px;perspective:760px}
-.academy-coin{width:81px;height:81px;border-radius:50%;padding:7px;background:linear-gradient(135deg,#cead64,#80602e 48%,#d5ad5e 73%,#99743a);border:3px ridge #bb9857;box-shadow:inset 1px 2px 3px #ecd3a1,0 6px 9px rgba(76,63,32,.23);transform-style:preserve-3d}
-.academy-coin-inside{width:100%;height:100%;border-radius:50%;border:1px dashed rgba(53,48,27,.62);display:grid;place-items:center;position:relative;color:#54381c}
-.academy-coin-inside:after{content:"";width:16px;height:16px;background:#564326;border:2px solid #ad8643;position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);box-shadow:inset 1px 1px 2px #2f2615}
-.academy-coin-inside span{position:absolute;top:8px;font-size:13px;font-weight:bold}
-.academy-coin-inside b{font-size:11px;letter-spacing:.1em;position:absolute;bottom:8px}
-.academy-coin.spinning{animation:coin-spin .77s cubic-bezier(.4,.16,.32,.88) both}
-@keyframes coin-spin{0%{transform:translateY(0) rotateX(0)}42%{transform:translateY(-38px) rotateX(540deg)}100%{transform:translateY(0) rotateX(1080deg)}}
+.academy-coin-altar{position:relative;margin:21px 0 15px;background:linear-gradient(#f2e7d2,#f7efdf);border:1px solid #b2926459;border-radius:13px;padding:27px 15px 19px;text-align:center}
 .academy-coin-altar>p{font-size:11px;color:#977c52;margin:7px 0 15px}
 .academy-subtitle{font-size:12px;color:#6e6b56;text-align:center;margin:19px 0 10px}
 .academy-manual{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
@@ -167,12 +159,11 @@
   .academy-stage-banner h1{font-size:31px}.academy-stage-glyph{font-size:100px}
   .academy-stage-grid,.academy-learning-layout{grid-template-columns:1fr;gap:12px;margin-top:12px}
   .academy-casting-table,.academy-casting-result,.academy-ai-section,.academy-learning-surface,.academy-learning-panel,.academy-prelude{padding:19px 14px}
-  .academy-coin{width:70px;height:70px}.academy-coins{gap:14px;min-height:100px}
   .academy-ai-inputs{grid-template-columns:1fr;gap:14px}
   .academy-hex h3{font-size:17px}
   .academy-prelude{gap:16px}.academy-prelude>span{font-size:75px}.academy-prelude h2{font-size:21px}
 }
-@media(prefers-reduced-motion:reduce){.atlas-yinyang,.academy-coin.spinning{animation:none!important}.atlas-method,.academy-nine,.atlas-primary,.academy-primary{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.atlas-yinyang{animation:none!important}.atlas-method,.academy-nine,.atlas-primary,.academy-primary{transition:none!important}}
 
 .academy-meihua-back{padding:6px 8px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:#8b775d}
 .academy-meihua-back button{color:#326950;text-decoration:underline;text-underline-offset:4px}

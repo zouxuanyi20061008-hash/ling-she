@@ -143,11 +143,6 @@
     margin: 8px 0 5px;
     padding: 7px 8px;
   }
-  .academy-stage--liuyao .academy-coins { min-height: 60px; gap: 10px; }
-  .academy-stage.academy-stage--liuyao .academy-coin { width: 58px; height: 58px; padding: 5px; }
-  .academy-stage--liuyao .academy-coin-inside::after { width: 12px; height: 12px; }
-  .academy-stage--liuyao .academy-coin-inside span { top: 4px; font-size: 10px; line-height: 1; }
-  .academy-stage--liuyao .academy-coin-inside b { bottom: 4px; font-size: 9px; line-height: 1; }
   .academy-stage--liuyao .academy-coin-altar > p { margin: 3px 0 5px; }
   .academy-stage--liuyao .academy-coin-altar .academy-primary {
     width: 100%;

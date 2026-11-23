@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
 // 万象书院 V20：实际渲染和点击测试，保护布局升级时的六爻排盘状态。
-// 只 mock 网络响应，不修改摇钱、历法或纳甲算法。
+// 使用固定随机位和网络响应复核记爻与盘面状态。
 import React from 'react'
 import {beforeEach,afterEach,it,expect,vi} from 'vitest'
 import {render,screen,fireEvent,waitFor,cleanup,act} from '@testing-library/react'
 import SixYaoStage from '../src/SixYaoStage.jsx'
+import {COIN_TOSS_MS} from '../src/LiuyaoCoinTray.jsx'
 
 const makeHex=()=>({
   full_name:'乾为天',
@@ -49,6 +50,47 @@ it('六爻未齐时研判台不可进入；起卦阶段保留手输爻位',()=>{
   expect(screen.getByText('5/6')).toBeTruthy()
   expect(studio('贰 · 研判台').disabled).toBe(true)
   expect(globalThis.fetch).not.toHaveBeenCalled()
+})
+
+it('铜钱落定才按实际面值记爻，重开能取消还在翻转的一掷',()=>{
+  const random=vi.spyOn(window.crypto,'getRandomValues').mockImplementation(faces=>{
+    faces.set([1,1,0]);return faces
+  })
+  vi.useFakeTimers()
+  try{
+    const {container}=render(<SixYaoStage apiConfig={config}/>)
+    const tray=container.querySelector('.liuyao-coin-tray')
+    fireEvent.click(screen.getByRole('button',{name:/摇第一爻/}))
+    expect(tray.dataset.phase).toBe('rolling')
+    act(()=>vi.advanceTimersByTime(COIN_TOSS_MS-1))
+    expect(studio('壹 · 起卦台').textContent).toContain('0/6')
+    act(()=>vi.advanceTimersByTime(1))
+    const values=Array.from(tray.querySelectorAll('.liuyao-coin-model'),model=>model.dataset.coinValue)
+    expect(tray.dataset.phase).toBe('settled')
+    expect(values).toEqual(['3','3','2'])
+    expect(screen.getByRole('status').textContent).toMatch(/3 ＋ 3 ＋ 2 ＝ 8 · 少阴/)
+    expect(studio('壹 · 起卦台').textContent).toContain('1/6')
+
+    fireEvent.click(screen.getByRole('button',{name:/摇第二爻/}))
+    fireEvent.click(screen.getByRole('button',{name:/重新起卦/}))
+    act(()=>vi.advanceTimersByTime(COIN_TOSS_MS))
+    expect(random).toHaveBeenCalledTimes(2)
+    expect(tray.dataset.phase).toBe('settled')
+    expect(studio('壹 · 起卦台').textContent).toContain('0/6')
+    expect(globalThis.fetch).not.toHaveBeenCalled()
+  }finally{vi.useRealTimers()}
+})
+
+it('启用减少动态效果时直接显示落定面值并记录一爻',()=>{
+  vi.stubGlobal('matchMedia',query=>({matches:query==='(prefers-reduced-motion: reduce)'}))
+  vi.spyOn(window.crypto,'getRandomValues').mockImplementation(faces=>{
+    faces.set([0,0,0]);return faces
+  })
+  const {container}=render(<SixYaoStage apiConfig={config}/>)
+  fireEvent.click(screen.getByRole('button',{name:/摇第一爻/}))
+  expect(container.querySelector('.liuyao-coin-tray').dataset.phase).toBe('settled')
+  expect(screen.getByRole('status').textContent).toMatch(/2 ＋ 2 ＋ 2 ＝ 6 · 老阴/)
+  expect(studio('壹 · 起卦台').textContent).toContain('1/6')
 })
 
 it('只有 API 真正成功才切到研判台；先显示排盘中而不是空白页面',async()=>{
