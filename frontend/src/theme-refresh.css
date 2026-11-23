@@ -380,7 +380,7 @@ button:disabled{cursor:not-allowed}
     linear-gradient(155deg,transparent 45%,rgba(202,231,186,.12) 46% 54%,transparent 55%),
     linear-gradient(22deg,transparent 58%,rgba(202,231,186,.12) 59% 68%,transparent 69%);
 }
-.library-stage .library-method-grid .library-method-card{min-height:155px}
+.library-stage .library-method-grid:not(.library-study-method-grid) .library-method-card{min-height:155px}
 .library-stage .library-method-card small{font-size:12px;line-height:1.7}
 .library-stage .library-page-controls button{min-height:44px}
 @media(max-width:760px){
@@ -648,7 +648,7 @@ button:disabled{cursor:not-allowed}
 .library-reader-quick button:disabled{opacity:.43;cursor:not-allowed}
 .library-reader-quick>span{font-size:12px;font-weight:650;color:#3b5d45}
 .library-stage .library-original{color:#244c38;background:#efe4d0}
-.library-stage .library-reading-grid p,.library-stage .library-learning-grid p{
+.library-stage .library-reading-grid p,.library-stage .library-lesson-text p{
   color:#334b3d;line-height:1.95
 }
 .library-stage .library-reading-grid section{background:#f6f0e2;border-color:#bfc1a9}

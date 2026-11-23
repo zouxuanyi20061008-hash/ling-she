@@ -1,22 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
-import { CLASSICS, LESSONS, QUIZZES, SOURCES } from './studyContent.js'
-import { METHODS, REFERENCES, TEXTS, COURSE, COURSE_QUIZ } from './traditionContent.js'
+import { CLASSICS, SOURCES } from './studyContent.js'
+import { METHODS, REFERENCES, TEXTS } from './traditionContent.js'
+import { ARTS } from './ArtsHub.jsx'
+import { LIBRARY_STUDY, LIBRARY_TRIALS } from './libraryStudy.js'
+import StudyTrial from './StudyTrial.jsx'
 
 const SECTIONS=[
   {id:'bookshelf',number:'壹',title:'典籍',english:'THE ARCHIVES',tag:'古籍原文 · 逐章细读',glyph:'典',detail:'先读前人的话，再学怎样理解。'},
-  {id:'courses',number:'贰',title:'修习',english:'THE CLASSROOM',tag:'分门课程 · 动态演示',glyph:'習',detail:'从象数基础，逐步走向实战。'},
-  {id:'quizmenu',number:'叁',title:'试炼',english:'THE PRACTICE',tag:'一题一页 · 即答即解',glyph:'问',detail:'亲自作答，验证有没有学懂。'},
+  {id:'courses',number:'贰',title:'修习',english:'THE CLASSROOM',tag:'一课一练',glyph:'習',detail:'每课讲一个知识点，学完就能动手。'},
+  {id:'quizmenu',number:'叁',title:'试炼',english:'THE PRACTICE',tag:'五题一轮 · 即答即解',glyph:'问',detail:'点格子、拼顺序，卡住了就看提示。'},
   {id:'settings',number:'肆',title:'设定',english:'THE SETTINGS',tag:'个人 API · 使用偏好',glyph:'设',detail:'自行配置 AI，古籍与排盘照常免费。'}
 ]
-const NAMES=Object.fromEntries(METHODS.map(m=>[m.id,m.title]))
-const QUAD=['甲','乙','丙','丁']
+const STUDY_METHODS=[...METHODS,...ARTS.filter(art=>!METHODS.some(method=>method.id===art.id))
+  .map(art=>({id:art.id,title:art.name,sub:art.title}))]
+const NAMES=Object.fromEntries(STUDY_METHODS.map(m=>[m.id,m.title]))
+const DEMO_METHODS=new Set(METHODS.map(method=>method.id))
 const READING_PROGRESS_KEY='wanxiang-library-progress-v1'
 function loadReadingProgress(){
   try{
     const stored=JSON.parse(window.localStorage.getItem(READING_PROGRESS_KEY)||'{}')
     if(!stored||typeof stored!=='object'||Array.isArray(stored))return {}
-    return Object.fromEntries(Object.entries(stored).filter(([key,page])=>
-      /^(reader|lesson):(zhouyi|meihua|liuyao|qimen|bazi)$/.test(key)&&Number.isInteger(page)&&page>=0))
+    return Object.fromEntries(Object.entries(stored).filter(([key,page])=>{
+      const [kind,method,extra]=key.split(':')
+      return extra===undefined&&Number.isInteger(page)&&page>=0&&
+        ((kind==='reader'&&DEMO_METHODS.has(method))||(kind==='lesson'&&Object.hasOwn(LIBRARY_STUDY,method)))
+    }))
   }catch{return {}}
 }
 function booksFor(id){
@@ -24,21 +32,6 @@ function booksFor(id){
     ? CLASSICS.map(c=>({...c,sourceUrl:SOURCES[c.source]}))
     : (TEXTS[id]||[]).map(c=>({...c,sourceUrl:c.sourceUrl||REFERENCES[id]}))
 }
-function lessonsFor(id){
-  return id==='meihua'?LESSONS.map(l=>({
-    title:l.title,kicker:l.level,sub:l.subtitle,
-    paragraphs:l.paragraphs,example:l.example
-  })):(COURSE[id]||[]).map((l,i)=>({
-    title:l[0],kicker:'第 '+(i+1)+' 课',sub:'循序研习',
-    paragraphs:l.slice(1),example:null
-  }))
-}
-function questionsFor(id){
-  return id==='meihua'
-    ? QUIZZES.map(q=>({question:q.question,options:q.options,answer:q.answer,why:q.why}))
-    : (COURSE_QUIZ[id]||[]).map(q=>({question:q.q,options:q.a,answer:q.correct,why:q.why}))
-}
-
 function StudySymbol({kind,playing=false}){
   return <div className={'library-demo '+kind+(playing?' playing':'')} aria-hidden="true">
     <div className="library-demo-ring"/>
@@ -51,12 +44,17 @@ function StudySymbol({kind,playing=false}){
 }
 
 function MethodSelection({section,onSelect}){
-  return <div className="library-method-grid">
-    {METHODS.map((method,i)=><button type="button" key={method.id} className={"library-method-card library-method--"+method.id} onClick={()=>onSelect(method.id)}>
-      <span className="library-method-index">{String(i+1).padStart(2,'0')}　·　{section==='bookshelf'?(method.bookStatus??method.status):method.status}</span>
+  const bookshelf=section==='bookshelf'
+  const courses=section==='courses'
+  const methods=bookshelf?METHODS:STUDY_METHODS
+  return <div className={'library-method-grid'+(bookshelf?'':' library-study-method-grid')}>
+    {methods.map((method,i)=><button type="button" key={method.id} className={"library-method-card library-method--"+method.id} onClick={()=>onSelect(method.id)}>
+      <span className="library-method-index">{bookshelf?
+        `${String(i+1).padStart(2,'0')}　·　${method.bookStatus??method.status}`:
+        courses?`${LIBRARY_STUDY[method.id].length} 课`:`${LIBRARY_TRIALS[method.id].length} 题`}</span>
       <strong>{method.title}</strong>
       <small>{method.sub}</small>
-      <span className="library-method-action">{section==='bookshelf'?'入卷研读':section==='courses'?'开始修习':'开始答题'} <b>↗</b></span>
+      <span className="library-method-action">{bookshelf?'入卷研读':courses?'开始修习':'开始答题'} <b aria-hidden="true">↗</b></span>
     </button>)}
   </div>
 }
@@ -133,7 +131,7 @@ function Locus({view,method,index,onClose,onLobby,onSection}){
         {i>0&&<em>／</em>}
         {c.do?<button type="button" onClick={c.do}>{c.label}</button>:<b>{c.label}</b>}
       </span>)}
-      {['reader','lesson','quiz'].includes(view)&&<span className="library-crumb-page">· 第 {index+1} 页</span>}
+      {['reader','lesson'].includes(view)&&<span className="library-crumb-page">· 第 {index+1} {view==='lesson'?'课':'页'}</span>}
     </nav>
     <button className="library-exit" type="button" onClick={onClose}>返回书院 <span>↗</span></button>
   </header>
@@ -144,9 +142,8 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
   const [method,setMethod]=useState('meihua')
   const [index,setIndex]=useState(0)
   const [playing,setPlaying]=useState(false)
-  const [choice,setChoice]=useState(null)
-  const [correct,setCorrect]=useState(0)
-  const [quizComplete,setQuizComplete]=useState(false)
+  const [trialMode,setTrialMode]=useState('round')
+  const [readerLesson,setReaderLesson]=useState(null)
   const [reveal,setReveal]=useState(false)
   const [notice,setNotice]=useState('')
   const [readingProgress,setReadingProgress]=useState(loadReadingProgress)
@@ -157,41 +154,55 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
 
   const sectionId=view==='reader'?'bookshelf':view==='lesson'?'courses':view==='quiz'?'quizmenu':view
   const section=SECTIONS.find(s=>s.id===sectionId)
-  const items=view==='reader'?booksFor(method):view==='lesson'?lessonsFor(method):view==='quiz'?questionsFor(method):[]
+  const lessons=LIBRARY_STUDY[method]
+  const items=view==='reader'?booksFor(method):view==='lesson'?lessons:[]
   const item=items[index]
   const zhouyiReader=view==='reader'&&method==='zhouyi'
-  const viewingPages=['reader','lesson','quiz'].includes(view)
   const resumeKind=view==='bookshelf'?'reader':view==='courses'?'lesson':null
-  const resumeEntries=resumeKind?METHODS.map(m=>({method:m,page:readingProgress[resumeKind+':'+m.id]}))
-    .filter(({method,page})=>Number.isInteger(page)&&page>0&&page<(resumeKind==='reader'?booksFor(method.id):lessonsFor(method.id)).length):[]
-  function rememberPage(page){
-    if(view==='reader'||view==='lesson')
-      setReadingProgress(previous=>({...previous,[view+':'+method]:page}))
+  const resumeMethods=resumeKind==='reader'?METHODS:STUDY_METHODS
+  const resumeEntries=resumeKind?resumeMethods.map(m=>({method:m,page:readingProgress[resumeKind+':'+m.id]}))
+    .filter(({method,page})=>Number.isInteger(page)&&page>0&&page<(resumeKind==='reader'?booksFor(method.id):LIBRARY_STUDY[method.id]).length):[]
+  function savePage(kind,id,page){
+    setReadingProgress(previous=>({...previous,[kind+':'+id]:page}))
   }
-  const navigate=(next)=>{
-    setView(next);setIndex(0);setChoice(null);setCorrect(0);setQuizComplete(false);setPlaying(false);setNotice('')
+  function rememberPage(page){
+    if(view==='reader'||view==='lesson')savePage(view,method,page)
+  }
+  const navigate=(next,page=0)=>{
+    setView(next);setIndex(page);setPlaying(false);setReaderLesson(null);setNotice('')
     window.scrollTo({top:0,behavior:'instant'})
   }
   function enter(methodId,resume=false){
     const nextView=view==='bookshelf'?'reader':view==='courses'?'lesson':'quiz'
     const saved=readingProgress[nextView+':'+methodId]
-    const length=nextView==='reader'?booksFor(methodId).length:nextView==='lesson'?lessonsFor(methodId).length:0
+    const length=nextView==='reader'?booksFor(methodId).length:nextView==='lesson'?LIBRARY_STUDY[methodId].length:0
     const start=resume&&Number.isInteger(saved)&&saved>=0&&saved<length?saved:0
-    setMethod(methodId);setIndex(start);setChoice(null);setCorrect(0);setQuizComplete(false);setPlaying(false)
-    setView(nextView)
-    setNotice('')
+    setMethod(methodId)
+    if(nextView==='quiz')setTrialMode('round')
+    navigate(nextView,start)
+  }
+  function turnPage(page){
+    rememberPage(page);setIndex(page);setPlaying(false)
     window.scrollTo({top:0,behavior:'instant'})
   }
-  function prev(){if(index>0){rememberPage(index-1);setIndex(i=>i-1);setPlaying(false);setNotice('');window.scrollTo({top:0,behavior:'instant'})}}
-  function next(){
-    if(index+1<items.length){
-      rememberPage(index+1);setIndex(i=>i+1);setPlaying(false);setChoice(null);setNotice('')
-      window.scrollTo({top:0,behavior:'instant'})
-    }
+  function prev(){if(index>0)turnPage(index-1)}
+  function next(){if(index+1<items.length)turnPage(index+1)}
+  function startTrial(page,mode){
+    setTrialMode(mode)
+    navigate('quiz',page)
+  }
+  function openLesson(page){
+    savePage('lesson',method,page)
+    navigate('lesson',page)
+  }
+  function readFromLesson(page){
+    savePage('reader',method,page)
+    navigate('reader',page)
+    setReaderLesson(index)
   }
   function back(){
     if(view==='lobby'){onClose();return}
-    if(view==='reader'){navigate('bookshelf');return}
+    if(view==='reader'){readerLesson===null?navigate('bookshelf'):openLesson(readerLesson);return}
     if(view==='lesson'){navigate('courses');return}
     if(view==='quiz'){navigate('quizmenu');return}
     navigate('lobby')
@@ -205,7 +216,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
     }
     window.addEventListener('keydown',keys)
     return ()=>window.removeEventListener('keydown',keys)
-  },[view,index,items.length,onClose])
+  },[view,method,index,items.length,readerLesson,onClose])
   function swipeStart(e){
     if(!['reader','lesson'].includes(view)||e.target.closest?.('input,select,textarea,button,a'))return
     const t=e.touches?.[0]
@@ -219,22 +230,20 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
     if(dx>0)prev();else next()
   }
 
-  const quiz=items[index]
-  const answered=choice!==null
   return <main className={"library-stage library-stage--"+(view==="lobby"?"archive":method)}>
     <div className="library-shell">
       <Locus view={view} method={method} index={index} onClose={onClose}
         onLobby={()=>navigate('lobby')} onSection={navigate}/>
       <div className="library-inner">
         {view!=='lobby'&&<nav className="library-secondary-nav" aria-label="藏经阁快捷栏目">
-          <button type="button" className="library-back-button" onClick={back}>← 返回{view==='reader'?'典籍目录':view==='lesson'?'课程目录':view==='quiz'?'练习目录':'藏经阁'}</button>
+          <button type="button" className="library-back-button" onClick={back}>← 返回{view==='reader'?(readerLesson===null?'典籍目录':'本课'):view==='lesson'?'课程目录':view==='quiz'?'练习目录':'藏经阁'}</button>
           <div className="library-section-links">
             {SECTIONS.map(s=><button type="button" key={s.id} className={sectionId===s.id?'active':''}
               aria-current={sectionId===s.id?'page':undefined} onClick={()=>navigate(s.id)}>{s.title}</button>)}
           </div>
         </nav>}
 
-        <div className="library-turn" key={view+'-'+method+'-'+index+(quizComplete?'-done':'')}
+        <div className="library-turn" key={`${view}-${method}${view==='reader'?`-${index}`:''}`}
           onTouchStart={swipeStart} onTouchEnd={swipeEnd}>
           {view==='lobby'&&<section className="library-lobby" aria-label="藏经阁目录">
             <div className="library-lobby-title">
@@ -259,8 +268,8 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
               small={section.number+' · '+section.english}
               title={view==='bookshelf'?'择卷研读':view==='courses'?'择门修习':'入境试炼'}
               desc={view==='bookshelf'?'按卦序研读《周易》六十四卦，也可择读其他古籍。每页附原文出处。':
-                view==='courses'?'选择一门术数，逐课翻阅；配有互动概念演示。':
-                '选择一种术数进行练习；每答完一题，立刻呈现解析。'}/>
+                view==='courses'?'选一门，从第一课开始。也可以直接选课，做对应的小挑战。':
+                '选一门开始连练，也能直接选题。遇到卡点，随时打开提示或回顾本课。'}/>
             {resumeEntries.length>0&&<aside className="library-resume" aria-label="藏经阁断点续读">
               <div className="library-resume-title"><strong>续读 · 接着上次的位置</strong><small>进度仅存于当前浏览器</small></div>
               <div className="library-resume-links">{resumeEntries.map(({method:entry,page})=>
@@ -277,7 +286,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
               <span className="library-eyebrow">典籍 · {NAMES[method]} · 第 {index+1} {zhouyiReader?'卦':'则'}</span>
               <div className="library-chapter-menu">
                 <label htmlFor="library-chapter">{zhouyiReader?'选择卦象':'选择篇章'}</label>
-                <select id="library-chapter" value={index} onChange={e=>{const chosen=Number(e.target.value);setIndex(chosen);rememberPage(chosen);window.scrollTo({top:0,behavior:'instant'})}}>
+                <select id="library-chapter" value={index} onChange={e=>turnPage(Number(e.target.value))}>
                   {zhouyiReader?<>
                     <optgroup label="上经">
                       {items.slice(0,30).map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading}</option>)}
@@ -318,75 +327,46 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
           </section>}
 
           {view==='lesson'&&item&&<section className="library-learning-screen">
-            <div className="library-book-head">
-              <span className="library-eyebrow">修习 · {NAMES[method]} · {item.kicker}</span>
-              <span className="library-lesson-count">循序研读 · {items.length} 课</span>
+            <div className="library-book-head library-study-head">
+              <span className="library-eyebrow">修习 · {NAMES[method]}</span>
+              <div className="library-chapter-menu">
+                <label htmlFor="library-lesson-select">选择课程</label>
+                <select id="library-lesson-select" value={index} onChange={e=>turnPage(Number(e.target.value))}>
+                  {items.map((lesson,i)=><option key={lesson.id} value={i}>{i+1}. {lesson.title}</option>)}
+                </select>
+              </div>
             </div>
-            <div className="library-learning-grid">
-              <article className="library-lesson-paper">
-                <div className="library-paper-line"><span>研习讲义</span><span>第 {index+1} 课</span></div>
-                <h2>{item.title}</h2><span className="library-lesson-sub">{item.sub}</span>
-                <div className="library-lesson-text">{item.paragraphs.map((p,i)=><p key={i}>{p}</p>)}</div>
-                {item.example&&<div className="library-lesson-example"><b>思考题</b><p>{item.example}</p></div>}
-                <p className="library-lesson-note">请把传统取象视为文化研习与思考工具，并核实具体事情中的事实。</p>
-              </article>
-              <aside className="library-lesson-visual">
-                <p className="library-eyebrow">互动图解 · 认识结构</p>
-                <StudySymbol kind={method} playing={playing}/>
-                <button type="button" className="library-play" onClick={()=>setPlaying(p=>!p)}>
-                  {playing?'■ 停止演示':'▷ 播放演示'}
-                </button>
-                <small>动画是概念示意，不是实时排盘。点击按钮可播放或停止。</small>
-              </aside>
-            </div>
+            <article className="library-lesson-paper">
+              <div className="library-paper-line"><span>第 {index+1} 课</span><span>共 {items.length} 课</span></div>
+              <h2>{item.title}</h2>
+              {item.summary&&<p className="library-lesson-sub">{item.summary}</p>}
+              <div className="library-lesson-actions">
+                <button type="button" className="library-action" onClick={()=>startTrial(index,'single')}>本课试炼 <span aria-hidden="true">→</span></button>
+                {Number.isInteger(item.readingIndex)&&<button type="button" className="library-action secondary"
+                  onClick={()=>readFromLesson(item.readingIndex)}>读原典 <span aria-hidden="true">↗</span></button>}
+              </div>
+              <div className="library-lesson-text">{item.paragraphs.map((p,i)=><p key={i}>{p}</p>)}</div>
+              {item.example&&<div className="library-lesson-example"><b>例子</b><p>{item.example}</p></div>}
+              <button type="button" className="library-trial-lesson-link" onClick={()=>startTrial(index,'single')}>学完了，试一题 →</button>
+              {DEMO_METHODS.has(method)&&<details className="library-lesson-demo" key={item.id}
+                onToggle={e=>{if(!e.currentTarget.open)setPlaying(false)}}>
+                <summary>查看概念图</summary>
+                <div className="library-lesson-visual">
+                  <StudySymbol kind={method} playing={playing}/>
+                  <button type="button" className="library-play" onClick={()=>setPlaying(p=>!p)}>
+                    {playing?'■ 停止演示':'▷ 播放演示'}
+                  </button>
+                </div>
+              </details>}
+            </article>
             <PageControls index={index} total={items.length} onBack={prev} onNext={next}
-              doneLabel="开始练习" onFinish={()=>{setView('quiz');setIndex(0);setChoice(null);setCorrect(0);setQuizComplete(false)}}/>
+              doneLabel="本课练习" onFinish={()=>startTrial(index,'single')}/>
           </section>}
 
-          {view==='quiz'&&quiz&&<section className="library-quiz-screen">
-            <div className="library-book-head"><span className="library-eyebrow">研习试炼 · {NAMES[method]}</span>
-              <span className="library-lesson-count">{quizComplete?'已完成':'一题一页 · 即答即解'}</span></div>
-            {quizComplete?<article className="library-quiz-paper library-quiz-finish">
-              <span className="library-finish-seal">成</span>
-              <p className="library-eyebrow">本卷答题结束</p>
-              <h2>{correct} / {items.length} 题答对</h2>
-              <p>通过这组练习，重要的不只是记住名称，更是知道何处该看规则、何处需要现实证据。</p>
-              <div className="library-quiz-actions">
-                <button type="button" className="library-action" onClick={()=>{setIndex(0);setChoice(null);setCorrect(0);setQuizComplete(false)}}>重新试炼 ↻</button>
-                <button type="button" className="library-action secondary" onClick={()=>navigate('quizmenu')}>返回练习目录 →</button>
-              </div>
-            </article>:<article className="library-quiz-paper">
-              <p className="library-eyebrow">第 {index+1} 问 · 共 {items.length} 问</p>
-              <div className="library-quiz-progress" role="progressbar" aria-label="练习进度" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={index+1}>
-                <span style={{width:(index+1)/items.length*100+'%'}}/>
-              </div>
-              <h2>{quiz.question}</h2>
-              <div className="library-quiz-options">
-                {quiz.options.map((option,i)=><button type="button" key={i} disabled={answered}
-                  className={answered?(i===quiz.answer?'right':choice===i?'wrong':''):''}
-                  onClick={()=>{setChoice(i);if(i===quiz.answer)setCorrect(s=>s+1)}}>
-                  <span className="library-answer-key">{QUAD[i]||i+1}</span>
-                  <span className="library-answer-copy">{option}
-                    {answered&&(i===quiz.answer||i===choice)&&<small className="library-answer-state">
-                      {i===choice?(i===quiz.answer?'已选 · 正确':'已选 · 错误'):'正确答案'}
-                    </small>}
-                  </span>
-                </button>)}
-              </div>
-              {answered?<div className="library-quiz-explanation" data-correct={choice===quiz.answer} role="status">
-                <b>{choice===quiz.answer?'答对了 · 取象得法':'再思考 · 已显示正确答案'}</b>
-                <p>{quiz.why}</p>
-              </div>:<p className="library-quiz-hint">请选择一个答案，系统会立即显示判断与原因。</p>}
-              <div className="library-quiz-actions">
-                <button type="button" className="library-action secondary" onClick={()=>{navigate('quizmenu')}}>结束本次练习</button>
-                <button type="button" disabled={!answered} className="library-action" onClick={()=>{
-                  if(index===items.length-1){setQuizComplete(true)}
-                  else{setIndex(i=>i+1);setChoice(null)}
-                  window.scrollTo({top:0,behavior:'instant'})
-                }}>{index===items.length-1?'查看成绩':'下一题 →'}</button>
-              </div>
-            </article>}
-          </section>}
+          {view==='quiz'&&<StudyTrial key={`${index}-${trialMode}`} name={NAMES[method]} lessons={lessons}
+            trials={LIBRARY_TRIALS[method]} start={index} mode={trialMode}
+            onSelect={i=>startTrial(i,'single')} onRound={i=>startTrial(i,'round')}
+            onLesson={openLesson} onExit={()=>navigate('quizmenu')}/>}
 
           {view==='settings'&&<section className="library-settings-screen">
             <SectionHeading small="肆 · AI 接入" title="书房设定" desc="基础排盘、阅读与课程不需要 AI。只有调用模型进行深入解读时，才需要个人密钥或站长服务器配置。"/>
