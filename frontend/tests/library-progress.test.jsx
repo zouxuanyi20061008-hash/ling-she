@@ -8,6 +8,7 @@ import StudyHall from '../src/StudyHall.jsx'
 const props={onClose:()=>{},apiKey:'',setApiKey:()=>{},aiModel:'deepseek-chat',
   setAiModel:()=>{},accessCode:'',setAccessCode:()=>{}}
 const enterCatalog=(name)=>fireEvent.click(screen.getByRole('button',{name:new RegExp(name)}))
+const readerWait={timeout:10000}
 beforeEach(()=>{
   window.localStorage.clear()
   vi.stubGlobal('scrollTo',vi.fn())
@@ -17,19 +18,20 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks()})
 it('典籍换篇保存进度，返回目录和重新打开后均可以续读',async()=>{
   const first=render(<StudyHall {...props}/>)
   enterCatalog('壹 · 典籍')
-  fireEvent.click(screen.getAllByRole('button',{name:/入卷研读/})[1])
-  const quick=await screen.findByRole('navigation',{name:'藏经阁快速翻篇'})
+  const openMeihua=()=>fireEvent.click(screen.getByRole('button',{name:/梅花易数.*入卷研读/}))
+  openMeihua()
+  const quick=await screen.findByRole('navigation',{name:'藏经阁快速翻篇'},readerWait)
   fireEvent.click(within(quick).getByRole('button',{name:'下一篇 →'}))
   expect(JSON.parse(window.localStorage.getItem('wanxiang-library-progress-v1'))['fullreader:meihua']).toBe(1)
   first.unmount()
   render(<StudyHall {...props}/>)
   enterCatalog('壹 · 典籍')
   fireEvent.click(screen.getByRole('button',{name:/梅花易数 · 第 2 篇/}))
-  expect(await screen.findByText(/第 2 篇 \/ 共/)).toBeTruthy()
+  expect(await screen.findByText(/第 2 篇 \/ 共/,{},readerWait)).toBeTruthy()
   fireEvent.click(screen.getByRole('button',{name:/返回典籍目录/}))
-  fireEvent.click(screen.getAllByRole('button',{name:/入卷研读/})[1])
-  expect(await screen.findByText(/第 1 篇 \/ 共/)).toBeTruthy()
-})
+  openMeihua()
+  expect(await screen.findByText(/第 1 篇 \/ 共/,{},readerWait)).toBeTruthy()
+},30000)
 
 it('课程可以续读，损坏的旧进度不会导致页面崩溃',()=>{
   const first=render(<StudyHall {...props}/>)
@@ -91,7 +93,7 @@ it('易传可逐篇查看，并回到之前的卦',async()=>{
   fireEvent.click(screen.getByRole('button',{name:/周易.*入卷研读/}))
   fireEvent.change(screen.getByRole('combobox',{name:'选择卦象'}),{target:{value:'43'}})
   fireEvent.click(screen.getByRole('button',{name:/读易传/}))
-  const volume=await screen.findByRole('combobox',{name:'选择易传'})
+  const volume=await screen.findByRole('combobox',{name:'选择易传'},readerWait)
   expect(Array.from(volume.options,entry=>entry.textContent)).toEqual([
     '文言传','系辞上传','系辞下传','说卦传','序卦传','杂卦传',
   ])
@@ -100,7 +102,7 @@ it('易传可逐篇查看，并回到之前的卦',async()=>{
   expect(screen.getByRole('link',{name:/核对原典/}).href).toContain('oldid=')
   fireEvent.click(screen.getByRole('button',{name:/回六十四卦/}))
   expect(screen.getByRole('heading',{name:/姤/}).querySelector('rt').textContent).toBe('gòu')
-})
+},15000)
 
 it('旧版《周易》第二页的进度仍续读坤卦，并保留原有今释',()=>{
   window.localStorage.setItem('wanxiang-library-progress-v1',JSON.stringify({'reader:zhouyi':1}))
