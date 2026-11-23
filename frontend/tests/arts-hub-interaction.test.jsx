@@ -51,6 +51,18 @@ it('随机观象从既有八卦资料中选取，并保留非正式起卦提示'
   expect(screen.getByText(/不参与正式起卦/)).toBeTruthy()
 })
 
+it('每次随机观象都会切换到另一个卦象',()=>{
+  vi.spyOn(Math,'random').mockReturnValue(0)
+  renderHome()
+  const random=screen.getByRole('button',{name:'随机观象'})
+  const qian=screen.getByRole('button',{name:/乾卦：/})
+  const dui=screen.getByRole('button',{name:/兑卦：/})
+  fireEvent.click(random)
+  expect(dui.getAttribute('aria-pressed')).toBe('true')
+  fireEvent.click(random)
+  expect(qian.getAttribute('aria-pressed')).toBe('true')
+})
+
 it('旋转卦环只改变方位，不改变当前所选卦象，并且可以复位',()=>{
   const {container}=renderHome()
   const orbit=container.querySelector('.atlas-orbit')

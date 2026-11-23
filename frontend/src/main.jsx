@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react'
+import React,{useEffect,useLayoutEffect,useRef,useState} from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import ArtsHub,{ARTS} from './ArtsHub.jsx'
@@ -25,6 +25,8 @@ function Academy(){
   const [activeGroup,setActiveGroup]=useState('全部')
   const [choosePage,setChoosePage]=useState(0)
   const [experience,setExperience]=useState(null)
+  const chooseScroll=useRef(0)
+  const pendingScroll=useRef(null)
   const config={personalApiKey,setPersonalApiKey,aiModel,setAiModel,aiAccessCode,setAiAccessCode}
 
   useEffect(()=>{
@@ -52,8 +54,9 @@ function Academy(){
   }
   useEffect(()=>{
     function syncBrowserHistory(){
-      setMode(routeFromUrl())
-      window.scrollTo({top:0,behavior:'instant'})
+      const next=routeFromUrl()
+      pendingScroll.current=next==='choose'?chooseScroll.current:0
+      setMode(next)
     }
     window.addEventListener('popstate',syncBrowserHistory)
     window.addEventListener('hashchange',syncBrowserHistory)
@@ -63,15 +66,22 @@ function Academy(){
     }
   },[])
 
+  useLayoutEffect(()=>{
+    const top=pendingScroll.current
+    if(top===null)return
+    pendingScroll.current=null
+    window.scrollTo({top,behavior:'instant'})
+  },[mode])
+
   function navigate(next,replace=false){
     if(!VALID_ROUTES.has(next))return
-    if(mode!==next){
-      const state={academyRoute:next,from:mode}
-      if(replace)window.history.replaceState(state,'','#'+next)
-      else window.history.pushState(state,'','#'+next)
-      setMode(next)
-    }
-    window.scrollTo({top:0,behavior:'instant'})
+    if(mode===next)return
+    if(mode==='choose')chooseScroll.current=window.scrollY
+    pendingScroll.current=replace&&next==='choose'?chooseScroll.current:0
+    const state={academyRoute:next,from:mode}
+    if(replace)window.history.replaceState(state,'','#'+next)
+    else window.history.pushState(state,'','#'+next)
+    setMode(next)
   }
 
   function goBackTo(target){
@@ -94,18 +104,16 @@ function Academy(){
       {experience.role==='admin'&&<a href="/admin">管理后台 ↗</a>}
       <button type="button" onClick={logoutExperience}>退出体验</button>
     </div>}
-    {mode==='choose'&&<div className="case-exchange-quick-entry">
-      <button type="button" onClick={()=>navigate('cases')}>已有研究案例？进入案例交换中心 ↗</button>
-    </div>}
     {mode==='learn'?<LearnCastingStage initialMethod={learnFrom} onBack={()=>goBackTo('choose')}
       onPractice={next=>navigate(next)}/>:
-    mode==='cases'?<CaseExchangeCenter onClose={()=>navigate('choose')}/>:
+    mode==='cases'?<CaseExchangeCenter onClose={()=>goBackTo('choose')}/>:
     (mode==='home'||mode==='choose')?
       <ArtsHub screen={mode}
         onStart={()=>navigate('choose')}
         onBack={()=>goBackTo('home')}
         onSelect={next=>navigate(next)}
         onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}}
+        onCases={()=>navigate('cases')}
         activeGroup={activeGroup} setActiveGroup={setActiveGroup}
         page={choosePage} setPage={setChoosePage}/>:
       mode==='library'?

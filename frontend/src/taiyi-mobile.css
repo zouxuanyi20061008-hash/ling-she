@@ -1,0 +1,89 @@
+.taiyi-cast-switch { display: none; }
+.taiyi-cast-notes { margin: 8px 0 16px; }
+.taiyi-cast-notes summary,
+.taiyi-stage-notes summary { cursor: pointer; font-size: 14px; }
+.taiyi-year-mode .taiyi-cast-notes p { font-size: 12px; line-height: 1.95; }
+.taiyi-v64-result:focus-visible,
+.taiyi-v77-result:focus-visible { outline: 2px solid #356879; outline-offset: 3px; }
+
+@media (max-width: 650px) {
+  .academy-stage.academy-stage--taiyi { overflow-x: clip; }
+  .academy-stage--taiyi .academy-stage-banner {
+    min-height: 0;
+    padding: 12px 14px 6px;
+  }
+  .academy-stage--taiyi .academy-stage-banner .method-theme-identity,
+  .academy-stage--taiyi .academy-stage-glyph,
+  .academy-stage--taiyi .academy-knowledge-status,
+  .taiyi-cast-header small { display: none; }
+
+  .taiyi-v64 { padding: 8px; margin: 12px 0; }
+  .taiyi-cast-switch {
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 6px 0;
+    background: #e7f1ea;
+  }
+  .taiyi-cast-switch button {
+    min-height: 44px;
+    padding: 6px 8px;
+    border: 1px solid #789c8d;
+    border-radius: 8px;
+    background: #f6fbf6;
+    color: #1c4c3b;
+    font-weight: 700;
+  }
+  .taiyi-cast-switch button[aria-pressed="true"] {
+    background: #28684e;
+    border-color: #28684e;
+    color: white;
+  }
+  .taiyi-v64[data-active-cast="hour"] > .taiyi-year-mode,
+  .taiyi-v64[data-active-cast="year"] > .taiyi-v77-hour { display: none; }
+
+  .taiyi-year-mode { padding: 6px 4px; }
+  .taiyi-v77-hour { margin: 4px 0 0; padding: 10px; }
+  .taiyi-v77-hour h3,
+  .taiyi-year-mode > header h2 { margin: 0; font-size: 18px; }
+
+  .taiyi-v64-form,
+  .taiyi-v77-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    margin: 10px 0 2px;
+  }
+  .taiyi-v77-form { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+  .taiyi-v77-form > button { grid-column: 1 / -1; }
+  .taiyi-v64-form label,
+  .taiyi-v77-form label { min-width: 0; max-width: none; font-size: 14px; }
+
+  :is(.taiyi-v64-form, .taiyi-v77-form) :is(input, select, button),
+  .taiyi-v82-chooser select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .taiyi-v77-form input::-webkit-date-and-time-value { min-width: 0; text-align: start; }
+  .taiyi-cast-notes { margin: 2px 0 8px; }
+  .taiyi-cast-notes summary,
+  .taiyi-stage-notes summary,
+  .taiyi-v64-result summary,
+  .taiyi-v77-result summary { box-sizing: border-box; min-height: 44px; padding: 10px 0; cursor: pointer; }
+
+  .taiyi-v64-result,
+  .taiyi-v77-result { scroll-margin-top: 64px; overflow-wrap: anywhere; }
+  .taiyi-v78-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .taiyi-v79-sides,
+  .taiyi-v83-clocks { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 360px) {
+  .taiyi-v77-form { grid-template-columns: minmax(0, 1fr); }
+}

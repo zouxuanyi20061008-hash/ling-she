@@ -1,12 +1,13 @@
 import {useRef,useState} from 'react'
 import './academy.css'
+import {focusTaiyiResultOnMobile} from './taiyi-mobile.js'
 
 const CN_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const CN_CLOCK=()=>new Intl.DateTimeFormat('en-GB',{
   timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false
 }).format(new Date())
 
-export default function TaiyiV77Hour(){
+export default function TaiyiV77Hour({id}){
   const [date,setDate]=useState(CN_DATE)
   const [clock,setClock]=useState(CN_CLOCK)
   const [chart,setChart]=useState(null)
@@ -59,11 +60,27 @@ export default function TaiyiV77Hour(){
     jinjing_guest:'《太乙金镜式经》·直使加客大将',
     jinyao_dingji_eye:'《太乙金钥匙》·直使加定计目'
   }
-  return <section className="taiyi-v77-hour" aria-label="V85 太乙时计阴遁独立原典与气应三种天目相位">
-    <header>
+  return <section className="taiyi-v77-hour" id={id} aria-label="V85 太乙时计阴遁独立原典与气应三种天目相位">
+    <header className="taiyi-cast-header">
       <small>V85 · 太乙时计 / 金镜式经阴遁原典315与六纪天目相位</small>
       <h3>时计起盘 · 北京时间双时辰</h3>
-      <p>区别于上方岁计：按实际冬至、夏至交节选择阳遁或阴遁；
+    </header>
+    <form className="taiyi-v77-form" onSubmit={cast}>
+      <label>公历日期
+        <input aria-label="太乙时计公历日期" type="date" required
+          min="1901-01-01" max="2099-12-31" value={date}
+          onChange={e=>{setDate(e.target.value);invalidate()}}/>
+      </label>
+      <label>北京时间
+        <input aria-label="太乙时计北京时间" type="time" required
+          value={clock} onChange={e=>{setClock(e.target.value);invalidate()}}/>
+      </label>
+      <button type="submit" disabled={busy}>{busy?'正在计算时计…':'计算太乙时计基础盘'}</button>
+    </form>
+    {error&&<p role="alert" className="academy-caution">{error}</p>}
+    <details className="taiyi-cast-notes">
+      <summary>查看时计计算依据</summary>
+      <p>时计按实际冬至、夏至交节选择阳遁或阴遁；
         太乙沿八宫每三时移一宫，计神每时逆行一支。
         V78 另算冬夏至前最近甲子日简捷历元的五元七十二局、六纪与阴阳文昌十八算；
         V79 增加计神加和德取始击、主客逐宫投算与大参将；
@@ -77,21 +94,8 @@ export default function TaiyiV77Hour(){
         不能从甲子派借来完成气应派的全盘。
         V85 新增《金镜式经》阴遁第六纪壬子元27局独立真例，
         并列六纪三种天目相位条件计算；现代气应纪首未定，不选择主客将。</p>
-    </header>
-    <form className="taiyi-v77-form" onSubmit={cast}>
-      <label>时计公历日期
-        <input aria-label="太乙时计公历日期" type="date" required
-          min="1901-01-01" max="2099-12-31" value={date}
-          onChange={e=>{setDate(e.target.value);invalidate()}}/>
-      </label>
-      <label>时计北京时间
-        <input aria-label="太乙时计北京时间" type="time" required
-          value={clock} onChange={e=>{setClock(e.target.value);invalidate()}}/>
-      </label>
-      <button type="submit" disabled={busy}>{busy?'正在计算时计…':'计算太乙时计基础盘'}</button>
-    </form>
-    {error&&<p role="alert" className="academy-caution">{error}</p>}
-    {chart&&<section className="taiyi-v77-result"
+    </details>
+    {chart&&<section className="taiyi-v77-result" tabIndex={-1} ref={focusTaiyiResultOnMobile}
         role="region" aria-label="V77 太乙时计八宫与计神结果">
       <h4>{chart.solstice.name}后 · {chart.time_cycle.dun} ·
         太乙{chart.taiyi_palace.number}宫{chart.taiyi_palace.trigram}</h4>
@@ -102,7 +106,7 @@ export default function TaiyiV77Hour(){
         太乙在此宫第 {chart.time_cycle.hours_in_current_palace}/3 时。</p>
       <p>时计计神：<strong>{chart.jishen.branch}</strong> ·
         {chart.jishen.direction} · {chart.jishen.movement}。
-        此处计神与上方岁计计神不是同一输入规则。</p>
+        时计与岁计的计神采用各自的输入规则。</p>
       <div className="taiyi-v77-palace-grid" role="group" aria-label="太乙时计九宫位置">
         {chart.nine_palaces.map(p=><div key={p.number}
           className={'taiyi-v77-cell'+(p.is_taiyi?' is-taiyi':'')+

@@ -1007,8 +1007,6 @@ button:disabled{cursor:not-allowed}
 @media(max-width:600px){.experience-visitor-banner{justify-content:space-between}.experience-submit-case{padding:11px}}
 
 /* V27 本机案例交换中心：移动端清晰可读，提示储存边界 */
-.case-exchange-quick-entry{text-align:center;background:#f1eadb;padding:9px}
-.case-exchange-quick-entry button{background:#275c42;border:1px solid #275c42;color:#fff8e7;padding:10px 17px;min-height:42px;font-size:13px}
 .academy-case-exchange{max-width:1000px;margin:20px auto;padding:clamp(13px,3vw,28px);background:#fbf6eb;border:1px solid #c3af91;color:#284636}
 .academy-case-exchange h1{font-size:26px;color:#28543d;margin:12px 0}
 .academy-case-exchange h2{font-size:18px;color:#305940}
@@ -1141,163 +1139,232 @@ button:disabled{cursor:not-allowed}
 @media(max-width:580px){.case-v34-transfer{padding:11px}.case-v34-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.case-v34-actions button{flex:1 1 135px}}
 
 
-/* ThreeUI-inspired interaction pass: accessible, lightweight trigram exploration. */
-.atlas-trigram-explorer{
-  display:flex;flex-direction:column;gap:8px;width:100%;max-width:410px;margin:0 auto;
+/* 首页八卦互动 */
+.atlas-trigram-explorer {
+  display:flex;
+  flex-direction:column;
+  width:min(100%, 386px);
+  min-width:0;
+  gap:8px;
+  margin:0 auto;
 }
-.atlas-trigram-instruction{
-  margin:0;text-align:center;font-size:11px;line-height:1.7;letter-spacing:.06em;color:#536b59;
+.atlas-trigram-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px 12px;
 }
-.atlas-trigram-explorer .atlas-orbit{
-  width:100%;max-width:352px;aspect-ratio:1;margin:0 auto;position:relative;
+.atlas-trigram-heading h2 {
+  color:#244d3a;
+  font-size:20px;
+  font-weight:700;
 }
-.atlas-trigram-explorer .atlas-orbit-ring{pointer-events:none}
-.atlas-trigram-explorer .atlas-orbit-gua{
-  position:absolute;left:var(--orbit-x);top:var(--orbit-y);z-index:3;
-  display:grid;place-items:center;width:42px;height:42px;padding:0;
-  transform:translate(-50%,-50%);border:1px solid #b9ad91;border-radius:50%;
-  background:#f8f1df;color:#315b49;font-family:inherit;font-size:16px;font-weight:750;
-  cursor:pointer;box-shadow:0 3px 9px rgba(50,67,47,.13);
-  transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,border-color .18s ease;
+.atlas-trigram-heading p {
+  color:#465c4b;
+  font-size:13px;
+  line-height:1.6;
 }
-.atlas-trigram-explorer .atlas-orbit-gua:hover{
-  transform:translate(-50%,-50%) scale(1.09);border-color:#527b62;
-  box-shadow:0 6px 13px rgba(50,67,47,.19);
+.atlas-trigram-explorer button {
+  touch-action:manipulation;
 }
-.atlas-trigram-explorer .atlas-orbit-gua[aria-pressed="true"]{
-  transform:translate(-50%,-50%) scale(1.13);background:#245344;color:#fff4df;
-  border-color:#245344;box-shadow:0 0 0 4px rgba(53,103,75,.14),0 6px 13px rgba(38,68,50,.2);
+.atlas-trigram-explorer .atlas-orbit {
+  position:relative;
+  width:100%;
+  max-width:294px;
+  aspect-ratio:1;
+  margin:0 auto;
 }
-.atlas-trigram-explorer .atlas-orbit-gua:focus-visible{
-  outline:3px solid #a76b48;outline-offset:4px;
+.atlas-trigram-explorer .atlas-orbit-ring {
+  pointer-events:none;
 }
-.atlas-trigram-explorer .atlas-yinyang{
-  inset:31%;pointer-events:none;
+.atlas-trigram-explorer .atlas-orbit-gua {
+  position:absolute;
+  left:clamp(26px, var(--orbit-x), calc(100% - 26px));
+  top:clamp(26px, var(--orbit-y), calc(100% - 26px));
+  z-index:3;
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  padding:0;
+  transform:translate(-50%, -50%);
+  border:1px solid #b9ad91;
+  border-radius:50%;
+  background:#f8f1df;
+  color:#315b49;
+  font-family:inherit;
+  font-size:17px;
+  font-weight:750;
+  cursor:pointer;
+  box-shadow:0 3px 9px rgba(50,67,47,.13);
+  transition:left .22s ease,top .22s ease;
 }
-.atlas-trigram-explorer .atlas-taiji{width:70%}
-.atlas-trigram-explorer .atlas-trigram-detail{
-  width:min(100%,386px);margin:0 auto;padding:12px 14px;
-  border:1px solid #b8b39c;border-radius:13px;
-  background:rgba(250,247,236,.95);color:#344b3b;
-  box-shadow:0 8px 20px rgba(45,59,42,.09);
+.atlas-trigram-explorer .atlas-orbit-gua[aria-pressed="true"] {
+  background:#245344;
+  color:#fff4df;
+  border-color:#245344;
+  box-shadow:0 0 0 3px rgba(53,103,75,.20);
 }
-.atlas-trigram-detail-head{display:flex;align-items:center;gap:11px}
-.atlas-trigram-detail-symbol{
-  display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;
-  border:1px solid #b9c5ac;border-radius:10px;background:#e8eee2;
-  color:#245344;font-size:27px;line-height:1;
+.atlas-trigram-explorer .atlas-yinyang {
+  inset:31%;
+  animation:none;
+  pointer-events:none;
 }
-.atlas-trigram-detail-title small{display:block;color:#7b725d;font-size:10px;letter-spacing:.1em}
-.atlas-trigram-detail-title h3{margin:3px 0 0;color:#244d3a;font-size:19px;font-weight:700}
-.atlas-trigram-hint{margin:9px 0 8px;color:#465c4b;font-size:12px;line-height:1.7}
-.atlas-trigram-facts{display:flex;gap:6px;flex-wrap:wrap}
-.atlas-trigram-facts span{
-  padding:4px 8px;border:1px solid #c9cbb6;border-radius:999px;
-  background:#f4f2e6;color:#4d604e;font-size:10px;line-height:1.5;
+.atlas-trigram-explorer .atlas-taiji {
+  width:70%;
 }
-.atlas-trigram-footer{
-  display:flex;align-items:center;justify-content:space-between;gap:9px;
-  margin-top:10px;padding-top:9px;border-top:1px solid #e0ddcc;
+.atlas-trigram-detail {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  padding:8px 10px;
+  border:1px solid #b8b39c;
+  border-radius:10px;
+  background:#faf7ec;
+  color:#344b3b;
 }
-.atlas-trigram-footer small{color:#7c765f;font-size:10px;line-height:1.5}
-.atlas-trigram-footer button{
-  flex:0 0 auto;min-height:34px;padding:6px 11px;border:1px solid #8da18c;
-  border-radius:8px;background:#e8eee2;color:#28543e;font-size:11px;font-weight:700;
-  cursor:pointer;transition:background .16s ease,transform .16s ease;
+.atlas-trigram-detail-symbol {
+  display:grid;
+  place-items:center;
+  flex:0 0 44px;
+  height:44px;
+  border:1px solid #b9c5ac;
+  border-radius:8px;
+  background:#e8eee2;
+  color:#245344;
+  font-size:26px;
+  line-height:1;
 }
-.atlas-trigram-footer button:hover{background:#dce8d8;transform:translateY(-1px)}
-.atlas-trigram-footer button:focus-visible{outline:3px solid #a76b48;outline-offset:3px}
-@media(max-width:760px){
-  .atlas-trigram-explorer{max-width:360px}
-  .atlas-trigram-explorer .atlas-orbit{max-width:316px}
-  .atlas-trigram-explorer .atlas-orbit-gua{width:39px;height:39px}
-  .atlas-trigram-detail{padding:11px 12px}
+.atlas-trigram-detail h3 {
+  color:#244d3a;
+  font-size:17px;
+  font-weight:700;
 }
-@media(max-width:380px){
-  .atlas-trigram-explorer .atlas-orbit{max-width:286px}
-  .atlas-trigram-explorer .atlas-orbit-gua{width:36px;height:36px;font-size:14px}
-  .atlas-trigram-footer{align-items:flex-start;flex-wrap:wrap}
+.atlas-trigram-hint {
+  color:#465c4b;
+  font-size:13px;
+  line-height:1.5;
 }
-@media(prefers-reduced-motion:reduce){
-  .atlas-trigram-explorer .atlas-yinyang{animation:none}
-  .atlas-trigram-explorer .atlas-orbit-gua,.atlas-trigram-footer button{transition:none}
+.atlas-trigram-facts,
+.atlas-composition-text > div {
+  display:flex;
+  gap:2px 10px;
+  flex-wrap:wrap;
+  color:#4d604e;
+  font-size:12px;
+  line-height:1.6;
 }
-
-/* 八卦互动 V2：可旋转卦环、上下卦组合与移动端可触达控件。 */
-.atlas-trigram-explorer .atlas-orbit-gua{
-  transition:left .32s ease,top .32s ease,transform .18s ease,background .18s ease,
-    color .18s ease,box-shadow .18s ease,border-color .18s ease;
+.atlas-trigram-toolbar,
+.atlas-trigram-set-actions {
+  display:grid;
+  gap:6px;
 }
-.atlas-trigram-toolbar{
-  display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;
+.atlas-trigram-toolbar {
+  grid-template-columns:repeat(2, minmax(0, 1fr)) minmax(44px, .65fr);
 }
-.atlas-trigram-toolbar button{
-  min-height:32px;padding:5px 10px;border:1px solid #b8b39b;border-radius:8px;
-  background:rgba(248,244,231,.88);color:#405b48;font-family:inherit;
-  font-size:10px;font-weight:700;cursor:pointer;
+.atlas-trigram-set-actions {
+  grid-template-columns:repeat(2, minmax(0, 1fr));
 }
-.atlas-trigram-toolbar button:hover{background:#e7eddf;border-color:#829b83}
-.atlas-trigram-toolbar button:focus-visible,
-.atlas-trigram-set-actions button:focus-visible{
-  outline:3px solid #a76b48;outline-offset:3px;
-}
-.atlas-trigram-set{
-  display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap;
-  margin-top:12px;padding-top:10px;border-top:1px solid #e0ddcc;
-}
-.atlas-trigram-set>p{margin:0;color:#596954;font-size:10px;line-height:1.6}
-.atlas-trigram-set>p b{color:#245344}
-.atlas-trigram-set-actions{display:flex;gap:6px}
-.atlas-trigram-set-actions button{
-  min-height:31px;padding:5px 9px;border:1px solid #a6b39d;border-radius:7px;
-  background:#edf1e6;color:#385944;font-family:inherit;font-size:10px;font-weight:700;
+.atlas-trigram-toolbar button,
+.atlas-trigram-set-actions button,
+.atlas-trigram-random {
+  min-width:44px;
+  min-height:44px;
+  padding:6px 8px;
+  border:1px solid #a6b39d;
+  border-radius:8px;
+  background:#edf1e6;
+  color:#385944;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:700;
   cursor:pointer;
 }
-.atlas-trigram-set-actions button[aria-pressed="true"]{
-  background:#285644;border-color:#285644;color:#fff4df;
+.atlas-trigram-set-actions button[aria-pressed="true"] {
+  background:#285644;
+  border-color:#285644;
+  color:#fff4df;
 }
-.atlas-composition{
-  margin-top:10px;padding:10px 11px;border:1px solid #c8c2a9;border-radius:10px;
-  background:linear-gradient(135deg,rgba(239,239,222,.94),rgba(250,246,232,.96));
+.atlas-trigram-explorer button:active {
+  box-shadow:inset 0 0 0 2px #819981;
 }
-.atlas-composition-heading>small,.atlas-composition-result>div:first-child small{
-  display:block;color:#7c765f;font-size:9px;letter-spacing:.1em;
+.atlas-composition {
+  padding:8px 10px;
+  border:1px solid #c8c2a9;
+  border-radius:10px;
+  background:#f7f2e3;
 }
-.atlas-composition-heading>div{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:5px;
-  color:#52654f;font-size:10px;
+.atlas-composition-result {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:8px;
 }
-.atlas-composition-heading>div b{color:#a06c4c;font-size:12px}
-.atlas-composition-result{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;
+.atlas-composition-result strong {
+  display:block;
+  color:#244d3a;
+  font-size:18px;
 }
-.atlas-composition-result strong{
-  display:block;margin-top:3px;color:#244d3a;font-size:19px;letter-spacing:.06em;
+.atlas-composition-lines {
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  width:60px;
+  flex:none;
 }
-.atlas-composition-lines{display:flex;flex-direction:column;gap:4px;width:66px;flex:none}
-.atlas-composition-line{display:grid;grid-template-columns:1fr 1fr;gap:6px;height:5px}
-.atlas-composition-line.yang:before{
-  content:"";grid-column:1/3;background:#315744;border-radius:2px;
+.atlas-composition-line {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  height:4px;
 }
-.atlas-composition-line.yin:before,.atlas-composition-line.yin:after{
-  content:"";background:#315744;border-radius:2px;
+.atlas-composition-line.yang::before {
+  content:"";
+  grid-column:1/3;
+  background:#315744;
+  border-radius:2px;
 }
-.atlas-composition>p{
-  margin:8px 0 0;color:#77745f;font-size:9px;line-height:1.6;
+.atlas-composition-line.yin::before,
+.atlas-composition-line.yin::after {
+  content:"";
+  background:#315744;
+  border-radius:2px;
 }
-@media(max-width:650px){
-  .atlas-cover-page .atlas-trigram-explorer{
-    position:relative;z-index:4;width:100%;max-width:410px;margin:12px auto 0;
+.atlas-composition > p {
+  margin-top:5px;
+  color:#5d5c4c;
+  font-size:12px;
+  line-height:1.5;
+}
+@media (hover:hover) and (pointer:fine) {
+  .atlas-trigram-explorer button:hover {
+    border-color:#527b62;
   }
-  .atlas-cover-page .atlas-trigram-explorer .atlas-orbit{
-    position:relative;right:auto;top:auto;width:100%;max-width:245px;
-    opacity:1;pointer-events:auto;margin:0 auto;
-  }
-  .atlas-trigram-toolbar{gap:5px}
-  .atlas-trigram-toolbar button{min-height:34px;padding:6px 9px}
-  .atlas-trigram-set{align-items:flex-start}
-  .atlas-trigram-set-actions{flex:none}
 }
-@media(prefers-reduced-motion:reduce){
-  .atlas-trigram-explorer .atlas-orbit-gua{transition:none!important}
+@media (max-width:650px) {
+  .atlas-cover-page .atlas-trigram-explorer {
+    position:relative;
+    z-index:4;
+    margin:16px auto 0;
+  }
+  .atlas-cover-page .atlas-trigram-explorer .atlas-orbit {
+    position:relative;
+    right:auto;
+    top:auto;
+    max-width:220px;
+    opacity:1;
+    pointer-events:auto;
+    filter:none;
+  }
+  .atlas-trigram-explorer .atlas-taiji {
+    filter:none;
+  }
+}
+@media (max-width:650px), (pointer:coarse), (prefers-reduced-motion:reduce) {
+  .atlas-trigram-explorer .atlas-orbit-gua {
+    transition:none;
+  }
 }

@@ -1,11 +1,33 @@
-import {useState} from 'react'
+import {useId,useRef,useState} from 'react'
 import './academy.css'
+import './taiyi-mobile.css'
 import TaiyiV77Hour from './TaiyiV77Hour.jsx'
+import {focusTaiyiResultOnMobile} from './taiyi-mobile.js'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
   year:'numeric'}).format(new Date()))
 
 export default function TaiyiV64(){
+  const castId=useId()
+  const castPanel=useRef(null)
+  const [activeCast,setActiveCast]=useState('hour')
+  function selectCast(mode){
+    setActiveCast(mode)
+    castPanel.current?.scrollIntoView?.({block:'start'})
+  }
+  return <div className="taiyi-v64" ref={castPanel} data-active-cast={activeCast}>
+    <div className="taiyi-cast-switch" role="group" aria-label="太乙排盘方式">
+      <button type="button" aria-pressed={activeCast==='hour'} aria-controls={`${castId}-hour`}
+        onClick={()=>selectCast('hour')}>时计排盘</button>
+      <button type="button" aria-pressed={activeCast==='year'} aria-controls={`${castId}-year`}
+        onClick={()=>selectCast('year')}>岁计排盘</button>
+    </div>
+    <TaiyiYear id={`${castId}-year`}/>
+    <TaiyiV77Hour id={`${castId}-hour`}/>
+  </div>
+}
+
+function TaiyiYear({id}){
   const [year,setYear]=useState(YEAR_NOW)
   const [chart,setChart]=useState(null)
   const [busy,setBusy]=useState(false)
@@ -38,12 +60,9 @@ export default function TaiyiV64(){
   }
   const chosen=chart?.nine_palaces.find(p=>p.number===picked)
   const spirit=chart?.sixteen_spirits?.find(s=>s.index===pickedSpirit)
-  return <section className="taiyi-v64" aria-label="V67 太乙真实岁计">
-    <header><small>V67 · 太乙神数 / 定计与中五将</small>
+  return <section className="taiyi-year-mode" id={id} aria-label="V67 太乙真实岁计">
+    <header className="taiyi-cast-header"><small>V67 · 太乙神数 / 定计与中五将</small>
       <h2>积年推局 · 太乙八宫行次</h2>
-      <p>采用《古今图书集成》天启四年与《太乙金钥匙》嘉靖四十年的同系积年，
-        实算五元、七十二局、太乙行宫、理天理地理人及岁计计神。此为岁计，
-        不把冬夏至转换的时计阴阳规则混入。V67 已实算岁计定计目、定计大将与参将，并记录中五不出；仍可切换《武备志》同宫取算与 V65 谨慎待算口径。</p>
     </header>
     <form onSubmit={cast} className="taiyi-v64-form">
       <label>公历年份
@@ -59,9 +78,15 @@ export default function TaiyiV64(){
       </label>
       <button type="submit" disabled={busy}>{busy?'正在排岁计…':'计算太乙年局'}</button>
     </form>
-    <TaiyiV77Hour/>
     {error&&<p className="academy-caution" role="alert">{error}</p>}
-    {chart&&<div className="taiyi-v64-result">
+    <details className="taiyi-cast-notes">
+      <summary>查看岁计计算依据</summary>
+      <p>采用《古今图书集成》天启四年与《太乙金钥匙》嘉靖四十年的同系积年，
+        实算五元、七十二局、太乙行宫、理天理地理人及岁计计神。此为岁计，
+        不把冬夏至转换的时计阴阳规则混入。V67 已实算岁计定计目、定计大将与参将，并记录中五不出；仍可切换《武备志》同宫取算与 V65 谨慎待算口径。</p>
+    </details>
+    {chart&&<section className="taiyi-v64-result" aria-label="太乙岁计排盘结果"
+        tabIndex={-1} ref={focusTaiyiResultOnMobile}>
       <div className="taiyi-v64-overview">
         <strong>{chart.year.gregorian_year}年 · {chart.year.five_yuan_name} · {chart.year.ju_label}</strong>
         <div><span>历史积年：{chart.year.accumulated_years.toLocaleString('zh-CN')}</span>
@@ -274,6 +299,6 @@ export default function TaiyiV64(){
       <span className="taiyi-v64-source-sep"> · </span>
       <a href={chart.sources.historical_1561} target="_blank" rel="noopener noreferrer">
         《太乙金钥匙》1561 年年局案例</a>
-    </div>}
+    </section>}
   </section>
 }

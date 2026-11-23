@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useRef, useSyncExternalStore } from 'react'
 import './academy.css'
 import EightTrigramExplorer from './EightTrigramExplorer.jsx'
 
@@ -14,7 +14,7 @@ export const ARTS = [
   {id:'liuren',name:'大六壬',title:'六壬天盘',symbol:'壬',en:'DA LIU REN',tone:'night',
    brief:'天盘地盘，古代三式之一。',detail:'反吟涉害 · 原典单例边界 · 旬空天将',status:'V76 取传证据校核',group:'三式'},
   {id:'taiyi',name:'太乙神数',title:'太乙行宫',symbol:'乙',en:'TAI YI',tone:'jade',
-   brief:'步宫推数，历法中的术数传统。',detail:'阴遁315独立古籍例课 · 气应六纪三相位逐宫候选',status:'V85 六纪天目相位',group:'三式'},
+   brief:'步宫推数，历法中的术数传统。',detail:'阴遁315独立古籍例课 · 气应六纪三相位逐宫候选',status:'岁计与时计排盘',group:'三式'},
   {id:'ziwei',name:'紫微斗数',title:'紫微星盘',symbol:'星',en:'ZIWEI DOUSHU',tone:'copper',
    brief:'十二宫垣，星曜的古典语言。',detail:'十四正曜 · 十二辅煞 · 生年四化双口径',status:'V69 四化辅曜',group:'命理'},
   {id:'fengshui',name:'堪舆风水',title:'山川堪舆',symbol:'山',en:'KAN YU',tone:'amber',
@@ -23,6 +23,17 @@ export const ARTS = [
 
 const GROUPS=['全部','象数易','卜筮','三式','命理','空间']
 const CARD_LIMIT=4
+const COMPACT_LIST_QUERY='(max-width: 650px)'
+
+function subscribeToCompactList(onChange) {
+  const query=window.matchMedia?.(COMPACT_LIST_QUERY)
+  query?.addEventListener?.('change',onChange)
+  return ()=>query?.removeEventListener?.('change',onChange)
+}
+
+function isCompactList() {
+  return window.matchMedia?.(COMPACT_LIST_QUERY).matches ?? false
+}
 
 function BookSeal({word}) {
   return <span className="atlas-seal" aria-hidden="true">{word}</span>
@@ -74,16 +85,15 @@ function MethodCard({method,onSelect}) {
   </button>
 }
 
-export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onLearn,
+export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onLearn,onCases,
   activeGroup='全部',setActiveGroup,page=0,setPage}) {
   const startTouch=useRef(null)
-  const visible=useMemo(
-    ()=>activeGroup==='全部'?ARTS:ARTS.filter(a=>a.group===activeGroup),
-    [activeGroup]
-  )
+  const compactList=useSyncExternalStore(subscribeToCompactList,isCompactList)
+  const visible=activeGroup==='全部'?ARTS:ARTS.filter(a=>a.group===activeGroup)
   const pageCount=Math.max(1,Math.ceil(visible.length/CARD_LIMIT))
   const index=Math.min(page,pageCount-1)
-  const methods=visible.slice(index*CARD_LIMIT,(index+1)*CARD_LIMIT)
+  const methods=compactList?visible:visible.slice(index*CARD_LIMIT,(index+1)*CARD_LIMIT)
+  const canPage=!compactList&&pageCount>1
   const chooseGroup=g=>{setActiveGroup(g);setPage(0)}
   const choosePage=p=>setPage(Math.min(Math.max(0,p),pageCount-1))
   const isWelcome=screen!=='choose'
@@ -135,7 +145,6 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
             <div>
               <span className="atlas-eyebrow">第二页 · 选一门术，入一重境</span>
               <h1>择术入境</h1>
-              <p>八门各循其法：梅花、六爻已开放实际排盘；其他门类按各自核心算法逐步开发，未完成者只展示研习入口。</p>
             </div>
             <span className="atlas-choose-stamp" aria-hidden="true">择<br/>术</span>
           </div>
@@ -144,11 +153,12 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               aria-pressed={activeGroup===g} className={g===activeGroup?'active':''}
               onClick={()=>chooseGroup(g)}>{g}</button>)}
           </div>
-          <div className="atlas-choice-book" key={activeGroup+'-'+index}
-            onTouchStart={e=>{const t=e.touches[0];startTouch.current={x:t.clientX,y:t.clientY}}}
+          <div className="atlas-choice-book" key={activeGroup+'-'+(compactList?'all':index)}
+            onTouchStart={e=>{startTouch.current=canPage&&e.touches.length===1?e.touches[0]:null}}
+            onTouchCancel={()=>{startTouch.current=null}}
             onTouchEnd={e=>{
               const start=startTouch.current;startTouch.current=null
-              if(!start||!e.changedTouches?.length)return
+              if(!canPage||!start||!e.changedTouches?.length)return
               const t=e.changedTouches[0],dx=t.clientX-start.x,dy=t.clientY-start.y
               if(Math.abs(dx)<80||Math.abs(dx)<Math.abs(dy)*1.5)return
               choosePage(index+(dx<0?1:-1))
@@ -157,7 +167,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               {methods.map(method=><MethodCard key={method.id} method={method} onSelect={onSelect}/>)}
             </div>
           </div>
-          <nav className="atlas-page-controls" aria-label="术数列表分页">
+          {canPage&&<nav className="atlas-page-controls" aria-label="术数列表分页">
             <button type="button" className="atlas-page-arrow" disabled={index===0}
               onClick={()=>choosePage(index-1)}>← 上一页</button>
             <div className="atlas-page-indicators">
@@ -170,10 +180,10 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
             </div>
             <button type="button" className="atlas-page-arrow" disabled={index===pageCount-1}
               onClick={()=>choosePage(index+1)}>下一页 →</button>
-          </nav>
+          </nav>}
           <div className="atlas-choice-help">
-            <span>梅花与六爻可实际排盘，其余门类逐步开放。尚未完成的算法不冒充已实现。</span>
             <button type="button" onClick={onLearn}>第一次算卦？先学六爻与梅花基本操作 ↗</button>
+            {onCases&&<button type="button" onClick={onCases}>进入案例交换中心 ↗</button>}
           </div>
         </section>
       }

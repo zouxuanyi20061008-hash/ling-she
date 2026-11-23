@@ -58,6 +58,27 @@ it('V77 renders separate genuine hour board without mixing annual Taiyi structur
  expect(screen.queryByRole('group',{name:'太乙式九宫岁计盘'})).toBeNull()
 })
 
+it('keeps the hour inputs across mobile mode switches and focuses the new chart',async()=>{
+ vi.stubGlobal('matchMedia',vi.fn().mockReturnValue({matches:true}))
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>chart}))
+ render(<TaiyiV64/>)
+ const hourMode=screen.getByRole('button',{name:'时计排盘'})
+ const yearMode=screen.getByRole('button',{name:'岁计排盘'})
+ expect(hourMode.getAttribute('aria-pressed')).toBe('true')
+
+ const timeField=screen.getByLabelText('太乙时计北京时间')
+ fireEvent.change(timeField,{target:{value:'17:30'}})
+ fireEvent.click(yearMode)
+ expect(yearMode.getAttribute('aria-pressed')).toBe('true')
+ fireEvent.click(hourMode)
+ expect(hourMode.getAttribute('aria-pressed')).toBe('true')
+ expect(timeField.value).toBe('17:30')
+
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ const result=await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})
+ expect(document.activeElement).toBe(result)
+})
+
 it('V77 near actual solstice always warns about boundary',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
    ...chart,solstice:{...chart.solstice,near_15_minutes:true}})}))
