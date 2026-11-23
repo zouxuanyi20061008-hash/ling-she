@@ -99,6 +99,29 @@ body { background:#ded6c3; }
 .book-summary{background:var(--jade);color:#f0e9d5;border-radius:4px;margin-top:18px;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
 .book-summary .tag{border:1px solid rgba(222,198,144,.45);padding:4px 10px;font-size:12px;letter-spacing:.12em;color:#e5cc9f}
 .book-summary p{font-size:12px;line-height:1.8;opacity:.9}
+.book-summary .book-guide-action{min-height:44px;padding:4px 10px;border:1px solid #a7ae90;border-radius:6px;
+  background:#faf0d8;color:#284b3c;font-size:13px;font-weight:700}
+.book-guide-action:focus-visible{outline:2px solid #fff2cd;outline-offset:2px}
+.book-line-preview{margin:1px 0 9px;padding:10px;border:1px solid #a6b5a4;border-radius:9px;
+  background:linear-gradient(150deg,#edf0e2,#e7e7d6);text-align:center}
+.book-line-preview>p{margin:0 0 8px;color:#294f41;font-size:14px;line-height:1.45}
+.book-line-preview-board{display:grid;gap:7px;width:min(100%,230px);margin:0 auto 10px}
+.book-lesson-row{display:grid;align-items:center;grid-template-columns:30px minmax(0,1fr);gap:5px;min-height:12px}
+.book-lesson-row small{font-size:11px;color:#42574b;text-align:right}
+.book-lesson-row[data-moving='true'] small{color:#753a25;font-weight:750}
+.book-lesson-line-face{display:flex;gap:18%;height:8px;width:100%;color:#345d4d}
+.book-lesson-line-face i{flex:1;border-radius:2px;background:linear-gradient(#5f8170,currentColor 80%);
+  box-shadow:0 2px 0 #223a2f72}
+.book-lesson-flip-track{display:block;height:10px;perspective:200px}
+.book-lesson-flip-block{position:relative;display:block;width:100%;height:10px;transform-style:preserve-3d;
+  transition:transform .46s cubic-bezier(.34,.65,.3,1.05)}
+.book-line-preview[data-showing='changed'] .book-lesson-flip-block{transform:rotateX(180deg)}
+.book-lesson-flip-block .book-lesson-line-face{position:absolute;inset:0;height:10px;color:#8c4b34;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;transform:translateZ(2px)}
+.book-lesson-flip-block i{background:linear-gradient(#c18a60,currentColor 73%);box-shadow:0 2px 0 #56321f}
+.book-lesson-flip-block .back{transform:rotateX(180deg) translateZ(2px)}
+.book-line-preview .book-second-action{min-height:44px;padding:7px 14px;letter-spacing:0;font-size:14px}
+@media(prefers-reduced-motion:reduce){.book-lesson-flip-block{transition:none}}
 .book-tabs{display:flex;gap:5px;border-bottom:1px solid #d2c5ad;margin:23px 0 15px;overflow-x:auto}
 .book-tab{font-size:13px;padding:9px 17px;color:#7d786a;white-space:nowrap;border-bottom:2px solid transparent}
 .book-tab.active{color:var(--jade);font-weight:700;border-color:var(--jade)}

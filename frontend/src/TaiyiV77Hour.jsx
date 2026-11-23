@@ -2,11 +2,37 @@ import {useRef,useState} from 'react'
 import './academy.css'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
+import CastLesson,{CastHint} from './CastLesson.jsx'
 
 const CN_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const CN_CLOCK=()=>new Intl.DateTimeFormat('en-GB',{
   timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false
 }).format(new Date())
+
+function TaiyiHourLesson({chart,compact}){
+  const {input,solstice,time_cycle,nine_palaces,jishen}=chart
+  return <CastLesson title="读懂这个时辰的太乙盘" collapsed={!compact} steps={[
+    {
+      title:'核对时刻和阴阳遁',
+      text:'先核对北京时间，再看本盘从冬至还是夏至起算。临近交节可回「基础九宫盘」核对时刻。',
+      layout:'sequence',
+      items:[{label:'北京时间',value:`${input.solar_date} ${input.clock}`},
+        {label:'本盘起点',value:`${solstice.name}交节`},{label:'遁法',value:time_cycle.dun}],
+    },{
+      title:'找到本时太乙所在宫',
+      text:'亮起的格子是基础九宫盘中的太乙落宫。九宫按盘上的方位摆放，可切回「基础九宫盘」对照。',
+      layout:'grid',
+      items:nine_palaces.map(palace=>({label:`${palace.number}宫 · ${palace.trigram}`,
+        value:palace.is_taiyi?'本时太乙':palace.direction,active:palace.is_taiyi})),
+    },{
+      title:'分清居宫时数和计神',
+      text:'居宫时数告诉你太乙在当前宫的第几个时辰。计神则对照基础盘显示的地支和行进顺序。',
+      layout:'sequence',
+      items:[{label:'本宫内',value:`第 ${time_cycle.hours_in_current_palace} 个时辰`},
+        {label:'计神',value:`${jishen.branch} · ${jishen.direction}`}],
+    },
+  ]}/>
+}
 
 export default function TaiyiV77Hour({id,active=true}){
   const [date,setDate]=useState(CN_DATE)
@@ -81,6 +107,7 @@ export default function TaiyiV77Hour({id,active=true}){
       </label>
       <button type="submit" disabled={busy}>{busy?'正在计算时计…':'计算太乙时计基础盘'}</button>
     </form>
+    <CastHint>填公历日期和北京时间。只看某一年的盘，可以切换「岁计排盘」。</CastHint>
     {error&&<p role="alert" className="academy-caution">{error}</p>}
     <details className="taiyi-cast-notes">
       <summary>查看时计计算依据</summary>
@@ -131,6 +158,9 @@ export default function TaiyiV77Hour({id,active=true}){
         <p className="academy-caution" role="note">
           本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
         </p>}
+      </CastResultPanel>
+      <CastResultPanel value="guide" label="跟着看" group="读盘指引">
+        <TaiyiHourLesson chart={chart} compact={castPage.compact}/>
       </CastResultPanel>
       {chart.classical_jiazi_hour_v78&&<CastResultPanel value="v78" label="甲子积时与文昌" group="推算明细">
         <section className="taiyi-v78-epoch"

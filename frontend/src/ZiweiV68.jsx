@@ -1,12 +1,47 @@
 import {useLayoutEffect,useState,useRef} from 'react'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
+import CastLesson,{CastHint} from './CastLesson.jsx'
 import './ziwei-v68.css'
 
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const POS={巳:[1,1],午:[1,2],未:[1,3],申:[1,4],辰:[2,1],酉:[2,4],
  卯:[3,1],戌:[3,4],寅:[4,1],丑:[4,2],子:[4,3],亥:[4,4]}
 const CAST_NOTES='按《紫微斗数全书》卷二安星，生年四化附在真实星曜落宫。壬年化科口径可切换；本版不作实务吉凶判断。'
+
+function ZiweiLesson({chart,chosen,compact}){
+ const bodyPalace=chart.palaces.find(palace=>palace.is_shen)
+ const steps=[{
+   title:'先在十二宫找到命宫和身宫',
+   text:'切回「十二宫」，找带「命宫」和「身宫」标记的格子。可以先点命宫，再试着找到身宫所在的格子。',
+   layout:'pillars',
+   items:[{label:'命宫',value:chart.ming_ganzhi,active:true},
+     {label:'身宫',value:bodyPalace?`${bodyPalace.branch} · ${bodyPalace.name}`:chart.shen_branch}],
+ }]
+ if(chosen){
+   const showAuxiliary=Array.isArray(chosen.auxiliary_stars)
+   steps.push({
+     title:'看所选宫位里安排了哪些星',
+     text:(showAuxiliary?'先看正曜，再看辅煞。':'先看这一宫的十四正曜。')+
+       '切回「十二宫」换点另一个宫位，再进来就能对照新选的星曜。',
+     layout:'sequence',
+     items:[{label:'所选宫位',value:`${chosen.ganzhi} · ${chosen.name}`,active:true},
+       {label:'十四正曜',value:chosen.main_stars.join('、')||'本宫无十四主星'},
+       ...(showAuxiliary?[
+         {label:'已安辅煞',value:chosen.auxiliary_stars.join('、')||'本宫未见已安辅煞'},
+       ]:[])],
+   })
+ }
+ if(chart.four_transformations?.length){
+   steps.push({
+     title:'顺着四化标记找星曜',
+     text:'可以在「命盘四化」任选一条，记住星名和落宫，再回「十二宫」找到同一颗星。',
+     layout:'pillars',
+     items:chart.four_transformations.map(item=>({label:item.name,value:`${item.star} · ${item.palace_name}`})),
+   })
+ }
+ return <CastLesson title="跟着你的紫微盘找宫与星" collapsed={!compact} steps={steps}/>
+}
 
 export default function ZiweiV68(){
  const [calendarType,setCalendarType]=useState('solar')
@@ -120,6 +155,7 @@ export default function ZiweiV68(){
      </label>
      <button type="submit" disabled={busy}>{busy?'正在起盘…':'计算紫微命盘'}</button>
    </form>
+   <CastHint>出生日期按公历或农历填写，时刻用北京时间。农历闰月记得勾选。</CastHint>
    {error&&<p role="alert" className="ziwei-v68-error">{error}</p>}
    <details className="cast-form-mobile-notes"><summary>紫微排盘说明</summary><p>{CAST_NOTES}</p></details>
    </CastPagePane>
@@ -211,6 +247,9 @@ export default function ZiweiV68(){
      </section>}
      {chart.warnings?.map((w,i)=><p key={i} className="ziwei-v68-warning">{w}</p>)}
      <p className="ziwei-v68-warning">仍未实现：{chart.not_implemented.join('、')}。</p>
+     </CastResultPanel>
+     <CastResultPanel value="guide" label="跟着看">
+       <ZiweiLesson chart={chart} chosen={chosen} compact={castPage.compact}/>
      </CastResultPanel>
      </CastResultPanels>
    </div>}

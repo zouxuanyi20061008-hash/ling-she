@@ -1,9 +1,67 @@
 import {useState,useRef} from 'react'
+import CastLesson,{CastHint} from './CastLesson.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import './fengshui-v70.css'
+import './fengshui-compass.css'
 
 const CAST_NOTES='按罗盘角度实际换算坐向、二十四山和后天八卦九宫。输入方位角从正北顺时针测量，0°为北、90°为东、180°为南、270°为西。选填真实立极或入住日期后，另按立春起三元九运及下卦运、山、向三星盘；不声称已经实地测定房屋坐向，也不代替玄空替卦规则。'
+const AXIS_ENDS=[{id:'facing',label:'朝向',suffix:'向'},{id:'sitting',label:'坐山',suffix:'山'}]
+
+function FengshuiCompass({chart}){
+  const [view,setView]=useState(chart.input.bearing_role)
+  return <div className="fengshui-compass" data-view={view}>
+    <div className="fengshui-compass-scene" aria-hidden="true">
+      <div className="fengshui-compass-dial">
+        <span className="fengshui-compass-cardinal north">北</span>
+        <span className="fengshui-compass-cardinal east">东</span>
+        <span className="fengshui-compass-cardinal south">南</span>
+        <span className="fengshui-compass-cardinal west">西</span>
+        {chart.twenty_four_mountains.map(mountain=><span key={mountain.mountain}
+          className="fengshui-compass-tick" style={{'--bearing':`${mountain.center_degrees}deg`}}/>)}
+        {AXIS_ENDS.map(({id})=><span key={id} className="fengshui-compass-needle"
+          data-end={id} data-active={view===id} style={{'--bearing':`${chart[id].degrees}deg`}}/>)}
+        <span className="fengshui-compass-pivot"/>
+      </div>
+    </div>
+    <div className="fengshui-compass-ends" role="group" aria-label="罗盘坐向">
+      {AXIS_ENDS.map(({id,label,suffix})=><button key={id} type="button" data-end={id}
+        aria-pressed={view===id} onClick={()=>setView(id)}>
+        <span>{`看${label}`}</span><strong>{chart[id].mountain}{suffix} {chart[id].degrees}°</strong>
+      </button>)}
+    </div>
+  </div>
+}
+
+function FengshuiAxisGuide({chart,collapsed}){
+  const input=chart.input
+  const isMagnetic=input.north_reference==='magnetic_north'
+  const enteredEnd=input.bearing_role==='sitting'?'坐山':'朝向'
+  return <CastLesson title="跟着看本次坐向" collapsed={collapsed} steps={[
+    {
+      title:'认坐与向',
+      text:'点「看朝向」或「看坐山」，看同一条轴线的两端。罗盘上方是北，角度从北顺时针增加。',
+      visual:<FengshuiCompass chart={chart}/>,
+    },
+    {
+      title:'核对录入的角度',
+      text:isMagnetic?'这次输入的是磁北读数。将所填磁偏角加到读数上，得到按真北记的角度。':
+        `这次输入的是${enteredEnd}，读数已按真北记，可直接在罗盘上找这一端。`,
+      layout:'sequence',
+      items:[
+        {label:`输入${enteredEnd}`,value:`${input.bearing_degrees}°`},
+        ...(isMagnetic?[{label:'手填磁偏角',value:`${input.magnetic_declination_degrees}°`}]:[]),
+        {label:'真北角度',value:`${chart.true_bearing_degrees}°`,active:true},
+      ],
+    },
+    {
+      title:'到九宫盘核对',
+      text:`回「九宫盘」，按宫名找坐和向。九宫图上南下北，罗盘示意图上北下南。${chart.near_boundary?'本次角度临近山界，先复测再确定归山。':''}`,
+      layout:'pillars',
+      items:AXIS_ENDS.map(({id,label})=>({label,value:`${chart[id].trigram}${chart[id].palace_number}宫`,active:id==='facing'})),
+    },
+  ]}/>
+}
 
 export default function FengshuiV70(){
   const [bearing,setBearing]=useState('0')
@@ -119,11 +177,14 @@ export default function FengshuiV70(){
       <button type="submit" disabled={busy}>{busy?'正在计算…':enableFlying?'计算玄空三盘':'计算二十四山坐向'}</button>
     </form>
     {error&&<p className="fengshui-v70-error" role="alert">{error}</p>}
+    <CastHint>{north==='magnetic_north'?'先核实当地、当天的磁偏角，东偏为正，西偏为负。':
+      enableFlying?'填实际入宅、立极或大修的日期和时刻，定运要看立春。':
+      '先选量的是朝向还是坐山，角度从正北顺时针读。'}</CastHint>
     <details className="cast-form-mobile-notes"><summary>堪舆排盘说明</summary><p>{CAST_NOTES}</p></details>
     </CastPagePane>
     <CastPagePane name="result" {...castPage}>
     {chart&&<div className="fengshui-v70-result">
-      <CastResultPanels label="堪舆结果分类" defaultValue="board" variant={chart.flying_stars?'select':'buttons'}>
+      <CastResultPanels label="堪舆结果分类" defaultValue="board" variant={castPage.compact||chart.flying_stars?'select':'buttons'}>
       <CastResultPanel value="direction" label="坐向运期">
       <section className="fengshui-v70-summary" aria-label="堪舆计算结果">
         <small>当前坐向 · {chart.version}</small>
@@ -197,6 +258,9 @@ export default function FengshuiV70(){
       </div>
       <p className="fengshui-v70-note">九宫上南下北、左东右西；中五不对应二十四山。
         {chart.flying_stars?'每宫三数字为实际计算的运星、山星、向星；不会自动判断吉凶。':'此处只显示固定后天方位；没有立极日期就不显示飞星盘。'}</p>
+      </CastResultPanel>
+      <CastResultPanel value="guide" label="跟着看">
+        <FengshuiAxisGuide chart={chart} collapsed={!castPage.compact}/>
       </CastResultPanel>
       {chart.flying_stars&&<CastResultPanel value="flight" label="飞布路径">
       <section className="fengshui-v71-trace"

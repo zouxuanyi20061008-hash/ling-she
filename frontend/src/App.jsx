@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useId } from 'react'
 import './book.css'
 import {CaseNotebook} from './SixYaoStage.jsx'
 import {useCastPage} from './CastPage.jsx'
+import CastLesson,{CastHint} from './CastLesson.jsx'
 
 const pad = n => String(n).padStart(2, '0')
 const localInput = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
@@ -16,7 +17,7 @@ const STRUCTURES = ['左右', '上下', '半包围', '全包围', '左中右', '
 const initialManual = { structure: '其他', yangPart: '', yinPart: '', yang: '', yin: '' }
 const READING_PAGES = [
   ['xiantian','先天观理'], ['houtian','后天察境'], ['detail','完整卦解'],
-  ['numbers','原始取数'], ['cases','案例笔记'], ['ai','AI 解读'],
+  ['numbers','原始取数'], ['guide','跟着看动爻'], ['cases','案例笔记'], ['ai','AI 解读'],
 ]
 
 function followupQuestion(question) {
@@ -52,6 +53,60 @@ function HexCard({ name, data, moving }) {
     <p className="hex-keywords">{data.keywords}</p>
     <p className="hexmeaning">{data.meaning}</p>
   </article>
+}
+
+function LessonLineFace({bit,side=''}) {
+  return <span className={`book-lesson-line-face ${side}`}><i/>{bit===0&&<i/>}</span>
+}
+
+function MovingLinePreview({original,changed,position}) {
+  const [flipped,setFlipped]=useState(false)
+  const from=original.lines_bottom_to_top[position-1]
+  const to=changed.lines_bottom_to_top[position-1]
+  const reading=flipped?changed:original
+  const bit=flipped?to:from
+  return <div className="book-line-preview" data-showing={flipped?'changed':'original'}>
+    <p aria-live="polite">{flipped?'变卦':'本卦'} · <strong>{reading.full_name||reading.name}</strong> · 第 {position} 爻为{bit===1?'阳':'阴'}</p>
+    <div className="book-line-preview-board" aria-hidden="true">
+      {original.lines_bottom_to_top.map((value,i)=>({value,number:i+1})).reverse().map(({value,number})=>
+        <div className="book-lesson-row" key={number} data-moving={number===position?'true':undefined}>
+          <small>{number===position?`${number} 动`:number}</small>
+          {number===position?<span className="book-lesson-flip-track">
+            <span className="book-lesson-flip-block">
+              <LessonLineFace bit={from} side="front"/><LessonLineFace bit={to} side="back"/>
+            </span>
+          </span>:<LessonLineFace bit={value}/>}
+        </div>) }
+    </div>
+    <button type="button" aria-pressed={flipped} className="book-second-action"
+      onClick={()=>setFlipped(current=>!current)}>{flipped?'还原本卦':'翻动这一爻'}</button>
+  </div>
+}
+
+function MeihuaCastLesson({chart}) {
+  const original=chart.ben_gua
+  const changed=chart.bian_gua
+  const position=chart.dong_yao
+  const canFlip=Number.isInteger(position)&&position>=1&&position<=6&&
+    original.lines_bottom_to_top.length===6&&changed.lines_bottom_to_top.length===6&&
+    [0,1].includes(original.lines_bottom_to_top[position-1])&&
+    [0,1].includes(changed.lines_bottom_to_top[position-1])&&
+    original.lines_bottom_to_top.every((bit,i)=>i===position-1?bit!==changed.lines_bottom_to_top[i]:bit===changed.lines_bottom_to_top[i])
+  const steps=[{
+    title:'先认上下两组爻',
+    text:'从底下向上数，前三爻是下卦，后三爻是上卦。先对照你刚起出的本卦。',
+    layout:'layers',
+    items:[{label:'上三爻',value:`${original.upper.name}卦`},{label:'下三爻',value:`${original.lower.name}卦`,active:true}],
+  },...(canFlip?[{
+    title:'亲手翻一下动爻',
+    text:`这次动的是从下往上第 ${position} 爻。点「翻动这一爻」，看同一位置在变卦里怎样变化。`,
+    visual:<MovingLinePreview original={original} changed={changed} position={position}/>,
+  }]:[]),{
+    title:'把盘面带回你问的事',
+    text:'先核对自己的取数，再从「先天观理」或「完整卦解」看体用。遇到不贴合的地方，回头补充真实背景。',
+    items:[{label:'本卦',value:original.full_name||original.name},{label:'变卦',value:changed.full_name||changed.name}],
+  }]
+  return <CastLesson title="跟着这次卦看动爻" steps={steps}/>
 }
 
 function PlumArt() {
@@ -563,6 +618,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
           <button className="book-main-action" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
           <button className="book-second-action" onClick={() => submit(true)} disabled={busy || !question.trim() || !value.trim()}>排盘 + AI 解读</button>
         </div>
+        <CastHint>刚开始可用一件具体的练习问题，起卦输入试试 3,6，然后点「仅排盘」。</CastHint>
         {busy && <p className="mt-4 text-moss" role="status">正在请求服务器…</p>}
         {error && <p role="alert" className="book-alert mt-4">{error}</p>}
         {manualOverride && <p className="mt-3 text-sm text-amber-800">当前使用人工确认：阳 {manualOverride.yang} 画，阴 {manualOverride.yin} 画。
@@ -606,7 +662,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         <div className="book-summary">
           <div><p>体 · {chart.ti_gua.name}{chart.ti_gua.element}　用 · {chart.yong_gua.name}{chart.yong_gua.element}</p>
             <p>第 {chart.dong_yao} 爻动 · {chart.sheng_ke}</p></div>
-          <span className="tag">体用定基调</span>
+          <button type="button" className="book-guide-action" onClick={()=>{setReadingTab('guide');goPage(2)}}>跟着看动爻 →</button>
         </div>
         <div className="book-page-footer">
           <span className="book-page-mark">第二折 · 由象入理</span>
@@ -625,6 +681,9 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         <section id={`${readingNavId}-numbers`} className="book-reading-pane" aria-label="原始取数" hidden={readingTab!=='numbers'}>
           {readingTab==='numbers'&&<NumberExplanation chart={chart}/>}
         </section>
+        <div id={`${readingNavId}-guide`} className="book-reading-pane" hidden={readingTab!=='guide'}>
+          {readingTab==='guide'&&<MeihuaCastLesson chart={chart}/>}
+        </div>
         <div id={`${readingNavId}-cases`} className="book-reading-pane" hidden={readingTab!=='cases'}>
           <CaseNotebook method="梅花易数" chart={chart} question={question}/>
         </div>

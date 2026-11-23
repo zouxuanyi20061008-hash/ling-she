@@ -5,7 +5,6 @@ import ArtsHub,{ARTS} from './ArtsHub.jsx'
 import SixYaoStage from './SixYaoStage.jsx'
 import KnowledgeStage from './KnowledgeStage.jsx'
 import './library.css'
-import CaseExchangeCenter from './CaseExchangeCenter.jsx'
 import LearnCastingStage from './LearnCastingStage.jsx'
 import './style.css'
 import './theme-refresh.css'
@@ -14,6 +13,7 @@ import './casting-art.css'
 import './academy-interface.css'
 
 const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))
+const CaseExchangeCenter=React.lazy(()=>import('./CaseExchangeCenter.jsx'))
 const CAST_ROUTES=new Set(ARTS.map(art=>art.id))
 const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...CAST_ROUTES])
 const CAST_RESULT_SUFFIX='/result'
@@ -114,7 +114,9 @@ function Academy(){
     </div>}
     {mode==='learn'?<LearnCastingStage initialMethod={learnFrom} onBack={()=>goBackTo('choose')}
       onPractice={next=>navigate(next)}/>:
-    mode==='cases'?<CaseExchangeCenter onClose={()=>goBackTo('choose')}/>:
+    mode==='cases'?<React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开收案中心…</main>}>
+      <CaseExchangeCenter onClose={()=>goBackTo('choose')}/>
+    </React.Suspense>:
     (mode==='home'||mode==='choose')?
       <ArtsHub screen={mode}
         onStart={()=>navigate('choose')}

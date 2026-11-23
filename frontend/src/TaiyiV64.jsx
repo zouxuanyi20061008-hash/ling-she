@@ -5,6 +5,7 @@ import './taiyi-result-panels.css'
 import TaiyiV77Hour from './TaiyiV77Hour.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
+import CastLesson,{CastHint} from './CastLesson.jsx'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
   year:'numeric'}).format(new Date()))
@@ -20,6 +21,31 @@ function palaceMarkers(palace){
     palace.main_general_here&&'主大将',
     palace.guest_general_here&&'客大将',
   ].filter(Boolean)
+}
+
+function TaiyiYearLesson({chart,compact}){
+  const {year,nine_palaces}=chart
+  return <CastLesson title="读懂这一年的太乙盘" collapsed={!compact} steps={[
+    {
+      title:'先核对年份和年局',
+      text:'对照你填的公历年份，再记下盘上的五元和局数。按具体日期和时刻排盘时，可以切到「时计排盘」。',
+      layout:'sequence',
+      items:[{label:'公历年',value:`${year.gregorian_year} 年`},
+        {label:'五元',value:year.five_yuan_name},{label:'年局',value:year.ju_label}],
+    },{
+      title:'找到本年太乙所在宫',
+      text:'留意标出的宫位，再回「盘面」点这一宫，看它的方向和同宫标记。',
+      layout:'grid',
+      items:nine_palaces.map(palace=>({label:`${palace.number}宫 · ${palace.trigram}`,
+        value:palace.is_taiyi?'本年太乙':palace.direction,active:palace.is_taiyi})),
+    },{
+      title:'看这一年在三年宫期的第几年',
+      text:'太乙岁计每三年换一宫。可在「周期」查看这次的三年宫期和八宫行次。',
+      layout:'sequence',
+      items:[{label:'本元宫期',value:`第 ${year.three_year_cycle} 个`},
+        {label:'本宫内',value:`第 ${year.year_of_palace} 年`,active:true}],
+    },
+  ]}/>
 }
 
 export default function TaiyiV64(){
@@ -108,6 +134,7 @@ function TaiyiYear({id,active}){
       </label>
       <button type="submit" disabled={busy}>{busy?'正在排岁计…':'计算太乙年局'}</button>
     </form>
+    <CastHint>看某一年的盘，填公历年份。要看具体时刻，切换「时计排盘」。</CastHint>
     {error&&<p className="academy-caution" role="alert">{error}</p>}
     <details className="taiyi-cast-notes">
       <summary>查看岁计计算依据</summary>
@@ -341,6 +368,9 @@ function TaiyiYear({id,active}){
       <span className="taiyi-v64-source-sep"> · </span>
       <a href={chart.sources.historical_1561} target="_blank" rel="noopener noreferrer">
         《太乙金钥匙》1561 年年局案例</a>
+      </CastResultPanel>
+      <CastResultPanel value="guide" label="跟着看">
+        <TaiyiYearLesson chart={chart} compact={castPage.compact}/>
       </CastResultPanel>
       </CastResultPanels>
     </section>}

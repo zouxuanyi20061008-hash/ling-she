@@ -3,9 +3,40 @@ import './academy.css'
 import './liuren-mobile.css'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
+import CastLesson,{CastHint} from './CastLesson.jsx'
 
 const BEIJING_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const METHOD_DESCRIPTION='月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。'
+
+function liurenGuideSteps(chart,selected){
+  const steps=[{
+    title:'看月将落在什么位置',
+    text:'到「天地盘」找标着「占时」的格。月将排在这个地盘时支上方，这一步叫月将加占时。',
+    layout:'layers',
+    items:[
+      {label:'天盘月将',value:`${chart.month_general} · ${chart.month_general_name}`,active:true},
+      {label:'地盘占时',value:chart.hour_branch},
+    ],
+  },{
+    title:`读所选的地盘${selected}宫`,
+    text:'看一宫时，先认它的地盘支，再看上面临的天盘支。回「天地盘」点另一格，这里会跟着换。',
+    layout:'layers',
+    items:[
+      {label:'天盘上神',value:chart.heaven_plate[selected],active:true},
+      {label:'地盘所在宫',value:selected},
+    ],
+  }]
+  const transmissions=chart.three_transmissions
+  if(transmissions.status==='computed'&&transmissions.transmissions?.length===3){
+    steps.push({
+      title:'读本课的三传次序',
+      text:'从初传读到中传，再到末传。到「三传」可核对本课采用的发用规则。',
+      layout:'sequence',
+      items:transmissions.transmissions.map(item=>({label:item.name,value:item.branch,active:item.order===1})),
+    })
+  }
+  return steps
+}
 
 export default function LiurenV58(){
   const optionsId=useId()
@@ -107,6 +138,7 @@ export default function LiurenV58(){
       <button type="submit" disabled={busy}>{busy?'起课中…':'起大六壬天地盘'}</button>
     </form>
     {error&&<p role="alert" className="academy-caution">{error}</p>}
+    <CastHint>填起课时的北京时间，起课后先找天地盘上标着「占时」的那一格。</CastHint>
     </CastPagePane>
     <CastPagePane name="result" {...castPage}>
     {chart&&<div className="liuren-v58-result" role="region" aria-label="大六壬课盘结果" data-has-review={hasTransmissionReview}>
@@ -403,6 +435,9 @@ export default function LiurenV58(){
         对涉害争议、反吟多克等未决条件仍不自行选择初传；完整九宗门异派、贵人异法、真太阳时与吉凶断课未全部核实。</p>
       <a className="liuren-v58-source" href={chart.source.earth_heaven_four_lessons} target="_blank"
         rel="noopener noreferrer">阅读《六壬指南》天地盘与四课原文</a>
+      </CastResultPanel>
+      <CastResultPanel value="guide" label="跟着看" group="课盘">
+        <CastLesson title="六壬天地盘怎么读" collapsed={!castPage.compact} steps={liurenGuideSteps(chart,selected)}/>
       </CastResultPanel>
       </CastResultPanels>
     </div>}

@@ -6,6 +6,7 @@ import ZiweiV68 from './ZiweiV68.jsx'
 import FengshuiV70 from './FengshuiV70.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
+import CastLesson,{CastHint} from './CastLesson.jsx'
 import './academy.css'
 import './knowledge-mobile.css'
 import './knowledge-cast-mobile.css'
@@ -31,6 +32,82 @@ const BRANCHES=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌
 const PILLARS=['年柱','月柱','日柱','时柱']
 const QIMEN_CAST_NOTES='真实九宫地盘、星门神盘保持不变；增加三奇入墓与古籍六甲式三奇得使，并单独列出另一种值使门同宫口径，绝不合并判定。'
 const BAZI_CAST_NOTES='出生四柱按立春、十二节交接计算；大运可选传统规则或手动顺逆。也可另外选择任意北京时间，查看那一刻的流年、流月及整年十二节令月表。'
+
+function qimenGuideSteps(chart,palaceNumber){
+  const palace=chart.palaces.find(entry=>entry.number===palaceNumber)??chart.palaces[0]
+  const steps=[{
+    title:'先核对起局时刻',
+    text:'在「定局摘要」对照节气、时柱和局数，确认这是刚才所选时间起出的盘。',
+    layout:'sequence',
+    items:[
+      {label:'节气',value:chart.solar_term},
+      {label:'时柱',value:chart.hour_ganzhi},
+      {label:'局数',value:chart.ju_label,active:true},
+    ],
+  }]
+  if(palace){
+    const layers=[]
+    if(chart.has_eight_spirits&&palace.actual_spirit)layers.push({label:'八神',value:palace.actual_spirit})
+    if(chart.has_rotated_stars_and_gates){
+      if(palace.actual_gate)layers.push({label:'八门',value:palace.actual_gate})
+      const heaven=[palace.sky_stem,palace.actual_star].filter(Boolean).join(' · ')
+      if(heaven)layers.push({label:'天盘',value:heaven,active:true})
+    }
+    layers.push({label:'地盘干',value:palace.earth_stem})
+    const palaceName=`${palace.name}${palace.number}宫`
+    steps.push({
+      title:layers.length>1?`分层看${palaceName}`:`先看${palaceName}的地盘`,
+      text:layers.length>1
+        ?'从下往上读。回九宫盘可换宫对照。'
+        :'先找本宫的地盘干。当前这格只列能从这一局核对到的盘层。',
+      layout:layers.length>1?'layers':'sequence',
+      items:layers,
+    })
+  }
+  const duty=chart.duty_origin
+  if(chart.has_rotated_stars_and_gates&&duty.rotated_star_display_palace&&duty.rotated_door_display_palace){
+    steps.push({
+      title:'回九宫盘找值符和值使',
+      text:'按这里的盘面宫号去找值符星和值使门。要比较转宫前后，可在「定局摘要」对照。',
+      layout:'sequence',
+      items:[
+        {label:`值符 · ${duty.origin_star}`,value:`${duty.rotated_star_display_palace}宫`},
+        {label:`值使 · ${duty.origin_door}`,value:`${duty.rotated_door_display_palace}宫`},
+      ],
+    })
+  }
+  return steps
+}
+
+function baziGuideSteps(chart){
+  const pillars=chart.pillars.map(pillar=>({label:pillar.label,value:pillar.ganzhi}))
+  const steps=[{
+    title:'先认年、月、日、时四柱',
+    text:'每柱的第一字是天干，第二字是地支。可到「说明与出处」核对这次所用的出生时刻和节令。',
+    layout:'pillars',
+    items:pillars,
+  },{
+    title:'从日柱找日主',
+    text:`日柱的第一个字「${chart.day_master}」是日主。回到「四柱」看其他三柱的天干十神，它们都以日主为参照。`,
+    layout:'pillars',
+    items:pillars.map((pillar,index)=>({...pillar,active:chart.pillars[index].kind==='day'})),
+  }]
+  if(chart.luck||chart.flow){
+    steps.push({
+      title:'接着看已选择的时间范围',
+      text:chart.luck&&chart.flow
+        ?'到「十年大运」看每步的时间范围，再到「流年流月」核对你选的那一刻。'
+        :chart.luck?'到「十年大运」按起运时间看每一步。':'到「流年流月」核对所选时刻属于哪一节令月。',
+      layout:'sequence',
+      items:[
+        chart.luck&&{label:'大运方向',value:chart.luck.direction},
+        chart.flow&&{label:'所选流年',value:chart.flow.year.ganzhi},
+        chart.flow&&{label:'所选流月',value:chart.flow.month.ganzhi,active:true},
+      ].filter(Boolean),
+    })
+  }
+  return steps
+}
 
 function BaziResultRows({rows,selectedIndex=0,label,rangeLabel,gridClass,renderRow}){
   const pageSize=4
@@ -197,6 +274,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           <button type="submit" disabled={qimenBusy}>{qimenBusy?'正在计算…':'按所选时间起局'}</button>
         </form>
         {qimenError&&<p role="alert" className="academy-caution">{qimenError}</p>}
+        <CastHint>填写要起局的北京时间。若是 23 点到午夜，先核对换日约定。</CastHint>
         <details className="knowledge-cast-notes"><summary>查看奇门排盘说明</summary><p>{QIMEN_CAST_NOTES}</p></details>
         </CastPagePane>
         <CastPagePane name="result" {...qimenPage}>
@@ -365,6 +443,10 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             不提供据此判定的吉凶、择时或方位。</p>
           <a className="qimen-v50-source" href={qimenChart.reference} target="_blank" rel="noopener noreferrer">原典：《奇门遁甲元灵经》卷一</a>
           </CastResultPanel>
+          <CastResultPanel value="guide" label="跟着看">
+            <CastLesson title="奇门九宫怎么读" collapsed={!qimenPage.compact}
+              steps={qimenGuideSteps(qimenChart,palaceNum)}/>
+          </CastResultPanel>
           </CastResultPanels>
         </div>}
         </CastPagePane>
@@ -433,6 +515,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           </button>
         </form>
         {baziError&&<p role="alert" className="academy-caution">{baziError}</p>}
+        <CastHint>用北京时间填写出生时刻。要查大运或流年，先展开「大运与流年设置」。</CastHint>
         <details className="knowledge-cast-notes"><summary>查看四柱排盘说明</summary><p>{BAZI_CAST_NOTES}</p></details>
         </CastPagePane>
         <CastPagePane name="result" {...baziPage}>
@@ -530,6 +613,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             {baziChart.luck?'所选大运已经推算；':'未选择大运规则；'}{baziChart.flow?'流年和十二节令流月已按北京时间计算；':'流年流月未选择；'}完整命理分析尚未完成，十神仅说明传统五行结构。</p>
           <a className="bazi-v55-source" href={baziChart.source.independent_fixed_cases_reference}
             rel="noopener noreferrer" target="_blank">历法与固定例盘核验依据</a>
+          </CastResultPanel>
+          <CastResultPanel value="guide" label="跟着看">
+            <CastLesson title="四柱先看哪里" collapsed={!baziPage.compact} steps={baziGuideSteps(baziChart)}/>
           </CastResultPanel>
           </CastResultPanels>
         </div>}
