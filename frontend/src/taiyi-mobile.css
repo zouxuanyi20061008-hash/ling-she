@@ -98,7 +98,7 @@
   .taiyi-v78-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .taiyi-v79-sides,
   .taiyi-v83-clocks { grid-template-columns: minmax(0, 1fr); }
-  .taiyi-v77-result > h4 { margin-block: 6px 4px; line-height: 1.4; }
+  .taiyi-v77-result .taiyi-v77-board-title { margin-block: 6px 4px; line-height: 1.4; }
   .taiyi-v77-result .cast-result-panel > p { margin-block: 4px 8px; line-height: 1.55; }
   .taiyi-v77-board-page { display: flex; flex-direction: column; gap: 8px; }
   .taiyi-v77-board-notes { display: block; order: 1; font-size: 13px; line-height: 1.55; }

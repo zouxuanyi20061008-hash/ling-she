@@ -3,6 +3,8 @@ import './book.css'
 import {CaseNotebook} from './SixYaoStage.jsx'
 import {useCastPage} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
+import BeginnerReading from './BeginnerReading.jsx'
+import {getContextualMeihuaReading,getOracleQuestionTopic} from './oracle-question.js'
 
 const pad = n => String(n).padStart(2, '0')
 const localInput = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
@@ -16,8 +18,23 @@ const ApiUrl = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? '' : `${w
 const STRUCTURES = ['左右', '上下', '半包围', '全包围', '左中右', '上中下', '独体', '其他']
 const initialManual = { structure: '其他', yangPart: '', yinPart: '', yang: '', yin: '' }
 const READING_PAGES = [
-  ['xiantian','先天观理'], ['houtian','后天察境'], ['detail','完整卦解'],
+  ['reading','先读重点'], ['xiantian','先天观理'], ['houtian','后天察境'], ['detail','完整卦解'],
   ['numbers','原始取数'], ['guide','跟着看动爻'], ['cases','案例笔记'], ['ai','AI 解读'],
+]
+const PLAIN_RELATIONS = {
+  比和: '条件较容易配合，可从已经一致的地方推进。',
+  用生体: '外部条件偏有助力，先落实对方能提供的支持。',
+  体生用: '这件事偏需要你投入，先衡量自己能承担多少。',
+  体克用: '你这边有主动调整的空间，推进仍要靠具体行动。',
+  用克体: '眼下偏受外部条件牵制，宜先确认卡点，再决定怎么推进。',
+}
+const PLAIN_MOVING_POSITIONS = [
+  '起步条件',
+  '内部配合',
+  '从准备转到行动的关口',
+  '外部条件',
+  '关键决定',
+  '如何收尾',
 ]
 
 function followupQuestion(question) {
@@ -198,11 +215,45 @@ function LayerReading({ chart, activeTab }) {
   return <BasicReading chart={chart}/>
 }
 
+function MeihuaBeginnerReading({chart,question,onDetails}) {
+  const {ben_gua:original,bian_gua:changed,ti_gua:ti,yong_gua:yong,dong_yao:position,sheng_ke:relation}=chart
+  const topic=getOracleQuestionTopic(question)
+  const movingNote=PLAIN_MOVING_POSITIONS[position-1]
+  const self=`${ti.name}${ti.element}`
+  const matter=`${yong.name}${yong.element}`
+  const link={
+    比和:`${self}和${matter}同属${ti.element}`,
+    用生体:`${matter}生${self}`,
+    体生用:`${self}生${matter}`,
+    体克用:`${self}克${matter}`,
+    用克体:`${matter}克${self}`,
+  }[relation]
+  const reasons=[
+    `本卦 ${original.full_name} 看眼下。${original.meaning||''} ${self}代表你这边，${matter}代表所问的事。${link?`${link}，就是「${relation}」。`:''}`,
+    `第 ${position} 爻动成 ${changed.full_name}。${movingNote?`可留意${movingNote}。`:''}${changed.meaning||''}`,
+  ]
+  return <BeginnerReading title="这卦怎么回答你的问题" question={question}
+    takeaway={getContextualMeihuaReading(relation,topic)||PLAIN_RELATIONS[relation]||original.meaning}
+    reasons={reasons} next={topic?.check||'把卦里提到的条件和现实对一遍，先核实哪件事已经有明确进展。'}
+    actionLabel="看完整卦解" onAction={onDetails}/>
+}
+
 function BasicReading({ chart }) {
   const guide = chart.reading_guide || {}
   const ben = chart.ben_gua
   const hu = chart.hu_gua
   const bian = chart.bian_gua
+  const [archive,setArchive] = useState(null)
+  useEffect(()=>{
+    if(chart.moving_line_text||!ben.name||archive)return
+    let current=true
+    import('./zhouyiText.js').then(({ZHOUYI_TEXT})=>{
+      if(current)setArchive(ZHOUYI_TEXT)
+    }).catch(()=>{})
+    return ()=>{current=false}
+  },[archive,ben.name,chart.moving_line_text])
+  const lineText = archive?.find(entry=>entry.heading===ben.name)?.lines[chart.dong_yao-1]
+  const movingText = chart.moving_line_text || (lineText && `${ben.name}卦${lineText.name}：${lineText.text}`)
   return <section className="mt-5 rounded-3xl bg-white/85 border border-[#cad4c8] p-5 md:p-7">
     <div className="flex flex-wrap justify-between items-end gap-3">
       <div>
@@ -231,9 +282,7 @@ function BasicReading({ chart }) {
       <div>
         <h4 className="font-medium text-base">动爻 · 第 {chart.dong_yao} 爻</h4>
         <p className="mt-1">{guide.moving_position}</p>
-        {chart.moving_line_text
-          ? <p className="mt-1 text-moss">已核对的爻辞：{chart.moving_line_text}</p>
-          : <p className="mt-1 text-moss">这一动爻的经文尚未校勘收录，暂不凭空引用爻辞。</p>}
+        {movingText&&<p className="mt-1 text-moss">《周易》爻辞：{movingText}</p>}
       </div>
       <div className="rounded-xl bg-pale/60 p-4 text-moss">
         <p>后天方位参照：体卦{chart.ti_gua.name}对应{chart.ti_gua.direction}，用卦{chart.yong_gua.name}对应{chart.yong_gua.direction}。这些是传统象征方位，不能直接当成现实中的吉方或寻找地点。</p>
@@ -364,7 +413,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
   const [page, setPage] = useState(0)
   const [turnDirection, setTurnDirection] = useState('next')
   const [turnVersion, setTurnVersion] = useState(0)
-  const [readingTab, setReadingTab] = useState('xiantian')
+  const [readingTab, setReadingTab] = useState('reading')
   const touchOrigin = useRef(null)
   const requestVersion = useRef(0)
   const readingNavId = useId()
@@ -380,6 +429,11 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
   function showReadingSection(id) {
     setReadingTab(id)
     window.scrollTo({top:0,behavior:'instant'})
+  }
+
+  function openPlainReading() {
+    showReadingSection('reading')
+    goPage(2)
   }
 
   function goPage(target, resultReady=hasChart) {
@@ -408,7 +462,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
     const dx=e.changedTouches[0].clientX-origin.x
     const dy=e.changedTouches[0].clientY-origin.y
     if(Math.abs(dx)>90 && Math.abs(dx)>Math.abs(dy)*1.65) {
-      if (dx<0 && page===1) goPage(2)
+      if (dx<0 && page===1) openPlainReading()
       if (dx>0 && page===2) goPage(1)
     }
   }
@@ -497,7 +551,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         setReadingTab('ai')
         goPage(2,true)
       } else {
-        if (page===0) setReadingTab('xiantian')
+        if (page===0) setReadingTab('reading')
         goPage(1,true)
       }
       if (askBackground) {
@@ -580,7 +634,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
           {['问事','观卦','明理'].map((label,i)=>
             <button key={label} type="button" className={'book-step '+(page===i?'active':page>i?'passed':'')}
               aria-current={page===i?'step':undefined} disabled={i>0&&!chart}
-              onClick={()=>goPage(i)}><span>0{i+1}</span> {label}</button>
+              onClick={()=>i===2?openPlainReading():goPage(i)}><span>0{i+1}</span> {label}</button>
           )}
         </nav>
         {page===2&&chart&&<nav className="book-reading-links" aria-label="解读内容">
@@ -599,7 +653,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         <span>第 {['一','二','三'][page]} 折 · {['问事','观卦','明理'][page]}</span>
         <div>
           <button type="button" onClick={()=>goPage(page-1)}>← 上一折</button>
-          {page<2&&<button type="button" className="book-top-next" onClick={()=>goPage(page+1)}>下一折 →</button>}
+          {page<2&&<button type="button" className="book-top-next" onClick={openPlainReading}>下一折 →</button>}
         </div>
       </nav>}
       <div key={'leaf-'+page+'-'+turnVersion} className={'book-leaf '+turnDirection}
@@ -628,7 +682,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
           <button className="book-main-action" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
           <button className="book-second-action" onClick={() => submit(true)} disabled={busy || !question.trim() || !value.trim()}>排盘 + AI 解读</button>
         </div>
-        <CastHint>刚开始可用一件具体的练习问题，起卦输入试试 3,6，然后点「仅排盘」。</CastHint>
+        <CastHint>刚开始可以问一件具体的事，试用 3,6 取数，排盘后可直接翻到白话解读。</CastHint>
         {busy && <p className="mt-4 text-moss" role="status">正在请求服务器…</p>}
         {error && <p role="alert" className="book-alert mt-4">{error}</p>}
         {manualOverride && <p className="mt-3 text-sm text-amber-800">当前使用人工确认：阳 {manualOverride.yang} 画，阴 {manualOverride.yin} 画。
@@ -663,7 +717,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
       {page===1 && chart && <section className="book-page book-chart-page" aria-label="观卦">
         <p className="book-kicker">第二折 · 卦成观象</p>
         <h2 className="book-h1">本卦、互卦与变卦</h2>
-        <p className="book-intro">六爻自下而上排，赤色为动爻。这里先把卦象摆明白，至下一页再观先天之理、后天之境。</p>
+        <p className="book-intro">本卦看眼下，互卦看过程，变卦看变化方向。红色爻是这次发生变化的一笔。</p>
         <div className="book-charts">
           <HexCard name="本卦" data={chart.ben_gua} moving={chart.dong_yao}/>
           <HexCard name="互卦" data={chart.hu_gua}/>
@@ -678,12 +732,15 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
           <span className="book-page-mark">第二折 · 由象入理</span>
           <div className="book-pagenav">
             <button className="book-second-action" onClick={()=>goPage(0)}>← 修改所问</button>
-            <button className="book-main-action" onClick={()=>goPage(2)}>翻页看解读 →</button>
+            <button className="book-main-action" onClick={openPlainReading}>翻开白话解读 →</button>
           </div>
         </div>
       </section>}
       {page===2 && chart && <section className="book-page book-reading-page" aria-label="观境明理">
-        {READING_PAGES.slice(0,3).map(([id,label])=><section key={id} id={`${readingNavId}-${id}`}
+        <div id={`${readingNavId}-reading`} className="book-reading-pane" hidden={readingTab!=='reading'}>
+          {readingTab==='reading'&&<MeihuaBeginnerReading chart={chart} question={question} onDetails={()=>showReadingSection('detail')}/>}
+        </div>
+        {READING_PAGES.slice(1,4).map(([id,label])=><section key={id} id={`${readingNavId}-${id}`}
           className="book-reading-pane" aria-label={label} hidden={readingTab!==id}>
           {readingTab===id&&<LayerReading chart={chart} activeTab={id}/>}
           {chart.dual_layer?.boundary&&<p className="book-footnote">{chart.dual_layer.boundary}</p>}
@@ -699,7 +756,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         </div>
         <section id={`${readingNavId}-ai`} className="book-ai book-reading-pane" aria-label="AI 解读" hidden={readingTab!=='ai'}>
           <h3>以卦问事 · 深入解读</h3>
-          <p>补充一次真实背景，即可用 AI 讨论卦意。选择「完整卦解」也可直接查看基础内容。</p>
+          <p>补充一次真实背景，即可用 AI 讨论卦意。「先读重点」和「完整卦解」打开即读。</p>
           <div className="book-settings-hint" style={{margin:'12px 0'}}>
             <span>{personalApiKey ? '个人 DeepSeek 密钥已临时填写' : '如需 AI，请先在「藏经阁 · 设定」配置密钥。'}</span>
             <button type="button" onClick={onOpenStudy}>API 设置 ↗</button>

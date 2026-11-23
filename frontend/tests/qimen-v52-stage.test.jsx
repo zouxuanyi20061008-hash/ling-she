@@ -8,6 +8,7 @@ const rows=[
  {number:4,name:'巽',earth_stem:'戊',sky_stem:'癸',actual_star:'天英',actual_gate:'死门',actual_spirit:'九地',has_hour_void:true,hour_xunkong_branches_here:['辰','巳'],hour_horse:false,structural_tags:['天盘六仪击刑条件'],door_palace_relation:'宫克门',star_from_palace:9,gate_from_palace:2},
  {number:2,name:'坤',earth_stem:'丙',sky_stem:'辛',actual_star:'天柱',actual_gate:'开门',actual_spirit:'值符',has_hour_void:false,hour_xunkong_branches_here:[],hour_horse:false,structural_tags:[],door_palace_relation:'宫生门',star_from_palace:7,gate_from_palace:6},
  {number:8,name:'艮',earth_stem:'壬',sky_stem:'乙',actual_star:'天冲',actual_gate:'杜门',actual_spirit:'白虎',has_hour_void:false,hour_xunkong_branches_here:[],hour_horse:true,horse_branch_here:'寅',structural_tags:['门迫条件'],door_palace_relation:'门克宫（门迫条件）',star_from_palace:3,gate_from_palace:4},
+ {number:9,name:'离',earth_stem:'癸',sky_stem:'丙',actual_star:'天芮',actual_gate:'惊门',actual_spirit:'九天',has_hour_void:false,hour_xunkong_branches_here:[],hour_horse:false,structural_tags:[]},
 ]
 it('V52 visible spirits and specific void branches, horse, and structural tags',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
@@ -27,6 +28,9 @@ it('V52 visible spirits and specific void branches, horse, and structural tags',
  render(<KnowledgeStage mode="qimen" onBack={()=>{}} onStudy={()=>{}}/>)
  fireEvent.click(screen.getByRole('button',{name:'按所选时间起局'}))
  expect(await screen.findByText('阳遁4局 · 下元')).toBeTruthy()
+ const beginner=within(screen.getByRole('region',{name:'这局先看哪一格'}))
+ expect(beginner.getByText(/先看离9宫的惊门.*先核实让人不安的消息/)).toBeTruthy()
+ expect(beginner.getByText(/惊蛰下元.*丙申时.*值使门落在离9宫/)).toBeTruthy()
  expect(screen.getByText(/时旬空：辰、巳/)).toBeTruthy()
  expect(screen.getByText(/时支申 · 马星寅/)).toBeTruthy()
  const disc=screen.getByRole('group',{name:'V51 奇门九宫星门转盘'})

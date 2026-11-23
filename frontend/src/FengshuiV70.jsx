@@ -1,4 +1,5 @@
 import {useState,useRef} from 'react'
+import BeginnerReading from './BeginnerReading.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
@@ -7,6 +8,43 @@ import './fengshui-compass.css'
 
 const CAST_NOTES='按罗盘角度实际换算坐向、二十四山和后天八卦九宫。输入方位角从正北顺时针测量，0°为北、90°为东、180°为南、270°为西。选填真实立极或入住日期后，另按立春起三元九运及下卦运、山、向三星盘；不声称已经实地测定房屋坐向，也不代替玄空替卦规则。'
 const AXIS_ENDS=[{id:'facing',label:'朝向',suffix:'向'},{id:'sitting',label:'坐山',suffix:'山'}]
+
+function FengshuiReading({chart,enteredBearing}){
+  const {axis_label:axis,input,sitting,facing,period,flying_stars:stars}=chart
+  const pending=period&&!stars
+  let takeaway=`${axis}。朝${facing.direction}，背靠${sitting.direction}。`
+  let next='到「九宫盘」找朝向和坐山标记。如果读数来自现场，先确认测量位置和角度。'
+  if(chart.near_boundary){
+    takeaway=`暂归${axis}，角度贴近分界。请复测后再确认坐向。${pending?`目前可定为${period.yuan}${period.label}。`:''}`
+    next='在同一位置多量几次，避开近处金属干扰。到「坐向运期」核对真北角。'
+  }else if(pending){
+    takeaway=`当前是${axis}、${period.yuan}${period.label}。坐向偏离本山中心较多，这次先看运期。`
+    next='到「坐向运期」核对角度。若复测仍是这个方向，需另按兼向的规则判断。'
+  }else if(stars){
+    takeaway=`当前是${axis}、${period.yuan}${period.label}。九宫已排出运、山、向三个数。`
+    next='在「九宫盘」先找朝向和坐山。每格的三个数字分别来自三套排法，单看一个数字无法判断宅子吉凶。'
+  }
+
+  const bearingReason=input.north_reference==='magnetic_north'
+    ?`按所填磁偏角校正后，真北读数为 ${chart.true_bearing_degrees}°。坐山和朝向是同一条轴线的两端，相差 180°。`
+    :`输入的 ${enteredBearing}° 以真北为起点。罗盘把一圈分成 24 个 15° 的区间，坐山和朝向相差 180°。`
+  let periodReason=''
+  if(period){
+    const inputYear=Number(period.foundation_beijing.slice(0,4))
+    const reached=Date.parse(period.foundation_beijing)>=Date.parse(period.effective_lichun_for_input_year)
+    const effectiveYear=period.effective_lichun_year??(reached?inputYear:inputYear-1)
+    periodReason=`立极时${reached?'已到':'还没到'} ${inputYear} 年立春，按 ${effectiveYear} 年所属运期定运。`
+    if(chart.flying_status==='blocked_replacement_chart_uncertain'){
+      periodReason+='角度偏离本山中心超过 4.5°，普通三盘暂不适用。'
+    }else if(chart.flying_status==='blocked_mountain_boundary'){
+      periodReason+='靠近分界时，少量测量误差就可能改变归山，因此暂不排三盘。'
+    }else if(stars){
+      periodReason+='运数决定运盘的起数，坐山和朝向决定另外两盘的起数。'
+    }
+  }
+  return <BeginnerReading title="先读堪舆盘" takeaway={takeaway}
+    reasons={[bearingReason,...(periodReason?[periodReason]:[])]} next={next}/>
+}
 
 function FengshuiCompass({chart}){
   const [view,setView]=useState(chart.input.bearing_role)
@@ -142,7 +180,7 @@ export default function FengshuiV70(){
         <select aria-label="堪舆输入坐向" value={role}
           onChange={e=>{setRole(e.target.value);invalidate()}}>
           <option value="facing">朝向（向）</option>
-          <option value="sitting">坐向（坐）</option>
+          <option value="sitting">坐山（与朝向相反）</option>
         </select>
       </label>
       <label>角度参考基准
@@ -159,18 +197,18 @@ export default function FengshuiV70(){
           placeholder="例如：+5 或 -6"/>
         <small>网站不自动查询磁偏角。请确认测量地点和日期后填写。</small>
       </label>}
-      <label className="fengshui-v71-toggle">启用 V71 玄空三盘
+      <label className="fengshui-v71-toggle">按日期排玄空三盘
         <input type="checkbox" aria-label="启用 V71 玄空三盘"
           checked={enableFlying} onChange={e=>{setEnableFlying(e.target.checked);invalidate()}}/>
-        <small>按入宅/立极/重大改修的日期定运；默认不自动推定建筑元运。</small>
+        <small>填写入住、确定宅向或大修的日期，用来决定按哪个时期排盘。</small>
       </label>
       {enableFlying&&<>
-        <label>立极日期（公历，北京时间）
+        <label>用于定运的日期（公历）
           <input type="date" aria-label="堪舆立极公历日期"
             min="1901-01-01" max="2099-12-31" required
             value={foundationDate} onChange={e=>{setFoundationDate(e.target.value);invalidate()}}/>
         </label>
-        <label>立极时刻（北京时间）
+        <label>用于定运的时刻（北京时间）
           <input type="time" aria-label="堪舆立极北京时间" required
             value={foundationClock} onChange={e=>{setFoundationClock(e.target.value);invalidate()}}/>
         </label>
@@ -185,7 +223,10 @@ export default function FengshuiV70(){
     </CastPagePane>
     <CastPagePane name="result" {...castPage}>
     {chart&&<div className="fengshui-v70-result">
-      <CastResultPanels label="堪舆结果分类" defaultValue="board" variant={castPage.compact||chart.flying_stars?'select':'buttons'}>
+      <CastResultPanels label="堪舆结果分类" defaultValue="reading" variant={castPage.compact||chart.flying_stars?'select':'buttons'}>
+      <CastResultPanel value="reading" label="先读重点">
+        <FengshuiReading chart={chart} enteredBearing={enteredBearing}/>
+      </CastResultPanel>
       <CastResultPanel value="direction" label="坐向运期">
       <section className="fengshui-v70-summary" aria-label="堪舆计算结果">
         <small>当前坐向 · {chart.version}</small>

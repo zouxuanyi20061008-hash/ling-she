@@ -6,6 +6,7 @@ import TaiyiV77Hour from './TaiyiV77Hour.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,useCompactCastLayout,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
+import BeginnerReading from './BeginnerReading.jsx'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
   year:'numeric'}).format(new Date()))
@@ -23,9 +24,9 @@ function palaceMarkers(palace){
   ].filter(Boolean)
 }
 
-function TaiyiYearLesson({chart,compact}){
+function TaiyiYearLesson({chart}){
   const {year,nine_palaces}=chart
-  return <CastLesson title="读懂这一年的太乙盘" collapsed={!compact} steps={[
+  return <CastLesson title="跟着盘面学三年一宫" collapsed steps={[
     {
       title:'先核对年份和年局',
       text:'对照你填的公历年份，再记下盘上的五元和局数。按具体日期和时刻排盘时，可以切到「时计排盘」。',
@@ -138,6 +139,8 @@ function TaiyiYear({id,active,onResultAvailability}){
   }
   const chosen=chart?.nine_palaces.find(p=>p.number===picked)
   const spirit=chart?.sixteen_spirits?.find(s=>s.index===pickedSpirit)
+  const annual=chart?.year
+  const palace=annual?.taiyi_palace
   return <section className="taiyi-year-mode" id={id} aria-label="V67 太乙真实岁计">
     <CastPageNav title="太乙岁计" hasResult={!!chart} {...castPage}/>
     <CastPagePane name="form" {...castPage}>
@@ -169,6 +172,18 @@ function TaiyiYear({id,active,onResultAvailability}){
     </CastPagePane>
     <CastPagePane name="result" {...castPage}>
     {chart&&<section className="taiyi-v64-result" aria-label="太乙岁计排盘结果">
+      <CastResultPanels label="岁计结果分类" defaultValue={castPage.compact?'reading':'board'}>
+      <CastResultPanel value="reading" label="先读重点">
+        <BeginnerReading title="太乙岁计怎么读"
+          takeaway={`${annual.gregorian_year} 年是${annual.five_yuan_name}${annual.ju_label}，太乙落在${palace.number}宫${palace.trigram}（${palace.direction}），是本宫三年里的第 ${annual.year_of_palace} 年。`}
+          reasons={[
+            '从古籍规定的起算年数到你填的年份，再按每 72 局一元、五元一轮，找到这一年的元和局。',
+            `岁计按阳遁顺序走八宫，每宫停三年。第 ${annual.ju} 局落在本元第 ${annual.three_year_cycle} 个三年宫期，因此走到这一格。`,
+          ]}
+          next="点「盘面」找亮起的宫，再到「主客」看双方从哪格起算。这是全年盘势，具体一件事能否办成需要另作判断。"/>
+        <TaiyiYearLesson chart={chart}/>
+      </CastResultPanel>
+      <CastResultPanel value="board" label="盘面">
       <div className="taiyi-v64-overview">
         <strong>{chart.year.gregorian_year}年 · {chart.year.five_yuan_name} · {chart.year.ju_label}</strong>
         {!castPage.compact&&<div><span>历史积年：{chart.year.accumulated_years.toLocaleString('zh-CN')}</span>
@@ -180,8 +195,6 @@ function TaiyiYear({id,active,onResultAvailability}){
           {chart.year.taiyi_palace.trigram}（{chart.year.taiyi_palace.direction}）
           · {chart.year.year_governing} · 本宫第 {chart.year.year_of_palace} 年</p>}
       </div>
-      <CastResultPanels label="岁计结果分类">
-      <CastResultPanel value="board" label="盘面">
       <h3>太乙式九宫（上南下北）</h3>
       <div className="taiyi-v64-palaces" role="group" aria-label="太乙式九宫岁计盘">
         {chart.nine_palaces.map(p=><button type="button" key={p.number}
@@ -392,9 +405,6 @@ function TaiyiYear({id,active,onResultAvailability}){
       <span className="taiyi-v64-source-sep"> · </span>
       <a href={chart.sources.historical_1561} target="_blank" rel="noopener noreferrer">
         《太乙金钥匙》1561 年年局案例</a>
-      </CastResultPanel>
-      <CastResultPanel value="guide" label="跟着看">
-        <TaiyiYearLesson chart={chart} compact={castPage.compact}/>
       </CastResultPanel>
       </CastResultPanels>
     </section>}

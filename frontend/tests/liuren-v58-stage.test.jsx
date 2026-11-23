@@ -35,6 +35,9 @@ it('V58 real UI shows twelve plates, four lessons and known three transmissions'
  fireEvent.change(screen.getByLabelText('六壬北京时间'),{target:{value:'10:00'}})
  fireEvent.click(screen.getByRole('button',{name:'起大六壬天地盘'}))
  expect(await screen.findByText(/丙戌日 · 巳时/)).toBeTruthy()
+ const beginner=within(screen.getByRole('region',{name:'这课按什么顺序读'}))
+ expect(beginner.getByText(/相互制约.*申、亥、寅/)).toBeTruthy()
+ expect(beginner.getByText(/第1课下方的丙火制约上方的申金/)).toBeTruthy()
  expect(JSON.parse(spy.mock.calls[0][1].body)).toEqual({
   solar_date:'2026-06-01',clock:'10:00',day_boundary:'zi_hour'})
  const twelve=screen.getByRole('group',{name:'大六壬十二宫天地盘'})
@@ -50,6 +53,8 @@ it('V58 unknown nine-method case explicitly pending, never invent triple',async(
  render(<KnowledgeStage mode="liuren" onBack={()=>{}} onStudy={()=>{}}/>)
  fireEvent.click(screen.getByRole('button',{name:'起大六壬天地盘'}))
  expect(await screen.findByText('此课三传尚未完成核验')).toBeTruthy()
+ const beginner=within(screen.getByRole('region',{name:'这课先看四课，三传待核'}))
+ expect(beginner.getByText(/初传有子、戌这几种候选/)).toBeTruthy()
  expect(screen.getByText(/需涉害判深浅/)).toBeTruthy()
  expect(screen.queryByRole('group',{name:'大六壬三传'})).toBeNull()
 })

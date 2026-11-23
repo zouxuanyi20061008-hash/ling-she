@@ -3,15 +3,16 @@ import './academy.css'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
+import BeginnerReading from './BeginnerReading.jsx'
 
 const CN_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const CN_CLOCK=()=>new Intl.DateTimeFormat('en-GB',{
   timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false
 }).format(new Date())
 
-function TaiyiHourLesson({chart,compact}){
+function TaiyiHourLesson({chart}){
   const {input,solstice,time_cycle,nine_palaces,jishen}=chart
-  return <CastLesson title="读懂这个时辰的太乙盘" collapsed={!compact} steps={[
+  return <CastLesson title="跟着盘面学交节与行宫" collapsed steps={[
     {
       title:'核对时刻和阴阳遁',
       text:'先核对北京时间，再看本盘从冬至还是夏至起算。临近交节可回「基础九宫盘」核对时刻。',
@@ -81,6 +82,8 @@ export default function TaiyiV77Hour({id,active=true,onResultAvailability}){
   const v95=chart?.hour_v95_scan_candidate_audit
   const ancientV85=chart?.hour_v85_independent_yin_witness
   const v86=chart?.hour_v86_classical_examples
+  const cycle=chart?.time_cycle
+  const palace=chart?.taiyi_palace
   const doorChoices=v82?.candidates||[]
   const doorBoard=doorChoices.find(c=>c.school===doorSchool)||doorChoices[0]
   const doorTitle={
@@ -130,10 +133,24 @@ export default function TaiyiV77Hour({id,active=true,onResultAvailability}){
     </CastPagePane>
     <CastPagePane name="result" {...castPage}>
     {chart&&<section className="taiyi-v77-result" role="region" aria-label="V77 太乙时计八宫与计神结果">
-      <h4>{chart.solstice.name}后 · {chart.time_cycle.dun} ·
-        太乙{chart.taiyi_palace.number}宫{chart.taiyi_palace.trigram}</h4>
-      <CastResultPanels label="选择时计结果" variant="select">
+      {chart.solstice.near_15_minutes&&
+        <p className="academy-caution" role="note">
+          本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
+        </p>}
+      <CastResultPanels label="选择时计结果" variant="select" defaultValue={castPage.compact?'reading':'board'}>
+      <CastResultPanel value="reading" label="先读重点">
+        <BeginnerReading title="太乙时计怎么读"
+          takeaway={`${chart.input.solar_date} ${chart.input.clock.slice(0,5)} 属${chart.input.hour_branch}时，按${chart.solstice.name}后的${cycle.dun}排。太乙落在${palace.number}宫${palace.trigram}（${palace.direction}）。`}
+          reasons={[
+            `冬至起阳遁，夏至起阴遁。本盘最近一次已过的冬至或夏至是${chart.solstice.name}，所以走${cycle.dun}的顺序。`,
+            `把交节所在的时辰算作第 1 时，这次数到第 ${cycle.relative_time_count} 时。太乙每三个时辰换一宫，本次是这格的第 ${cycle.hours_in_current_palace} 个时辰。`,
+          ]}
+          next="在「基础九宫盘」找亮起的格子，进阶可看「甲子积时与文昌」。这是当时的盘势，具体事情的成败需要另作判断。"/>
+        <TaiyiHourLesson chart={chart}/>
+      </CastResultPanel>
       <CastResultPanel value="board" label="基础九宫盘">
+      <h4 className="taiyi-v77-board-title">{chart.solstice.name}后 · {chart.time_cycle.dun} ·
+        太乙{chart.taiyi_palace.number}宫{chart.taiyi_palace.trigram}</h4>
       <div className="taiyi-v77-board-page">
       <div className="taiyi-v77-board-notes">
       <p>本次北京时间 {chart.input.solar_date} {chart.input.clock}（{chart.input.hour_branch}时）；
@@ -155,13 +172,6 @@ export default function TaiyiV77Hour({id,active=true,onResultAvailability}){
         </div>)}
       </div>
       </div>
-      {chart.solstice.near_15_minutes&&
-        <p className="academy-caution" role="note">
-          本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
-        </p>}
-      </CastResultPanel>
-      <CastResultPanel value="guide" label="跟着看" group="读盘指引">
-        <TaiyiHourLesson chart={chart} compact={castPage.compact}/>
       </CastResultPanel>
       {chart.classical_jiazi_hour_v78&&<CastResultPanel value="v78" label="甲子积时与文昌" group="推算明细">
         <section className="taiyi-v78-epoch"

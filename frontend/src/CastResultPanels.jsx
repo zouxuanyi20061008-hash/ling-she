@@ -42,6 +42,7 @@ export default function CastResultPanels({ label, variant = 'buttons', defaultVa
   const [selection, setSelection] = useState(defaultValue)
   const selected = panels.find(panel => panel.props.value === (value ?? selection))?.props.value ?? panels[0]?.props.value
   const previous = useRef(selected)
+  const navigation = useRef(null)
   const selectedPanel = useRef(null)
   const scrollOnSelection = useRef(false)
 
@@ -54,17 +55,22 @@ export default function CastResultPanels({ label, variant = 'buttons', defaultVa
 
   useLayoutEffect(() => {
     if (previous.current === selected) return
+    const priorPanel = document.getElementById(`${id}-${previous.current}`)
     previous.current = selected
-    if (compact) window.scrollTo({ top: 0, behavior: 'instant' })
-    else if (scrollOnSelection.current) selectedPanel.current?.scrollIntoView?.({ block: 'start', behavior: 'instant' })
+    if (compact) {
+      if (priorPanel?.contains(document.activeElement)) {
+        navigation.current?.querySelector('select, button[aria-pressed="true"]')?.focus({ preventScroll: true })
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    } else if (scrollOnSelection.current) selectedPanel.current?.scrollIntoView?.({ block: 'start', behavior: 'instant' })
     scrollOnSelection.current = false
-  }, [compact, selected])
+  }, [compact, id, selected])
 
   if (!panels.length) return null
   if (panels.length === 1) return cloneElement(panels[0], { active: true })
 
   return <>
-    <div className="cast-result-navigation">
+    <div className="cast-result-navigation" ref={navigation}>
       {variant === 'select'
         ? <ResultSelect label={label} panels={panels} selected={selected} select={select} controls={`${id}-${selected}`} />
         : <div className="cast-result-buttons" role="group" aria-label={label}

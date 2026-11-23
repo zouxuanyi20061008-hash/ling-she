@@ -82,6 +82,13 @@ it('keeps the hour inputs across mobile mode switches and returns from the chart
  expect(document.activeElement).toBe(navigation.getByRole('button',{name:'排盘结果'}))
  expect(window.location.hash).toBe('#taiyi/result')
  expect(screen.queryByRole('button',{name:'计算太乙时计基础盘'})).toBeNull()
+ const reading=screen.getByRole('region',{name:'太乙时计怎么读'})
+ expect(reading.textContent).toContain('按夏至后的阴遁排')
+ expect(reading.textContent).toContain('这次数到第 2 时')
+ const board=screen.getByRole('group',{name:'太乙时计九宫位置'}).closest('.cast-result-panel')
+ expect(board.getAttribute('data-active')).toBe('false')
+ fireEvent.change(screen.getByLabelText('选择时计结果'),{target:{value:'board'}})
+ expect(board.getAttribute('data-active')).toBe('true')
 
  fireEvent.click(navigation.getByRole('button',{name:'← 返回排盘'}))
  await waitFor(()=>expect(window.location.hash).toBe('#taiyi'))

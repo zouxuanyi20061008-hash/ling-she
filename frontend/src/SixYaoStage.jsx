@@ -6,6 +6,8 @@ import SixYaoJointOverview from './SixYaoJointOverview.jsx'
 import SixYaoCombinationPanel from './SixYaoCombinationPanel.jsx'
 import LiuyaoCoinTray,{COIN_TOSS_MS} from './LiuyaoCoinTray.jsx'
 import {useCastPage} from './CastPage.jsx'
+import BeginnerReading from './BeginnerReading.jsx'
+import {getOracleQuestionTopic} from './oracle-question.js'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 import {shareCaseFromArchive} from './case-exchange.js'
 import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
@@ -26,6 +28,46 @@ function Diagram({label,hex,moving=[]}) {
     </div>
     <b>{hex.keywords}</b><p>{hex.meaning}</p>
   </article>
+}
+
+function SixYaoBeginnerReading({chart,question,onStep}) {
+  const topic=getOracleQuestionTopic(question)
+  const {ben_gua:original,bian_gua:changed,dong_yao:moving=[],focus,focus_decision:decision,calendar}=chart
+  const hexName=original?.full_name
+  const movingNames=positions=>positions.map(position=>POS[position-1]+'爻').join('、')
+  const needsCalendar=!calendar?.day||!calendar?.month
+  const candidate=decision?.selected_candidate||(decision?.candidates?.length===1?decision.candidates[0]:null)
+  const positions=focus?.primary_positions||[]
+  const signs=candidate?.indicators
+  const indicator=signs?.month_break?'所看这一爻和月建相冲，盘里有一条需要核对的牵制。':
+    signs?.xunkong?'所看这一爻带有「旬空」标记，宜先核实事情的条件是否落实。':
+    signs?.month_action==='月建生爻'||signs?.day_action==='日辰生爻'?'所看这一爻得到日月中的生扶，盘里有一条可核对的支持线索。':''
+
+  const hexEvidence=moving.length
+    ? `本卦 ${hexName} 看眼下，${movingNames(moving)}发生变化，形成之卦 ${changed?.full_name}。${changed?.meaning||''}`
+    : `本卦 ${hexName} 没有动爻，先看本卦描述的处境。${original?.meaning||''}`
+  let takeaway=original?.meaning||'卦已排好。先把要问的人或事对应到盘里，再看哪里有变化。'
+  if(topic?.subject)takeaway=`关于${topic.subject}，先读本卦的整体提示。${takeaway}`
+  let focusEvidence=topic?.focusWhy||'世爻通常看你这一方，应爻看对方。要问具体事项，先选出最关心的对象。'
+  if(focus&&!positions.length){
+    takeaway=`你选的「${focus.category}」在本卦里找不到，先对照日月和隐藏的对应爻。`
+    focusEvidence=`「${focus.category}」没有直接出现在本卦。若盘里列出隐藏的对应爻，可以在「因事取用」核对。`
+  }else if(focus){
+    const moved=focus.moving_positions||[]
+    focusEvidence=`「${focus.category}」出现在${movingNames(positions)}，${moved.length?`${movingNames(moved)}有变化。`:'这些位置本身没翻动。'}`
+    if(indicator)takeaway=indicator
+    else if(positions.length>1&&!candidate)takeaway=`你选的「${focus.category}」有几处同时相关，需要逐一对照。`
+    else if(needsCalendar)takeaway=`「${focus.category}」的位置已明确，补好起卦日期才能看日月的支持与牵制。`
+    else takeaway=`可以把「${focus.category}」的动静和已核对的日月条件放在一起看。`
+  }
+
+  const step=!focus&&question.trim()?'focus':needsCalendar?'calendar':!focus?'focus':'relations'
+  const next=step==='calendar'?'补上实际起卦日期。日辰和节令月建是六爻判断支持与牵制所需的时间条件。':
+    step==='focus'?'先确认你想看谁、看哪件事，系统会标出各个对应爻。':
+    (topic?.check||'把支持和限制线索分开核对，再对照事情在现实中已经发生了什么。')
+  const actionLabel={focus:'选择关注对象',calendar:'核对起卦日期',relations:'看支持和限制'}[step]
+  return <BeginnerReading title="这卦先看什么" question={question} takeaway={takeaway}
+    reasons={[hexEvidence,focusEvidence]} next={next} actionLabel={actionLabel} onAction={()=>onStep(step)}/>
 }
 
 
@@ -98,7 +140,7 @@ function SolarDateAssist({day,month,onApply,busy}){
       <strong>中国历法 · 农历 / 公历换算</strong>
       <span>统一北京时间 UTC+8</span>
     </div>
-    <p>两种日期都可以输入，统一按北京时间计算。<strong>农历月份不是六爻月建</strong>：月建以节气交节为准。系统只提供预览，你确认后才会改动卦盘。</p>
+    <p>填实际起卦的日期和时间，公历、农历都可以。系统按北京时间计算起卦当天的干支（日辰）和当时的节令月份（月建）。先预览，你确认后才会更新卦盘。</p>
     <div className="solar-assist-tabs" role="group" aria-label="选择日期类型">
       <button type="button" className={mode==='solar'?'active':''}
         aria-pressed={mode==='solar'} onClick={()=>change(setMode,'solar')}>公历（阳历）</button>
@@ -2128,7 +2170,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
   const [studyPosition,setStudyPosition]=useState(null)
   const [roleView,setRoleView]=useState('用神')
   const [reviewStage,setReviewStage]=useState('calendar')
-  const [mobileResult,setMobileResult]=useState('board')
+  const [mobileResult,setMobileResult]=useState('reading')
   const [relationsView,setRelationsView]=useState('summary')
   const [studioView,setStudioView]=useState('casting')
   const castPage=useCastPage('liuyao',Boolean(chart))
@@ -2193,7 +2235,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
     const seq=[...lines,value];setLines(seq);setChart(null);setAnswer('');setError('')
     if(seq.length===6){
       setReviewStage('calendar')
-      setMobileResult('board')
+      setMobileResult('reading')
       process(seq,dayGanzhi,monthBranch,focusLiugin,studyPosition,true)
     }
   }
@@ -2302,7 +2344,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
           <button type="button" className={studioView==='analysis'?'active':''}
             aria-current={studioView==='analysis'?'page':undefined}
             disabled={!chart} onClick={()=>openStudio('analysis')}>
-            <b>贰 · 研判台</b><small>{chart?'卦已成 · 进入五步分析':'六爻齐备后开放'}</small>
+            <b>贰 · 研判台</b><small>{chart?'卦已成 · 先看白话解读':'六爻齐备后开放'}</small>
           </button>
         </nav>
         {chart&&studioView==='analysis'&&<div className="liuyao-mobile-result-navigation">
@@ -2311,6 +2353,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             <select aria-label="选择六爻研判内容" aria-controls={`${resultPanelId}-${mobileResult}`}
               value={mobileResult} onChange={selectMobileResult} disabled={calendarBusy}>
               <optgroup label="卦盘总览">
+                <option value="reading">先读重点</option>
                 <option value="board">本卦与完整装卦</option>
                 <option value="hexagrams">本卦和之卦图</option>
                 <option value="joint">用神与动变合参</option>
@@ -2378,7 +2421,9 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
             </div>
           })}</div>
           {chart?<div className="academy-computed">
-            <p className="liuyao-workbench-lead">研判台 · 先看本卦与之卦，再选一个步骤。想修改六爻，可返回「起卦台」。</p>
+            {studioView==='analysis'&&<div id={`${resultPanelId}-reading`} className="liuyao-result-panel" data-current={mobileResult==='reading'}>
+              <SixYaoBeginnerReading chart={chart} question={question} onStep={goReviewStep}/>
+            </div>}
             <div id={`${resultPanelId}-hexagrams`} className="liuyao-result-panel" data-current={mobileResult==='hexagrams'}>
               <div className="academy-hex-pair"><Diagram label="本卦" hex={chart.ben_gua} moving={chart.dong_yao}/><Diagram label="之卦" hex={chart.bian_gua}/></div>
               <p className="liuyao-moving-summary">动爻：{chart.dong_yao.length?chart.dong_yao.map(i=>POS[i-1]+'爻').join('、'):'无动爻'}</p>

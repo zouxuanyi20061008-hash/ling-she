@@ -3,7 +3,7 @@ import React from 'react'
 import {afterEach,it,expect,vi} from 'vitest'
 import {render,screen,fireEvent,within,cleanup} from '@testing-library/react'
 import ZiweiV68 from '../src/ZiweiV68.jsx'
-afterEach(()=>{cleanup();vi.unstubAllGlobals()})
+afterEach(()=>{cleanup();vi.unstubAllGlobals();window.history.replaceState(null,'','/')})
 const br='子丑寅卯辰巳午未申酉戌亥'.split('')
 const chart={
  version:'V69',year_ganzhi:'壬申',ming_ganzhi:'乙酉',shen_branch:'未',
@@ -61,4 +61,27 @@ it('V69 other school submits an explicit option, never silently replaces origina
  expect(await screen.findByRole('group',{name:'V69 生年四化落宫'})).toBeTruthy()
  expect(JSON.parse(spy.mock.calls[0][1].body).four_transform_school).toBe('common')
  expect(screen.getByText(/壬年异文：本次化科采用左辅/)).toBeTruthy()
+})
+
+it('mobile Ziwei opens with why these palaces were selected and explains the chosen topic',async()=>{
+ vi.stubGlobal('matchMedia',vi.fn().mockReturnValue({matches:true}))
+ vi.stubGlobal('scrollTo',vi.fn())
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({
+  ...chart,palaces:chart.palaces.map(p=>p.branch==='卯'?{...p,name:'官禄'}:p),
+ })}))
+ window.history.replaceState(null,'','#ziwei')
+ render(<ZiweiV68/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算紫微命盘'}))
+ const reading=await screen.findByRole('region',{name:'紫微命盘怎么读'})
+ expect(reading.textContent).toContain('从乙酉命宫看整体特质')
+ expect(reading.textContent).toContain('按巳时倒数到命宫')
+ const grid=screen.getByRole('group',{name:'V69 紫微十二宫星盘'})
+ const panel=grid.closest('.cast-result-panel')
+ expect(panel.getAttribute('data-active')).toBe('false')
+ fireEvent.click(within(reading).getByRole('button',{name:'看十二宫'}))
+ expect(panel.getAttribute('data-active')).toBe('true')
+ fireEvent.click(within(grid).getByRole('button',{name:/甲卯 · 官禄/}))
+ const details=screen.getByRole('region',{name:'当前选中的紫微宫位'})
+ expect(details.textContent).toContain('看工作、职责与如何发挥能力')
+ expect(details.textContent).toContain('紫微常用来读主导与统筹')
 })

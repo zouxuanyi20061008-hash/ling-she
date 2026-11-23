@@ -60,6 +60,22 @@ it('V70 real eighth-art entrance posts compass angle and shows 9 palaces and 24 
   expect(spy).toHaveBeenCalledTimes(1)
 })
 
+it('手机堪舆先用方位和角度解释结果，再切换到原有九宫',async()=>{
+  vi.stubGlobal('matchMedia',()=>({matches:true,addEventListener(){},removeEventListener(){}}))
+  vi.stubGlobal('scrollTo',vi.fn())
+  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>fixture}))
+  render(<KnowledgeStage mode="fengshui" onBack={()=>{}} onStudy={()=>{}}/>)
+  fireEvent.click(screen.getByRole('button',{name:'计算二十四山坐向'}))
+  const reading=await screen.findByRole('region',{name:'先读堪舆盘'})
+  expect(reading.textContent).toContain('坐午向子。朝北，背靠南。')
+  expect(reading.textContent).toContain('坐山和朝向相差 180°')
+  const board=screen.getByRole('group',{name:'九宫盘'})
+  expect(board.dataset.active).toBe('false')
+  fireEvent.change(screen.getByLabelText('堪舆结果分类'),{target:{value:'board'}})
+  expect(board.dataset.active).toBe('true')
+  expect(screen.getByRole('group',{name:'先读重点'}).dataset.active).toBe('false')
+})
+
 it('V70 magnetic option sends user-provided declination and changed input role',async()=>{
   const spy=vi.fn().mockResolvedValue({ok:true,json:async()=>fixture})
   vi.stubGlobal('fetch',spy)

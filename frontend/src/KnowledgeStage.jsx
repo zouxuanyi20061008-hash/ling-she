@@ -7,6 +7,8 @@ import FengshuiV70 from './FengshuiV70.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
+import BeginnerReading from './BeginnerReading.jsx'
+import {qimenReading,baziReading} from './knowledge-readings.js'
 import './academy.css'
 import './knowledge-mobile.css'
 import './knowledge-cast-mobile.css'
@@ -165,7 +167,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'请核实日期与时辰')
       if(ticket===qimenRequest.current){
         setQimenChart(body)
-        setQimenResultPanel('plate')
+        setQimenResultPanel(qimenPage.compact?'reading':'plate')
         qimenPage.showResult()
       }
     }catch(error){
@@ -191,6 +193,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [baziChart,setBaziChart]=useState(null)
   const [baziBusy,setBaziBusy]=useState(false)
   const [baziError,setBaziError]=useState('')
+  const [baziResultPanel,setBaziResultPanel]=useState('pillars')
   const baziPage=useCastPage('bazi',!!baziChart,{enabled:isBazi})
   const baziRequest=useRef(0)
   function invalidateBazi(){
@@ -230,6 +233,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'请核实出生日期与时间')
       if(ticket===baziRequest.current){
         setBaziChart(body)
+        setBaziResultPanel(baziPage.compact?'reading':'pillars')
         baziPage.showResult()
       }
     }catch(error){
@@ -287,13 +291,17 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           <button type="submit" disabled={qimenBusy}>{qimenBusy?'正在计算…':'按所选时间起局'}</button>
         </form>
         {qimenError&&<p role="alert" className="academy-caution">{qimenError}</p>}
-        <CastHint>填写要起局的北京时间。若是 23 点到午夜，先核对换日约定。</CastHint>
+        <CastHint>填要起局的北京时间。起局后先读重点，再从九宫盘找依据。</CastHint>
         <details className="knowledge-cast-notes"><summary>查看奇门排盘说明</summary><p>{QIMEN_CAST_NOTES}</p></details>
         </CastPagePane>
         <CastPagePane name="result" {...qimenPage}>
         {qimenChart&&<div className="qimen-v50-result">
           <CastResultPanels label="奇门结果分类" variant={qimenPage.compact?'select':'buttons'}
             value={qimenResultPanel} onValueChange={setQimenResultPanel}>
+          <CastResultPanel value="reading" label="先读重点">
+            <BeginnerReading {...qimenReading(qimenChart)}
+              actionLabel={qimenPage.compact?'看九宫盘':undefined} onAction={()=>setQimenResultPanel('plate')}/>
+          </CastResultPanel>
           <CastResultPanel value="summary" label="定局摘要">
           {qimenChart.input_provenance?.warnings?.map((w,i)=>
             <p key={i} className="academy-caution">{w}</p>)}
@@ -528,12 +536,20 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           </button>
         </form>
         {baziError&&<p role="alert" className="academy-caution">{baziError}</p>}
-        <CastHint>用北京时间填写出生时刻。要查大运或流年，先展开「大运与流年设置」。</CastHint>
+        <CastHint>只看出生盘，填出生日期和北京时间即可。想查大运或某个时刻，再开「大运与流年设置」。</CastHint>
         <details className="knowledge-cast-notes"><summary>查看四柱排盘说明</summary><p>{BAZI_CAST_NOTES}</p></details>
         </CastPagePane>
         <CastPagePane name="result" {...baziPage}>
         {baziChart&&<div className="bazi-v55-result">
-          <CastResultPanels label="八字结果分类">
+          <CastResultPanels label="八字结果分类" variant={baziPage.compact?'select':'buttons'}
+            value={baziResultPanel} onValueChange={setBaziResultPanel}>
+          <CastResultPanel value="reading" label="先读重点">
+            <BeginnerReading {...baziReading(baziChart)}
+              actionLabel={baziPage.compact
+                ?baziChart.flow?'看流年流月':baziChart.luck?'看十年大运':'看四柱表'
+                :undefined}
+              onAction={()=>setBaziResultPanel(baziChart.flow?'flow':baziChart.luck?'luck':'pillars')}/>
+          </CastResultPanel>
           <CastResultPanel value="pillars" label="四柱">
           <p className="bazi-v55-day-master"><strong>日主 {baziChart.day_master} · {baziChart.day_master_element}</strong></p>
           <div role="group" aria-label="V55 真实八字四柱" className="bazi-v55-pillar-grid">

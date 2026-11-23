@@ -2,14 +2,30 @@ import {useLayoutEffect,useState,useRef} from 'react'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
+import BeginnerReading from './BeginnerReading.jsx'
 import './ziwei-v68.css'
 
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const POS={巳:[1,1],午:[1,2],未:[1,3],申:[1,4],辰:[2,1],酉:[2,4],
  卯:[3,1],戌:[3,4],寅:[4,1],丑:[4,2],子:[4,3],亥:[4,4]}
 const CAST_NOTES='按《紫微斗数全书》卷二安星，生年四化附在真实星曜落宫。壬年化科口径可切换；本版不作实务吉凶判断。'
+const BRANCHES='子丑寅卯辰巳午未申酉戌亥'
+const PALACE_TOPICS={
+ 命宫:'看人的整体特质与做事方式',兄弟:'看兄弟姐妹之间的相处',夫妻:'看亲密关系与长期伴侣之间的相处',
+ 子女:'看与子女的关系',财帛:'看收入、支出和资源的运用',疾厄:'从传统命盘的角度看身体与日常调养',
+ 迁移:'看离开熟悉环境后怎样适应和行动',交友:'看与朋友、同事和合作伙伴怎样互动',
+ 官禄:'看工作、职责与如何发挥能力',田宅:'看居住环境和家业',福德:'看内在感受、兴趣和休息方式',
+ 父母:'看与父母、长辈的关系和支持',
+}
+const STAR_THEMES={
+ 紫微:'主导与统筹',天机:'筹划与应变',太阳:'对外承担与表现',武曲:'资源与执行',天同:'和缓与享受',
+ 廉贞:'规则与职责',天府:'保管与积累',太阴:'居家与积蓄',贪狼:'交际与爱好',巨门:'言语与分歧',
+ 天相:'辅佐与协调',天梁:'照应与守则',七杀:'决断与压力',破军:'变动与消耗',
+}
+const STAR_SOURCE='https://zh.wikisource.org/zh-hans/紫微斗數全書/卷一#諸星問答論'
+const palaceName=name=>name.endsWith('宫')?name:`${name}宫`
 
-function ZiweiLesson({chart,chosen,compact}){
+function ZiweiLesson({chart,chosen}){
  const bodyPalace=chart.palaces.find(palace=>palace.is_shen)
  const steps=[{
    title:'先在十二宫找到命宫和身宫',
@@ -40,7 +56,25 @@ function ZiweiLesson({chart,chosen,compact}){
      items:chart.four_transformations.map(item=>({label:item.name,value:`${item.star} · ${item.palace_name}`})),
    })
  }
- return <CastLesson title="跟着你的紫微盘找宫与星" collapsed={!compact} steps={steps}/>
+ return <CastLesson title="跟着你的紫微盘找宫与星" collapsed steps={steps}/>
+}
+
+function ZiweiPalaceReading({chart,palace}){
+ const topic=PALACE_TOPICS[palace.name]
+ if(!topic)return null
+ const oppositeBranch=BRANCHES[(BRANCHES.indexOf(palace.branch)+6)%12]
+ const opposite=chart.palaces.find(item=>item.branch===oppositeBranch)
+ const themes=palace.main_stars
+   .filter(star=>STAR_THEMES[star])
+   .map(star=>`${star}常用来读${STAR_THEMES[star]}`)
+ return <p className="ziwei-palace-reading">
+   <strong>这个宫{topic}。</strong>
+   {themes.length>0
+     ?` 本盘的传统取象是${themes.join('，')}。结合这一宫的主题理解，再对照同宫的辅曜和四化。`
+     :!palace.main_stars.length&&opposite?.main_stars?.length
+       ?` 本宫没有十四主星，读盘时可从正对面的${palaceName(opposite.name)}及其${opposite.main_stars.join('、')}入手，再看本宫辅曜。`
+       :' 先看此处列出的星曜和标记，再和同主题的其他宫位一起读。'}
+ </p>
 }
 
 export default function ZiweiV68(){
@@ -92,7 +126,7 @@ export default function ZiweiV68(){
      if(!res.ok)throw new Error(typeof result.detail==='string'?
        result.detail:'出生日期、闰月或时辰无效')
      if(ticket===requestVersion.current){
-       setChart(result);setSelected(result.ming_branch);setResultSection('palaces')
+       setChart(result);setSelected(result.ming_branch);setResultSection(castPage.compact?'reading':'palaces')
        castPage.showResult()
      }
    }catch(e){
@@ -102,6 +136,7 @@ export default function ZiweiV68(){
    }
  }
  const chosen=chart?.palaces?.find(p=>p.branch===selected)
+ const bodyPalace=chart?.palaces?.find(p=>p.is_shen)
  return <section className="ziwei-v68" aria-label="V69 紫微四化与辅曜真实排盘">
    <CastPageNav title="紫微斗数" hasResult={!!chart} {...castPage}/>
    <CastPagePane name="form" {...castPage}>
@@ -155,13 +190,25 @@ export default function ZiweiV68(){
      </label>
      <button type="submit" disabled={busy}>{busy?'正在起盘…':'计算紫微命盘'}</button>
    </form>
-   <CastHint>出生日期按公历或农历填写，时刻用北京时间。农历闰月记得勾选。</CastHint>
+   <CastHint>先填出生日期和北京时间。只看命宫和星曜时，性别可以留空。出生在农历闰月要勾选。</CastHint>
    {error&&<p role="alert" className="ziwei-v68-error">{error}</p>}
    <details className="cast-form-mobile-notes"><summary>紫微排盘说明</summary><p>{CAST_NOTES}</p></details>
    </CastPagePane>
    <CastPagePane name="result" {...castPage}>
    {chart&&<div className="ziwei-v68-result">
      <CastResultPanels label="紫微结果分类" value={resultSection} onValueChange={setResultSection}>
+     <CastResultPanel value="reading" label="先读重点">
+       <BeginnerReading title="紫微命盘怎么读"
+         takeaway={`从${chart.ming_ganzhi}命宫看整体特质，再从身宫所在的${chart.shen_branch}位${bodyPalace?`「${palaceName(bodyPalace.name)}」`:''}看日常行动的侧重。`}
+         reasons={[
+           `用农历出生月定起点，再按${chart.hour_branch}时倒数到命宫、顺数到身宫。`,
+           `命宫干支定出${chart.five_element_bureau.label}，再结合农历出生日安星，得到紫微在${chart.ziwei_branch}、天府在${chart.tianfu_branch}。`,
+         ]}
+         next="想看工作，在「十二宫」点官禄。想看感情点夫妻，想看财务点财帛。每宫会解释本盘标记和主题的关系。"
+         actionLabel={castPage.compact?'看十二宫':undefined}
+         onAction={castPage.compact?()=>setResultSection('palaces'):undefined}/>
+       <ZiweiLesson chart={chart} chosen={chosen}/>
+     </CastResultPanel>
      <CastResultPanel value="summary" label="命盘四化">
      <div className="ziwei-v68-summary">
        <h3>{chart.year_ganzhi}年 · {chart.five_element_bureau.label}</h3>
@@ -172,6 +219,7 @@ export default function ZiweiV68(){
        <p>大限 {chart.great_limit_direction||'未排（未填写性别）'}
          · 闰月口径 {chart.rules.leap_month}</p>
        {chart.four_transformations&&<>
+         <p>四化是按出生年的天干给四颗星加上的标记。看四化时，先找被标记的星，再看它落在哪个主题的宫位。</p>
          <p>四化口径：<strong>{chart.four_transform_school_label}</strong></p>
          <div className="ziwei-v69-transform-summary" role="group" aria-label="V69 生年四化落宫">
            {chart.four_transformations.map(t=><span key={t.name}>
@@ -216,6 +264,7 @@ export default function ZiweiV68(){
          setResultSection('palaces')
        }}>← 返回十二宫</button>}
        <h3 ref={palaceDetailHeading} tabIndex={-1}>{chosen.ganzhi} · {chosen.name}</h3>
+       <ZiweiPalaceReading chart={chart} palace={chosen}/>
        <p>十四正曜：{chosen.main_stars.join('、')||'本宫无十四主星，不代表没有其他星曜'}。</p>
        {chart.auxiliary_star_positions&&<p>已安辅煞：
          {chosen.auxiliary_stars?.join('、')||'本宫未见本版十二颗辅煞星'}。</p>}
@@ -232,6 +281,7 @@ export default function ZiweiV68(){
          {chart.ziwei_trace.borrow_direction}，紫微落{chart.ziwei_trace.result}。</p>
        <p>{chart.rules.year_boundary}；{chart.rules.ming_shen}。</p>
        <p>历法来源：{chart.calendar.verification}。非官方历书；不校正地方真太阳时。</p>
+       <a href={STAR_SOURCE} target="_blank" rel="noopener noreferrer">星曜传统含义参考《紫微斗数全书》卷一</a>
      </section>
      {chart.auxiliary_rules&&<section className="ziwei-v68-trace"
         aria-label="V69 辅曜安星计算依据">
@@ -247,9 +297,6 @@ export default function ZiweiV68(){
      </section>}
      {chart.warnings?.map((w,i)=><p key={i} className="ziwei-v68-warning">{w}</p>)}
      <p className="ziwei-v68-warning">仍未实现：{chart.not_implemented.join('、')}。</p>
-     </CastResultPanel>
-     <CastResultPanel value="guide" label="跟着看">
-       <ZiweiLesson chart={chart} chosen={chosen} compact={castPage.compact}/>
      </CastResultPanel>
      </CastResultPanels>
    </div>}

@@ -3,6 +3,7 @@ import React from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import App from '../src/App.jsx'
+import {getContextualMeihuaReading,getOracleQuestionTopic} from '../src/oracle-question.js'
 
 const config={personalApiKey:'',aiAccessCode:'',aiModel:'deepseek-chat'}
 const makeChart=name=>{
@@ -42,4 +43,45 @@ it('改取数后能立即再排，先回来的旧请求不会显示旧盘或结�
   expect(screen.getByRole('region',{name:'观卦'})).toBeTruthy()
   expect(screen.getAllByRole('heading',{name:'当前卦盘'})).toHaveLength(3)
   expect(screen.queryByRole('heading',{name:'上一张卦盘'})).toBeNull()
+})
+
+it('翻开即读到结合所问的卦意与依据，并能查看对应的周易爻辞',async()=>{
+  const chart={
+    ...makeChart('火水未济'),
+    ben_gua:{...makeChart('火水未济').ben_gua,name:'未济',keywords:'未成·待渡',meaning:'条件尚未齐备，宜辨清未解的阻碍。'},
+    hu_gua:{...makeChart('水火既济').hu_gua,keywords:'事成·防变'},
+    bian_gua:{...makeChart('火风鼎').bian_gua,meaning:'重整秩序、成就新局，求其稳固。'},
+    ti_gua:{name:'离',element:'火'},yong_gua:{name:'坎',element:'水'},sheng_ke:'用克体',
+  }
+  const fetchMock=vi.fn().mockResolvedValue({ok:true,json:async()=>chart})
+  vi.stubGlobal('fetch',fetchMock)
+  vi.stubGlobal('scrollTo',vi.fn())
+  const {container}=render(<App apiConfig={config}/>)
+  const [question,value]=container.querySelectorAll('.book-inputs textarea')
+  fireEvent.change(question,{target:{value:'下周面试能不能拿到录用机会？'}})
+  fireEvent.change(value,{target:{value:'3,6'}})
+  await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'仅排盘',exact:true}))})
+  fireEvent.click(screen.getByRole('button',{name:/翻开白话解读/}))
+  expect(screen.getByRole('region',{name:'这卦怎么回答你的问题'})).toBeTruthy()
+  expect(screen.getByText(/录用或工作进展.*眼下偏受外部条件牵制.*对方的决定和流程/)).toBeTruthy()
+  expect(screen.getByText(/坎水克离火.*用克体/)).toBeTruthy()
+  expect(screen.getByText(/第 3 爻动成 火风鼎/)).toBeTruthy()
+  expect(screen.getByText(/可以问清预计何时回复/)).toBeTruthy()
+  fireEvent.click(screen.getByRole('button',{name:'看完整卦解'}))
+  expect(screen.getByRole('heading',{name:'互卦 · 水火既济'})).toBeTruthy()
+  expect(await screen.findByText(/未济卦六三：未济，征凶，利涉大川/)).toBeTruthy()
+  expect(fetchMock).toHaveBeenCalledTimes(1)
+  expect(fetchMock.mock.calls[0][0]).toMatch(/\/api\/cast$/)
+})
+
+it.each([
+  ['比和','盘里有配合的空间'],
+  ['用生体','盘里偏有外部助力'],
+  ['体生用','你要先投入时间或精力'],
+  ['体克用','你能主动调整'],
+  ['用克体','眼下偏受外部条件牵制'],
+])('把盘上的体用关系 %s 和所问事项连起来', (relation,hint)=>{
+  const topic=getOracleQuestionTopic('这段合作能继续吗？')
+  expect(getContextualMeihuaReading(relation,topic)).toContain(topic.subject)
+  expect(getContextualMeihuaReading(relation,topic)).toContain(hint)
 })

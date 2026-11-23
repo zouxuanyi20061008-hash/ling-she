@@ -11,7 +11,7 @@
 """
 from __future__ import annotations
 
-from datetime import date,datetime,time
+from datetime import date,datetime,time,timedelta
 from zoneinfo import ZoneInfo
 from lunar_python import Solar
 
@@ -47,16 +47,19 @@ def _jieqi(year:int,name:str,month:int)->datetime:
     return datetime.strptime(matching[0].toYmdHms(),"%Y-%m-%d %H:%M:%S").replace(
         tzinfo=BEIJING)
 
-def latest_solstice(moment:datetime)->tuple[str,datetime]:
+def _solstice_context(moment:datetime)->tuple[str,datetime,bool]:
     if moment.tzinfo is None or moment.utcoffset()!=BEIJING.utcoffset(moment):
         raise ValueError("V77 节令时间必须为北京时间的有时区瞬间")
-    candidates=[]
-    for year in (moment.year-1,moment.year):
-        for name,month in TERMS:
-            t=_jieqi(year,name,month)
-            if t<=moment:candidates.append((t,name))
-    if not candidates:raise ValueError("V77 未找到有效冬夏至原始交接点")
-    point,name=max(candidates)
+    candidates=[(_jieqi(year,name,month),name)
+                for year in (moment.year-1,moment.year) for name,month in TERMS]
+    passed=[(point,name) for point,name in candidates if point<=moment]
+    if not passed:raise ValueError("V77 未找到有效冬夏至原始交接点")
+    point,name=max(passed)
+    near=any(abs(moment-candidate)<=timedelta(minutes=15) for candidate,_ in candidates)
+    return name,point,near
+
+def latest_solstice(moment:datetime)->tuple[str,datetime]:
+    name,point,_=_solstice_context(moment)
     return name,point
 
 def hour_step_after_solstice(moment:datetime,solstice:datetime)->int:
@@ -102,12 +105,11 @@ def hour_basic_board(solar_date:date,clock:time)->dict:
     if not isinstance(clock,time) or clock.tzinfo is not None:
         raise ValueError("V77 需要不带时区偏移的北京时间钟面时刻")
     now=datetime.combine(solar_date,clock).replace(tzinfo=BEIJING)
-    name,term=latest_solstice(now)
+    name,term,near=_solstice_context(now)
     dun="阳遁" if name=="冬至" else "阴遁"
     count=hour_step_after_solstice(now,term)
     core=hour_cycle_from_count(count,dun)
     branch=_time_branch(now)
-    near=abs((now-term).total_seconds())<=15*60
     nine=[
       {"number":p,"trigram":PALACES[p]["trigram"],
        "direction":PALACES[p]["direction"],

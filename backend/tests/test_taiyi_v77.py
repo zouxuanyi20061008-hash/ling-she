@@ -63,6 +63,7 @@ def test_solstice_true_instant_boundary_not_gregorian_calendar_day():
     assert b["time_cycle"]["dun"]=="阴遁"
     assert b["time_cycle"]["relative_time_count"]==1
     assert b["taiyi_palace"]["number"]==9
+    assert a["solstice"]["near_15_minutes"] is True
     assert b["solstice"]["near_15_minutes"] is True
 
 def test_solstice_december_switch_uses_exact_china_clock():
@@ -75,6 +76,16 @@ def test_solstice_december_switch_uses_exact_china_clock():
     assert b["time_cycle"]["dun"]=="阳遁"
     assert b["taiyi_palace"]["number"]==1
     assert b["jishen"]["branch"]=="寅"
+
+@pytest.mark.parametrize("offset,near", [
+    (-901,False),(-900,True),(900,True),(901,False),
+])
+def test_solstice_warning_covers_both_sides_of_fifteen_minute_window(offset,near):
+    term=_jieqi(2026,"夏至",6)
+    moment=term+timedelta(seconds=offset)
+    board=hour_basic_board(moment.date(),moment.time())
+    assert board["solstice"]["near_15_minutes"] is near
+    assert board["time_cycle"]["dun"]==("阳遁" if offset<0 else "阴遁")
 
 def test_civil_zi_hour_23_to_next_midnight_same_slot():
     term=datetime(2026,12,22,16,0,tzinfo=BEIJING)

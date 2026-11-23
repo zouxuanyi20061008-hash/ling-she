@@ -93,7 +93,6 @@
     font-size: 16px;
   }
   .academy-stage--liuyao .academy-computed .review-flow-nav { display: none; }
-  .academy-stage--liuyao .liuyao-workbench-lead { display: none; }
   .academy-stage--liuyao .liuyao-extra-pages:not([hidden]) { display: contents; }
   .liuyao-study-page:not(.academy-ai-section),
   .liuyao-result-panel { display: flow-root; }
@@ -103,7 +102,7 @@
   .academy-stage--liuyao .academy-casting-result:is([data-mobile-result='ai'],[data-mobile-result='notebook']) {
     display: none;
   }
-  .academy-stage--liuyao .academy-casting-result[data-mobile-result='board'] > .academy-panel-head { display: none; }
+  .academy-stage--liuyao .academy-casting-result:is([data-mobile-result='board'],[data-mobile-result='reading']) > .academy-panel-head { display: none; }
   .academy-stage--liuyao .academy-ai-section,
   .academy-stage--liuyao .liuyao-notebook-page .academy-casebook { margin-top: 6px; }
   .academy-stage--liuyao .academy-ai-section h2 { font-size: 18px; }

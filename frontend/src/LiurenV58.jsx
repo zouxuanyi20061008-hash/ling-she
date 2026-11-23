@@ -4,6 +4,8 @@ import './liuren-mobile.css'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
+import BeginnerReading from './BeginnerReading.jsx'
+import {liurenReading} from './knowledge-readings.js'
 
 const BEIJING_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const METHOD_DESCRIPTION='月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。'
@@ -77,7 +79,7 @@ export default function LiurenV58(){
       if(ticket===requestVersion.current){
         setChart(result)
         setSelected(result.hour_branch)
-        setResultPanel('palaces')
+        setResultPanel(castPage.compact?'reading':'palaces')
         castPage.showResult()
       }
     }catch(e){
@@ -138,11 +140,15 @@ export default function LiurenV58(){
       <button type="submit" disabled={busy}>{busy?'起课中…':'起大六壬天地盘'}</button>
     </form>
     {error&&<p role="alert" className="academy-caution">{error}</p>}
-    <CastHint>填起课时的北京时间，起课后先找天地盘上标着「占时」的那一格。</CastHint>
+    <CastHint>填起课时的北京时间。起课后先读本课顺序，也可用天地盘和四课核对依据。</CastHint>
     </CastPagePane>
     <CastPagePane name="result" {...castPage}>
     {chart&&<div className="liuren-v58-result" role="region" aria-label="大六壬课盘结果" data-has-review={hasTransmissionReview}>
       <CastResultPanels label="查看六壬结果" variant="select" value={resultPanel} onValueChange={setResultPanel}>
+      <CastResultPanel value="reading" label="先读重点" group="课盘">
+        <BeginnerReading {...liurenReading(chart)}
+          actionLabel={castPage.compact?'看三传与依据':undefined} onAction={()=>setResultPanel('transmissions')}/>
+      </CastResultPanel>
       {(chart.heavenly_generals||chart.xun_void_and_dun)&&
         <CastResultPanel value="cycles" label="天将与旬空" group="课盘">
       {chart.heavenly_generals&&<section className="liuren-v62-generals"
