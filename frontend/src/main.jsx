@@ -9,6 +9,8 @@ import CaseExchangeCenter from './CaseExchangeCenter.jsx'
 import LearnCastingStage from './LearnCastingStage.jsx'
 import './style.css'
 import './theme-refresh.css'
+import './academy-art.css'
+import './casting-art.css'
 
 const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...ARTS.map(a=>a.id)])
 function routeFromUrl(){

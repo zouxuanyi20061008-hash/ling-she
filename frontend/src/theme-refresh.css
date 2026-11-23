@@ -33,13 +33,11 @@ button:disabled{cursor:not-allowed}
   background:var(--tile-bg);border-color:var(--tile-line);
   border-top:5px solid var(--accent);
   color:#263b30;min-height:268px}
-.atlas-method-top,.atlas-method-en,.atlas-method-no{color:#576054}
+.atlas-method-top,.atlas-method-en{color:#576054}
 .atlas-method h3{color:#26392e}
 .atlas-method p,.atlas-method>small{color:#48574d}
 .atlas-method-status{font-size:10px;font-weight:700;color:var(--accent);border-color:var(--accent)}
 .atlas-method-symbol{margin:7px 7px 1px;font-size:48px}
-.atlas-method-identity{color:var(--accent);font-size:11px;font-weight:700;
-  letter-spacing:.08em;position:relative;z-index:1;margin-bottom:8px}
 .atlas-method-arrow{color:var(--accent)}
 .atlas-method:focus-visible,.atlas-method:hover{border-color:var(--accent)}
 /* 八门分色：即使来源于同一种卡片组件，盘式气质互不混淆。 */
@@ -55,7 +53,7 @@ button:disabled{cursor:not-allowed}
   background-image:radial-gradient(circle at 78% 20%,rgba(194,215,236,.18),transparent 37%),
     radial-gradient(circle at 18% 67%,rgba(126,163,204,.13),transparent 38%)}
 .atlas-method--qimen h3,.atlas-method--qimen p,.atlas-method--qimen>small,
-.atlas-method--qimen .atlas-method-en,.atlas-method--qimen .atlas-method-no,
+.atlas-method--qimen .atlas-method-en,
 .atlas-method--qimen .atlas-method-top{color:#f6eddb}
 .atlas-method--qimen .atlas-method-status{color:#f2d398}
 .atlas-method--bazi{
@@ -73,7 +71,7 @@ button:disabled{cursor:not-allowed}
   radial-gradient(circle at 42% 67%,rgba(224,204,250,.2) 1px,transparent 2px),
   radial-gradient(circle at 71% 86%,rgba(224,204,250,.17) 2px,transparent 3px)}
 .atlas-method--ziwei h3,.atlas-method--ziwei p,.atlas-method--ziwei>small,
-.atlas-method--ziwei .atlas-method-no,.atlas-method--ziwei .atlas-method-en{color:#f3e9f9}
+.atlas-method--ziwei .atlas-method-en{color:#f3e9f9}
 .atlas-method--ziwei .atlas-method-status{color:#f3d7a9}
 .atlas-method--fengshui{
   --accent:#395b3f;--tile-bg:#e9ede0;--tile-line:#9eae91;
@@ -286,7 +284,6 @@ button:disabled{cursor:not-allowed}
   .atlas-method-symbol{font-size:38px;margin-top:9px}
   .atlas-method h3{font-size:18px}
   .atlas-method-status{font-size:9px;white-space:normal}
-  .atlas-method-identity{font-size:10px}
   .academy-stage-banner{min-height:148px;padding:17px 15px}
   .academy-stage-banner h1{font-size:clamp(26px,7vw,36px);margin:7px 0}
   .academy-stage-banner span{font-size:12px;line-height:1.85}

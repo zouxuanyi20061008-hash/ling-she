@@ -214,8 +214,8 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
                 <span className="library-gateway-bottom">{s.tag}<b>→</b></span>
               </button>)}
             </div>
-            <p className="library-lobby-foot">点选一阁进入专属页面；每一章节、每一节课和每一道练习都能独立翻页。</p>
             <button className="library-action" type="button" onClick={onPractice}>先动手练起卦：六爻与梅花零基础课 →</button>
+            <p className="library-lobby-foot">点选一阁进入专属页面；每一章节、每一节课和每一道练习都能独立翻页。</p>
           </section>}
 
           {['bookshelf','courses','quizmenu'].includes(view)&&<section className="library-directory">

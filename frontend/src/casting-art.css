@@ -1,0 +1,165 @@
+:is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) {
+  --casting-serif: 'Noto Serif SC', 'Songti SC', STSong, SimSun, serif;
+  --casting-rule: color-mix(in srgb, var(--room-accent, #31594b) 32%, #d9c6a9);
+  --casting-glaze: color-mix(in srgb, var(--room-accent, #31594b) 8%, #fffaf0);
+  --casting-shadow: color-mix(in srgb, var(--room-accent-dark, #213c32) 13%, transparent);
+  --casting-field: color-mix(in srgb, var(--room-surface, #faf5e9) 43%, #fffdf8);
+}
+
+.academy-stage--liuyao {
+  --casting-motif: repeating-radial-gradient(circle at 84% 57%, transparent 0 28px, #d69a551c 29px 30px, transparent 31px 45px);
+  --casting-mist: #d28e54a8;
+}
+
+.academy-stage--qimen {
+  --casting-motif: repeating-linear-gradient(90deg, transparent 0 47px, #d7c29423 48px 49px),
+    repeating-linear-gradient(0deg, transparent 0 47px, #d7c29423 48px 49px);
+  --casting-mist: #4878a2b0;
+}
+
+.academy-stage--bazi {
+  --casting-motif: repeating-linear-gradient(90deg, transparent 0 32px, #f4d3a02b 33px 34px, transparent 35px 46px);
+  --casting-mist: #bf79529e;
+}
+
+.academy-stage--liuren {
+  --casting-motif: repeating-radial-gradient(ellipse at 95% 87%, transparent 0 28px, #c3e7eb3d 29px 30px, transparent 31px 44px);
+  --casting-mist: #589da9b0;
+}
+
+.academy-stage--taiyi {
+  --casting-motif: repeating-radial-gradient(circle at 84% 46%, transparent 0 27px, #d4eac932 28px 29px, transparent 30px 46px);
+  --casting-mist: #70a6a18a;
+}
+
+.academy-stage--ziwei {
+  --casting-motif: radial-gradient(circle at 92% 22%, #f2cea7 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 17%, #e4d3ff 0 1px, transparent 2px),
+    radial-gradient(circle at 73% 57%, #f2cea7bd 0 1px, transparent 2px),
+    radial-gradient(circle at 96% 57%, #e4d3ff 0 1px, transparent 2px),
+    radial-gradient(circle at 67% 30%, #e4d3ff9c 0 1px, transparent 2px);
+  --casting-mist: #9676aa9e;
+}
+
+.academy-stage--fengshui {
+  --casting-motif: repeating-linear-gradient(159deg, transparent 0 58px, #bdcfa20e 59px 71px, transparent 72px 111px),
+    repeating-linear-gradient(25deg, transparent 0 75px, #bed4a519 76px 90px, transparent 91px 140px);
+  --casting-mist: #8ba36c95;
+}
+
+:is(.academy-knowledge-mode, .academy-stage--liuyao) .academy-stage-banner {
+  background-image: var(--casting-motif), radial-gradient(ellipse at 89% 15%, var(--casting-mist), transparent 57%),
+    linear-gradient(118deg, #0002, transparent 75%);
+  border-color: color-mix(in srgb, var(--room-banner) 40%, var(--room-edge));
+  border-radius: 13px;
+  box-shadow: inset 0 1px #ffefd540, 0 8px 19px var(--casting-shadow);
+}
+
+.academy-stage-banner h1,
+.academy-stage-banner .academy-stage-glyph,
+:is(.qimen-v50, .bazi-v55, .liuren-v58, .taiyi-v64, .ziwei-v68, .fengshui-v70) header :is(h2, h3),
+.book-app--meihua :is(.book-name, .book-h1, .book-hex h3) {
+  font-family: var(--casting-serif);
+}
+
+.academy-stage-banner .academy-stage-glyph { text-shadow: 0 2px 10px #0004; }
+
+@media (min-width: 651px) {
+  :is(.academy-knowledge-mode, .academy-stage--liuyao) .academy-stage-banner::after {
+    position: absolute;
+    inset: 7px;
+    border: 1px solid #fff2cf29;
+    border-radius: 7px;
+    content: '';
+    pointer-events: none;
+  }
+}
+
+.academy-knowledge-mode :is(.academy-knowledge-status, .qimen-v50, .bazi-v55, .liuren-v58, .taiyi-v64, .ziwei-v68, .fengshui-v70),
+.academy-stage--liuyao .liuyao-studio-grid :is(.academy-casting-table, .academy-casting-result),
+.book-app--meihua .book-leaf {
+  background-color: var(--room-surface, #faf5e9);
+  background-image: linear-gradient(150deg, #fffaf272, transparent 67%);
+  border-color: var(--casting-rule);
+  border-radius: 14px;
+  box-shadow: 0 7px 23px var(--casting-shadow), inset 0 1px #fff8;
+}
+
+.academy-knowledge-mode .academy-knowledge-status {
+  background-color: var(--casting-glaze);
+  border-left-color: var(--room-accent);
+  box-shadow: none;
+}
+
+.academy-knowledge-mode :is(.academy-learning-surface, .academy-learning-panel) {
+  border-color: var(--casting-rule);
+  border-radius: 12px;
+  box-shadow: 0 5px 16px var(--casting-shadow);
+}
+
+.academy-knowledge-mode :is(.qimen-v50, .bazi-v55, .liuren-v58, .taiyi-v64, .ziwei-v68, .fengshui-v70) > header :is(h2, h3),
+.academy-knowledge-mode .taiyi-v64 :is(.taiyi-year-mode, .taiyi-v77-hour) > header :is(h2, h3) { color: var(--room-accent-dark); }
+
+:is(.academy-knowledge-mode, .academy-stage--liuyao) :is(
+  .qimen-v50-form, .bazi-v55-form, .liuren-v58-form, .taiyi-v64-form, .taiyi-v77-form,
+  .ziwei-v68-form, .fengshui-v70-form, .academy-quick-question, .cast-result-navigation, .liuyao-mobile-result-navigation
+) :is(input:not([type='checkbox']):not([type='radio']), select, textarea),
+.book-app--meihua .book-page .field {
+  border-color: var(--casting-rule);
+  border-radius: 7px;
+  background-color: var(--casting-field);
+  box-shadow: inset 0 1px 2px #281b0e07;
+}
+
+.academy-knowledge-mode :is(
+  .qimen-v50-form, .bazi-v55-form, .liuren-v58-form, .taiyi-v64-form, .taiyi-v77-form, .ziwei-v68-form, .fengshui-v70-form
+) button[type='submit'],
+.academy-stage--liuyao .academy-coin-altar .academy-primary,
+.book-app--meihua .book-main-action {
+  border-radius: 8px;
+  background-color: var(--room-accent-dark, #214a3c);
+  background-image: linear-gradient(155deg, #fff2cb18, transparent 62%);
+  color: #fff9e9;
+  box-shadow: 0 3px 8px var(--casting-shadow), inset 0 1px #fff3;
+}
+
+.academy-knowledge-mode .cast-result-navigation { box-shadow: 0 1px var(--casting-rule); }
+.academy-knowledge-mode .cast-result-navigation button[aria-pressed='false'] {
+  background-color: var(--casting-field);
+  border-color: var(--casting-rule);
+}
+.academy-knowledge-mode .cast-result-navigation button[aria-pressed='true'] { box-shadow: inset 0 1px #fff3; }
+
+.academy-knowledge-mode :is(.bazi-v55-pillar, .liuren-v58-lessons article, .fengshui-v70-axis article, .ziwei-v69-transform-summary span),
+.academy-stage--liuyao :is(.academy-manual button, .academy-hex, .liuyao-studio-switch button),
+.book-app--meihua .book-hex {
+  border-radius: 9px;
+  box-shadow: inset 0 1px #fff8;
+}
+
+.academy-knowledge-mode :is(.qimen-v50-palace, .taiyi-v64-overview, .ziwei-v68-picked, .fengshui-v70-summary) {
+  background-color: var(--casting-glaze);
+  border-radius: 9px;
+  box-shadow: inset 0 1px #fff8;
+}
+
+.academy-knowledge-mode :is(.qimen-v50-nine, .liuren-v58-plate, .taiyi-v64-palaces, .ziwei-v68-grid, .fengshui-v70-mountains) > button {
+  border-radius: 5px;
+}
+
+.academy-knowledge-mode :is(.qimen-v50-nine, .liuren-v58-plate, .taiyi-v64-palaces, .ziwei-v68-grid, .fengshui-v70-mountains) > button:is([aria-pressed='true'], .selected) {
+  outline: 2px solid var(--room-accent);
+  outline-offset: -2px;
+}
+
+.book-app--meihua .book-cover { background-image: radial-gradient(ellipse at 0 28%, #f3f0de, transparent 62%); }
+.book-app--meihua .book-brand-icon,
+.book-app--meihua .book-step { border-radius: 8px; }
+.book-app--meihua .book-step.active { background: var(--casting-glaze); border-color: var(--casting-rule); }
+
+@media (max-width: 650px) {
+  :is(.academy-knowledge-mode, .academy-stage--liuyao) .academy-stage-banner { border-radius: 9px; }
+  .academy-knowledge-mode :is(.qimen-v50, .bazi-v55, .liuren-v58, .taiyi-v64, .ziwei-v68, .fengshui-v70),
+  .academy-stage--liuyao .liuyao-studio-grid :is(.academy-casting-table, .academy-casting-result),
+  .book-app--meihua .book-leaf { border-radius: 10px; }
+}

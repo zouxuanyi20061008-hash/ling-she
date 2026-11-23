@@ -1,6 +1,8 @@
 import { useRef, useSyncExternalStore } from 'react'
 import './academy.css'
 import EightTrigramExplorer from './EightTrigramExplorer.jsx'
+import academyLandscape from './assets/academy-landscape.webp'
+import academyLandscapeSmall from './assets/academy-landscape-small.webp'
 
 export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
@@ -39,44 +41,13 @@ function BookSeal({word}) {
   return <span className="atlas-seal" aria-hidden="true">{word}</span>
 }
 
-function InkLandscape() {
-  return <svg className="academy-cover-landscape" viewBox="0 0 840 255" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-    <defs>
-      <linearGradient id="land-fog" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0" stopColor="#67836c" stopOpacity=".29"/>
-        <stop offset="1" stopColor="#67836c" stopOpacity="0"/>
-      </linearGradient>
-      <linearGradient id="land-foreground" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0" stopColor="#3e6653" stopOpacity=".24"/>
-        <stop offset="1" stopColor="#3e6653" stopOpacity=".025"/>
-      </linearGradient>
-    </defs>
-    <circle cx="600" cy="57" r="44" fill="#b5a077" opacity=".13"/>
-    <path d="M0 206 L110 121 155 174 245 82 316 165 398 112 494 211 569 160 665 222 754 149 840 216V255H0Z" fill="url(#land-fog)"/>
-    <path d="M0 240 L92 182 146 203 238 124 282 168 358 150 460 241 538 165 594 193 693 146 767 208 840 182V255H0Z" fill="url(#land-foreground)"/>
-    <g stroke="#658272" fill="none" strokeWidth="1.4" strokeOpacity=".25">
-      <path d="M221 153L245 82 290 133M526 187L569 160 618 200M683 169L754 149 820 202"/>
-      <path d="M0 236 Q180 212 328 234 T638 227 T840 236" strokeDasharray="4 9"/>
-    </g>
-    <g transform="translate(515 158)" fill="#466f5c" opacity=".34">
-      <path d="M0 54L37 54 37 17 0 17Z"/>
-      <path d="M-10 19L18-3 47 19 40 20 18 8-4 20Z"/>
-      <path d="M-6 12L18-10 42 12 34 11 18-2 2 11Z"/>
-      <path d="M8 54V31Q18 23 28 31V54" fill="#ebdfc4"/>
-    </g>
-  </svg>
-}
-
 function MethodCard({method,onSelect}) {
-  const index=ARTS.findIndex(a=>a.id===method.id)
   return <button type="button" className={'atlas-method '+method.tone+' atlas-method--'+method.id}
     onClick={()=>onSelect(method.id)} aria-label={'进入'+method.name+'，'+method.status}>
     <span className="atlas-method-top">
-      <span className="atlas-method-no">第 {String(index+1).padStart(2,'0')} 门</span>
       <span className="atlas-method-status">{method.status}</span>
     </span>
     <span className="atlas-method-symbol" aria-hidden="true">{method.symbol}</span>
-    <span className="atlas-method-identity" aria-hidden="true">{({meihua:"梅影 · 水墨",liuyao:"青铜 · 龟甲",qimen:"玄夜 · 九宫",bazi:"赤金 · 四柱",liuren:"沧海 · 天盘",taiyi:"云穹 · 太乙",ziwei:"星垣 · 紫微",fengshui:"山川 · 堪舆"})[method.id]}</span>
     <span className="atlas-method-en">{method.en}</span>
     <h3>{method.name}</h3>
     <p>{method.brief}</p>
@@ -114,8 +85,11 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
 
       {isWelcome ?
         <section className="atlas-hero atlas-cover-page" aria-label="万象书院欢迎页">
-          <InkLandscape/>
           <div className="atlas-hero-copy">
+            <picture className="atlas-cover-painting" aria-hidden="true">
+              <source media={COMPACT_LIST_QUERY} srcSet={academyLandscapeSmall}/>
+              <img src={academyLandscape} alt="" width="1280" height="853"/>
+            </picture>
             <p className="atlas-motto"><span className="atlas-line"/> 读天地之象 · 学古人之思</p>
             <h1>万象有数，<br/><em>问道于心。</em></h1>
             <p className="atlas-lead">一座可以亲手起卦、翻阅原典、循序研习的中国传统术数书院。</p>
@@ -127,14 +101,8 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
                 查阅典籍 · 藏经阁 ↗
               </button>
             </div>
-            <div className="atlas-entry-steps" aria-label="学习路径">
-              <span><b>壹</b> 选一门</span><i/>
-              <span><b>贰</b> 排全盘</span><i/>
-              <span><b>叁</b> 参诸象</span>
-            </div>
           </div>
           <EightTrigramExplorer/>
-          <p className="atlas-cover-corner" aria-hidden="true">八 门 初 开 · 各 循 其 法</p>
         </section>
       :
         <section className="atlas-selection atlas-choose-page" aria-label="择术入境">
@@ -143,7 +111,6 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               ← 返回书院
             </button>
             <div>
-              <span className="atlas-eyebrow">第二页 · 选一门术，入一重境</span>
               <h1>择术入境</h1>
             </div>
             <span className="atlas-choose-stamp" aria-hidden="true">择<br/>术</span>
