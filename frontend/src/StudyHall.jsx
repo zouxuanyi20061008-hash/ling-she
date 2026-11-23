@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CLASSICS, LESSONS, QUIZZES, SOURCES } from './studyContent.js'
 import { METHODS, REFERENCES, TEXTS, COURSE, COURSE_QUIZ } from './traditionContent.js'
-import './library.css'
 
 const SECTIONS=[
   {id:'bookshelf',number:'壹',title:'典籍',english:'THE ARCHIVES',tag:'古籍原文 · 逐章细读',glyph:'典',detail:'先读前人的话，再学怎样理解。'},
@@ -23,7 +22,7 @@ function loadReadingProgress(){
 function booksFor(id){
   return id==='meihua'
     ? CLASSICS.map(c=>({...c,sourceUrl:SOURCES[c.source]}))
-    : (TEXTS[id]||[]).map(c=>({...c,sourceUrl:REFERENCES[id]}))
+    : (TEXTS[id]||[]).map(c=>({...c,sourceUrl:c.sourceUrl||REFERENCES[id]}))
 }
 function lessonsFor(id){
   return id==='meihua'?LESSONS.map(l=>({
@@ -54,7 +53,7 @@ function StudySymbol({kind,playing=false}){
 function MethodSelection({section,onSelect}){
   return <div className="library-method-grid">
     {METHODS.map((method,i)=><button type="button" key={method.id} className={"library-method-card library-method--"+method.id} onClick={()=>onSelect(method.id)}>
-      <span className="library-method-index">{String(i+1).padStart(2,'0')}　·　{method.status}</span>
+      <span className="library-method-index">{String(i+1).padStart(2,'0')}　·　{section==='bookshelf'?(method.bookStatus??method.status):method.status}</span>
       <strong>{method.title}</strong>
       <small>{method.sub}</small>
       <span className="library-method-action">{section==='bookshelf'?'入卷研读':section==='courses'?'开始修习':'开始答题'} <b>↗</b></span>
@@ -65,6 +64,40 @@ function MethodSelection({section,onSelect}){
 function SectionHeading({small,title,desc}){
   return <div className="library-content-heading">
     <p>{small}</p><h2>{title}</h2><span>{desc}</span>
+  </div>
+}
+
+function ZhouyiText({item}){
+  const lineImages=item.lines.filter(line=>line.image)
+  const commentaryLabels=[item.commentary&&'彖传',lineImages.length>0&&'小象传'].filter(Boolean).join('与')
+  return <div className="library-zhouyi-text">
+    <section className="library-zhouyi-passage" aria-label="卦辞">
+      <h3>卦辞</h3>
+      <p>{item.judgment}</p>
+    </section>
+    <section className="library-zhouyi-passage" aria-label="爻辞">
+      <h3>爻辞</h3>
+      <dl className="library-zhouyi-lines">
+        {item.lines.map(line=><div key={line.name}><dt>{line.name}</dt><dd>{line.text}</dd></div>)}
+      </dl>
+    </section>
+    {item.image&&<section className="library-zhouyi-passage" aria-label="大象传">
+      <h3>大象传</h3>
+      <p>{item.image}</p>
+    </section>}
+    {commentaryLabels&&<details className="library-zhouyi-commentary">
+      <summary>查看{commentaryLabels}</summary>
+      {item.commentary&&<section className="library-zhouyi-passage" aria-label="彖传">
+        <h3>彖传</h3>
+        <p>{item.commentary}</p>
+      </section>}
+      {lineImages.length>0&&<section className="library-zhouyi-passage" aria-label="小象传">
+        <h3>小象传</h3>
+        <dl className="library-zhouyi-lines">
+          {lineImages.map(line=><div key={line.name}><dt>{line.name}</dt><dd>{line.image}</dd></div>)}
+        </dl>
+      </section>}
+    </details>}
   </div>
 }
 
@@ -126,6 +159,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
   const section=SECTIONS.find(s=>s.id===sectionId)
   const items=view==='reader'?booksFor(method):view==='lesson'?lessonsFor(method):view==='quiz'?questionsFor(method):[]
   const item=items[index]
+  const zhouyiReader=view==='reader'&&method==='zhouyi'
   const viewingPages=['reader','lesson','quiz'].includes(view)
   const resumeKind=view==='bookshelf'?'reader':view==='courses'?'lesson':null
   const resumeEntries=resumeKind?METHODS.map(m=>({method:m,page:readingProgress[resumeKind+':'+m.id]}))
@@ -224,52 +258,62 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
             <SectionHeading
               small={section.number+' · '+section.english}
               title={view==='bookshelf'?'择卷研读':view==='courses'?'择门修习':'入境试炼'}
-              desc={view==='bookshelf'?'五系古籍选读与原文链接。每页一章，原文、释义和辨析分别标明。':
+              desc={view==='bookshelf'?'按卦序研读《周易》六十四卦，也可择读其他古籍。每页附原文出处。':
                 view==='courses'?'选择一门术数，逐课翻阅；配有互动概念演示。':
                 '选择一种术数进行练习；每答完一题，立刻呈现解析。'}/>
             {resumeEntries.length>0&&<aside className="library-resume" aria-label="藏经阁断点续读">
               <div className="library-resume-title"><strong>续读 · 接着上次的位置</strong><small>进度仅存于当前浏览器</small></div>
               <div className="library-resume-links">{resumeEntries.map(({method:entry,page})=>
                 <button type="button" key={entry.id} onClick={()=>enter(entry.id,true)}>
-                  {entry.title} · 第 {page+1} {resumeKind==='reader'?'篇':'课'} <span aria-hidden="true">→</span>
+                  {entry.title} · 第 {page+1} {resumeKind==='lesson'?'课':entry.id==='zhouyi'?'卦':'篇'} <span aria-hidden="true">→</span>
                 </button>)}</div>
             </aside>}
             <MethodSelection section={view} onSelect={enter}/>
-            <p className="library-directory-note">目前是精选入门篇目，并非已完整收录所有古籍。原文出处可在具体篇章中打开核对。</p>
+            {view==='bookshelf'&&<p className="library-directory-note">阅读时可按卦或篇章直达，也能接着上次的位置继续。</p>}
           </section>}
 
           {view==='reader'&&item&&<section className="library-reading-screen">
             <div className="library-book-head">
-              <span className="library-eyebrow">典籍 · {NAMES[method]} · 第 {index+1} 则</span>
+              <span className="library-eyebrow">典籍 · {NAMES[method]} · 第 {index+1} {zhouyiReader?'卦':'则'}</span>
               <div className="library-chapter-menu">
-                <label htmlFor="library-chapter">选择篇章</label>
+                <label htmlFor="library-chapter">{zhouyiReader?'选择卦象':'选择篇章'}</label>
                 <select id="library-chapter" value={index} onChange={e=>{const chosen=Number(e.target.value);setIndex(chosen);rememberPage(chosen);window.scrollTo({top:0,behavior:'instant'})}}>
-                  {items.map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading}</option>)}
+                  {zhouyiReader?<>
+                    <optgroup label="上经">
+                      {items.slice(0,30).map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading}</option>)}
+                    </optgroup>
+                    <optgroup label="下经">
+                      {items.slice(30).map((c,i)=><option value={i+30} key={c.id}>{i+31}. {c.heading}</option>)}
+                    </optgroup>
+                  </>:items.map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading}</option>)}
                 </select>
               </div>
             </div>
             <nav className="library-reader-quick" aria-label="藏经阁快速翻篇">
-              <button type="button" disabled={index===0} onClick={prev}>← 上一篇</button>
-              <span>第 {index+1} 篇 / 共 {items.length} 篇</span>
+              <button type="button" disabled={index===0} onClick={prev}>← {zhouyiReader?'上一卦':'上一篇'}</button>
+              <span>第 {index+1} {zhouyiReader?'卦':'篇'} / 共 {items.length} {zhouyiReader?'卦':'篇'}</span>
               {index===items.length-1?
                 <button type="button" className="library-reader-quick-next" onClick={()=>navigate('bookshelf')}>返回目录 ↑</button>:
-                <button type="button" className="library-reader-quick-next" onClick={next}>下一篇 →</button>}
+                <button type="button" className="library-reader-quick-next" onClick={next}>{zhouyiReader?'下一卦':'下一篇'} →</button>}
             </nav>
             <article className="library-page-paper">
-              <div className="library-paper-line"><span>原典选读</span><span>{item.volume}</span></div>
+              <div className="library-paper-line"><span>{zhouyiReader?'经传原文':'原典选读'}</span><span>{item.volume}</span></div>
               <p className="library-text-section">{item.section}</p>
               <h2>{item.heading}</h2>
-              <blockquote className="library-original">{item.original}</blockquote>
-              <div className="library-reading-grid">
-                <section><b>今释 · 通其意</b><p>{item.explanation}</p></section>
-                <section><b>辨析 · 知其界</b><p>{item.note}</p></section>
-              </div>
+              {zhouyiReader?<ZhouyiText item={item}/>:<blockquote className="library-original">{item.original}</blockquote>}
+              {(item.explanation||item.note)&&<div className="library-reading-grid">
+                {item.explanation&&<section><b>今释 · 通其意</b><p>{item.explanation}</p></section>}
+                {item.note&&<section><b>辨析 · 知其界</b><p>{item.note}</p></section>}
+              </div>}
               <div className="library-source">
-                <span>此为选段或整理文字，请以完整古籍为准；非离线全文。</span>
+                {zhouyiReader?
+                  <span>卦序依通行本，原文据维基文库整理。<br/>转录整理许可 <a className="library-source-license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></span>:
+                  <span>此为选段或整理文字，请以完整古籍为准；非离线全文。</span>}
                 <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">核对原典 ↗</a>
               </div>
             </article>
             <PageControls index={index} total={items.length} onBack={prev} onNext={next}
+              firstLabel={zhouyiReader?'上一卦':undefined} lastLabel={zhouyiReader?'下一卦':undefined}
               doneLabel="返回目录" onFinish={()=>navigate('bookshelf')}/>
           </section>}
 

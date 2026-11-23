@@ -4,7 +4,7 @@ import App from './App.jsx'
 import ArtsHub,{ARTS} from './ArtsHub.jsx'
 import SixYaoStage from './SixYaoStage.jsx'
 import KnowledgeStage from './KnowledgeStage.jsx'
-import StudyHall from './StudyHall.jsx'
+import './library.css'
 import CaseExchangeCenter from './CaseExchangeCenter.jsx'
 import LearnCastingStage from './LearnCastingStage.jsx'
 import './style.css'
@@ -13,6 +13,7 @@ import './academy-art.css'
 import './casting-art.css'
 import './academy-interface.css'
 
+const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))
 const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...ARTS.map(a=>a.id)])
 function routeFromUrl(){
   const route=window.location.hash.slice(1)
@@ -120,10 +121,12 @@ function Academy(){
         activeGroup={activeGroup} setActiveGroup={setActiveGroup}
         page={choosePage} setPage={setChoosePage}/>:
       mode==='library'?
-      <StudyHall onClose={closeLibrary} onPractice={()=>{setLearnFrom('liuyao');navigate('learn')}}
-        apiKey={personalApiKey} setApiKey={setPersonalApiKey}
-        aiModel={aiModel} setAiModel={setAiModel}
-        accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>:
+      <React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开藏经阁…</main>}>
+        <StudyHall onClose={closeLibrary} onPractice={()=>{setLearnFrom('liuyao');navigate('learn')}}
+          apiKey={personalApiKey} setApiKey={setPersonalApiKey}
+          aiModel={aiModel} setAiModel={setAiModel}
+          accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>
+      </React.Suspense>:
       mode==='meihua'?
       <App onBack={()=>goBackTo('choose')} onOpenStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('meihua');navigate('learn')}} apiConfig={config}/>:
       mode==='liuyao'?

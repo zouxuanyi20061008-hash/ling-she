@@ -1,23 +1,36 @@
-// 各门古籍入口与校勘后的少量节选：原典与本项目解释严格区分。
+import { ZHOUYI_TEXT } from './zhouyiText.js'
+
+// 古籍原文与书院解释分列。
 export const METHODS = [
-  {id:'zhouyi',title:'周易',sub:'经传源头',status:'选读'},
+  {id:'zhouyi',title:'周易',sub:'经传源头',status:'选读',bookStatus:'六十四卦'},
   {id:'meihua',title:'梅花易数',sub:'象数心易',status:'八课'},
   {id:'liuyao',title:'六爻纳甲',sub:'京房八宫',status:'五课'},
   {id:'qimen',title:'奇门遁甲',sub:'九宫时空',status:'三课'},
   {id:'bazi',title:'四柱八字',sub:'干支命理',status:'三课'},
 ]
 export const REFERENCES = {
-  zhouyi:'https://zh.wikisource.org/zh-hans/易经',
+  zhouyi:'https://zh.wikisource.org/zh-hans/周易',
   meihua:'https://zh.wikisource.org/zh-hans/梅花易數/卷一',
   liuyao:'https://zh.wikisource.org/zh-hans/增删卜易/2',
   qimen:'https://zh.wikisource.org/zh/遁甲演義',
   bazi:'https://zh.wikisource.org/wiki/三命通會/卷一',
 }
+const ZHOUYI_READING_NOTES = {
+  乾:{id:'yi-qian',explanation:'以天之刚健启示人不断自我修养，不等同于一卦便可决定成败。',
+    note:'《周易》既是经典文本，也是历代解释之源。卦辞、爻辞、象传各有层次。'},
+  坤:{id:'yi-kun',explanation:'地的承载之德可以作为修身的文化比喻，与是否要行动的具体建议需区分。',
+    note:'学习时先辨别爻位、卦名、卦辞、象辞。'},
+}
+
 export const TEXTS = {
-  zhouyi:[
-    {id:'yi-qian',volume:'《周易》',section:'乾 · 象辞',heading:'天行健',original:'天行健，君子以自强不息。',explanation:'以天之刚健启示人不断自我修养，不等同于一卦便可决定成败。',note:'《周易》既是经典文本，也是历代解释之源。卦辞、爻辞、象传各有层次。'},
-    {id:'yi-kun',volume:'《周易》',section:'坤 · 象辞',heading:'厚德载物',original:'地势坤，君子以厚德载物。',explanation:'地的承载之德可以作为修身的文化比喻，与是否要行动的具体建议需区分。',note:'学习时先辨别爻位、卦名、卦辞、象辞。'}
-  ],
+  zhouyi:ZHOUYI_TEXT.map((hexagram,index)=>({
+    ...hexagram,
+    id:`yi-${index+1}`,
+    heading:hexagram.heading==='遯'?'遁':hexagram.heading,
+    volume:index<30?'《周易》 · 上经':'《周易》 · 下经',
+    section:`第 ${index+1} 卦`,
+    ...ZHOUYI_READING_NOTES[hexagram.heading],
+  })),
   liuyao:[
     {id:'liu-method',volume:'《增删卜易》',section:'卷二 · 占卦法',heading:'三钱六掷',original:'第一次为初爻，画在卦的最下面，依次上升。',explanation:'以三枚钱币摇六次；第一次形成最下面的初爻，第六次形成上爻。',note:'本馆已具三钱六掷、京房八宫、世应、纳甲干支与六亲。日月建、六神、旬空及旺衰仍须另行校勘。'},
     {id:'liu-shape',volume:'《增删卜易》',section:'卷二 · 卦象图',heading:'乾三连 · 坤六断',original:'乾三连，坤六断。',explanation:'乾卦三阳不断，坤卦三阴皆断，是记住八卦形态的开始。',note:'记形状时从初爻到三爻按下到上识别。'},
