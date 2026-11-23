@@ -66,7 +66,11 @@ function MovingLinePreview({original,changed,position}) {
   const reading=flipped?changed:original
   const bit=flipped?to:from
   return <div className="book-line-preview" data-showing={flipped?'changed':'original'}>
-    <p aria-live="polite">{flipped?'变卦':'本卦'} · <strong>{reading.full_name||reading.name}</strong> · 第 {position} 爻为{bit===1?'阳':'阴'}</p>
+    <div className="book-line-preview-controls">
+      <p aria-live="polite">{flipped?'变卦':'本卦'} · <strong>{reading.full_name||reading.name}</strong> · 第 {position} 爻为{bit===1?'阳':'阴'}</p>
+      <button type="button" aria-pressed={flipped} className="book-second-action"
+        onClick={()=>setFlipped(current=>!current)}>{flipped?'还原本卦':'翻动这一爻'}</button>
+    </div>
     <div className="book-line-preview-board" aria-hidden="true">
       {original.lines_bottom_to_top.map((value,i)=>({value,number:i+1})).reverse().map(({value,number})=>
         <div className="book-lesson-row" key={number} data-moving={number===position?'true':undefined}>
@@ -78,8 +82,6 @@ function MovingLinePreview({original,changed,position}) {
           </span>:<LessonLineFace bit={value}/>}
         </div>) }
     </div>
-    <button type="button" aria-pressed={flipped} className="book-second-action"
-      onClick={()=>setFlipped(current=>!current)}>{flipped?'还原本卦':'翻动这一爻'}</button>
   </div>
 }
 

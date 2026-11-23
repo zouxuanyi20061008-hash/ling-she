@@ -104,8 +104,9 @@ body { background:#ded6c3; }
 .book-guide-action:focus-visible{outline:2px solid #fff2cd;outline-offset:2px}
 .book-line-preview{margin:1px 0 9px;padding:10px;border:1px solid #a6b5a4;border-radius:9px;
   background:linear-gradient(150deg,#edf0e2,#e7e7d6);text-align:center}
-.book-line-preview>p{margin:0 0 8px;color:#294f41;font-size:14px;line-height:1.45}
-.book-line-preview-board{display:grid;gap:7px;width:min(100%,230px);margin:0 auto 10px}
+.book-line-preview-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:0 0 9px}
+.book-line-preview-controls p{margin:0;color:#294f41;font-size:13px;line-height:1.45;text-align:left}
+.book-line-preview-board{display:grid;gap:7px;width:min(100%,230px);margin:0 auto 3px}
 .book-lesson-row{display:grid;align-items:center;grid-template-columns:30px minmax(0,1fr);gap:5px;min-height:12px}
 .book-lesson-row small{font-size:11px;color:#42574b;text-align:right}
 .book-lesson-row[data-moving='true'] small{color:#753a25;font-weight:750}
