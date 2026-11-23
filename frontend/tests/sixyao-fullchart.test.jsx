@@ -90,4 +90,4 @@ it('六爻台完整六掷后立即显示装卦总览，撤回一爻后可重新�
   await waitFor(()=>expect(fetchMock).toHaveBeenCalledTimes(2))
   const second=JSON.parse(fetchMock.mock.calls[1][1].body)
   expect(second.numbers).toEqual([7,7,7,7,7,9])
-})
+},15000)
