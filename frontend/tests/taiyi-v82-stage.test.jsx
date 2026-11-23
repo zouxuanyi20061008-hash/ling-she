@@ -110,11 +110,41 @@ it('V82 refused Dingji intermediate cannot be selected as a nine-palace variant'
  expect(unresolved.textContent).toContain('不能强制映射到八正宫')
 })
 
+it('switches hour result sections without losing the eight-door choice or expanded evidence',async()=>{
+ const fetcher=vi.fn().mockResolvedValue({ok:true,json:async()=>base})
+ vi.stubGlobal('fetch',fetcher)
+ render(<TaiyiV77Hour/>)
+ fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
+ const sections=await screen.findByLabelText('选择时计结果')
+ const board=screen.getByRole('group',{name:'基础九宫盘'})
+ expect(sections.value).toBe('board')
+ expect(board.dataset.active).toBe('true')
+
+ fireEvent.change(sections,{target:{value:'v82'}})
+ const eightDoors=screen.getByRole('group',{name:'八门候选排布'})
+ expect(board.dataset.active).toBe('false')
+ expect(eightDoors.dataset.active).toBe('true')
+ const door=within(eightDoors).getByRole('combobox',{name:'V82 选择太乙八门古籍起宫法'})
+ const evidence=within(eightDoors).getByText('核对这一古法候选的八方逐宫路径及原典')
+ fireEvent.change(door,{target:{value:'jinjing_guest'}})
+ fireEvent.click(evidence)
+
+ fireEvent.change(sections,{target:{value:'sources'}})
+ expect(eightDoors.dataset.active).toBe('false')
+ expect(screen.getByRole('group',{name:'时计出处与待考事项'}).dataset.active).toBe('true')
+ fireEvent.change(sections,{target:{value:'v82'}})
+ expect(eightDoors.dataset.active).toBe('true')
+ expect(door.value).toBe('jinjing_guest')
+ expect(evidence.parentElement.open).toBe(true)
+ expect(fetcher).toHaveBeenCalledTimes(1)
+})
+
 it('V82 old V81 response does not fabricate an eight-door map',async()=>{
  const {hour_v82_eight_door_schools,...legacy}=base
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>legacy}))
  render(<TaiyiV77Hour/>)
  fireEvent.click(screen.getByRole('button',{name:'计算太乙时计基础盘'}))
  expect(await screen.findByRole('region',{name:'V77 太乙时计八宫与计神结果'})).toBeTruthy()
+ expect(within(screen.getByLabelText('选择时计结果')).queryByRole('option',{name:'八门候选排布'})).toBeNull()
  expect(screen.queryByRole('group',{name:'V82 太乙时计四派八门古籍旋宫候选'})).toBeNull()
 })

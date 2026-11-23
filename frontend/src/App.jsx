@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useId } from 'react'
 import './book.css'
 import {CaseNotebook} from './SixYaoStage.jsx'
 
@@ -310,6 +310,13 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
   const [turnVersion, setTurnVersion] = useState(0)
   const [readingTab, setReadingTab] = useState('xiantian')
   const touchOrigin = useRef(null)
+  const readingNavId = useId()
+
+  function showReadingSection(id) {
+    const section = document.getElementById(`${readingNavId}-${id}`)
+    section?.focus({ preventScroll:true })
+    section?.scrollIntoView?.({ block:'start' })
+  }
 
   function goPage(target) {
     const next = Math.max(0, Math.min(2, target))
@@ -488,13 +495,20 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
           </button>
         </div>
       </header>
-      <nav className="book-steps" aria-label="排卦步骤">
-        {['问事','观卦','明理'].map((label,i)=>
-          <button key={label} type="button" className={'book-step '+(page===i?'active':page>i?'passed':'')}
-            aria-current={page===i?'step':undefined} disabled={i>0&&!chart}
-            onClick={()=>goPage(i)}><span>0{i+1}</span> {label}</button>
-        )}
-      </nav>
+      <div className="book-mobile-nav">
+        <nav className="book-steps" aria-label="排卦步骤">
+          {['问事','观卦','明理'].map((label,i)=>
+            <button key={label} type="button" className={'book-step '+(page===i?'active':page>i?'passed':'')}
+              aria-current={page===i?'step':undefined} disabled={i>0&&!chart}
+              onClick={()=>goPage(i)}><span>0{i+1}</span> {label}</button>
+          )}
+        </nav>
+        {page===2&&chart&&<nav className="book-reading-links" aria-label="解读内容">
+          {[['reading','卦解'],['cases','案例笔记'],['ai','AI 解读']].map(([id,label])=>
+            <button key={id} type="button" aria-controls={`${readingNavId}-${id}`}
+              onClick={()=>showReadingSection(id)}>{label}</button>)}
+        </nav>}
+      </div>
       {page>0&&chart&&<nav className="book-top-flip" aria-label="梅花易数快速翻页">
         <span>第 {['一','二','三'][page]} 折 · {['问事','观卦','明理'][page]}</span>
         <div>
@@ -519,22 +533,11 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
           </label>
           <label><span className="book-label">你想用什么起卦？</span>
             <textarea rows={2} maxLength={500} className="field resize-y" value={value} onChange={e => { setValue(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} placeholder="明、迷茫、3、3,6，或写下看到听到的事情…" />
-            <span className="mt-2 block text-xs leading-5 text-moss/80">字、数字、声音、事物、偶然见闻，都可以作为起卦契机。</span>
+            <span className="mt-2 block text-xs leading-5 text-moss/80">字、数字、声音或见闻都可作为起卦契机。</span>
           </label>
           <label><span className="book-label">起卦时间 · 可手动修改</span>
             <input className="field" type="datetime-local" value={dateValue} onChange={e => { setDateValue(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }}/>
           </label>
-          <label className="wide text-sm text-moss">独体字阴数方案
-            <select value={independentYin} onChange={e => { setIndependentYin(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} className="field mt-2 md:max-w-lg">
-              <option value="one">默认取 1（推荐）</option>
-              <option value="hour">取所选时辰数（子=1，亥=12）</option>
-            </select>
-          </label>
-        </div>
-        <div className="book-settings-hint">
-          <span>第一次起卦？先学会两数取卦、八卦与动爻的计算步骤。</span>
-          <button type="button" onClick={onLearn}>零基础起卦实操 ↗</button>
-          <button type="button" onClick={onOpenStudy}>古籍 · 教程 · API 设置 ↗</button>
         </div>
         <div className="book-aux mt-6">
           <button className="book-main-action" onClick={() => submit(false)} disabled={busy || !question.trim() || !value.trim()}>仅排盘</button>
@@ -544,16 +547,27 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
           <button className="book-minor" type="button" onClick={() => openObservation(null, false)} disabled={busy || !value.trim()}>自定取数</button>
           <button className="book-minor" type="button" onClick={() => { setDateValue(localInput(new Date())); setManualOverride(null); clearResult() }}>刷新为当前时间</button>
         </div>
+        {busy && <p className="mt-4 text-moss">正在请求服务器…</p>}
+        {error && <p role="alert" className="book-alert mt-4">{error}</p>}
+        <label className="book-yin-setting mt-3 block text-sm text-moss">独体字阴数方案
+          <select value={independentYin} onChange={e => { setIndependentYin(e.target.value); setManualOverride(null); setObservationOverride(null); setBackgroundAsked(false); setBackground(""); clearResult() }} className="field mt-2 md:max-w-lg">
+            <option value="one">默认取 1（推荐）</option>
+            <option value="hour">取所选时辰数（子=1，亥=12）</option>
+          </select>
+        </label>
         {manualOverride && <p className="mt-3 text-sm text-amber-800">当前使用人工确认：阳 {manualOverride.yang} 画，阴 {manualOverride.yin} 画。
           <button className="ml-2 underline" type="button" onClick={() => { setManualOverride(null); clearResult() }}>恢复自动拆字</button></p>}
         {observationOverride && <p className="mt-3 text-sm text-amber-800">当前按自定取数：上卦 {observationOverride.first}，下卦 {observationOverride.second}；依据：{observationOverride.reason}。
           <button className="ml-2 underline" type="button" onClick={() => { setObservationOverride(null); clearResult() }}>取消自定取数</button></p>}
+        <div className="book-settings-hint">
+          <span>第一次起卦？先学会两数取卦、八卦与动爻的计算步骤。</span>
+          <button type="button" onClick={onLearn}>零基础起卦实操 ↗</button>
+          <button type="button" onClick={onOpenStudy}>古籍 · 教程 · API 设置 ↗</button>
+        </div>
         <p className="text-xs leading-6 text-moss/80 mt-5">
           起卦不限制触发形式，取数却必须有依据。单字按我们制定的阴阳拆字规则；两字按前字、后字整字笔画；纯数字按数字法。
           其他见闻和较长文字可「自定取数」，系统保留原始描述及取数依据，不让 AI 猜数字。
         </p>
-        {busy && <p className="mt-4 text-moss">正在请求服务器…</p>}
-        {error && <p role="alert" className="book-alert mt-4">{error}</p>}
         <div className="book-page-footer">
           <p className="book-page-mark">第一折 · 起念问事</p>
           <p className="book-small">排盘成功后自动翻至下一页 →</p>
@@ -583,9 +597,11 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         </div>
       </section>}
       {page===2 && chart && <section className="book-page" aria-label="观境明理">
-        <p className="book-kicker">第三折 · 先天与后天</p>
-        <h2 className="book-h1" style={{fontSize:'clamp(27px,4vw,40px)'}}>先天定理，后天定事。</h2>
-        <p className="book-intro">从{chart.ben_gua.full_name}出发，先以体用审关系，再以方位与类象追问具体情境，最终回到现实。</p>
+        <header id={`${readingNavId}-reading`} className="book-reading-target" tabIndex={-1}>
+          <p className="book-kicker">第三折 · 先天与后天</p>
+          <h2 className="book-h1" style={{fontSize:'clamp(27px,4vw,40px)'}}>先天定理，后天定事。</h2>
+          <p className="book-intro">从{chart.ben_gua.full_name}出发，先以体用审关系，再以方位与类象追问具体情境，最终回到现实。</p>
+        </header>
         <div className="book-tabs" role="tablist" aria-label="选择易理视角">
           {[['xiantian','先天 · 观理'],['houtian','后天 · 察境'],['detail','完整卦解']].map(([id,label])=>
             <button key={id} type="button" role="tab" aria-selected={readingTab===id}
@@ -593,8 +609,10 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
         </div>
         <LayerReading chart={chart} activeTab={readingTab}/>
         <p className="book-footnote">{chart.dual_layer?.boundary}</p>
-        <CaseNotebook method="梅花易数" chart={chart} question={question}/>
-        <section className="book-ai">
+        <div id={`${readingNavId}-cases`} className="book-reading-target" tabIndex={-1}>
+          <CaseNotebook method="梅花易数" chart={chart} question={question}/>
+        </div>
+        <section id={`${readingNavId}-ai`} className="book-ai book-reading-target" tabIndex={-1}>
           <h3>以卦问事 · 深入解读</h3>
           <p>免费易理解读已在上方呈现。要结合你当下的真实处境分析，可再补充一次背景后调用 AI；若尚未配置模型密钥，仍可阅读完整基础卦解。</p>
           <div className="book-settings-hint" style={{margin:'12px 0'}}>

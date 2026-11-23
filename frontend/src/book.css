@@ -177,10 +177,45 @@ body { background:#ded6c3; }
   font-size:11px;color:#6c715f;line-height:1.7;margin-top:16px
 }
 .book-settings-hint button{color:#205c49;text-decoration:underline;text-underline-offset:3px;font-size:11px}
+.book-mobile-nav{display:contents}
+.book-reading-links{display:none}
 @media(max-width:620px){
   .book-head-actions{gap:5px}
   .book-settings{padding:8px;gap:5px;font-size:11px;min-height:38px}
   .book-settings svg{width:16px;height:16px}
   .book-settings small{display:none}
   .book-serial{display:none}
+}
+
+@media(max-width:650px){
+  .book-app--meihua{overflow-x:clip}
+  .book-app--meihua .book-frame{padding-top:4px}
+  .book-app--meihua .academy-meihua-back{padding:0 6px}
+  .book-app--meihua .academy-meihua-back button,.book-app--meihua .book-settings{min-height:44px}
+  .book-app--meihua .book-top{margin:0 6px 4px}
+  .book-app--meihua .book-mobile-nav{display:block;position:sticky;top:0;z-index:24;
+    padding:4px 0;background:#eae4d7}
+  .book-app--meihua .book-steps{margin:0;gap:4px}
+  .book-app--meihua .book-steps .book-step span,.book-app--meihua .book-top-flip{display:none}
+  .book-app--meihua .book-reading-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:4px}
+  .book-reading-links button{min-height:44px;padding:4px;border:1px solid #9ba990;border-radius:4px;
+    background:#f8f5ea;color:#244a37;font-size:13px;font-weight:650}
+  .book-app--meihua .book-reading-target{scroll-margin-top:108px}
+  .book-app--meihua .book-leaf.next,.book-app--meihua .book-leaf.prev{animation:none}
+  .book-app--meihua .book-leaf,.book-app--meihua .book-page{min-height:0}
+  .book-app--meihua .book-page{padding:14px 16px 18px}
+  .book-app--meihua .book-cover{padding:2px 0 0}
+  .book-app--meihua .book-cover :is(.book-kicker,.book-h1 br,.book-seal,.book-intro){display:none}
+  .book-app--meihua .book-cover .book-h1{font-size:clamp(22px,6.5vw,32px);line-height:1.35;margin:0 0 4px}
+  .book-app--meihua .book-cover-art{height:112px}
+  .book-app--meihua .book-inputs{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px}
+  .book-app--meihua .book-inputs label{min-width:0}
+  .book-app--meihua .book-inputs .book-label{margin-bottom:4px;letter-spacing:0}
+  .book-app--meihua :is(.book-inputs,.book-yin-setting) .field{min-height:44px;font-size:16px;min-width:0;padding:7px 9px}
+  .book-app--meihua .book-inputs textarea.field{height:58px}
+  .book-app--meihua .book-aux{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:10px}
+  .book-app--meihua .book-aux :is(.book-main-action,.book-second-action){padding:8px 4px;letter-spacing:0;font-size:14px}
+  .book-app--meihua :is(.book-aux .book-minor,.book-settings-hint button,.book-tab){min-height:44px}
+  .book-app--meihua .book-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}
+  .book-app--meihua .book-tab{white-space:normal;padding:5px 1px}
 }

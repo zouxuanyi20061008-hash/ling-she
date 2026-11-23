@@ -1,0 +1,64 @@
+.taiyi-result-navigation { display: none; }
+.taiyi-result-panel { display: contents; }
+
+@media (max-width: 650px) {
+  .taiyi-result-navigation {
+    position: sticky;
+    z-index: 1;
+    top: 56px;
+    display: block;
+    padding: 4px 0 6px;
+    background: #e7f1ea;
+  }
+  .taiyi-result-buttons {
+    display: grid;
+    grid-template-columns: repeat(var(--taiyi-result-button-count), minmax(0, 1fr));
+    gap: 6px;
+  }
+  .taiyi-result-select {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #234f41;
+  }
+  .taiyi-result-select > select { flex: 1; min-width: 0; font-size: 16px; }
+  .taiyi-result-navigation :is(button, select) {
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 4px 6px;
+    border: 1px solid #789c8d;
+    border-radius: 8px;
+    background: #fafdf8;
+    color: #234f41;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .taiyi-result-navigation button[aria-pressed='true'] {
+    border-color: #28684e;
+    background: #28684e;
+    color: white;
+  }
+  .taiyi-result-panel {
+    display: flow-root;
+    scroll-margin-top: 112px;
+  }
+  .taiyi-result-panel[data-active='false'] { display: none; }
+
+  .taiyi-v64-overview { padding: 9px 10px; }
+  .taiyi-v64-overview > div { gap: 4px 8px; margin: 4px 0; }
+  .taiyi-v64-overview > p { margin-top: 4px; }
+  .taiyi-v64-result .taiyi-result-panel > h3 { margin: 8px 0; }
+  .taiyi-v64-palaces { gap: 6px; }
+  .taiyi-v64-palaces button { gap: 4px; min-height: 70px; padding: 6px 3px; }
+  .taiyi-v64-palaces small:empty { display: none; }
+  .taiyi-v64-result .taiyi-result-panel > a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .taiyi-v64-source-sep { display: none; }
+}

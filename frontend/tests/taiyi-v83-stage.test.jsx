@@ -52,7 +52,7 @@ it('V83 shows different solstice and Jiazi door clocks without replacing earlier
  expect(s.textContent).toContain('积1550时')
  expect(s.textContent).toContain('积1718时')
  expect(s.textContent).toContain('两法此课直使门名不同')
- expect(s.textContent).toContain('不得把此处王希明二至法直使直接套到下方原有大将宫')
+ expect(s.textContent).toContain('不得把此处王希明二至法直使直接套到原有大将宫')
  expect(within(s).getAllByRole('link')).toHaveLength(2)
  expect(within(s).getAllByRole('link')[0].getAttribute('href')).toBe(source)
  expect(screen.getByRole('region',{name:'V77 太乙时计八宫与计神结果'}).textContent)

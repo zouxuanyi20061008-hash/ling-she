@@ -1,6 +1,7 @@
 import {useRef,useState} from 'react'
 import './academy.css'
 import {focusTaiyiResultOnMobile} from './taiyi-mobile.js'
+import TaiyiResultPanels,{TaiyiResultPanel} from './TaiyiResultPanels.jsx'
 
 const CN_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const CN_CLOCK=()=>new Intl.DateTimeFormat('en-GB',{
@@ -99,6 +100,8 @@ export default function TaiyiV77Hour({id}){
         role="region" aria-label="V77 太乙时计八宫与计神结果">
       <h4>{chart.solstice.name}后 · {chart.time_cycle.dun} ·
         太乙{chart.taiyi_palace.number}宫{chart.taiyi_palace.trigram}</h4>
+      <TaiyiResultPanels label="选择时计结果" variant="select">
+      <TaiyiResultPanel value="board" label="基础九宫盘">
       <p>本次北京时间 {chart.input.solar_date} {chart.input.clock}（{chart.input.hour_branch}时）；
         二至真实交节：{chart.solstice.started_at_beijing.replace('T',' ')}。
         二至以来相对第 <strong>{chart.time_cycle.relative_time_count}</strong> 时，
@@ -116,7 +119,13 @@ export default function TaiyiV77Hour({id}){
             p.is_middle_unvisited?'中五不游':'—'}</span>
         </div>)}
       </div>
-      {chart.classical_jiazi_hour_v78&&<section className="taiyi-v78-epoch"
+      {chart.solstice.near_15_minutes&&
+        <p className="academy-caution" role="note">
+          本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
+        </p>}
+      </TaiyiResultPanel>
+      {chart.classical_jiazi_hour_v78&&<TaiyiResultPanel value="v78" label="甲子积时与文昌" group="推算明细">
+        <section className="taiyi-v78-epoch"
           role="group" aria-label="V78 时计甲子积时与五元文昌证据">
         <h4>V78 · 冬夏至前甲子日简捷历元</h4>
         <p>起点：{chart.classical_jiazi_hour_v78.anchor.prior_jiazi_date}
@@ -160,8 +169,10 @@ export default function TaiyiV77Hour({id}){
         <span> · </span>
         <a href={chart.classical_jiazi_hour_v78.sources.yin_63}
           target="_blank" rel="noopener noreferrer">戊子元阴63局原例</a>
-      </section>}
-      {chart.hour_main_guest_v79&&<section className="taiyi-v79-main-guest"
+        </section>
+      </TaiyiResultPanel>}
+      {chart.hour_main_guest_v79&&<TaiyiResultPanel value="v79" label="始击与主客将" group="推算明细">
+        <section className="taiyi-v79-main-guest"
           role="group" aria-label="V79 时计始击与主客大小将实盘">
         <h4>V79 · 始击与主客投算（甲子日前简捷历元）</h4>
         <p>本时局来自 V78 的
@@ -222,8 +233,10 @@ export default function TaiyiV77Hour({id}){
           target="_blank" rel="noopener noreferrer">
           《太乙金钥匙》庚戌时主16客23、大参6/8与3/9古籍例盘
         </a>
-      </section>}
+        </section>
+      </TaiyiResultPanel>}
       {chart.hour_dingji_v80&&chart.hour_eight_doors_v80&&
+        <TaiyiResultPanel value="v80" label="合神、定计与直使" group="推算明细">
         <section className="taiyi-v80-hour-dingji" role="group"
                  aria-label="V80 太乙时计合神定算与八门直使">
           <h4>V80 · 合神、定计目与时计直使</h4>
@@ -288,8 +301,10 @@ export default function TaiyiV77Hour({id}){
              target="_blank" rel="noopener noreferrer">
             《太乙金钥匙》庚戌时合神、定计、八门原文
           </a>
-        </section>}
+        </section>
+        </TaiyiResultPanel>}
       {chart.hour_v81_source_review&&chart.hour_v81_door_location_candidate&&
+       <TaiyiResultPanel value="v81" label="定算异文与值使候选" group="推算明细">
        <section className="taiyi-v81-source-review" role="group"
                 aria-label="V81 太乙时计原典内部冲突与值使候选位置">
          <h4>V81 · 定算内证与值使十六神候选位</h4>
@@ -345,8 +360,10 @@ export default function TaiyiV77Hour({id}){
          <span> · </span>
          <a href={chart.hour_v81_door_location_candidate.primary_text_rules[1].source}
             target="_blank" rel="noopener noreferrer">直使加定计目的古法出处</a>
-       </section>}
+       </section>
+       </TaiyiResultPanel>}
       {chart.hour_v83_chief_epoch_comparison&&
+        <TaiyiResultPanel value="v83" label="两种历元直使对照" group="推算明细">
         <section className="taiyi-v83-epoch" role="group"
           aria-label="V83 太乙时计二至气应和甲子捷法直使对照">
           <h4>V83 · 两种时计历元分别推直使</h4>
@@ -381,9 +398,9 @@ export default function TaiyiV77Hour({id}){
               ' 两法不能作为同一个值使起算结果。'}
           </p>
           <p className="academy-caution">
-            下方 V82 八门九宫候选使用
+            V82 八门九宫候选使用
             <strong>前甲子日捷法</strong>的文昌、主客大将与直使。
-            不得把此处王希明二至法直使直接套到下方原有大将宫；
+            不得把此处王希明二至法直使直接套到原有大将宫；
             气应派完整八门主客宫仍未单独验证。</p>
           <p>
             <a href={chart.hour_v83_chief_epoch_comparison.jinjing_solstice_relative.source}
@@ -392,8 +409,10 @@ export default function TaiyiV77Hour({id}){
             <a href={chart.hour_v83_chief_epoch_comparison.jinyao_jiazi_shortcut.source}
               target="_blank" rel="noopener noreferrer">《太乙金钥匙》时计起门法</a>
           </p>
-        </section>}
-      {v87&&<section className="taiyi-v85-ji-phase" role="group"
+        </section>
+        </TaiyiResultPanel>}
+      {v87&&<TaiyiResultPanel value="v87" label="阴遁纪、局、时柱核验" group="原典校勘">
+        <section className="taiyi-v85-ji-phase" role="group"
           aria-label="V87 阴遁古例360时同余冲突与原文来源">
         <h4>V87 · 卷九阴遁纪／局／时柱同余核验</h4>
         <p>在完整<strong>{v87.period_hours}时</strong>一周内独立核算：
@@ -427,8 +446,10 @@ export default function TaiyiV77Hour({id}){
         </details>
         <p>现代二至气应文昌、始击和主客将、完整八门落宫、古代上元积时，
           以及《金钥匙》定计32/33冲突仍然待判。</p>
-      </section>}
-      {v88?.witness&&<section className="taiyi-v88-witness" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v88?.witness&&<TaiyiResultPanel value="v88" label="明代抄本馆藏" group="原典校勘">
+        <section className="taiyi-v88-witness" role="group"
           aria-label="V88 太乙明钞本候选校勘线索">
         <h4>V88 · 新发现的明代馆藏抄本线索</h4>
         <p>台湾国家图书馆著录《太乙金镜式经》为<strong>{v88.witness.edition}</strong>，
@@ -452,8 +473,10 @@ export default function TaiyiV77Hour({id}){
           <a href={v88.witness.scan_url} target="_blank" rel="noopener noreferrer">
           明钞本124页数字扫描</a>
         </p>
-      </section>}
-      {v89&&<section className="taiyi-v89-census" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v89&&<TaiyiResultPanel value="v89" label="数字化版本谱系" group="原典校勘">
+        <section className="taiyi-v89-census" role="group"
           aria-label="V89 太乙古籍数字化来源谱系清点">
         <h4>V89 · 太乙古籍数字化来源谱系清点</h4>
         <p>本轮清点分类页列出的 <strong>{v89.catalogue_category_resource_count} 个</strong>数字文件：
@@ -476,8 +499,10 @@ export default function TaiyiV77Hour({id}){
             {' · '}{resource.classification_label}
           </li>)}
         </ul>
-      </section>}
-      {v95&&<section className="taiyi-v90-scan-locator" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v95&&<TaiyiResultPanel value="v95" label="卷九扫描候选与定位" group="原典校勘">
+        <section className="taiyi-v90-scan-locator" role="group"
           aria-label="V95 太乙卷九扫描候选与实体页定位">
         <h4>V95 · 卷九扫描候选扩展与实体页定位指纹</h4>
         <p>目前登记 <strong>{v95.candidate_count}</strong> 条扫描或电子书目候选：
@@ -507,8 +532,10 @@ export default function TaiyiV77Hour({id}){
         <span> · </span>
         <a href={v95.candidate_sources.find(x=>x.id==="ntut_3100479").reader_url}
           target="_blank" rel="noopener noreferrer">商务印书馆122页本</a>
-      </section>}
-      {v94&&<section className="taiyi-v90-scan-locator" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v94&&<TaiyiResultPanel value="v94" label="双源文字与 OCR 核对" group="原典校勘">
+        <section className="taiyi-v90-scan-locator" role="group"
           aria-label="V94 太乙卷九OCR文本行校核">
         <h4>V94 · 卷九正文双源文字定位与 OCR 误识别核对</h4>
         <p>影像 OCR 章节 <strong>367760</strong>：第4行是卷九题名，第5行是作者，第6行是目录，
@@ -535,8 +562,10 @@ export default function TaiyiV77Hour({id}){
         <span> · </span>
         <a href={v93.scan_candidates.cadal_06056495.url} target="_blank" rel="noopener noreferrer">
           打开 CADAL 120页原始文件</a>
-      </section>}
-      {v93&&<section className="taiyi-v90-scan-locator" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v93&&<TaiyiResultPanel value="v93" label="文字来源与扫描登记" group="原典校勘">
+        <section className="taiyi-v90-scan-locator" role="group"
           aria-label="V93 太乙卷九CText文本定位">
         <h4>V93 · 卷九文字来源与扫描候选登记</h4>
         <p>已登记 CText 图书馆资源 <strong>5784</strong>：原书来源浙江大学图书馆，
@@ -556,8 +585,10 @@ export default function TaiyiV77Hour({id}){
         <span> · </span>
         <a href={v93.scan_candidates.cadal_06056495.url} target="_blank" rel="noopener noreferrer">
           打开 CADAL 原始文件</a>
-      </section>}
-      {v92&&<section className="taiyi-v90-scan-locator" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v92&&<TaiyiResultPanel value="v92" label="卷九文字叶定位" group="原典校勘">
+        <section className="taiyi-v90-scan-locator" role="group"
           aria-label="V92 太乙卷九目标段落文字定位">
         <h4>V92 · 卷九目标段落已定位到文字叶</h4>
         <p>四库文渊阁本卷九转录标记显示：卷九题名及目录在 <strong>1a</strong>，
@@ -573,8 +604,10 @@ export default function TaiyiV77Hour({id}){
         <span> · </span>
         <a href={v92.sources.cadal_scan.url} target="_blank" rel="noopener noreferrer">
           打开 CADAL 原始扫描</a>
-      </section>}
-      {v91&&<section className="taiyi-v90-scan-locator" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v91&&<TaiyiResultPanel value="v91" label="卷九扫描入口" group="原典校勘">
+        <section className="taiyi-v90-scan-locator" role="group"
           aria-label="V91 CADAL 卷九扫描入口">
         <h4>V91 · 卷九扫描入口新增</h4>
         <p>已找到浙江大学 CADAL 数字化文件 <strong>CADAL06056495</strong>，
@@ -586,8 +619,10 @@ export default function TaiyiV77Hour({id}){
         <span> · </span>
         <a href={v91.candidate_scan.source_record_url} target="_blank" rel="noopener noreferrer">
           查看同书数字化文件目录</a>
-      </section>}
-      {v90&&<section className="taiyi-v90-scan-locator" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v90&&<TaiyiResultPanel value="v90" label="明钞本扫描页序" group="原典校勘">
+        <section className="taiyi-v90-scan-locator" role="group"
           aria-label="V90 太乙明钞本扫描页序定位">
         <h4>V90 · NCL-06604 明钞本扫描页序定位</h4>
         <p>已逐页核验扫描前 <strong>{v90.scan_structure.visually_reviewed_page_count} 页</strong>：
@@ -623,8 +658,10 @@ export default function TaiyiV77Hour({id}){
             <p key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">
               {source.label}</a> · 四库全书本转录</p>)}
         </details>
-      </section>}
-      {v86&&<section className="taiyi-v85-ji-phase" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v86&&<TaiyiResultPanel value="v86" label="卷九时计古例校核" group="原典校勘">
+        <section className="taiyi-v85-ji-phase" role="group"
           aria-label="V86 金镜式经卷九三例核验与阴遁原文冲突">
         <h4>V86 · 卷九时计例课独立校核</h4>
         <p>阳遁第一纪三张原例按太乙、文昌、始击和客算逐项复核；
@@ -668,8 +705,10 @@ export default function TaiyiV77Hour({id}){
         <a href={v86.yang_examples.source} target="_blank" rel="noopener noreferrer">
           《太乙金镜式经》卷九 · 三张原例及阴遁冲突原文
         </a>
-      </section>}
-      {v85&&ancientV85&&<section className="taiyi-v85-ji-phase" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v85&&ancientV85&&<TaiyiResultPanel value="v85" label="阴遁原例与六纪天目" group="原典校勘">
+        <section className="taiyi-v85-ji-phase" role="group"
         aria-label="V85 太乙阴遁315原典真值与气应天目三种纪相位">
         <h4>V85 · 《太乙金镜式经》独立阴遁例课与六纪天目</h4>
         <p>古籍独立例课：<strong>第六纪·壬子元27局</strong>，
@@ -746,8 +785,10 @@ export default function TaiyiV77Hour({id}){
           古代绝对上元积时与完整时计八门亦未核准。</p>
         <a href={ancientV85.source} target="_blank" rel="noopener noreferrer">
           《太乙金镜式经》卷一独立阴遁时计例课与六纪天目</a>
-      </section>}
-      {v84&&<section className="taiyi-v84-independent" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v84&&<TaiyiResultPanel value="v84" label="气应派基本盘" group="推算明细">
+        <section className="taiyi-v84-independent" role="group"
          aria-label="V84 气应与甲子派独立太乙八门候选九宫对照">
         <h4>V84 · 二至气应派独立基本盘</h4>
         <p>王希明二至气应起时：
@@ -803,8 +844,10 @@ export default function TaiyiV77Hour({id}){
           <a href={v84.qiying.source.chief_and_general_motion}
              target="_blank" rel="noopener noreferrer">直使加太乙及大将移动法</a>
         </p>
-      </section>}
-      {v82&&<section className="taiyi-v82-schools" role="group"
+        </section>
+      </TaiyiResultPanel>}
+      {v82&&<TaiyiResultPanel value="v82" label="八门候选排布" group="推算明细">
+        <section className="taiyi-v82-schools" role="group"
         aria-label="V82 太乙时计四派八门古籍旋宫候选">
         <h4>V82 · 分古籍起宫的八门候选排布</h4>
         <p>八门八卦环序：
@@ -873,11 +916,9 @@ export default function TaiyiV77Hour({id}){
           <a href={v82.source_support.ancient_dingji_eye_variant}
              target="_blank" rel="noopener noreferrer">定计目古法原文</a>
         </p>
-      </section>}
-      {chart.solstice.near_15_minutes&&
-        <p className="academy-caution" role="note">
-          本次处于交节前后十五分钟内，请进一步核查权威节气时刻。
-        </p>}
+        </section>
+      </TaiyiResultPanel>}
+      <TaiyiResultPanel value="sources" label="时计出处与待考事项" group="原典校勘">
       <p className="academy-caution">V85 独立核准《太乙金镜式经》阴遁315例课主客将，
         但现代二至气应的纪首相位未定，三组天目与将位仅作条件分栏，
         不选任一派为真实主客将。庚戌定算32／33、同宫专法、
@@ -888,6 +929,8 @@ export default function TaiyiV77Hour({id}){
       <span> · </span>
       <a href={chart.sources.hour_example} target="_blank" rel="noopener noreferrer">
         《太乙金钥匙》时计积47时例盘</a>
+      </TaiyiResultPanel>
+      </TaiyiResultPanels>
     </section>}
   </section>
 }
