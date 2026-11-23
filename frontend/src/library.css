@@ -471,3 +471,25 @@
   .library-gateway,.library-method-card,.library-exit,.library-page-controls>button,.library-page-track span{
     transition:none!important}
 }
+.library-reading-edition,.library-classic-heading{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:0 0 10px;color:var(--lib-jade-dark);font-size:14px}
+.library-reading-edition button,.library-classic-heading button{margin-left:auto;min-height:44px;padding:6px 12px;border:1px solid #adbea8;border-radius:6px;background:#f8f7eb;font-weight:650}
+.library-classic-heading strong{font-size:20px}
+.library-classic-heading span{font-size:13px}
+.library-page-paper ruby{ruby-align:center}
+.library-page-paper rt{font:650 1rem/1.5 system-ui,sans-serif;color:#375b4a;letter-spacing:.06em}
+.library-alternate-pinyin{margin:-6px 0 12px;color:#475648;font-size:13px}
+.library-full-classic{touch-action:pan-y pinch-zoom}
+.library-classic-menus{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px;margin-bottom:10px}
+.library-classic-menus label{display:grid;gap:4px;min-width:0;color:var(--lib-jade-dark);font-size:13px;font-weight:650}
+.library-classic-menus select{width:100%;min-width:0;min-height:44px;padding:4px 7px;border:1px solid #b9bca5;border-radius:6px;color:#293e30;background:#fffdf5;font-size:16px;text-overflow:ellipsis}
+.library-classic-text{color:#263e34;line-height:1.9;overflow-wrap:anywhere}
+.library-classic-text p{margin:0 0 1em;white-space:pre-wrap}
+.library-classic-text figure{margin:0 0 1em}
+.library-classic-text figure img{display:block;max-width:100%;height:auto;margin-inline:auto}
+.library-classic-text figcaption,.library-classic-note{margin:0 0 1em;color:#68573e;font-size:14px;line-height:1.55}
+.library-classic-table,.library-classic-diagram{max-width:100%;overflow-x:auto;touch-action:pan-x pan-y pinch-zoom;margin-bottom:1em}
+.library-classic-table table{min-width:max-content;border-collapse:collapse}
+.library-classic-table td{padding:5px 9px;border:1px solid #cbbca2;text-align:center}
+.library-classic-diagram{white-space:pre;font-family:ui-monospace,'Microsoft YaHei',monospace;font-size:14px}
+.library-classic-source>div{display:flex;flex-wrap:wrap;gap:8px 12px}
+.library-classic-source>div>a{min-height:44px;display:inline-flex;align-items:center}

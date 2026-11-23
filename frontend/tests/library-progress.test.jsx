@@ -14,20 +14,21 @@ beforeEach(()=>{
 })
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks()})
 
-it('典籍换篇保存进度，返回目录和重新打开后均可以续读',()=>{
+it('典籍换篇保存进度，返回目录和重新打开后均可以续读',async()=>{
   const first=render(<StudyHall {...props}/>)
   enterCatalog('壹 · 典籍')
   fireEvent.click(screen.getAllByRole('button',{name:/入卷研读/})[1])
-  fireEvent.click(screen.getByRole('button',{name:'下一篇 →'}))
-  expect(JSON.parse(window.localStorage.getItem('wanxiang-library-progress-v1'))['reader:meihua']).toBe(1)
+  const quick=await screen.findByRole('navigation',{name:'藏经阁快速翻篇'})
+  fireEvent.click(within(quick).getByRole('button',{name:'下一篇 →'}))
+  expect(JSON.parse(window.localStorage.getItem('wanxiang-library-progress-v1'))['fullreader:meihua']).toBe(1)
   first.unmount()
   render(<StudyHall {...props}/>)
   enterCatalog('壹 · 典籍')
   fireEvent.click(screen.getByRole('button',{name:/梅花易数 · 第 2 篇/}))
-  expect(screen.getByText(/第 2 篇 \/ 共/)).toBeTruthy()
+  expect(await screen.findByText(/第 2 篇 \/ 共/)).toBeTruthy()
   fireEvent.click(screen.getByRole('button',{name:/返回典籍目录/}))
   fireEvent.click(screen.getAllByRole('button',{name:/入卷研读/})[1])
-  expect(screen.getByText(/第 1 篇 \/ 共/)).toBeTruthy()
+  expect(await screen.findByText(/第 1 篇 \/ 共/)).toBeTruthy()
 })
 
 it('课程可以续读，损坏的旧进度不会导致页面崩溃',()=>{
@@ -52,6 +53,10 @@ it('《周易》按上经和下经列全六十四卦，可直达并连续翻卦'
   expect(groups.map(group=>[group.label,group.children.length])).toEqual([['上经',30],['下经',34]])
   expect(groups[0].children[0].textContent).toMatch(/^1\. .*乾/)
   expect(groups[0].children[29].textContent).toMatch(/^30\. .*[离離]/)
+  expect(groups[0].children[2].textContent).toMatch(/屯 · zhūn/)
+  fireEvent.change(chooser(),{target:{value:'2'}})
+  expect(screen.getByRole('heading',{name:/屯/}).querySelector('rt').textContent).toBe('zhūn')
+  fireEvent.change(chooser(),{target:{value:'0'}})
   expect(groups[1].children[0].textContent).toMatch(/^31\. .*咸/)
   expect(groups[1].children[33].textContent).toMatch(/^64\. .*未[济濟]/)
   expect(quick().getByRole('button',{name:/上一卦/}).disabled).toBe(true)
@@ -78,6 +83,23 @@ it('《周易》按上经和下经列全六十四卦，可直达并连续翻卦'
   expect(JSON.parse(window.localStorage.getItem('wanxiang-library-progress-v1'))['reader:zhouyi']).toBe(63)
   fireEvent.click(quick().getByRole('button',{name:/返回目录/}))
   expect(screen.getByRole('button',{name:/周易 · 第 64 卦/})).toBeTruthy()
+})
+
+it('易传可逐篇查看，并回到之前的卦',async()=>{
+  render(<StudyHall {...props}/>)
+  enterCatalog('壹 · 典籍')
+  fireEvent.click(screen.getByRole('button',{name:/周易.*入卷研读/}))
+  fireEvent.change(screen.getByRole('combobox',{name:'选择卦象'}),{target:{value:'43'}})
+  fireEvent.click(screen.getByRole('button',{name:/读易传/}))
+  const volume=await screen.findByRole('combobox',{name:'选择易传'})
+  expect(Array.from(volume.options,entry=>entry.textContent)).toEqual([
+    '文言传','系辞上传','系辞下传','说卦传','序卦传','杂卦传',
+  ])
+  fireEvent.change(volume,{target:{value:'4'}})
+  expect(screen.getByText(/有天地，然后万物生焉/)).toBeTruthy()
+  expect(screen.getByRole('link',{name:/核对原典/}).href).toContain('oldid=')
+  fireEvent.click(screen.getByRole('button',{name:/回六十四卦/}))
+  expect(screen.getByRole('heading',{name:/姤/}).querySelector('rt').textContent).toBe('gòu')
 })
 
 it('旧版《周易》第二页的进度仍续读坤卦，并保留原有今释',()=>{

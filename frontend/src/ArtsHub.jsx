@@ -1,6 +1,6 @@
-import { useRef, useSyncExternalStore } from 'react'
+import { useRef, useState, useSyncExternalStore } from 'react'
 import './academy.css'
-import EightTrigramExplorer from './EightTrigramExplorer.jsx'
+import HomeExperiences from './HomeExperiences.jsx'
 import academyLandscape from './assets/academy-landscape.webp'
 import academyLandscapeSmall from './assets/academy-landscape-small.webp'
 
@@ -58,8 +58,9 @@ function MethodCard({method,onSelect}) {
 }
 
 export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onLearn,onCases,
-  activeGroup='全部',setActiveGroup,page=0,setPage}) {
+  activeGroup='全部',setActiveGroup,page=0,setPage,homeExperience,setHomeExperience}) {
   const startTouch=useRef(null)
+  const [localExperience,setLocalExperience]=useState(0)
   const compactList=useSyncExternalStore(subscribeToCompactList,isCompactList)
   const visible=activeGroup==='全部'?ARTS:ARTS.filter(a=>a.group===activeGroup)
   const pageCount=Math.max(1,Math.ceil(visible.length/CARD_LIMIT))
@@ -103,7 +104,8 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               </button>
             </div>
           </div>
-          <EightTrigramExplorer/>
+          <HomeExperiences onSelect={onSelect} activeIndex={homeExperience??localExperience}
+            onIndexChange={setHomeExperience??setLocalExperience}/>
         </section>
       :
         <section className="atlas-selection atlas-choose-page" aria-label="择术入境">

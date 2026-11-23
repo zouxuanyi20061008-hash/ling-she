@@ -32,7 +32,9 @@ function Academy(){
   const [aiAccessCode,setAiAccessCode]=useState('')
   const [activeGroup,setActiveGroup]=useState('全部')
   const [choosePage,setChoosePage]=useState(0)
+  const [homeExperience,setHomeExperience]=useState(0)
   const [experience,setExperience]=useState(null)
+  const homeScroll=useRef(0)
   const chooseScroll=useRef(0)
   const pendingScroll=useRef(null)
   const config={personalApiKey,setPersonalApiKey,aiModel,setAiModel,aiAccessCode,setAiAccessCode}
@@ -63,7 +65,7 @@ function Academy(){
   useEffect(()=>{
     function syncBrowserHistory(){
       const next=routeFromUrl()
-      pendingScroll.current=next==='choose'?chooseScroll.current:0
+      pendingScroll.current=next==='home'?homeScroll.current:next==='choose'?chooseScroll.current:0
       setMode(next)
     }
     window.addEventListener('popstate',syncBrowserHistory)
@@ -84,8 +86,9 @@ function Academy(){
   function navigate(next,replace=false){
     if(!VALID_ROUTES.has(next))return
     if(mode===next)return
+    if(mode==='home')homeScroll.current=window.scrollY
     if(mode==='choose')chooseScroll.current=window.scrollY
-    pendingScroll.current=replace&&next==='choose'?chooseScroll.current:0
+    pendingScroll.current=replace&&next==='home'?homeScroll.current:replace&&next==='choose'?chooseScroll.current:0
     const state={academyRoute:next,from:mode}
     if(replace)window.history.replaceState(state,'','#'+next)
     else window.history.pushState(state,'','#'+next)
@@ -103,6 +106,10 @@ function Academy(){
   function closeLibrary(){
     const from=window.history.state?.academyRoute==='library'?window.history.state?.from:null
     goBackTo(from && from!=='library'?from:'home')
+  }
+
+  function closeCast(){
+    goBackTo(window.history.state?.from==='home'?'home':'choose')
   }
 
   return <>
@@ -125,7 +132,8 @@ function Academy(){
         onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}}
         onCases={()=>navigate('cases')}
         activeGroup={activeGroup} setActiveGroup={setActiveGroup}
-        page={choosePage} setPage={setChoosePage}/>:
+        page={choosePage} setPage={setChoosePage}
+        homeExperience={homeExperience} setHomeExperience={setHomeExperience}/>:
       mode==='library'?
       <React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开藏经阁…</main>}>
         <StudyHall onClose={closeLibrary} onPractice={()=>{setLearnFrom('liuyao');navigate('learn')}}
@@ -134,10 +142,10 @@ function Academy(){
           accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>
       </React.Suspense>:
       mode==='meihua'?
-      <App onBack={()=>goBackTo('choose')} onOpenStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('meihua');navigate('learn')}} apiConfig={config}/>:
+      <App onBack={closeCast} onOpenStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('meihua');navigate('learn')}} apiConfig={config}/>:
       mode==='liuyao'?
-      <SixYaoStage onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}} apiConfig={config}/>:
-      <KnowledgeStage mode={mode} onBack={()=>goBackTo('choose')} onStudy={()=>navigate('library')}/>}
+      <SixYaoStage onBack={closeCast} onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}} apiConfig={config}/>:
+      <KnowledgeStage mode={mode} onBack={closeCast} onStudy={()=>navigate('library')}/>}
   </>
 }
 

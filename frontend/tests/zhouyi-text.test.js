@@ -46,4 +46,15 @@ describe('藏经阁《周易》', () => {
     expect(hexagrams[0]).toMatchObject({ id: 'yi-qian', heading: '乾', explanation: expect.stringContaining('自我修养') })
     expect(hexagrams[1]).toMatchObject({ id: 'yi-kun', heading: '坤', explanation: expect.stringContaining('承载之德') })
   })
+
+  it('六十四卦均标调号，卦名多音字按传统音读', () => {
+    expect(hexagrams).toHaveLength(64)
+    for(const {heading,pinyin} of hexagrams){
+      expect(pinyin.split(' ')).toHaveLength([...heading].length)
+      expect(pinyin).toMatch(/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/)
+    }
+    const pinyin=Object.fromEntries(hexagrams.map(entry=>[entry.heading,entry.pinyin]))
+    expect(pinyin).toMatchObject({屯:'zhūn',比:'bì',小畜:'xiǎo xù',否:'pǐ',观:'guàn',
+      噬嗑:'shì hé',贲:'bì',大畜:'dà xù',解:'xiè',夬:'guài',姤:'gòu',艮:'gèn'})
+  })
 })

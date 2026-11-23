@@ -1,12 +1,13 @@
 import { ZHOUYI_TEXT } from './zhouyiText.js'
+import { HEXAGRAM_ALTERNATE_PINYIN, HEXAGRAM_PINYIN } from './zhouyiPronunciation.js'
 
 // 古籍原文与书院解释分列。
 export const METHODS = [
-  {id:'zhouyi',title:'周易',sub:'经传源头',status:'选读',bookStatus:'六十四卦'},
-  {id:'meihua',title:'梅花易数',sub:'象数心易',status:'八课'},
-  {id:'liuyao',title:'六爻纳甲',sub:'京房八宫',status:'五课'},
-  {id:'qimen',title:'奇门遁甲',sub:'九宫时空',status:'三课'},
-  {id:'bazi',title:'四柱八字',sub:'干支命理',status:'三课'},
+  {id:'zhouyi',title:'周易',sub:'经传源头',status:'选读',bookStatus:'六十四卦 · 十翼'},
+  {id:'meihua',title:'梅花易数',sub:'象数心易',status:'八课',bookTitle:'《梅花易数》',bookStatus:'三卷'},
+  {id:'liuyao',title:'六爻纳甲',sub:'京房八宫',status:'五课',bookTitle:'《增删卜易》',bookStatus:'四卷'},
+  {id:'qimen',title:'奇门遁甲',sub:'九宫时空',status:'三课',bookTitle:'《遁甲演义》',bookStatus:'四库本 · 四卷'},
+  {id:'bazi',title:'四柱八字',sub:'干支命理',status:'三课',bookTitle:'《三命通会》',bookStatus:'四库本 · 十二卷'},
 ]
 export const REFERENCES = {
   zhouyi:'https://zh.wikisource.org/zh-hans/周易',
@@ -23,14 +24,19 @@ const ZHOUYI_READING_NOTES = {
 }
 
 export const TEXTS = {
-  zhouyi:ZHOUYI_TEXT.map((hexagram,index)=>({
-    ...hexagram,
-    id:`yi-${index+1}`,
-    heading:hexagram.heading==='遯'?'遁':hexagram.heading,
-    volume:index<30?'《周易》 · 上经':'《周易》 · 下经',
-    section:`第 ${index+1} 卦`,
-    ...ZHOUYI_READING_NOTES[hexagram.heading],
-  })),
+  zhouyi:ZHOUYI_TEXT.map((hexagram,index)=>{
+    const heading=hexagram.heading==='遯'?'遁':hexagram.heading
+    return {
+      ...hexagram,
+      id:`yi-${index+1}`,
+      heading,
+      pinyin:HEXAGRAM_PINYIN[heading],
+      alternatePinyin:HEXAGRAM_ALTERNATE_PINYIN[heading],
+      volume:index<30?'《周易》 · 上经':'《周易》 · 下经',
+      section:`第 ${index+1} 卦`,
+      ...ZHOUYI_READING_NOTES[hexagram.heading],
+    }
+  }),
   liuyao:[
     {id:'liu-method',volume:'《增删卜易》',section:'卷二 · 占卦法',heading:'三钱六掷',original:'第一次为初爻，画在卦的最下面，依次上升。',explanation:'以三枚钱币摇六次；第一次形成最下面的初爻，第六次形成上爻。',note:'本馆已具三钱六掷、京房八宫、世应、纳甲干支与六亲。日月建、六神、旬空及旺衰仍须另行校勘。'},
     {id:'liu-shape',volume:'《增删卜易》',section:'卷二 · 卦象图',heading:'乾三连 · 坤六断',original:'乾三连，坤六断。',explanation:'乾卦三阳不断，坤卦三阴皆断，是记住八卦形态的开始。',note:'记形状时从初爻到三爻按下到上识别。'},

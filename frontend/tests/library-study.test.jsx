@@ -56,7 +56,7 @@ it('旧版修习进度仍可续读，《周易》课可跳到对应卦再返回'
   choose('选择课程',6)
   expect(screen.getByRole('heading',{name:'去典籍找一卦'})).toBeTruthy()
   click(/读原典/)
-  expect(screen.getByRole('heading',{name:'咸'})).toBeTruthy()
+  expect(screen.getByRole('heading',{name:/咸.*xián/})).toBeTruthy()
   click(/返回本课/)
   expect(screen.getByRole('heading',{name:'去典籍找一卦'})).toBeTruthy()
   expect(JSON.parse(localStorage.getItem(progressKey))).toMatchObject({

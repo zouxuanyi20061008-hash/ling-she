@@ -3,6 +3,7 @@ import { CLASSICS, SOURCES } from './studyContent.js'
 import { METHODS, REFERENCES, TEXTS } from './traditionContent.js'
 import { ARTS } from './ArtsHub.jsx'
 import { LIBRARY_STUDY, LIBRARY_TRIALS } from './libraryStudy.js'
+import FullClassicReader from './FullClassicReader.jsx'
 import StudyTrial from './StudyTrial.jsx'
 
 const SECTIONS=[
@@ -23,7 +24,7 @@ function loadReadingProgress(){
     return Object.fromEntries(Object.entries(stored).filter(([key,page])=>{
       const [kind,method,extra]=key.split(':')
       return extra===undefined&&Number.isInteger(page)&&page>=0&&
-        ((kind==='reader'&&DEMO_METHODS.has(method))||(kind==='lesson'&&Object.hasOwn(LIBRARY_STUDY,method)))
+        ((['reader','fullreader'].includes(kind)&&DEMO_METHODS.has(method))||(kind==='lesson'&&Object.hasOwn(LIBRARY_STUDY,method)))
     }))
   }catch{return {}}
 }
@@ -53,7 +54,7 @@ function MethodSelection({section,onSelect}){
         `${String(i+1).padStart(2,'0')}　·　${method.bookStatus??method.status}`:
         courses?`${LIBRARY_STUDY[method.id].length} 课`:`${LIBRARY_TRIALS[method.id].length} 题`}</span>
       <strong>{method.title}</strong>
-      <small>{method.sub}</small>
+      <small>{bookshelf&&method.bookTitle?method.bookTitle:method.sub}</small>
       <span className="library-method-action">{bookshelf?'入卷研读':courses?'开始修习':'开始答题'} <b aria-hidden="true">↗</b></span>
     </button>)}
   </div>
@@ -115,12 +116,13 @@ function PageControls({index,total,onBack,onNext,firstLabel='上一页',lastLabe
 }
 
 function Locus({view,method,index,onClose,onLobby,onSection}){
+  const reading=view==='reader'||view==='fullreader'
   const crumbs=[{label:'藏经阁',do:onLobby}]
   if(view!=='lobby'){
-    const section=(view==='reader'?'bookshelf':view==='lesson'?'courses':view==='quiz'?'quizmenu':view)
+    const section=(reading?'bookshelf':view==='lesson'?'courses':view==='quiz'?'quizmenu':view)
     crumbs.push({label:SECTIONS.find(s=>s.id===section)?.title||section,do:()=>onSection(section)})
   }
-  if(['reader','lesson','quiz'].includes(view))crumbs.push({label:NAMES[method],do:null})
+  if(reading||['lesson','quiz'].includes(view))crumbs.push({label:NAMES[method],do:null})
   return <header className="library-topbar">
     <button className="library-brand" type="button" onClick={onLobby} title="返回藏经阁目录">
       <span className="library-brand-seal">藏</span>
@@ -131,7 +133,7 @@ function Locus({view,method,index,onClose,onLobby,onSection}){
         {i>0&&<em>／</em>}
         {c.do?<button type="button" onClick={c.do}>{c.label}</button>:<b>{c.label}</b>}
       </span>)}
-      {['reader','lesson'].includes(view)&&<span className="library-crumb-page">· 第 {index+1} {view==='lesson'?'课':'页'}</span>}
+      {(reading||view==='lesson')&&<span className="library-crumb-page">· 第 {index+1} {view==='lesson'?'课':'页'}</span>}
     </nav>
     <button className="library-exit" type="button" onClick={onClose}>返回书院 <span>↗</span></button>
   </header>
@@ -152,34 +154,42 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
     try{window.localStorage.setItem(READING_PROGRESS_KEY,JSON.stringify(readingProgress))}catch{}
   },[readingProgress])
 
-  const sectionId=view==='reader'?'bookshelf':view==='lesson'?'courses':view==='quiz'?'quizmenu':view
+  const reading=view==='reader'||view==='fullreader'
+  const sectionId=reading?'bookshelf':view==='lesson'?'courses':view==='quiz'?'quizmenu':view
   const section=SECTIONS.find(s=>s.id===sectionId)
   const lessons=LIBRARY_STUDY[method]
   const items=view==='reader'?booksFor(method):view==='lesson'?lessons:[]
   const item=items[index]
   const zhouyiReader=view==='reader'&&method==='zhouyi'
-  const resumeKind=view==='bookshelf'?'reader':view==='courses'?'lesson':null
-  const resumeMethods=resumeKind==='reader'?METHODS:STUDY_METHODS
-  const resumeEntries=resumeKind?resumeMethods.map(m=>({method:m,page:readingProgress[resumeKind+':'+m.id]}))
-    .filter(({method,page})=>Number.isInteger(page)&&page>0&&page<(resumeKind==='reader'?booksFor(method.id):LIBRARY_STUDY[method.id]).length):[]
+  const resumeEntries=view==='bookshelf'
+    ? METHODS.flatMap(entry=>['reader','fullreader'].map(kind=>({entry,kind,page:readingProgress[`${kind}:${entry.id}`]})))
+        .filter(({entry,kind,page})=>page>0&&(kind==='fullreader'||page<booksFor(entry.id).length))
+    : view==='courses'?STUDY_METHODS.map(entry=>({entry,kind:'lesson',page:readingProgress[`lesson:${entry.id}`]}))
+        .filter(({entry,page})=>page>0&&page<LIBRARY_STUDY[entry.id].length):[]
   function savePage(kind,id,page){
     setReadingProgress(previous=>({...previous,[kind+':'+id]:page}))
   }
   function rememberPage(page){
-    if(view==='reader'||view==='lesson')savePage(view,method,page)
+    if(reading||view==='lesson')savePage(view,method,page)
   }
   const navigate=(next,page=0)=>{
     setView(next);setIndex(page);setPlaying(false);setReaderLesson(null);setNotice('')
     window.scrollTo({top:0,behavior:'instant'})
   }
-  function enter(methodId,resume=false){
-    const nextView=view==='bookshelf'?'reader':view==='courses'?'lesson':'quiz'
-    const saved=readingProgress[nextView+':'+methodId]
-    const length=nextView==='reader'?booksFor(methodId).length:nextView==='lesson'?LIBRARY_STUDY[methodId].length:0
-    const start=resume&&Number.isInteger(saved)&&saved>=0&&saved<length?saved:0
+  function enter(methodId){
+    const nextView=view==='bookshelf'?(methodId==='zhouyi'?'reader':'fullreader'):view==='courses'?'lesson':'quiz'
     setMethod(methodId)
     if(nextView==='quiz')setTrialMode('round')
-    navigate(nextView,start)
+    navigate(nextView)
+  }
+  function resume({entry,kind,page}){
+    setMethod(entry.id)
+    navigate(kind,page)
+  }
+  function switchReading(kind){
+    const saved=readingProgress[`${kind}:${method}`]??0
+    navigate(kind,saved)
+    setReaderLesson(readerLesson)
   }
   function turnPage(page){
     rememberPage(page);setIndex(page);setPlaying(false)
@@ -202,7 +212,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
   }
   function back(){
     if(view==='lobby'){onClose();return}
-    if(view==='reader'){readerLesson===null?navigate('bookshelf'):openLesson(readerLesson);return}
+    if(reading){readerLesson===null?navigate('bookshelf'):openLesson(readerLesson);return}
     if(view==='lesson'){navigate('courses');return}
     if(view==='quiz'){navigate('quizmenu');return}
     navigate('lobby')
@@ -236,7 +246,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
         onLobby={()=>navigate('lobby')} onSection={navigate}/>
       <div className="library-inner">
         {view!=='lobby'&&<nav className="library-secondary-nav" aria-label="藏经阁快捷栏目">
-          <button type="button" className="library-back-button" onClick={back}>← 返回{view==='reader'?(readerLesson===null?'典籍目录':'本课'):view==='lesson'?'课程目录':view==='quiz'?'练习目录':'藏经阁'}</button>
+          <button type="button" className="library-back-button" onClick={back}>← 返回{reading?(readerLesson===null?'典籍目录':'本课'):view==='lesson'?'课程目录':view==='quiz'?'练习目录':'藏经阁'}</button>
           <div className="library-section-links">
             {SECTIONS.map(s=><button type="button" key={s.id} className={sectionId===s.id?'active':''}
               aria-current={sectionId===s.id?'page':undefined} onClick={()=>navigate(s.id)}>{s.title}</button>)}
@@ -267,14 +277,15 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
             <SectionHeading
               small={section.number+' · '+section.english}
               title={view==='bookshelf'?'择卷研读':view==='courses'?'择门修习':'入境试炼'}
-              desc={view==='bookshelf'?'按卦序研读《周易》六十四卦，也可择读其他古籍。每页附原文出处。':
+              desc={view==='bookshelf'?'按卦序读《周易》经文与十翼，或选其他古籍逐卷读原文。每篇附底本出处。':
                 view==='courses'?'选一门，从第一课开始。也可以直接选课，做对应的小挑战。':
                 '选一门开始连练，也能直接选题。遇到卡点，随时打开提示或回顾本课。'}/>
             {resumeEntries.length>0&&<aside className="library-resume" aria-label="藏经阁断点续读">
               <div className="library-resume-title"><strong>续读 · 接着上次的位置</strong><small>进度仅存于当前浏览器</small></div>
-              <div className="library-resume-links">{resumeEntries.map(({method:entry,page})=>
-                <button type="button" key={entry.id} onClick={()=>enter(entry.id,true)}>
-                  {entry.title} · 第 {page+1} {resumeKind==='lesson'?'课':entry.id==='zhouyi'?'卦':'篇'} <span aria-hidden="true">→</span>
+              <div className="library-resume-links">{resumeEntries.map(({entry,kind,page})=>
+                <button type="button" key={`${kind}:${entry.id}`} onClick={()=>resume({entry,kind,page})}>
+                  {entry.title}{entry.id==='zhouyi'&&kind==='fullreader'?'易传':kind==='reader'&&entry.id!=='zhouyi'?'选读':''}
+                  {' · 第 '}{page+1} {kind==='lesson'?'课':entry.id==='zhouyi'&&kind==='reader'?'卦':'篇'} <span aria-hidden="true">→</span>
                 </button>)}</div>
             </aside>}
             <MethodSelection section={view} onSelect={enter}/>
@@ -282,6 +293,10 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
           </section>}
 
           {view==='reader'&&item&&<section className="library-reading-screen">
+            <div className="library-reading-edition">
+              <span>{zhouyiReader?'六十四卦 · 上经与下经':'课程选读'}</span>
+              <button type="button" onClick={()=>switchReading('fullreader')}>{zhouyiReader?'读易传 ↗':'阅读全书 ↗'}</button>
+            </div>
             <div className="library-book-head">
               <span className="library-eyebrow">典籍 · {NAMES[method]} · 第 {index+1} {zhouyiReader?'卦':'则'}</span>
               <div className="library-chapter-menu">
@@ -289,10 +304,10 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
                 <select id="library-chapter" value={index} onChange={e=>turnPage(Number(e.target.value))}>
                   {zhouyiReader?<>
                     <optgroup label="上经">
-                      {items.slice(0,30).map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading}</option>)}
+                      {items.slice(0,30).map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading} · {c.pinyin}</option>)}
                     </optgroup>
                     <optgroup label="下经">
-                      {items.slice(30).map((c,i)=><option value={i+30} key={c.id}>{i+31}. {c.heading}</option>)}
+                      {items.slice(30).map((c,i)=><option value={i+30} key={c.id}>{i+31}. {c.heading} · {c.pinyin}</option>)}
                     </optgroup>
                   </>:items.map((c,i)=><option value={i} key={c.id}>{i+1}. {c.heading}</option>)}
                 </select>
@@ -308,7 +323,8 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
             <article className="library-page-paper">
               <div className="library-paper-line"><span>{zhouyiReader?'经传原文':'原典选读'}</span><span>{item.volume}</span></div>
               <p className="library-text-section">{item.section}</p>
-              <h2>{item.heading}</h2>
+              <h2>{zhouyiReader?<ruby>{item.heading}<rt lang="zh-Latn-pinyin">{item.pinyin}</rt></ruby>:item.heading}</h2>
+              {zhouyiReader&&item.alternatePinyin&&<p className="library-alternate-pinyin">今读也见 <span lang="zh-Latn-pinyin">{item.alternatePinyin}</span></p>}
               {zhouyiReader?<ZhouyiText item={item}/>:<blockquote className="library-original">{item.original}</blockquote>}
               {(item.explanation||item.note)&&<div className="library-reading-grid">
                 {item.explanation&&<section><b>今释 · 通其意</b><p>{item.explanation}</p></section>}
@@ -316,7 +332,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
               </div>}
               <div className="library-source">
                 {zhouyiReader?
-                  <span>卦序依通行本，原文据维基文库整理。<br/>转录整理许可 <a className="library-source-license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></span>:
+                  <span>卦序依通行本，原文据维基文库整理。<br/>卦名音读参照 <a className="library-source-license" href="https://zh.wikisource.org/wiki/經典釋文_(四庫全書本)/卷02" target="_blank" rel="noopener noreferrer">《经典释文·周易音义》</a>。转录整理许可 <a className="library-source-license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></span>:
                   <span>此为选段或整理文字，请以完整古籍为准；非离线全文。</span>}
                 <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">核对原典 ↗</a>
               </div>
@@ -325,6 +341,9 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
               firstLabel={zhouyiReader?'上一卦':undefined} lastLabel={zhouyiReader?'下一卦':undefined}
               doneLabel="返回目录" onFinish={()=>navigate('bookshelf')}/>
           </section>}
+
+          {view==='fullreader'&&<FullClassicReader method={method} page={index} onPage={turnPage}
+            onExit={back} onAlternate={method==='zhouyi'?()=>switchReading('reader'):undefined} alternateLabel="回六十四卦 ↗"/>}
 
           {view==='lesson'&&item&&<section className="library-learning-screen">
             <div className="library-book-head library-study-head">

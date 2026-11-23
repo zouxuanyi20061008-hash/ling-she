@@ -2,7 +2,7 @@
 // 首页互动回归：八卦探象只作象意练习，不触碰正式排盘算法。
 import React from 'react'
 import {afterEach,it,expect,vi} from 'vitest'
-import {cleanup,fireEvent,render,screen} from '@testing-library/react'
+import {cleanup,fireEvent,render,screen,within} from '@testing-library/react'
 import ArtsHub from '../src/ArtsHub.jsx'
 
 afterEach(()=>{cleanup();vi.restoreAllMocks()})
@@ -94,3 +94,36 @@ it('首页开始研习入口仍调用原有导航回调',()=>{
   fireEvent.click(screen.getByRole('button',{name:/开始研习/}))
   expect(onStart).toHaveBeenCalledOnce()
 })
+
+it('首页可前后切换体验，八卦环位置在换页后保留',()=>{
+  renderHome()
+  fireEvent.click(screen.getByRole('button',{name:'顺时针旋转45度'}))
+  fireEvent.click(screen.getByRole('button',{name:'下一个术数体验'}))
+  expect(screen.queryByRole('region',{name:'八卦探象互动体验'})).toBeNull()
+  const qimen=screen.getByRole('article',{name:'奇门遁甲互动体验'})
+  fireEvent.click(within(qimen).getByRole('button',{name:'离9宫 · 惊门'}))
+  expect(within(qimen).getByRole('status').textContent).toContain('惊门在离九宫')
+  fireEvent.click(screen.getByRole('button',{name:'上一个术数体验'}))
+  const trigram=screen.getByRole('region',{name:'八卦探象互动体验'})
+  expect(within(trigram).getByRole('group',{name:'选择八卦'}).dataset.rotation).toBe('45')
+})
+
+it('可直达各术数小玩法，改动只发生在样盘，并能进入对应工坊',()=>{
+  const {props}=renderHome()
+  const cases=[
+    ['紫微斗数','卯 · 迁移','酉的对宫是卯','ziwei'],
+    ['四柱八字','日柱天干 甲','甲是日主','bazi'],
+    ['堪舆风水','西 270度','西 270°','fengshui'],
+    ['六爻铜钱','第 3 枚铜钱。背面 3。翻面','6 · 老阴','liuyao'],
+    ['大六壬','亥','中传亥','liuren'],
+    ['太乙神数','第 4 时辰','坎八宫','taiyi'],
+  ]
+  for(const [name,choice,explanation,route] of cases){
+    fireEvent.click(screen.getByRole('button',{name:`体验${name}`}))
+    const card=within(screen.getByRole('article',{name:`${name}互动体验`}))
+    fireEvent.click(card.getByRole('button',{name:choice}))
+    expect(card.getByRole('status').textContent).toContain(explanation)
+    fireEvent.click(card.getByRole('button',{name:`进入${name}工坊`}))
+    expect(props.onSelect).toHaveBeenLastCalledWith(route)
+  }
+},15000)
