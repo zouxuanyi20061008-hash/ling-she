@@ -53,6 +53,11 @@ it('V70 real eighth-art entrance posts compass angle and shows 9 palaces and 24 
   fireEvent.click(within(ring).getByRole('button',{name:/癸/}))
   expect(screen.getByRole('region',{name:'当前选中二十四山'}).textContent)
     .toContain('中心 15°')
+  const navigation=within(screen.getByRole('group',{name:'堪舆结果分类'}))
+  fireEvent.click(navigation.getByRole('button',{name:'计算依据'}))
+  fireEvent.click(navigation.getByRole('button',{name:'二十四山'}))
+  expect(within(ring).getByRole('button',{name:/癸/}).getAttribute('aria-pressed')).toBe('true')
+  expect(spy).toHaveBeenCalledTimes(1)
 })
 
 it('V70 magnetic option sends user-provided declination and changed input role',async()=>{

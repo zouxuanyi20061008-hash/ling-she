@@ -1,0 +1,54 @@
+.liuren-v58-options-toggle,
+.liuren-v58-options-description,
+.liuren-v58-result[data-has-review='true'] .liuren-v58-transmissions-heading {
+  display: none;
+}
+.liuren-v58-options { display: contents; }
+.liuren-v58-result .liuren-v58-source { color: #295e73; font-size: 12px; text-decoration: underline; }
+
+@media (max-width: 650px) {
+  .liuren-v58 { margin: 10px 0; padding: 12px; }
+  .liuren-v58 .liuren-v58-heading > :is(small, p),
+  .liuren-v58-review-heading { display: none; }
+  .liuren-v58 .liuren-v58-heading h2 { margin: 0; font-size: 18px; line-height: 1.45; }
+
+  .liuren-v58-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 8px 10px;
+    margin: 10px 0 14px;
+  }
+  .liuren-v58-form label { gap: 4px; }
+  .liuren-v58-form :is(input, select) { font-size: 16px; }
+  .liuren-v58-form input::-webkit-date-and-time-value { min-width: 0; text-align: start; }
+  .liuren-v58-form button { grid-column: 1 / -1; border-radius: 6px; }
+  .liuren-v58-form .liuren-v58-options-toggle {
+    display: block;
+    border: 1px solid #9ab2b9;
+    background: #f4faf8;
+    color: #285761;
+    text-align: left;
+  }
+  .liuren-v58-options-toggle::after { content: '＋'; float: right; }
+  .liuren-v58-options-toggle[aria-expanded='true']::after { content: '−'; }
+  .liuren-v58-options {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #9ab2b9;
+    background: #edf5f2;
+  }
+  .liuren-v58-options[data-open='false'] { display: none; }
+  .liuren-v58-options-description { display: block; font-size: 12px; line-height: 1.6; }
+
+  .liuren-v58-result[data-has-review='true'] .liuren-v58-transmissions-heading { display: block; }
+  .liuren-v58-result .liuren-v58-meta { gap: 3px; padding: 9px; }
+  .liuren-v58-result h3 { margin: 10px 0 8px; }
+  .liuren-v58-plate { gap: 5px; }
+  .liuren-v58-plate button { justify-content: center; min-height: 74px; padding: 5px; gap: 3px; }
+  .liuren-v58-plate button strong { font-size: 16px; }
+  .liuren-v58-plate button span:empty { display: none; }
+  .liuren-v58-result .liuren-v58-source { display: inline-flex; min-height: 44px; align-items: center; }
+}

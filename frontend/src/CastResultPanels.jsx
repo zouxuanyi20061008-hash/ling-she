@@ -1,5 +1,11 @@
 import { Children, cloneElement, useId, useLayoutEffect, useRef, useState } from 'react'
-import './taiyi-result-panels.css'
+import './cast-result-panels.css'
+
+export function focusCastResultOnMobile(result) {
+  if (!result || !window.matchMedia?.('(max-width: 650px)').matches) return
+  result.focus({ preventScroll: true })
+  result.scrollIntoView?.({ block: 'start' })
+}
 
 function ResultSelect({ label, panels, selected, select, controls }) {
   const groups = new Map()
@@ -9,7 +15,7 @@ function ResultSelect({ label, panels, selected, select, controls }) {
     groups.get(group).push(panel)
   }
 
-  return <label className="taiyi-result-select">
+  return <label className="cast-result-select">
     <span>{label}</span>
     <select value={selected} aria-controls={controls} onChange={event => select(event.target.value)}>
       {Array.from(groups, ([group, choices]) => {
@@ -21,18 +27,18 @@ function ResultSelect({ label, panels, selected, select, controls }) {
   </label>
 }
 
-export function TaiyiResultPanel({ label, id, active, panelRef, children }) {
-  return <div className="taiyi-result-panel" id={id} role="group" aria-label={label}
+export function CastResultPanel({ label, id, active, panelRef, children }) {
+  return <div className="cast-result-panel" id={id} role="group" aria-label={label}
     data-active={active} ref={panelRef}>
     {children}
   </div>
 }
 
-export default function TaiyiResultPanels({ label, variant = 'buttons', children }) {
+export default function CastResultPanels({ label, variant = 'buttons', defaultValue, children }) {
   const panels = Children.toArray(children)
   const id = useId()
-  const [selection, setSelection] = useState(panels[0].props.value)
-  const selected = panels.find(panel => panel.props.value === selection)?.props.value ?? panels[0].props.value
+  const [selection, setSelection] = useState(defaultValue)
+  const selected = panels.find(panel => panel.props.value === selection)?.props.value ?? panels[0]?.props.value
   const selectedPanel = useRef(null)
   const scrollOnSelection = useRef(false)
 
@@ -48,12 +54,15 @@ export default function TaiyiResultPanels({ label, variant = 'buttons', children
     selectedPanel.current?.scrollIntoView?.({ block: 'start', behavior: 'instant' })
   }, [selected])
 
+  if (!panels.length) return null
+  if (panels.length === 1) return cloneElement(panels[0], { active: true })
+
   return <>
-    <div className="taiyi-result-navigation">
+    <div className="cast-result-navigation">
       {variant === 'select'
         ? <ResultSelect label={label} panels={panels} selected={selected} select={select} controls={`${id}-${selected}`} />
-        : <div className="taiyi-result-buttons" role="group" aria-label={label}
-            style={{ '--taiyi-result-button-count': panels.length }}>
+        : <div className="cast-result-buttons" role="group" aria-label={label}
+            style={{ '--cast-result-button-count': panels.length }}>
             {panels.map(({ props }) => <button key={props.value} type="button"
               aria-pressed={props.value === selected} aria-controls={`${id}-${props.value}`}
               onClick={event => {

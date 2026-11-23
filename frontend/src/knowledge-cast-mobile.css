@@ -1,0 +1,74 @@
+.knowledge-cast-notes,
+.knowledge-back-to-chart { display: none; }
+
+@media (max-width: 650px) {
+  .academy-knowledge-mode :is(.qimen-v50, .bazi-v55) { margin-top: 8px; padding: 10px; }
+  .academy-knowledge-mode :is(.qimen-v50, .bazi-v55) > header :is(small, .knowledge-cast-intro) {
+    display: none;
+  }
+  .academy-knowledge-mode :is(.qimen-v50, .bazi-v55) > header h2 {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  .qimen-v50 .qimen-v50-form, .bazi-v55 .bazi-v55-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 8px;
+    margin: 10px 0 0;
+  }
+  :is(.qimen-v50-form, .bazi-v55-form) label { gap: 4px; }
+  .qimen-v50-form > label:last-of-type,
+  :is(.qimen-v50-form, .bazi-v55-form) > button,
+  .bazi-v55-form .bazi-v57-flow-enable { grid-column: 1 / -1; }
+  :is(.qimen-v50-form, .bazi-v55-form) :is(input:not([type='checkbox']), select, button) {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
+  :is(.qimen-v50-form, .bazi-v55-form) input::-webkit-date-and-time-value {
+    min-width: 0;
+    text-align: start;
+  }
+  .bazi-v55-form .bazi-v57-flow-enable {
+    justify-content: center;
+    min-height: 44px;
+    padding: 4px 7px;
+  }
+
+  .knowledge-cast-notes { display: block; }
+  .knowledge-cast-notes summary {
+    min-height: 44px;
+    padding: 10px 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .knowledge-cast-notes p { margin: 0 4px 10px; font-size: 13px; line-height: 1.65; }
+
+  .qimen-v50 .qimen-v50-nine { gap: 5px; }
+  .qimen-v50 .qimen-v50-nine button { min-height: 110px; padding: 5px 3px; gap: 3px; }
+  .qimen-v50 .qimen-v50-nine, .qimen-v50-palace { scroll-margin-top: 58px; }
+  .knowledge-back-to-chart {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 5px 8px;
+    margin-bottom: 6px;
+    border: 1px solid #789c8d;
+    border-radius: 6px;
+    background: #fafdf8;
+    color: #234f41;
+    font-size: 14px;
+  }
+  .bazi-v55 .bazi-v55-meta { padding: 9px; }
+  .bazi-v55 :is(.bazi-v56-luck, .bazi-v57-flow) { margin-top: 10px; padding-top: 8px; }
+  .qimen-v50-result .qimen-v50-source, .bazi-v55-result .bazi-v55-source {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 14px;
+  }
+}

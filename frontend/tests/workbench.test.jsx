@@ -86,6 +86,26 @@ it('排盘网络失败保留六爻，显示原因并允许按原爻重试',async
   expect(both).toEqual([[7,7,7,7,7,7],[7,7,7,7,7,7]])
 })
 
+it('手机可从盘面直达研判步骤，切回时保留专题和原始排盘',async()=>{
+  globalThis.fetch.mockResolvedValueOnce({ok:true,json:async()=>makeChart()})
+  render(<SixYaoStage onBack={()=>{}} onStudy={()=>{}} apiConfig={config}/>)
+  enterSixManual()
+  const results=await screen.findByRole('combobox',{name:'选择六爻研判内容'})
+  expect(results.value).toBe('board')
+
+  fireEvent.change(results,{target:{value:'relations'}})
+  const pathways=screen.getByRole('button',{name:'用神作用链'})
+  expect(pathways.closest('.liuyao-result-panel').dataset.current).toBe('true')
+  fireEvent.click(pathways)
+  fireEvent.change(results,{target:{value:'board'}})
+  expect(pathways.closest('.liuyao-result-panel').dataset.current).toBe('false')
+  fireEvent.change(results,{target:{value:'relations'}})
+
+  expect(pathways.getAttribute('aria-pressed')).toBe('true')
+  expect(pathways.closest('.liuyao-result-panel').dataset.current).toBe('true')
+  expect(globalThis.fetch).toHaveBeenCalledTimes(1)
+})
+
 it('失败状态下重新起卦会复位录爻数与操作按钮',async()=>{
   globalThis.fetch.mockRejectedValueOnce(new Error('连接已中断'))
   render(<SixYaoStage onBack={()=>{}} onStudy={()=>{}} apiConfig={config}/>)

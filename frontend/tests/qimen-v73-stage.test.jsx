@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {it,afterEach,expect,vi} from 'vitest'
-import {render,screen,fireEvent,cleanup} from '@testing-library/react'
+import {render,screen,fireEvent,cleanup,within} from '@testing-library/react'
 import KnowledgeStage from '../src/KnowledgeStage.jsx'
 
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
@@ -60,6 +60,17 @@ it('V73 renders verified 33 core-layer cells and preserves unverified context',a
  expect(section.textContent).toContain('不自动断吉凶')
  expect(screen.getByText(/V73 核心四层一致性审计/)).toBeTruthy()
  expect(section.querySelector('a').getAttribute('href')).toBe(audit.source.full_external_worked_chart)
+ const navigation=within(screen.getByRole('group',{name:'奇门结果分类'}))
+ const boardToggle=navigation.getByRole('button',{name:'九宫盘'})
+ const auditToggle=navigation.getByRole('button',{name:'整盘校核'})
+ const palace=within(screen.getByRole('group',{name:'V51 奇门九宫星门转盘'}))
+   .getByRole('button',{name:/离宫 · 9/})
+ expect(boardToggle.getAttribute('aria-pressed')).toBe('true')
+ fireEvent.click(palace)
+ fireEvent.click(auditToggle)
+ expect(auditToggle.getAttribute('aria-pressed')).toBe('true')
+ fireEvent.click(boardToggle)
+ expect(palace.getAttribute('aria-pressed')).toBe('true')
 })
 it('V73 never fabricates audit if API returns older V54 chart without it',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>base}))
@@ -67,5 +78,6 @@ it('V73 never fabricates audit if API returns older V54 chart without it',async(
  fireEvent.click(screen.getByRole('button',{name:'按所选时间起局'}))
  expect(await screen.findByText('阳遁4局 · 下元')).toBeTruthy()
  expect(screen.queryByRole('region',{name:'V73 奇门四层整盘交叉审计'})).toBeNull()
+ expect(screen.queryByRole('button',{name:'整盘校核'})).toBeNull()
  expect(screen.getByRole('group',{name:'V51 奇门九宫星门转盘'})).toBeTruthy()
 })

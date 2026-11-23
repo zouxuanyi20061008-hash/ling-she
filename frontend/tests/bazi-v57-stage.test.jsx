@@ -46,6 +46,13 @@ it('V57 opt-in request sends chosen Beijing date and returns twelve monthly wind
  expect(within(board).getAllByText(/第 \d+ 月/).length).toBe(12)
  expect(within(board).getByText('庚寅')).toBeTruthy()
  expect(screen.getByText(/大运对应：未选择大运排法/)).toBeTruthy()
+ const navigation=within(screen.getByRole('group',{name:'八字结果分类'}))
+ const flowToggle=navigation.getByRole('button',{name:'流年流月'})
+ fireEvent.click(flowToggle)
+ expect(flowToggle.getAttribute('aria-pressed')).toBe('true')
+ fireEvent.click(navigation.getByRole('button',{name:'四柱'}))
+ expect(screen.getByLabelText('八字流年日期').value).toBe('2026-02-04')
+ expect(request).toHaveBeenCalledTimes(1)
 })
 
 it('V57 default response V55 remains usable and no unsolicited flow dates',async()=>{
@@ -58,4 +65,5 @@ it('V57 default response V55 remains usable and no unsolicited flow dates',async
  const args=JSON.parse(request.mock.calls[0][1].body)
  expect(args.flow_solar_date).toBeUndefined()
  expect(screen.queryByRole('group',{name:'十二节令流月表'})).toBeNull()
+ expect(screen.queryByRole('button',{name:'流年流月'})).toBeNull()
 })

@@ -4,7 +4,10 @@ import LiurenV58 from './LiurenV58.jsx'
 import TaiyiV64 from './TaiyiV64.jsx'
 import ZiweiV68 from './ZiweiV68.jsx'
 import FengshuiV70 from './FengshuiV70.jsx'
+import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
 import './academy.css'
+import './knowledge-mobile.css'
+import './knowledge-cast-mobile.css'
 
 const PALACES=[
   {n:4,name:'巽',dir:'东南',desc:'风行而入，往来与逐渐渗透'},
@@ -25,6 +28,8 @@ const DOORS=[
 const STEMS=[['甲','木'],['乙','木'],['丙','火'],['丁','火'],['戊','土'],['己','土'],['庚','金'],['辛','金'],['壬','水'],['癸','水']]
 const BRANCHES=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
 const PILLARS=['年柱','月柱','日柱','时柱']
+const QIMEN_CAST_NOTES='真实九宫地盘、星门神盘保持不变；增加三奇入墓与古籍六甲式三奇得使，并单独列出另一种值使门同宫口径，绝不合并判定。'
+const BAZI_CAST_NOTES='出生四柱按立春、十二节交接计算；大运可选传统规则或手动顺逆。也可另外选择任意北京时间，查看那一刻的流年、流月及整年十二节令月表。'
 export default function KnowledgeStage({mode,onBack,onStudy}) {
   const art=ARTS.find(a=>a.id===mode)||ARTS[2]
   const isQimen=mode==='qimen',isBazi=mode==='bazi',isLiuren=mode==='liuren',isTaiyi=mode==='taiyi',isZiwei=mode==='ziwei',isFengshui=mode==='fengshui'
@@ -40,6 +45,8 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
   const [qimenBusy,setQimenBusy]=useState(false)
   const [qimenError,setQimenError]=useState('')
   const qimenRequest=useRef(0)
+  const qimenPalaceBoard=useRef(null)
+  const qimenPalaceDetail=useRef(null)
   function invalidateQimen(){
     qimenRequest.current+=1
     setQimenChart(null);setQimenBusy(false);setQimenError('')
@@ -111,6 +118,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
     }
   }
   const palace=PALACES.find(a=>a.n===palaceNum)
+  const stageNotes=<>{art.brief}　{art.detail}。<br/>{isQimen?'V73 已对地盘、天盘九星、八门、八神做逐宫一致性审计，保留三奇双口径和未核验的暗干、流派及断课边界。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V76 对反吟同深课核对原典适用范围：《探原》为戊辰、戊戌明示通则，《存验》只限戊辰日戌将辰时独立实占；其它同形盘不可套用单例。':isZiwei?'V69 已实算十二颗辅煞及生年四化，壬年化科分两套流派口径核验；流年四化、其余杂曜仍待实现。':isFengshui?'V71 以真实立春时刻定三元九运，按下卦法排运、山、向三星；兼向替卦、临近山界暂不出星盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</>
   return <main className={"academy-stage academy-stage--"+mode+" academy-knowledge-mode"}>
     <div className="academy-container">
       <header className="academy-stage-nav"><button onClick={onBack}>← 返回万象书院</button><b>{art.group} · {art.name}</b><button onClick={onStudy}>藏经阁 ◎</button></header>
@@ -123,7 +131,10 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           <span>{art.brief}　{art.detail}。<br/>
             V85 以《太乙金镜式经》阴遁第六纪壬子元27局独立验收主29客4及四将；气应派六纪天目只算三个纪首条件相位，缺现代历元证据时不选择真实大将。
           </span>
-        </details>:<span>{art.brief}　{art.detail}。<br/>{isQimen?'V73 已对地盘、天盘九星、八门、八神做逐宫一致性审计，保留三奇双口径和未核验的暗干、流派及断课边界。':isBazi?'V57 新增按立春、十二节即时换算的流年流月整表，并可将选定时刻对应至十年大运；历史交节边界均可复核。':isLiuren?'V76 对反吟同深课核对原典适用范围：《探原》为戊辰、戊戌明示通则，《存验》只限戊辰日戌将辰时独立实占；其它同形盘不可套用单例。':isZiwei?'V69 已实算十二颗辅煞及生年四化，壬年化科分两套流派口径核验；流年四化、其余杂曜仍待实现。':isFengshui?'V71 以真实立春时刻定三元九运，按下卦法排运、山、向三星；兼向替卦、临近山界暂不出星盘。':'本门目前提供学馆入口，待逐条核实古籍规则后再补排盘。'}</span>}
+        </details>:<>
+          <span className="academy-desktop-notes">{stageNotes}</span>
+          <details className="academy-mobile-notes"><summary>研习说明</summary><span>{stageNotes}</span></details>
+        </>}
       </div><div className="academy-stage-glyph">{art.symbol}</div></section>
       <div className="academy-knowledge-status"><span>本门研习方式</span><b>{isQimen?'V73 四层转盘 · 逐宫校核':isBazi?'V57 四柱大运 · 流年流月':isLiuren?'V76 反吟复等 · 原典范围校核':isTaiyi?'V85 阴遁独立例课 · V67 岁计':isZiwei?'V69 十四正曜 · 十二辅煞 · 生年四化':isFengshui?'V71 三元九运 · 玄空下卦':'古籍导览 · 按章研习'}</b><small>{isQimen?'值符值使 · 星门神一致性 · 未决流派显式保留':isBazi?'十二节令流月 · 交节流年 · 大运时段定位':isLiuren?'明示两日通则 · 单张实占严守时将 · 其余保留待判':isTaiyi?'阴遁315真例 · 六纪天目三相位 · 主客未决':isZiwei?'十二辅煞 · 生年四化 · 异文分栏' :isFengshui?'立春定运 · 玄空三盘 · 山界替卦保护':'独立主题 · 后续按本门术法逐步完善'}</small></div>
       {isLiuren&&<LiurenV58/>}
@@ -132,7 +143,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
       {isFengshui&&<FengshuiV70/>}
       {isQimen&&<section className="qimen-v50">
         <header><small>V54 · 时家奇门 / 拆补法</small><h2>北京时间定局 · 九宫星门转盘</h2>
-          <p>真实九宫地盘、星门神盘保持不变；增加三奇入墓与古籍六甲式三奇得使，并单独列出另一种值使门同宫口径，绝不合并判定。</p>
+          <p className="knowledge-cast-intro">{QIMEN_CAST_NOTES}</p>
         </header>
         <form onSubmit={castActualQimen} className="qimen-v50-form">
           <label>公历日期（中国时间）
@@ -153,7 +164,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           <button type="submit" disabled={qimenBusy}>{qimenBusy?'正在计算…':'按所选时间起局'}</button>
         </form>
         {qimenError&&<p role="alert" className="academy-caution">{qimenError}</p>}
-        {qimenChart&&<div className="qimen-v50-result">
+        <details className="knowledge-cast-notes"><summary>查看奇门排盘说明</summary><p>{QIMEN_CAST_NOTES}</p></details>
+        {qimenChart&&<div className="qimen-v50-result" tabIndex={-1} ref={focusCastResultOnMobile}>
+          {qimenChart.input_provenance?.warnings?.map((w,i)=>
+            <p key={i} className="academy-caution">{w}</p>)}
+          <CastResultPanels label="奇门结果分类" defaultValue="plate">
+          <CastResultPanel value="summary" label="定局摘要">
           <div className="qimen-v50-summary">
             <strong>{qimenChart.ju_label} · {qimenChart.yuan}</strong>
             <span>节气：{qimenChart.solar_term} · 日柱 {qimenChart.day_ganzhi} · 时柱 {qimenChart.hour_ganzhi}</span>
@@ -191,7 +207,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               值使门同宫另一口径：{qimenChart.wonder_rule_review.chief_door_overlap_positions.join('、')||'本盘未见'}。
               分歧宫位：{qimenChart.wonder_rule_review.interpretation_disagreements.join('、')||'无'}。</span>}
           </div>
-          {qimenChart.core_plate_audit&&<section className="qimen-v73-audit"
+          </CastResultPanel>
+          {qimenChart.core_plate_audit&&<CastResultPanel value="audit" label="整盘校核">
+            <section className="qimen-v73-audit"
               aria-label="V73 奇门四层整盘交叉审计">
               <h3>V73 · 四层转盘完整性校核</h3>
               <p>经核对的核心层：
@@ -209,12 +227,18 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                 target="_blank" rel="noopener noreferrer">
                 查阅完整九宫独立例盘依据
               </a>
-            </section>}
-          <div className="academy-nine qimen-v50-nine" role="group"
+            </section>
+          </CastResultPanel>}
+          <CastResultPanel value="plate" label="九宫盘">
+          <div className="academy-nine qimen-v50-nine" role="group" tabIndex={-1} ref={qimenPalaceBoard}
             aria-label={qimenChart.has_rotated_stars_and_gates?'V51 奇门九宫星门转盘':'V50 奇门九宫真实地盘'}>
             {qimenChart.palaces.map(p=><button type="button" key={p.number}
               className={palaceNum===p.number?'active':''}
-              onClick={()=>setPalaceNum(p.number)}>
+              aria-pressed={palaceNum===p.number}
+              onClick={()=>{
+                setPalaceNum(p.number)
+                focusCastResultOnMobile(qimenPalaceDetail.current)
+              }}>
               <small>{p.name}宫 · {p.number}</small>
               {qimenChart.has_eight_spirits&&<small className="qimen-v52-spirit">{p.actual_spirit||'中宫无神'}</small>}
               {qimenChart.has_rotated_stars_and_gates?
@@ -232,7 +256,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                 <><strong>{p.earth_stem}</strong><b>地盘</b></>}
             </button>)}
           </div>
-          <div className="qimen-v50-palace">
+          <div className="qimen-v50-palace" tabIndex={-1} ref={qimenPalaceDetail}>
+            <button type="button" className="knowledge-back-to-chart"
+              onClick={()=>focusCastResultOnMobile(qimenPalaceBoard.current)}>返回九宫选宫</button>
             {qimenChart.palaces.filter(p=>p.number===palaceNum).map(p=>
               <p key={p.number}><b>{p.name}{p.number}宫</b> · 地盘 {p.earth_stem}。
                 {qimenChart.has_rotated_stars_and_gates?
@@ -277,8 +303,8 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
                   <>{p.original_star}、{p.original_door||'中宫不安八门'}为固定本宫出处，
                     <strong>不是</strong>此时天盘星门的实际落宫。</>}</p>)}
           </div>
-          {qimenChart.input_provenance?.warnings?.map((w,i)=>
-            <p key={i} className="academy-caution">{w}</p>)}
+          </CastResultPanel>
+          <CastResultPanel value="references" label="说明与原典">
           <p className="academy-caution">{qimenChart.wonder_rule_review?
             'V54 三奇入墓与古籍六甲式三奇得使已分别校验；值使门同宫属于其他解释口径，严格开休生值使门也单列。暗干尚未独立例盘核验，所有格名均不可直接推断吉凶。':
             qimenChart.has_ten_stem_lookup?
@@ -289,14 +315,16 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
             'V51 天盘九星、八门已按时辰实际转宫，但八神、旬空、马星和格局尚未完成；不是全部层次齐备的完整奇门时盘。':
             '当前只有 V50 地盘，九星、八门与八神尚未完成。不是完整奇门时盘。'}
             不提供据此判定的吉凶、择时或方位。</p>
-          <a href={qimenChart.reference} target="_blank" rel="noopener noreferrer">原典：《奇门遁甲元灵经》卷一</a>
+          <a className="qimen-v50-source" href={qimenChart.reference} target="_blank" rel="noopener noreferrer">原典：《奇门遁甲元灵经》卷一</a>
+          </CastResultPanel>
+          </CastResultPanels>
         </div>}
       </section>}
       {isBazi&&<section className="bazi-v55" aria-label="V55 四柱八字真实排盘">
         <header>
           <small>V57 · 节令四柱、大运与流年流月</small>
           <h2>输入出生时刻 · 计算真实四柱</h2>
-          <p>出生四柱按立春、十二节交接计算；大运可选传统规则或手动顺逆。也可另外选择任意北京时间，查看那一刻的流年、流月及整年十二节令月表。</p>
+          <p className="knowledge-cast-intro">{BAZI_CAST_NOTES}</p>
         </header>
         <form className="bazi-v55-form" onSubmit={castActualBazi}>
           <label>公历出生日期
@@ -348,7 +376,12 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
           </button>
         </form>
         {baziError&&<p role="alert" className="academy-caution">{baziError}</p>}
-        {baziChart&&<div className="bazi-v55-result">
+        <details className="knowledge-cast-notes"><summary>查看四柱排盘说明</summary><p>{BAZI_CAST_NOTES}</p></details>
+        {baziChart&&<div className="bazi-v55-result" tabIndex={-1} ref={focusCastResultOnMobile}>
+          {baziChart.warnings.map((w,i)=>
+            <p key={i} className="academy-caution">{w}</p>)}
+          <CastResultPanels label="八字结果分类">
+          <CastResultPanel value="pillars" label="四柱">
           <div className="bazi-v55-meta">
             <strong>日主 {baziChart.day_master} · {baziChart.day_master_element}</strong>
             <span>北京时间：{baziChart.beijing_time.replace('T',' ')}</span>
@@ -373,7 +406,9 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               </div>
             </article>)}
           </div>
-          {baziChart.luck&&<section className="bazi-v56-luck" aria-label="V56 八步十年大运">
+          </CastResultPanel>
+          {baziChart.luck&&<CastResultPanel value="luck" label="十年大运">
+          <section className="bazi-v56-luck" aria-label="V56 八步十年大运">
             <header><small>V56 · 时家节令起运</small>
               <h3>十年大运 · {baziChart.luck.direction}</h3>
               <p>所选口径：{baziChart.luck.mode_label}。传统男女命是历史排运算法的名称，也可直接指定顺逆，不推断身份。</p>
@@ -402,8 +437,10 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               </article>)}
             </div>
             <p className="academy-caution">大运只是传统干支时间结构，不代表个人健康、事业、婚姻或财富的预测；没有进行出生地真太阳时、流年和完整断课。</p>
-          </section>}
-          {baziChart.flow&&<section className="bazi-v57-flow" aria-label="V57 真实流年流月">
+          </section>
+          </CastResultPanel>}
+          {baziChart.flow&&<CastResultPanel value="flow" label="流年流月">
+          <section className="bazi-v57-flow" aria-label="V57 真实流年流月">
             <header><small>V57 · 立春与十二节令时间窗</small>
               <h3>流年 {baziChart.flow.year.ganzhi} · 流月 {baziChart.flow.month.ganzhi}</h3>
               <p>查看时刻：{baziChart.flow.target_beijing_time.replace('T',' ')}；
@@ -428,13 +465,15 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
               </article>)}
             </div>
             <p className="academy-caution">十二流月按真实节气“节”分割，不是农历月初或每月1日。大运对应只是时间包含关系，不判断财富、婚姻、健康、事业或事件应期。</p>
-          </section>}
-          {baziChart.warnings.map((w,i)=>
-            <p key={i} className="academy-caution">{w}</p>)}
+          </section>
+          </CastResultPanel>}
+          <CastResultPanel value="references" label="说明与出处">
           <p className="academy-caution">年柱依立春、月柱依交节；本盘使用北京时间而非出生地真太阳时。
             {baziChart.luck?'所选大运已经推算；':'未选择大运规则；'}{baziChart.flow?'流年和十二节令流月已按北京时间计算；':'流年流月未选择；'}完整命理分析尚未完成，十神仅说明传统五行结构。</p>
-          <a href={baziChart.source.independent_fixed_cases_reference}
+          <a className="bazi-v55-source" href={baziChart.source.independent_fixed_cases_reference}
             rel="noopener noreferrer" target="_blank">历法与固定例盘核验依据</a>
+          </CastResultPanel>
+          </CastResultPanels>
         </div>}
       </section>}
       {(isLiuren||isTaiyi||isFengshui)?null:isQimen?<section className="academy-learning-layout">

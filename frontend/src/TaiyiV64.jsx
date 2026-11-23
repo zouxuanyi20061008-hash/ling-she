@@ -1,9 +1,9 @@
 import {useId,useRef,useState} from 'react'
 import './academy.css'
 import './taiyi-mobile.css'
+import './taiyi-result-panels.css'
 import TaiyiV77Hour from './TaiyiV77Hour.jsx'
-import TaiyiResultPanels,{TaiyiResultPanel} from './TaiyiResultPanels.jsx'
-import {focusTaiyiResultOnMobile} from './taiyi-mobile.js'
+import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
   year:'numeric'}).format(new Date()))
@@ -87,7 +87,7 @@ function TaiyiYear({id}){
         不把冬夏至转换的时计阴阳规则混入。V67 已实算岁计定计目、定计大将与参将，并记录中五不出；仍可切换《武备志》同宫取算与 V65 谨慎待算口径。</p>
     </details>
     {chart&&<section className="taiyi-v64-result" aria-label="太乙岁计排盘结果"
-        tabIndex={-1} ref={focusTaiyiResultOnMobile}>
+        tabIndex={-1} ref={focusCastResultOnMobile}>
       <div className="taiyi-v64-overview">
         <strong>{chart.year.gregorian_year}年 · {chart.year.five_yuan_name} · {chart.year.ju_label}</strong>
         <div><span>历史积年：{chart.year.accumulated_years.toLocaleString('zh-CN')}</span>
@@ -97,8 +97,8 @@ function TaiyiYear({id}){
           {chart.year.taiyi_palace.trigram}（{chart.year.taiyi_palace.direction}）
           · {chart.year.year_governing} · 本宫第 {chart.year.year_of_palace} 年</p>
       </div>
-      <TaiyiResultPanels label="岁计结果分类">
-      <TaiyiResultPanel value="board" label="盘面">
+      <CastResultPanels label="岁计结果分类">
+      <CastResultPanel value="board" label="盘面">
       <h3>太乙式九宫（上南下北）</h3>
       <div className="taiyi-v64-palaces" role="group" aria-label="太乙式九宫岁计盘">
         {chart.nine_palaces.map(p=><button type="button" key={p.number}
@@ -137,8 +137,8 @@ function TaiyiYear({id}){
         <p>太乙式数字按“一乾、二离、三艮、四震、六兑、七坤、八坎、九巽”，
           不是常见洛书的“坎一离九”；中宫五不入。</p>
       </section>
-      </TaiyiResultPanel>
-      <TaiyiResultPanel value="main-guest" label="主客">
+      </CastResultPanel>
+      <CastResultPanel value="main-guest" label="主客">
       {chart.main_guest.heaven_eye_wenchang&&<>
         <section className="taiyi-v65-marks" aria-label="V65 十六神与文昌始击定位">
           <h3>十六神 · 文昌与始击实算</h3>
@@ -245,8 +245,8 @@ function TaiyiYear({id}){
           <strong>仅为古籍原文校验值，并非本版主客计算结果。</strong>
         </p>}
       </section>}
-      </TaiyiResultPanel>
-      {(chart.dingji_v67||chart.middle_five_states)&&<TaiyiResultPanel value="dingji" label="定计">
+      </CastResultPanel>
+      {(chart.dingji_v67||chart.middle_five_states)&&<CastResultPanel value="dingji" label="定计">
       {chart.dingji_v67&&<section className="taiyi-v67-dingji"
           role="group" aria-label="V67 定计目及大参将真实计算">
         <h3>定计 · 六合旋盘与逐宫求算</h3>
@@ -299,8 +299,8 @@ function TaiyiYear({id}){
           </div>:<p>本年没有计算值落中五的主客或定计大参将。</p>}
         <p>“中五不出”是古籍排盘中的术语，不代表现实情况的预测。</p>
       </section>}
-      </TaiyiResultPanel>}
-      <TaiyiResultPanel value="sources" label="古籍原文">
+      </CastResultPanel>}
+      <CastResultPanel value="sources" label="古籍原文">
       <p className="academy-caution">V67 为古典岁计结构推演，不包含月计、日计、时计或现代事件预测。
         不同太乙历元传承不能混用；同宫主客异派口径并列，不将未核准的主客将数字充当默认排盘结论。</p>
       <a href={chart.sources.historical_1624} target="_blank" rel="noopener noreferrer">
@@ -308,8 +308,8 @@ function TaiyiYear({id}){
       <span className="taiyi-v64-source-sep"> · </span>
       <a href={chart.sources.historical_1561} target="_blank" rel="noopener noreferrer">
         《太乙金钥匙》1561 年年局案例</a>
-      </TaiyiResultPanel>
-      </TaiyiResultPanels>
+      </CastResultPanel>
+      </CastResultPanels>
     </section>}
   </section>
 }

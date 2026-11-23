@@ -1,9 +1,14 @@
-import {useState,useRef} from 'react'
+import {useId,useState,useRef} from 'react'
 import './academy.css'
+import './liuren-mobile.css'
+import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
 
 const BEIJING_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
+const METHOD_DESCRIPTION='月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。'
 
 export default function LiurenV58(){
+  const optionsId=useId()
+  const [optionsOpen,setOptionsOpen]=useState(false)
   const [date,setDate]=useState(BEIJING_DATE)
   const [clock,setClock]=useState('12:00')
   const [dayBoundary,setDayBoundary]=useState('zi_hour')
@@ -43,10 +48,14 @@ export default function LiurenV58(){
       if(ticket===requestVersion.current)setBusy(false)
     }
   }
+  const hasTransmissionReview=(chart?.historical_witness_v76?.applied&&
+    chart.historical_witness_v76.category==='fanyin_tied_classical_witness')||
+    chart?.fanyin_shehai_v75?.applied||Boolean(chart?.pending_branch_review||chart?.transmission_review||
+      chart?.shehai_v61?.full_path_witnesses)
   return <section className="liuren-v58" aria-label="V76 大六壬真实起课">
-    <header><small>V76 · 大六壬 / 反吟复等原典证据与严谨取传</small>
+    <header className="liuren-v58-heading"><small>V76 · 大六壬 / 反吟复等原典证据与严谨取传</small>
       <h2>北京时间起课 · 十二宫天地盘</h2>
-      <p>月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。</p>
+      <p>{METHOD_DESCRIPTION}</p>
     </header>
     <form className="liuren-v58-form" onSubmit={cast}>
       <label>公历起课日期
@@ -57,6 +66,9 @@ export default function LiurenV58(){
         <input aria-label="六壬北京时间" type="time" value={clock}
           onChange={e=>{setClock(e.target.value);invalidate()}} required/>
       </label>
+      <button type="button" className="liuren-v58-options-toggle" aria-controls={optionsId}
+        aria-expanded={optionsOpen} onClick={()=>setOptionsOpen(open=>!open)}>起课口径与说明</button>
+      <div id={optionsId} className="liuren-v58-options" data-open={optionsOpen}>
       <label>日柱换日口径
         <select aria-label="六壬换日规则" value={dayBoundary}
           onChange={e=>{setDayBoundary(e.target.value);invalidate()}}>
@@ -81,10 +93,13 @@ export default function LiurenV58(){
         </select>
         <small>仅影响涉害同深的反吟课；《探原》明载两日取亥，《存验》只核到戊辰戌将辰时单例取巳。其余时将不可套用单例。</small>
       </label>
+      <p className="liuren-v58-options-description">{METHOD_DESCRIPTION}</p>
+      </div>
       <button type="submit" disabled={busy}>{busy?'起课中…':'起大六壬天地盘'}</button>
     </form>
     {error&&<p role="alert" className="academy-caution">{error}</p>}
-    {chart&&<div className="liuren-v58-result">
+    {chart&&<div className="liuren-v58-result" role="region" aria-label="大六壬课盘结果" data-has-review={hasTransmissionReview}
+      ref={focusCastResultOnMobile} tabIndex={-1}>
       <div className="liuren-v58-meta">
         <strong>{chart.day_ganzhi}日 · {chart.hour_branch}时 · {chart.month_general}{chart.month_general_name}将</strong>
         <span>上一中气：{chart.calendar_provenance.previous_middle_term.name}，
@@ -93,6 +108,9 @@ export default function LiurenV58(){
           {chart.calendar_provenance.next_middle_term.beijing_time.replace('T',' ')}</span>
         <span>日干寄宫：{chart.day_stem_lodge}；月将按中气、八字月柱按节，两者不同。</span>
       </div>
+      <CastResultPanels label="查看六壬结果" variant="select" defaultValue="palaces">
+      {(chart.heavenly_generals||chart.xun_void_and_dun)&&
+        <CastResultPanel value="cycles" label="天将与旬空" group="课盘">
       {chart.heavenly_generals&&<section className="liuren-v62-generals"
           aria-label="V62 贵人与十二天将">
         <header>
@@ -136,10 +154,13 @@ export default function LiurenV58(){
         <p className="liuren-v63-distinction">注意：十二天将“天空”与六甲旬的“旬空”是两套不同概念。
           本盘不推断真空、假空或现实应期。</p>
       </section>}
+      </CastResultPanel>}
+      <CastResultPanel value="palaces" label="天地盘" group="课盘">
       <h3>十二宫 · 天盘在上、地盘在下</h3>
       <div role="group" aria-label="大六壬十二宫天地盘" className="liuren-v58-plate">
         {chart.palaces.map(p=><button type="button" key={p.earth}
-          className={selected===p.earth?'active':''} onClick={()=>setSelected(p.earth)}>
+          className={selected===p.earth?'active':''} aria-pressed={selected===p.earth}
+          onClick={()=>setSelected(p.earth)}>
           <small>地盘 {p.earth}</small><strong>天盘 {p.heaven}</strong>
           {chart.xun_void_and_dun&&<small className={p.heaven_is_void?'liuren-v63-empty':''}>
             天盘{p.heaven_is_void?'旬空':('遁'+p.heaven_xun_dun)}
@@ -157,6 +178,8 @@ export default function LiurenV58(){
         {chart.xun_void_and_dun&&<span> · 天盘
           {chart.xun_void_and_dun.by_branch[chart.heaven_plate[selected]]||'旬空'}，
           地盘本位{chart.xun_void_and_dun.by_branch[selected]||'旬空'}</span>}</p>
+      </CastResultPanel>
+      <CastResultPanel value="lessons" label="四课" group="课盘">
       <h3>四课 · 上神与下神</h3>
       <div role="group" aria-label="大六壬四课" className="liuren-v58-lessons">
         {chart.four_lessons.map(p=><article key={p.number}>
@@ -171,7 +194,10 @@ export default function LiurenV58(){
           </small>}
         </article>)}
       </div>
-      <h3>三传 · 初传、中传、末传</h3>
+      </CastResultPanel>
+      {hasTransmissionReview&&
+        <CastResultPanel value="review" label="取传校勘" group="依据">
+      <h3 className="liuren-v58-review-heading">三传 · 初传、中传、末传</h3>
       {chart.historical_witness_v76?.applied&&
         chart.historical_witness_v76.category==='fanyin_tied_classical_witness'&&
         <section className="liuren-v76-witness" role="group"
@@ -304,6 +330,9 @@ export default function LiurenV58(){
         <a href={chart.shehai_v61.source} rel="noopener noreferrer"
            target="_blank">《六壬大全》涉害原文</a>
       </section>}
+      </CastResultPanel>}
+      <CastResultPanel value="transmissions" label="三传" group="课盘">
+      <h3 className="liuren-v58-transmissions-heading">三传 · 初传、中传、末传</h3>
       {chart.three_transmissions.status==='computed'?
         <div role="group" aria-label="大六壬三传" className="liuren-v58-transmissions">
           {chart.three_transmissions.transmissions.map(p=><article key={p.order}>
@@ -341,12 +370,16 @@ export default function LiurenV58(){
               <p>逐宫涉害深浅未独立核验；不同口径不可自动择一。</p>
             </div>}
         </div>}
+      </CastResultPanel>
+      <CastResultPanel value="sources" label="出处与提示" group="依据">
       {chart.calendar_provenance.warnings.map((w,i)=>
         <p key={i} className="academy-caution">{w}</p>)}
       <p className="academy-caution">V74 已保留 V62 十二天将、V63 日旬遁干与旬空实算，并修正丁卯、己卯、辛卯伏吟互刑杜传。
         对涉害争议、反吟多克等未决条件仍不自行选择初传；完整九宗门异派、贵人异法、真太阳时与吉凶断课未全部核实。</p>
-      <a href={chart.source.earth_heaven_four_lessons} target="_blank"
+      <a className="liuren-v58-source" href={chart.source.earth_heaven_four_lessons} target="_blank"
         rel="noopener noreferrer">阅读《六壬指南》天地盘与四课原文</a>
+      </CastResultPanel>
+      </CastResultPanels>
     </div>}
   </section>
 }

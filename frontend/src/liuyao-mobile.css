@@ -1,0 +1,128 @@
+.liuyao-navigation,
+.liuyao-result-panel { display: contents; }
+.liuyao-mobile-guide,
+.liuyao-mobile-result-navigation { display: none; }
+.academy-stage--liuyao .liuyao-moving-summary {
+  margin: 14px 0;
+  color: #3d493d;
+  font-size: 13px;
+}
+
+@media (max-width: 650px) {
+  .academy-stage.academy-stage--liuyao { overflow-x: clip; }
+  .academy-stage--liuyao .academy-stage-nav { min-height: 48px; }
+  .academy-stage--liuyao .academy-stage-nav button { min-height: 44px; }
+  .academy-stage.academy-stage--liuyao .academy-stage-banner {
+    min-height: 0;
+    margin-top: 6px;
+    padding: 3px 9px;
+  }
+  .academy-stage--liuyao .academy-stage-banner > div:first-child {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 6px;
+  }
+  .academy-stage.academy-stage--liuyao .academy-stage-banner h1 {
+    margin: 0;
+    font-size: clamp(19px, 5.7vw, 25px);
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .academy-stage--liuyao .academy-stage-banner :is(
+    .method-theme-identity, p, .liuyao-banner-guide, .academy-stage-glyph
+  ) { display: none; }
+  .academy-stage--liuyao .liuyao-mobile-guide { display: block; }
+  .academy-stage--liuyao .liuyao-mobile-guide[open] { flex-basis: 100%; }
+  .liuyao-mobile-guide summary {
+    min-height: 44px;
+    padding: 11px 2px;
+    color: var(--room-banner-ink);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .liuyao-mobile-guide[open] > span { padding-bottom: 10px; }
+
+  .academy-stage--liuyao .liuyao-navigation {
+    position: sticky;
+    z-index: 25;
+    top: 0;
+    display: block;
+    margin-top: 6px;
+    background: #e9d9c4;
+  }
+  .academy-stage--liuyao .liuyao-navigation .liuyao-studio-switch {
+    position: static;
+    margin: 0;
+    padding: 4px;
+    box-shadow: none;
+  }
+  .academy-stage--liuyao .liuyao-navigation .liuyao-studio-switch button {
+    min-height: 44px;
+    padding: 4px 6px;
+    gap: 1px;
+  }
+  .academy-stage--liuyao .liuyao-mobile-result-navigation { display: block; padding: 4px; }
+  .liuyao-mobile-result-navigation label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #583421;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .liuyao-mobile-result-navigation select {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 4px 6px;
+    border: 1px solid #a77d60;
+    border-radius: 6px;
+    background: #fff8ec;
+    color: #583421;
+    font-size: 16px;
+  }
+  .academy-stage--liuyao .academy-computed .review-flow-nav { display: none; }
+  .academy-stage--liuyao .liuyao-workbench-lead { display: none; }
+  .liuyao-result-panel { display: flow-root; }
+  :is(.liuyao-result-panel, .liuyao-ai-panel)[data-current='false'] { display: none; }
+  .academy-stage--liuyao .academy-casting-result[data-mobile-result='ai'] {
+    display: none;
+  }
+
+  .academy-stage--liuyao .liuyao-studio-grid.academy-stage-grid { margin-top: 6px; }
+  .academy-stage--liuyao .academy-quick-question { margin: 6px 0 4px; }
+  .academy-stage--liuyao .academy-quick-question textarea {
+    min-height: 52px;
+    margin-top: 3px;
+    padding: 6px 8px;
+    font-size: 16px;
+  }
+  .academy-stage.academy-stage--liuyao .academy-coin-altar {
+    margin: 8px 0 5px;
+    padding: 7px 8px;
+  }
+  .academy-stage--liuyao .academy-coins { min-height: 60px; gap: 10px; }
+  .academy-stage.academy-stage--liuyao .academy-coin { width: 58px; height: 58px; padding: 5px; }
+  .academy-stage--liuyao .academy-coin-inside::after { width: 12px; height: 12px; }
+  .academy-stage--liuyao .academy-coin-inside span { top: 4px; font-size: 10px; line-height: 1; }
+  .academy-stage--liuyao .academy-coin-inside b { bottom: 4px; font-size: 9px; line-height: 1; }
+  .academy-stage--liuyao .academy-coin-altar > p { margin: 3px 0 5px; }
+  .academy-stage--liuyao .academy-coin-altar .academy-primary {
+    width: 100%;
+    min-height: 44px;
+  }
+  .academy-stage--liuyao .academy-subtitle { margin: 6px 0 4px; }
+  .academy-stage--liuyao .academy-manual { gap: 5px; }
+  .academy-stage--liuyao .academy-manual button { min-height: 44px; padding: 4px; }
+  .academy-stage--liuyao .academy-manual b { font-size: 17px; line-height: 1.1; }
+  .academy-stage--liuyao .academy-under-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    margin-top: 7px;
+  }
+  .academy-stage--liuyao .academy-under-actions button { min-height: 44px; }
+}

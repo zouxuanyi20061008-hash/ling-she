@@ -31,7 +31,7 @@
   .academy-stage--taiyi .academy-knowledge-status,
   .taiyi-cast-header small { display: none; }
 
-  .taiyi-v64 { padding: 8px; margin: 12px 0; }
+  .taiyi-v64 { --cast-result-nav-top: 56px; padding: 8px; margin: 12px 0; }
   .taiyi-cast-switch {
     position: sticky;
     z-index: 2;
@@ -97,7 +97,7 @@
   .taiyi-v79-sides,
   .taiyi-v83-clocks { grid-template-columns: minmax(0, 1fr); }
   .taiyi-v77-result > h4 { margin-block: 6px 4px; line-height: 1.4; }
-  .taiyi-v77-result .taiyi-result-panel > p { margin-block: 4px 8px; line-height: 1.55; }
+  .taiyi-v77-result .cast-result-panel > p { margin-block: 4px 8px; line-height: 1.55; }
   .taiyi-v77-result .taiyi-v77-cell {
     min-height: 64px;
     justify-content: center;

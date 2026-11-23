@@ -1,9 +1,11 @@
 import {useState,useRef} from 'react'
+import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
 import './ziwei-v68.css'
 
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const POS={巳:[1,1],午:[1,2],未:[1,3],申:[1,4],辰:[2,1],酉:[2,4],
  卯:[3,1],戌:[3,4],寅:[4,1],丑:[4,2],子:[4,3],亥:[4,4]}
+const CAST_NOTES='按《紫微斗数全书》卷二安星，生年四化附在真实星曜落宫。壬年化科口径可切换；本版不作实务吉凶判断。'
 
 export default function ZiweiV68(){
  const [calendarType,setCalendarType]=useState('solar')
@@ -53,8 +55,7 @@ export default function ZiweiV68(){
  return <section className="ziwei-v68" aria-label="V69 紫微四化与辅曜真实排盘">
    <header><small>V69 · 紫微斗数 / 四化与辅曜</small>
      <h2>十四正曜 · 十二辅煞 · 生年四化</h2>
-     <p>按《紫微斗数全书》卷二安星，生年四化附在真实星曜落宫。
-       壬年化科口径可切换；本版不作实务吉凶判断。</p>
+     <p className="cast-form-desktop-notes">{CAST_NOTES}</p>
    </header>
    <form onSubmit={submit} className="ziwei-v68-form">
      <label>日期历法
@@ -74,7 +75,7 @@ export default function ZiweiV68(){
          min="1" max="12" value={lunarMonth} onChange={e=>{setLunarMonth(e.target.value);invalidate()}}/></label>
        <label>农历日<input type="number" aria-label="紫微农历日" required
          min="1" max="30" value={lunarDay} onChange={e=>{setLunarDay(e.target.value);invalidate()}}/></label>
-       <label>出生于闰月
+       <label className="ziwei-mobile-leap">出生于闰月
          <input type="checkbox" aria-label="紫微闰月" checked={leap}
            onChange={e=>{setLeap(e.target.checked);invalidate()}}/>
        </label>
@@ -103,7 +104,10 @@ export default function ZiweiV68(){
      <button type="submit" disabled={busy}>{busy?'正在起盘…':'计算紫微命盘'}</button>
    </form>
    {error&&<p role="alert" className="ziwei-v68-error">{error}</p>}
-   {chart&&<div className="ziwei-v68-result">
+   <details className="cast-form-mobile-notes"><summary>紫微排盘说明</summary><p>{CAST_NOTES}</p></details>
+   {chart&&<div className="ziwei-v68-result" tabIndex={-1} ref={focusCastResultOnMobile}>
+     <CastResultPanels label="紫微结果分类" defaultValue="palaces">
+     <CastResultPanel value="summary" label="命盘四化">
      <div className="ziwei-v68-summary">
        <h3>{chart.year_ganzhi}年 · {chart.five_element_bureau.label}</h3>
        <p>公历 {chart.calendar.solar_date} · 农历 {chart.calendar.lunar.display}
@@ -121,6 +125,8 @@ export default function ZiweiV68(){
          </div>
        </>}
      </div>
+     </CastResultPanel>
+     <CastResultPanel value="palaces" label="十二宫">
      <div className="ziwei-v68-scroll">
        <div className="ziwei-v68-grid" role="group" aria-label="V69 紫微十二宫星盘">
          {chart.palaces.map(p=><button key={p.branch} type="button"
@@ -143,7 +149,7 @@ export default function ZiweiV68(){
          </div>
        </div>
      </div>
-     {chosen&&<section className="ziwei-v68-picked" aria-label="当前选中的紫微宫位">
+     {chosen&&<section className="ziwei-v68-picked" aria-label="当前选中的紫微宫位" aria-live="polite">
        <h3>{chosen.ganzhi} · {chosen.name}</h3>
        <p>十四正曜：{chosen.main_stars.join('、')||'本宫无十四主星，不代表没有其他星曜'}。</p>
        {chart.auxiliary_star_positions&&<p>已安辅煞：
@@ -152,6 +158,8 @@ export default function ZiweiV68(){
          生年四化：{chosen.four_transformations.map(x=>x.star+x.name).join('、')}。</p>}
        {chosen.great_limit&&<p>大限：{chosen.great_limit.start_age}–{chosen.great_limit.end_age}岁（传统虚岁）</p>}
      </section>}
+     </CastResultPanel>
+     <CastResultPanel value="sources" label="安星依据">
      <section className="ziwei-v68-trace" aria-label="紫微安星核对步骤">
        <h3>安星可核验步骤</h3>
        <p>{chart.five_element_bureau.number}局、农历{chart.ziwei_trace.day}日，
@@ -174,6 +182,8 @@ export default function ZiweiV68(){
      </section>}
      {chart.warnings?.map((w,i)=><p key={i} className="ziwei-v68-warning">{w}</p>)}
      <p className="ziwei-v68-warning">仍未实现：{chart.not_implemented.join('、')}。</p>
+     </CastResultPanel>
+     </CastResultPanels>
    </div>}
  </section>
 }

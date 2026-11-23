@@ -1092,7 +1092,7 @@
 .qimen-v50-nine button strong{font-size:24px}
 .qimen-v50-palace{background:#fffaf0;padding:12px;color:#355945}
 .qimen-v50 .academy-caution{line-height:1.9;margin-top:10px}
-.qimen-v50-result>a{color:#376549;text-decoration:underline;font-size:12px}
+.qimen-v50-result .qimen-v50-source{color:#376549;text-decoration:underline;font-size:12px}
 @media(max-width:660px){.qimen-v50{padding:12px}.qimen-v50-form{gap:9px}.qimen-v50-form label{flex-basis:110px}.qimen-v50-nine button{min-height:69px}.qimen-v50-nine button strong{font-size:20px}}
 
 /* V51 实际转盘上的星、门、地盘干/天盘干，避免与固定教学盘混淆 */
@@ -1139,7 +1139,7 @@
 .bazi-v55-hidden{display:flex;flex-direction:column;gap:5px;width:100%;border-top:1px solid #e0d0bc;padding-top:9px}
 .bazi-v55-hidden em{font-size:10px;font-style:normal;color:#9a6b4b}
 .bazi-v55-hidden span{font-size:11px}
-.bazi-v55-result>a{font-size:12px;color:#866045;text-decoration:underline}
+.bazi-v55-result .bazi-v55-source{font-size:12px;color:#866045;text-decoration:underline}
 .bazi-v55-result .academy-caution{line-height:1.9;font-size:12px}
 @media(max-width:720px){.bazi-v55-pillar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bazi-v55{padding:13px}.bazi-v55-pillar strong{font-size:27px}}
 
@@ -1197,7 +1197,6 @@
 .liuren-v58-transmissions article strong{font-size:25px;color:#865332}
 .liuren-v58-transmissions p{flex-basis:100%;font-size:12px}
 .liuren-v58-pending{background:#fff9ec;border:1px solid #cab797;padding:13px;font-size:12px;line-height:1.8}
-.liuren-v58-result>a{font-size:12px;color:#295e73;text-decoration:underline}
 @media(max-width:680px){.liuren-v58{padding:12px}.liuren-v58-plate{grid-template-columns:repeat(3,minmax(0,1fr))}.liuren-v58-lessons{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* V59 三传发用依据以及未决涉害候选清晰分栏 */
@@ -1290,7 +1289,7 @@
 .taiyi-v64-summary{display:flex;flex-wrap:wrap;gap:9px}
 .taiyi-v64-summary span{border:1px solid #b8ceb9;background:#fff;padding:8px;font-size:11px}
 .taiyi-v64-pending{background:#fff9eb;border-color:#d4c39e}
-.taiyi-v64-result .taiyi-result-panel>a{font-size:12px;color:#2d7255;text-decoration:underline}
+.taiyi-v64-result .cast-result-panel>a{font-size:12px;color:#2d7255;text-decoration:underline}
 .taiyi-v64-source-sep{font-size:11px}
 @media(max-width:630px){.taiyi-v64{padding:12px}.taiyi-v64-palaces button{min-height:78px;padding:8px 2px}.taiyi-v64-palaces button strong{font-size:14px}}
 

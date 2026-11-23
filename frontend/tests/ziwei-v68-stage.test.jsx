@@ -35,6 +35,12 @@ it('V68 actual Ziwei entrance posts birth time and shows twelve selectable stars
  expect(within(grid).getByText('紫微 · 贪狼')).toBeTruthy()
  fireEvent.click(within(grid).getByRole('button',{name:/甲卯/}))
  expect(screen.getByRole('region',{name:'当前选中的紫微宫位'}).textContent).toContain('紫微')
+ const navigation=within(screen.getByRole('group',{name:'紫微结果分类'}))
+ expect(navigation.getByRole('button',{name:'十二宫'}).getAttribute('aria-pressed')).toBe('true')
+ fireEvent.click(navigation.getByRole('button',{name:'安星依据'}))
+ fireEvent.click(navigation.getByRole('button',{name:'十二宫'}))
+ expect(within(grid).getByRole('button',{name:/甲卯/}).getAttribute('aria-pressed')).toBe('true')
+ expect(spy).toHaveBeenCalledTimes(1)
 })
 it('V68 lunar leap fields and alternate convention sent exactly',async()=>{
  const spy=vi.fn().mockResolvedValue({ok:true,json:async()=>chart})

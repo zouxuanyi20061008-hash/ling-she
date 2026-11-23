@@ -1,5 +1,8 @@
 import {useState,useRef} from 'react'
+import CastResultPanels,{CastResultPanel,focusCastResultOnMobile} from './CastResultPanels.jsx'
 import './fengshui-v70.css'
+
+const CAST_NOTES='按罗盘角度实际换算坐向、二十四山和后天八卦九宫。输入方位角从正北顺时针测量，0°为北、90°为东、180°为南、270°为西。选填真实立极或入住日期后，另按立春起三元九运及下卦运、山、向三星盘；不声称已经实地测定房屋坐向，也不代替玄空替卦规则。'
 
 export default function FengshuiV70(){
   const [bearing,setBearing]=useState('0')
@@ -64,10 +67,7 @@ export default function FengshuiV70(){
     <header>
       <small>V71 · 堪舆风水 / 二十四山与玄空下卦</small>
       <h2>二十四山坐向 · 三元九运 · 玄空三盘</h2>
-      <p>按罗盘角度实际换算坐向、二十四山和后天八卦九宫。输入方位角从正北
-        顺时针测量，0°为北、90°为东、180°为南、270°为西。
-        选填真实立极或入住日期后，另按立春起三元九运及下卦运、山、向三星盘；
-        不声称已经实地测定房屋坐向，也不代替玄空替卦规则。</p>
+      <p className="cast-form-desktop-notes">{CAST_NOTES}</p>
     </header>
     <form onSubmit={calculate} className="fengshui-v70-form">
       <label>量得方位角（0°～360°）
@@ -114,7 +114,10 @@ export default function FengshuiV70(){
       <button type="submit" disabled={busy}>{busy?'正在计算…':enableFlying?'计算玄空三盘':'计算二十四山坐向'}</button>
     </form>
     {error&&<p className="fengshui-v70-error" role="alert">{error}</p>}
-    {chart&&<div className="fengshui-v70-result">
+    <details className="cast-form-mobile-notes"><summary>堪舆排盘说明</summary><p>{CAST_NOTES}</p></details>
+    {chart&&<div className="fengshui-v70-result" tabIndex={-1} ref={focusCastResultOnMobile}>
+      <CastResultPanels label="堪舆结果分类" variant={chart.flying_stars?'select':'buttons'}>
+      <CastResultPanel value="direction" label="坐向运期">
       <section className="fengshui-v70-summary" aria-label="堪舆计算结果">
         <small>当前坐向 · {chart.version}</small>
         <h3>{chart.axis_label}</h3>
@@ -156,6 +159,8 @@ export default function FengshuiV70(){
              '偏离本山中心超过4.5°，可能需要兼向替卦：只给出元运，不生成三盘。'}
           </p>}
       </section>}
+      </CastResultPanel>
+      <CastResultPanel value="board" label="九宫盘">
       <h3>{chart.flying_stars?'玄空飞星 · 运/山/向三盘':'后天九宫坐向定位'}</h3>
       <div className="fengshui-v70-palace-grid" role="group"
         aria-label="V70 堪舆后天九宫">
@@ -176,7 +181,9 @@ export default function FengshuiV70(){
       </div>
       <p className="fengshui-v70-note">九宫上南下北、左东右西；中五不对应二十四山。
         {chart.flying_stars?'每宫三数字为实际计算的运星、山星、向星；不会自动判断吉凶。':'此处只显示固定后天方位；没有立极日期就不显示飞星盘。'}</p>
-      {chart.flying_stars&&<section className="fengshui-v71-trace"
+      </CastResultPanel>
+      {chart.flying_stars&&<CastResultPanel value="flight" label="飞布路径">
+      <section className="fengshui-v71-trace"
         aria-label="V71 玄空飞星逐步溯源">
         <h3>三盘飞布路径 · 可核对</h3>
         <p>洛书顺序：{chart.flying_stars.flight_path.join(' → ')}；
@@ -196,7 +203,9 @@ export default function FengshuiV70(){
           {chart.flying_stars.facing_trace.direction}）
           {chart.flying_stars.facing_trace.borrowed_five?'，五黄借本运星本宫':''}。</p>
         <p>规则边界：{chart.flying_stars.rules.limit}</p>
-      </section>}
+      </section>
+      </CastResultPanel>}
+      <CastResultPanel value="mountains" label="二十四山">
       <h3>二十四山 · 各山中心与区间</h3>
       <div className="fengshui-v70-mountains" role="group" aria-label="V70 二十四山逐山核对">
         {chart.twenty_four_mountains.map(m=><button key={m.mountain} type="button"
@@ -215,6 +224,8 @@ export default function FengshuiV70(){
         <p>对向：{picked.opposite_mountain} · {picked.direction}
           · 五行{picked.element}。本区间起点归本山，终点归下一山。</p>
       </section>}
+      </CastResultPanel>
+      <CastResultPanel value="sources" label="计算依据">
       <section className="fengshui-v70-rules" aria-label="堪舆计算约定与局限">
         <h3>计算口径与未实现项目</h3>
         <p>{chart.compass_convention.mountain_intervals}；
@@ -228,6 +239,8 @@ export default function FengshuiV70(){
           查阅二十四山角度对照资料 ↗
         </a>
       </section>
+      </CastResultPanel>
+      </CastResultPanels>
     </div>}
   </section>
 }
