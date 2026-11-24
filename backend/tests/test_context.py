@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 from app.clarification import followup_question
@@ -164,12 +165,19 @@ def test_offline_cast_keeps_new_dual_layer_without_ai():
     assert chart["reading_guide"]["relationship"]
 
 
-def test_personal_deepseek_key_is_transient_and_preferred(monkeypatch):
+@pytest.mark.parametrize(("route", "model", "provider_model", "thinking"), [
+    ("/api/interpret", "deepseek-flash", "deepseek-flash", "disabled"),
+    ("/api/liuyao/interpret", "deepseek-v4-pro", "deepseek-v4-pro", "enabled"),
+    ("/api/interpret", "deepseek-chat", "deepseek-flash", "disabled"),
+    ("/api/liuyao/interpret", "deepseek-reasoner", "deepseek-flash", "enabled"),
+])
+def test_personal_deepseek_key_is_transient_and_preferred(monkeypatch, route, model, provider_model, thinking):
     import importlib
     import io, json
     server=importlib.import_module("app.main")
     monkeypatch.setenv("LLM_API_KEY","sk-site-owner-key-not-used")
     monkeypatch.setenv("AI_ACCESS_CODE","server-only-access-code")
+    monkeypatch.setattr(server, "rate_limit", lambda _ip: None)
     captured={}
     def fake_call(outbound,timeout):
         captured["url"]=outbound.full_url
@@ -180,21 +188,59 @@ def test_personal_deepseek_key_is_transient_and_preferred(monkeypatch):
     client=TestClient(server.app)
     payload={
         "question":"朋友之间这件事该怎么看",
-        "value":"5,2",
-        "time_iso":"2026-10-22T02:15:00+09:00",
         "background":"目前朋友正在沟通合作条款",
         "background_confirmed":True,
-        "ai_model":"deepseek-reasoner"
+        "ai_model":model,
     }
-    result=client.post("/api/interpret",json=payload,headers={"X-User-API-Key":"sk-personaltest123456"})
+    if route == "/api/interpret":
+        payload.update(value="5,2", time_iso="2026-10-22T02:15:00+09:00")
+    else:
+        payload.update(numbers=[7, 8, 9, 6, 8, 7])
+    result=client.post(route,json=payload,headers={"X-User-API-Key":"sk-personaltest123456"})
     assert result.status_code==200
     assert result.json()["interpretation"]=="sample answer"
     assert "sk-personaltest123456" not in result.text
     assert "sk-site-owner-key-not-used" not in result.text
     assert captured["url"]=="https://api.deepseek.com/chat/completions"
     assert captured["auth"]=="Bearer sk-personaltest123456"
-    assert captured["body"]["model"]=="deepseek-reasoner"
+    assert captured["body"]["model"]==provider_model
+    assert captured["body"]["thinking"]=={"type": thinking}
     assert all("sk-personaltest123456" not in msg["content"] for msg in captured["body"]["messages"])
+
+
+@pytest.mark.parametrize(("url", "setting", "expected", "thinking"), [
+    ("https://api.deepseek.com/chat/completions", None, "deepseek-flash", {"type": "disabled"}),
+    ("https://api.deepseek.com/chat/completions", "deepseek-reasoner", "deepseek-flash", {"type": "enabled"}),
+    ("https://example.com/chat/completions", "custom-model", "custom-model", None),
+])
+def test_owner_deepseek_defaults_and_custom_provider(monkeypatch, url, setting, expected, thinking):
+    import importlib
+    import io, json
+    server = importlib.import_module("app.main")
+    monkeypatch.setenv("LLM_API_URL", url)
+    monkeypatch.setenv("LLM_API_KEY", "sk-owner-for-test-only")
+    monkeypatch.delenv("AI_ACCESS_CODE", raising=False)
+    if setting is None:
+        monkeypatch.delenv("LLM_MODEL", raising=False)
+    else:
+        monkeypatch.setenv("LLM_MODEL", setting)
+    monkeypatch.setattr(server, "rate_limit", lambda _ip: None)
+    captured = {}
+
+    def fake_call(outbound, timeout):
+        assert outbound.full_url == url
+        captured.update(json.loads(outbound.data))
+        return io.BytesIO(b'{"choices":[{"message":{"content":"sample answer"}}]}')
+
+    monkeypatch.setattr(server, "urlopen", fake_call)
+    result = TestClient(app).post("/api/interpret", json={
+        "question": "如何处理合作？", "value": "5,2", "time_iso": "2026-10-22T02:15:00+09:00",
+        "background": "已经收到草拟条款。", "background_confirmed": True,
+    })
+    assert result.status_code == 200
+    assert captured["model"] == expected
+    assert captured.get("thinking") == thinking
+
 
 def test_reject_malformed_personal_deepseek_key(monkeypatch):
     monkeypatch.delenv("LLM_API_KEY",raising=False)

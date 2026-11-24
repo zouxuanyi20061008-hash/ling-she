@@ -406,8 +406,8 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
                 </div>
                 <label className="library-setting-label">选择模型
                   <select value={aiModel} onChange={e=>{setAiModel(e.target.value);setNotice('已选择 '+e.target.value)}}>
-                    <option value="deepseek-chat">DeepSeek Chat</option>
-                    <option value="deepseek-reasoner">DeepSeek Reasoner</option>
+                    <option value="deepseek-flash">DeepSeek Flash（快速）</option>
+                    <option value="deepseek-v4-pro">DeepSeek V4 Pro（深入）</option>
                   </select>
                 </label>
                 <label className="library-setting-label">站长访问码（可留空）

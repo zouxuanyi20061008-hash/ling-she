@@ -9,6 +9,7 @@ from collections import defaultdict, deque
 from datetime import datetime, date as date_value, time as time_value
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 from urllib.request import Request as UrlRequest, urlopen
 from urllib.error import HTTPError, URLError
 
@@ -32,13 +33,23 @@ from .core.ziwei import cast_ziwei
 from .client_cors import ClientCORSMiddleware
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
+DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
+DEFAULT_DEEPSEEK_MODEL = "deepseek-flash"
+DeepSeekModel = Literal["deepseek-flash", "deepseek-v4-pro", "deepseek-chat", "deepseek-reasoner"]
+DEEPSEEK_OPTIONS = {
+    "deepseek-flash": ("deepseek-flash", "disabled"),
+    "deepseek-v4-pro": ("deepseek-v4-pro", "enabled"),
+    # Older app packages still send these names. Keep their fast/reasoning behavior.
+    "deepseek-chat": ("deepseek-flash", "disabled"),
+    "deepseek-reasoner": ("deepseek-flash", "enabled"),
+}
 
 class CastRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     question: str = Field(min_length=1,max_length=1000)
     background: str | None = Field(default=None,max_length=1200)
     background_confirmed: bool = False
-    ai_model: Literal["deepseek-chat","deepseek-reasoner"] = "deepseek-chat"
+    ai_model: DeepSeekModel = DEFAULT_DEEPSEEK_MODEL
     value: str = Field(min_length=1,max_length=500)
     observation_first: int | None = Field(default=None,gt=0,le=99999999)
     observation_second: int | None = Field(default=None,gt=0,le=99999999)
@@ -118,7 +129,7 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
         raise HTTPException(422,"个人 API Key 格式不正确；请在藏经阁检查 DeepSeek 密钥。")
     if personal_key:
         key = personal_key
-        endpoint = "https://api.deepseek.com/chat/completions"
+        endpoint = DEEPSEEK_URL
         model = ai_model
     else:
         key = os.getenv("LLM_API_KEY","").strip()
@@ -127,13 +138,19 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
         code = os.getenv("AI_ACCESS_CODE","")
         if code and not secrets.compare_digest(request.headers.get("x-ai-access-code",""),code):
             raise HTTPException(401,"站长设置的 AI 访问码错误")
-        endpoint = os.getenv("LLM_API_URL","https://api.deepseek.com/chat/completions")
-        model = os.getenv("LLM_MODEL","deepseek-chat")
+        endpoint = os.getenv("LLM_API_URL", DEEPSEEK_URL)
+        model = os.getenv("LLM_MODEL")
         if not endpoint.startswith("https://"):
             raise HTTPException(500,"模型 API 地址必须使用 HTTPS")
+    official_deepseek = urlsplit(endpoint).hostname == "api.deepseek.com"
+    if model is None:
+        model = DEFAULT_DEEPSEEK_MODEL if official_deepseek else "deepseek-chat"
     rate_limit(request.client.host if request.client else "unknown")
-    payload = json.dumps({"model":model,"messages":messages,
-                          "temperature":0.5,"stream":False},ensure_ascii=False).encode("utf-8")
+    options = {"model": model, "messages": messages, "temperature": 0.5, "stream": False}
+    if official_deepseek and model in DEEPSEEK_OPTIONS:
+        model_name, thinking = DEEPSEEK_OPTIONS[model]
+        options.update(model=model_name, thinking={"type": thinking})
+    payload = json.dumps(options, ensure_ascii=False).encode("utf-8")
     outbound = UrlRequest(endpoint,data=payload,headers={"Content-Type":"application/json",
                          "Authorization":f"Bearer {key}"},method="POST")
     try:
@@ -321,7 +338,7 @@ class SixYaoReadRequest(SixYaoCastRequest):
     question: str = Field(min_length=1,max_length=1000)
     background: str | None = Field(default=None,max_length=1200)
     background_confirmed: bool = False
-    ai_model: Literal["deepseek-chat","deepseek-reasoner"] = "deepseek-chat"
+    ai_model: DeepSeekModel = DEFAULT_DEEPSEEK_MODEL
 
 def _sixyao_chart(req: SixYaoCastRequest) -> dict:
     """收到已采纳日期时，服务器用原始公历/农历重新换算并记录依据。"""

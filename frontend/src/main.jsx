@@ -29,7 +29,7 @@ function Academy(){
   const [mode,setMode]=useState(routeFromUrl)
   const [learnFrom,setLearnFrom]=useState('liuyao')
   const [personalApiKey,setPersonalApiKey]=useState('')
-  const [aiModel,setAiModel]=useState('deepseek-chat')
+  const [aiModel,setAiModel]=useState('deepseek-flash')
   const [aiAccessCode,setAiAccessCode]=useState('')
   const [activeGroup,setActiveGroup]=useState('全部')
   const [choosePage,setChoosePage]=useState(0)

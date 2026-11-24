@@ -5,7 +5,7 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import App from '../src/App.jsx'
 import {getContextualMeihuaReading,getOracleQuestionTopic} from '../src/oracle-question.js'
 
-const config={personalApiKey:'',aiAccessCode:'',aiModel:'deepseek-chat'}
+const config={personalApiKey:'',aiAccessCode:'',aiModel:'deepseek-flash'}
 const makeChart=name=>{
   const hex={full_name:name,upper:{name:'乾'},lower:{name:'坤'},lines_bottom_to_top:[0,0,0,1,1,1]}
   return {ben_gua:hex,hu_gua:hex,bian_gua:hex,dong_yao:3,ti_gua:{name:'乾',element:'金'},yong_gua:{name:'坤',element:'土'},sheng_ke:'用生体'}
@@ -105,6 +105,7 @@ it('排盘后 AI 请求失败时能在解读页看到原因和重试，已经起
   expect(ai.getByRole('alert').textContent).toBe(message)
   expect(ai.getByRole('button',{name:'结合现实背景 · 深入断事'}).disabled).toBe(false)
   expect(fetchMock.mock.calls.map(([url])=>url)).toEqual(['/api/cast','/api/interpret'])
+  expect(JSON.parse(fetchMock.mock.calls[1][1].body).ai_model).toBe('deepseek-flash')
   fireEvent.click(screen.getByRole('button',{name:/再看卦象/}))
   expect(within(screen.getByRole('region',{name:'观卦'})).getAllByRole('heading',{name:'火水未济'})).toHaveLength(3)
 })
