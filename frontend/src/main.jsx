@@ -21,10 +21,12 @@ const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))
 const CaseExchangeCenter=React.lazy(()=>import('./CaseExchangeCenter.jsx'))
 const CAST_ROUTES=new Set(ARTS.map(art=>art.id))
 const TRIAL_ROUTE='library/trial'
-const VALID_ROUTES=new Set(['home','choose','learn','library',TRIAL_ROUTE,'cases',...CAST_ROUTES])
+const TRIAL_CASE_ROUTE='library/trial/case'
+const VALID_ROUTES=new Set(['home','choose','learn','library',TRIAL_ROUTE,TRIAL_CASE_ROUTE,'cases',...CAST_ROUTES])
 const CAST_RESULT_SUFFIX='/result'
 const canonicalRoute=route=>route==='games'?TRIAL_ROUTE:route
-const isLibraryRoute=route=>route==='library'||route===TRIAL_ROUTE
+const isTrialRoute=route=>route===TRIAL_ROUTE||route===TRIAL_CASE_ROUTE
+const isLibraryRoute=route=>route==='library'||isTrialRoute(route)
 function routeFromUrl(){
   const route=canonicalRoute(window.location.hash.slice(1))
   const method=route.endsWith(CAST_RESULT_SUFFIX)?route.slice(0,-CAST_RESULT_SUFFIX.length):null
@@ -41,7 +43,7 @@ function Academy(){
   const [activeGroup,setActiveGroup]=useState('全部')
   const [choosePage,setChoosePage]=useState(0)
   const [trialExperience,setTrialExperience]=useState(0)
-  const [trialPanel,setTrialPanel]=useState('practice')
+  const [trialPanel,setTrialPanel]=useState(()=>routeFromUrl()===TRIAL_CASE_ROUTE?'cases':'practice')
   const [experience,setExperience]=useState(null)
   const scrollPositions=useRef({home:0,choose:0,[TRIAL_ROUTE]:0})
   const pendingScroll=useRef(null)
@@ -79,6 +81,8 @@ function Academy(){
         setTrialPanel('practice')
       }
       const next=routeFromUrl()
+      if(next===TRIAL_CASE_ROUTE)setTrialPanel('cases')
+      if(next===TRIAL_ROUTE)setTrialPanel(panel=>panel==='cases'?'practice':panel)
       pendingScroll.current=scrollPositions.current[next]??0
       setMode(next)
     }
@@ -118,12 +122,17 @@ function Academy(){
     }
   }
 
-  function changeTrialRoute(open){
-    const next=open?TRIAL_ROUTE:'library'
+  function changeTrialRoute(open,panel=trialPanel){
+    const next=open?(panel==='cases'?TRIAL_CASE_ROUTE:TRIAL_ROUTE):'library'
     if(mode===next)return
     // Library subpages share one browser entry and keep its return destination.
     window.history.replaceState({...window.history.state,academyRoute:next},'','#'+next)
     setMode(next)
+  }
+
+  function changeTrialPanel(panel){
+    setTrialPanel(panel)
+    if(isTrialRoute(mode))changeTrialRoute(true,panel)
   }
 
   function closeLibrary(){
@@ -170,9 +179,9 @@ function Academy(){
       isLibraryRoute(mode)?
       <React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开藏经阁…</main>}>
         <StudyHall onClose={closeLibrary} onPractice={()=>{setLearnFrom('liuyao');navigate('learn')}}
-          trialRoute={mode===TRIAL_ROUTE} onTrialRouteChange={changeTrialRoute}
+          trialRoute={isTrialRoute(mode)} onTrialRouteChange={changeTrialRoute}
           trialExperienceIndex={trialExperience} onTrialExperienceChange={setTrialExperience} onTrialWorkshop={method=>navigate(method)}
-          trialPanel={trialPanel} onTrialPanelChange={setTrialPanel}
+          trialPanel={trialPanel} onTrialPanelChange={changeTrialPanel}
           apiKey={personalApiKey} setApiKey={setPersonalApiKey}
           aiModel={aiModel} setAiModel={setAiModel}
           accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>

@@ -9,12 +9,13 @@ import { PRACTICE_METHODS } from './practiceMethods.js'
 import './library-trial-hub.css'
 
 const TrialPractice=lazy(()=>import('./AcademyGames.jsx'))
+const TrialCases=lazy(()=>import('./LearningRoutes.jsx'))
 const isTrialView=view=>view==='quizmenu'||view==='quiz'
 
 const SECTIONS=[
   {id:'bookshelf',number:'壹',title:'典籍',english:'THE ARCHIVES',tag:'古籍原文 · 逐章细读',glyph:'典',detail:'先读前人的话，再学怎样理解。'},
   {id:'courses',number:'贰',title:'修习',english:'THE CLASSROOM',tag:'一课一练',glyph:'習',detail:'每课讲一个知识点，学完就能动手。'},
-  {id:'quizmenu',number:'叁',title:'试炼',english:'THE PRACTICE',tag:'动手练习 · 课后答题',glyph:'练',detail:'动手认卦、翻铜钱、读盘，再用答题巩固。'},
+  {id:'quizmenu',number:'叁',title:'试炼',english:'THE PRACTICE',tag:'入门闯关 · 完整演练',glyph:'练',detail:'从认卦、读盘练起，再亲手排盘和解读。'},
   {id:'settings',number:'肆',title:'设定',english:'THE SETTINGS',tag:'个人 API · 使用偏好',glyph:'设',detail:'自行配置 AI，古籍与排盘照常免费。'}
 ]
 const STUDY_METHODS=[...METHODS,...ARTS.filter(art=>!METHODS.some(method=>method.id===art.id))
@@ -158,6 +159,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
   const [readingProgress,setReadingProgress]=useState(loadReadingProgress)
   const [localTrialPanel,setLocalTrialPanel]=useState('practice')
   const [practiceOpened,setPracticeOpened]=useState(false)
+  const [casesOpened,setCasesOpened]=useState(false)
   const [localExperienceIndex,setLocalExperienceIndex]=useState(0)
   const activeTrialPanel=trialPanel??localTrialPanel
   const selectTrialPanel=onTrialPanelChange??setLocalTrialPanel
@@ -173,6 +175,9 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
       return trialRoute?'quizmenu':'lobby'
     })
   },[trialRoute])
+  useEffect(()=>{
+    if(trialRoute&&activeTrialPanel==='cases')setView('quizmenu')
+  },[trialRoute,activeTrialPanel])
 
   const reading=view==='reader'||view==='fullreader'
   const sectionId=reading?'bookshelf':view==='lesson'?'courses':view==='quiz'?'quizmenu':view
@@ -193,8 +198,12 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
   function rememberPage(page){
     if(reading||view==='lesson')savePage(view,method,page)
   }
-  const navigate=(next,page=0)=>{
-    if(isTrialView(next)!==isTrialView(view))onTrialRouteChange?.(isTrialView(next))
+  const navigate=(next,page=0,panel=activeTrialPanel)=>{
+    const trial=isTrialView(next)
+    if(trial!==isTrialView(view)){
+      if(trial&&(panel==='cases'||activeTrialPanel==='cases'))onTrialRouteChange?.(true,panel)
+      else onTrialRouteChange?.(trial)
+    }
     setView(next);setIndex(page);setPlaying(false);setReaderLesson(null);setNotice('')
     window.scrollTo({top:0,behavior:'instant'})
   }
@@ -220,18 +229,20 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
   function prev(){if(index>0)turnPage(index-1)}
   function next(){if(index+1<items.length)turnPage(index+1)}
   function startTrial(page,mode){
-    selectTrialPanel('quiz')
+    switchTrialPanel('quiz')
     setTrialMode(mode)
-    navigate('quiz',page)
+    navigate('quiz',page,'quiz')
   }
-  function openPractice(){
+  function openPractice(panel){
     selectExperience(relatedExperience)
-    selectTrialPanel('practice')
-    navigate('quizmenu')
+    switchTrialPanel(panel)
+    navigate('quizmenu',0,panel)
   }
-  function openQuizDirectory(){
-    if(activeTrialPanel==='practice')setPracticeOpened(true)
-    selectTrialPanel('quiz')
+  function switchTrialPanel(panel){
+    if(view==='quizmenu'&&activeTrialPanel==='practice')setPracticeOpened(true)
+    if(view==='quizmenu'&&activeTrialPanel==='cases')setCasesOpened(true)
+    selectTrialPanel(panel)
+    if(panel!==activeTrialPanel)window.scrollTo({top:0,behavior:'instant'})
   }
   function openLesson(page){
     savePage('lesson',method,page)
@@ -272,7 +283,8 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
     if(dx>0)prev();else next()
   }
 
-  return <main className={"library-stage library-stage--"+(view==='lobby'?'archive':view==='quizmenu'?'trial':method)}>
+  return <main className={"library-stage library-stage--"+(view==='lobby'?'archive':view==='quizmenu'?'trial':method)}
+    data-trial-panel={view==='quizmenu'?activeTrialPanel:undefined}>
     <div className="library-shell">
       <Locus view={view} method={method} index={index} onClose={onClose}
         onLobby={()=>navigate('lobby')} onSection={navigate}/>
@@ -328,13 +340,19 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
             <header className="library-trial-hub-header">
               <h2 id="library-trial-title">入境试炼</h2>
               <div className="library-trial-tabs" role="group" aria-label="试炼方式">
-                <button type="button" aria-pressed={activeTrialPanel==='practice'} onClick={()=>selectTrialPanel('practice')}>动手试炼</button>
-                <button type="button" aria-pressed={activeTrialPanel==='quiz'} onClick={openQuizDirectory}>课后答题</button>
+                <button type="button" aria-pressed={activeTrialPanel==='practice'} onClick={()=>switchTrialPanel('practice')}>动手试炼</button>
+                <button type="button" aria-pressed={activeTrialPanel==='cases'} onClick={()=>switchTrialPanel('cases')}>完整演练</button>
+                <button type="button" aria-pressed={activeTrialPanel==='quiz'} onClick={()=>switchTrialPanel('quiz')}>课后答题</button>
               </div>
             </header>
             {(activeTrialPanel==='practice'||practiceOpened)&&<div hidden={activeTrialPanel!=='practice'}>
               <Suspense fallback={<p className="library-trial-loading" role="status">正在打开动手试炼…</p>}>
                 <TrialPractice activeIndex={activeExperienceIndex} onIndexChange={selectExperience} onSelect={onTrialWorkshop}/>
+              </Suspense>
+            </div>}
+            {(activeTrialPanel==='cases'||casesOpened)&&<div hidden={activeTrialPanel!=='cases'}>
+              <Suspense fallback={<p className="library-trial-loading" role="status">正在打开完整演练…</p>}>
+                <TrialCases activeIndex={activeExperienceIndex} onIndexChange={selectExperience}/>
               </Suspense>
             </div>}
             {activeTrialPanel==='quiz'&&
@@ -418,9 +436,14 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
               </div>
               <div className="library-lesson-text">{item.paragraphs.map((p,i)=><p key={i}>{p}</p>)}</div>
               {item.example&&<div className="library-lesson-example"><b>例子</b><p>{item.example}</p></div>}
-              {relatedExperience>=0&&<button type="button" className="library-trial-lesson-link" onClick={openPractice}>
-                动手练这一门 <span aria-hidden="true">→</span>
-              </button>}
+              {relatedExperience>=0&&<div className="library-lesson-practice-links">
+                <button type="button" className="library-trial-lesson-link" onClick={()=>openPractice('practice')}>
+                  动手练这一门 <span aria-hidden="true">→</span>
+                </button>
+                <button type="button" className="library-trial-lesson-link" onClick={()=>openPractice('cases')}>
+                  做完整演练 <span aria-hidden="true">→</span>
+                </button>
+              </div>}
               {DEMO_METHODS.has(method)&&<details className="library-lesson-demo" key={item.id}
                 onToggle={e=>{if(!e.currentTarget.open)setPlaying(false)}}>
                 <summary>查看概念图</summary>

@@ -1,0 +1,258 @@
+.learning-routes {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 6px;
+  width: min(100%, 460px);
+  margin: 0 auto;
+  color: var(--quiet-ink);
+  font-family: var(--quiet-ui);
+}
+
+.learning-case-header,
+.learning-review-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.learning-route-directory select {
+  width: 100%;
+}
+
+.learning-route-completion,
+.learning-case-header > span {
+  flex: none;
+  color: var(--quiet-muted);
+  font-size: 12px;
+}
+
+.learning-route-completion {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: center;
+}
+
+.learning-routes select {
+  min-width: 0;
+  min-height: 44px;
+  padding: 4px 8px;
+  border: 1px solid var(--quiet-line);
+  border-radius: 6px;
+  background: var(--quiet-surface);
+  color: var(--quiet-ink);
+  font-size: 14px;
+}
+
+.learning-route-modes,
+.learning-case-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.learning-routes button {
+  min-height: 44px;
+  border: 1px solid var(--quiet-line);
+  border-radius: 6px;
+  background: var(--quiet-surface);
+  color: var(--quiet-primary);
+  font-weight: 650;
+}
+
+.learning-route-modes button {
+  flex: 1;
+  padding: 4px 3px;
+  font-size: 13px;
+}
+
+.learning-route-modes button span {
+  margin-left: 4px;
+}
+
+.learning-routes button[aria-pressed='true'] {
+  border-color: var(--quiet-primary);
+  background: var(--quiet-tint);
+}
+
+.learning-case {
+  grid-column: 1 / -1;
+  padding: 10px 12px;
+  border: 1px solid var(--quiet-line);
+  border-top: 2px solid #ac8c62;
+  border-radius: 8px;
+  background: var(--quiet-surface);
+}
+
+.learning-case-header h3 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.35;
+}
+
+.learning-case-premise {
+  margin: 4px 0 6px;
+  color: var(--quiet-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.learning-case-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 12px;
+  margin-bottom: 4px;
+}
+
+.learning-case-notes details[open] {
+  flex-basis: 100%;
+}
+
+.learning-case-notes summary {
+  display: list-item;
+  width: fit-content;
+  min-height: 28px;
+  padding: 4px 0;
+  cursor: pointer;
+  color: var(--quiet-primary);
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.learning-case-notes p,
+.learning-case-notes ol,
+.learning-case-reference {
+  margin: 0 0 6px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: var(--quiet-paper);
+  color: var(--quiet-ink);
+  white-space: pre-line;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.learning-case-notes ol {
+  padding-left: 28px;
+  list-style: decimal;
+}
+
+.learning-case-question {
+  margin: 4px 0 6px;
+  font-size: 15px;
+  line-height: 1.42;
+}
+
+.learning-case-options {
+  display: grid;
+  gap: 4px;
+}
+
+.learning-case-options button {
+  position: relative;
+  min-width: 0;
+  padding: 5px 8px 5px 28px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.35;
+  white-space: pre-line;
+}
+
+.learning-case-options button::before {
+  position: absolute;
+  top: 50%;
+  left: 9px;
+  width: 11px;
+  height: 11px;
+  transform: translateY(-50%);
+  border: 1px solid var(--quiet-strong-line);
+  border-radius: 50%;
+  background: var(--quiet-surface);
+  content: '';
+}
+
+.learning-case-options button[aria-pressed='true']::before {
+  border: 3px solid var(--quiet-primary);
+}
+
+.learning-case-feedback,
+.learning-case-review,
+.learning-case-takeaway {
+  margin: 6px 0 0;
+  padding: 7px 8px;
+  border-left: 2px solid var(--quiet-primary);
+  background: var(--quiet-tint);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.learning-case-record {
+  margin: 4px 0;
+  color: var(--quiet-primary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.learning-case-feedback[data-result='retry'] {
+  border-color: #9b6546;
+  background: #f4e9df;
+}
+
+.learning-case-review p {
+  margin: 0;
+}
+
+.learning-case-review p + p {
+  margin-top: 4px;
+}
+
+.learning-case-score {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+.learning-case-actions {
+  margin-top: 7px;
+}
+
+.learning-case-actions button {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.learning-case-actions button:last-child {
+  flex: 1;
+  border-color: var(--quiet-primary);
+  background: var(--quiet-primary);
+  color: #fffdf7;
+}
+
+.learning-case-actions button:disabled {
+  border-color: var(--quiet-line);
+  background: var(--quiet-paper);
+  color: var(--quiet-muted);
+}
+
+.learning-review-selector {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.learning-routes .learning-case-restart {
+  grid-column: 1 / -1;
+  display: block;
+  margin: 4px auto 0;
+  padding: 4px 10px;
+  border-color: transparent;
+  background: none;
+  font-size: 13px;
+}
+
+@media (max-height: 620px) and (max-width: 440px) {
+  .learning-case {
+    padding: 7px 8px;
+  }
+  .learning-case-options {
+    gap: 3px;
+  }
+}

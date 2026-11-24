@@ -13,7 +13,7 @@
   border-bottom: 1px solid var(--quiet-line);
 }
 
-.library-trial-hub[data-panel='practice'] .library-trial-hub-header {
+.library-trial-hub:is([data-panel='practice'], [data-panel='cases']) .library-trial-hub-header {
   width: min(100%, 460px);
 }
 
@@ -57,13 +57,23 @@
   line-height: 1.65;
 }
 
+.library-lesson-practice-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
 @media (max-width: 650px) {
   .library-stage.library-stage--trial .library-inner { padding-top: 5px; }
   .library-stage.library-stage--trial .library-secondary-nav { margin-bottom: 4px; }
+  .library-stage[data-trial-panel='cases'] .library-secondary-nav { display: none; }
   .library-trial-hub-header { margin-bottom: 2px; padding-bottom: 3px; }
 }
 
 @media (max-width: 360px) {
   .library-trial-hub-header { padding-bottom: 0; }
+  .library-trial-hub-header h2 { font-size: 16px; }
+  .library-trial-tabs { gap: 2px; }
+  .library-trial-tabs button { padding-inline: 5px; font-size: 12px; }
   .atlas-games .home-experience-rail { margin-top: 1px; }
 }
