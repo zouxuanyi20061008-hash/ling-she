@@ -22,11 +22,11 @@
 .atlas-screen .atlas-ident-text small { color: #6f6254; }
 
 .atlas-screen .atlas-seal {
-  border: 1px solid #907049;
+  border: 1px solid #c58a62;
   border-radius: 7px;
-  background: #26334a;
+  background: linear-gradient(150deg, #a84336, #7e2d29);
   color: #fff0ce;
-  box-shadow: inset 0 0 0 3px #26334a, inset 0 0 0 4px #b28c665c;
+  box-shadow: inset 0 0 0 3px #6e241b45, inset 0 0 0 4px #f4bf8580;
 }
 
 .atlas-screen .atlas-library {
@@ -40,24 +40,24 @@
 .atlas-screen .atlas-library span { color: #745937; }
 
 .atlas.atlas-screen.atlas-welcome {
-  --atlas-ink: #f4e9d8;
-  --atlas-rule: #b899682f;
-  --academy-focus: #edca98;
-  --academy-tap: #edca982e;
-  --ui-accent: #f1d5a7;
-  background: radial-gradient(ellipse at 63% 10%, #1b2940, #0d1625 72%);
+  --atlas-ink: #3d2928;
+  --atlas-plum: #8e3028;
+  --atlas-rule: #e6cdb9;
+  --academy-focus: var(--atlas-plum);
+  --academy-tap: #8e302829;
+  --ui-accent: var(--atlas-plum);
+  background: radial-gradient(ellipse at 60% 0%, #fffdf8, #f7eddf 88%);
   color: var(--atlas-ink);
 }
 
-.atlas-welcome .atlas-ident-text small { color: #c2b6a3; }
+.atlas-welcome .atlas-ident-text small { color: #6d554a; }
 
 .atlas-welcome .atlas-library {
-  color: #f4e9d8;
-  border-color: #af8e5d82;
-  background: #19253a;
+  color: var(--atlas-plum);
+  background: #fffaf2;
 }
 
-.atlas-welcome .atlas-library span { color: #d7b688; }
+.atlas-welcome .atlas-library span { color: #785746; }
 
 .atlas-welcome .atlas-cover-page {
   flex: 0 0 auto;
@@ -70,43 +70,42 @@
 .atlas-welcome .atlas-cover-page .atlas-hero-copy {
   min-height: clamp(460px, 70svh, 700px);
   padding: clamp(30px, 6vw, 86px);
-  border-color: #b48a535c;
+  border-color: var(--atlas-rule);
   border-radius: 14px;
-  background: #111c2e;
-  box-shadow: 0 18px 55px #070c174d;
+  background: #fbf2e5;
+  box-shadow: 0 14px 40px #8b573e16;
 }
 
-.atlas-welcome .atlas-cover-painting img { object-position: 68% center; }
+.atlas-welcome .atlas-cover-painting img { object-position: 68% 37%; }
 
 .atlas-welcome .atlas-hero-copy::before {
-  background: linear-gradient(90deg, #0c1625ed, #0c1625ac 32%, #0c16251d 57%, transparent 79%),
-    linear-gradient(0deg, #0b1523b0, transparent 33%);
+  background: linear-gradient(90deg, #fff9efdf, #fff9efc4 26%, #fff9ef51 45%, transparent 63%);
 }
 
-.atlas-welcome .atlas-cover-page .atlas-motto { color: #e1bd89; }
-.atlas-welcome .atlas-cover-page .atlas-line { background: #c29864; }
+.atlas-welcome .atlas-cover-page .atlas-motto { color: #784236; }
+.atlas-welcome .atlas-cover-page .atlas-line { background: #b47861; }
 
 .atlas-welcome .atlas-cover-page h1 {
-  color: #fff2de;
+  color: var(--atlas-ink);
   font-weight: 700;
 }
 
-.atlas-welcome .atlas-cover-page h1 em { color: #edca98; }
-.atlas-welcome .atlas-cover-page .atlas-lead { color: #e5dac9; }
+.atlas-welcome .atlas-cover-page h1 em { color: var(--atlas-plum); }
+.atlas-welcome .atlas-cover-page .atlas-lead { color: #5d463c; }
 .atlas-welcome .atlas-hero-actions { display: flex; }
 
 .atlas-welcome .atlas-hero-actions .atlas-primary {
   min-height: 48px;
   padding-inline: 18px;
-  border-color: #eed3a4;
+  border-color: #923b30;
   border-radius: 8px;
-  background: linear-gradient(120deg, #fae7c5, #e7bf88);
-  color: #252033;
-  box-shadow: 0 5px 18px #080c15a0;
+  background: linear-gradient(120deg, #a54235, #823028);
+  color: #fff7e9;
+  box-shadow: 0 4px 13px #86392b30;
 }
 
 .atlas-welcome .atlas-hero-actions .atlas-primary span { margin-inline-start: 16px; }
-.atlas-welcome .atlas-footer { color: #b4a997; }
+.atlas-welcome .atlas-footer { color: #735a4c; }
 
 .atlas-choose .atlas-choose-heading h1 { color: var(--atlas-ink); }
 .atlas-choose .atlas-choose-stamp { color: #765736; border-color: #af8756; }
@@ -159,8 +158,8 @@
 .atlas-choose :is(.atlas-return, .atlas-choice-help button) { color: var(--ui-accent); }
 
 @media (hover: hover) {
-  .atlas-welcome .atlas-library:hover { background: #293a54; }
-  .atlas-welcome .atlas-hero-actions .atlas-primary:hover { background: #fff0cd; }
+  .atlas-welcome .atlas-library:hover { background: #f7e8db; }
+  .atlas-welcome .atlas-hero-actions .atlas-primary:hover { background: #7d3028; }
   .atlas-choose .atlas-choose-page .atlas-method:hover { border-color: #ae8b5d; }
 }
 
@@ -179,9 +178,9 @@
     box-shadow: none;
   }
 
-  .atlas-welcome .atlas-cover-painting img { object-position: center 18%; }
+  .atlas-welcome .atlas-cover-painting img { object-position: center 14%; }
   .atlas-welcome .atlas-hero-copy::before {
-    background: linear-gradient(0deg, #0d1625 1%, #0d1625ee 14%, #0d162593 38%, #0d16251a 65%, transparent 81%);
+    background: linear-gradient(0deg, #fbf3e7 1%, #fbf3e7e6 15%, #fbf3e78c 35%, transparent 62%);
   }
 
   .atlas-welcome .atlas-cover-page h1 {

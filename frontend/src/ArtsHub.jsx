@@ -1,7 +1,7 @@
 import { useRef, useSyncExternalStore } from 'react'
 import './academy.css'
-import moonGate from './assets/academy-moon-gate.webp'
-import moonGateCompact from './assets/academy-moon-gate-compact.webp'
+import plumDaylight from './assets/academy-plum-daylight.webp'
+import plumDaylightCompact from './assets/academy-plum-daylight-compact.webp'
 
 export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
@@ -88,12 +88,12 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
         <section className="atlas-hero atlas-cover-page" aria-label="万象书院欢迎页">
           <div className="atlas-hero-copy">
             <picture className="atlas-cover-painting" aria-hidden="true">
-              <source media={COMPACT_LIST_QUERY} srcSet={moonGateCompact} width="600" height="912"/>
-              <img src={moonGate} alt="" width="1536" height="1024" decoding="async" fetchpriority="high"/>
+              <source media={COMPACT_LIST_QUERY} srcSet={plumDaylightCompact} width="600" height="904"/>
+              <img src={plumDaylight} alt="" width="1536" height="1024" decoding="async" fetchpriority="high"/>
             </picture>
             <p className="atlas-motto"><span className="atlas-line"/> 读天地之象 · 学古人之思</p>
             <h1>万象有数，<br/><em>问道于心。</em></h1>
-            <p className="atlas-lead">{compactList?'亲手起卦，翻阅原典，研习八门术数。':'一座可以亲手起卦、翻阅原典、循序研习的中国传统术数书院。'}</p>
+            <p className="atlas-lead">亲手起卦，翻阅原典，研习八门术数。</p>
             <div className="atlas-hero-actions">
               <button type="button" className="atlas-primary atlas-start" onClick={onStart}>
                 开始排盘 <span aria-hidden="true">→</span>
