@@ -560,7 +560,13 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
       }
       if (requestInterpretation) setInterpretation(data.interpretation)
     } catch (e) {
-      if(requestId===requestVersion.current)setError(e.message || '网络错误')
+      if(requestId===requestVersion.current){
+        setError(e.message || '网络错误')
+        if(requestInterpretation && chart){
+          setReadingTab('ai')
+          goPage(2,true)
+        }
+      }
     } finally {
       if(requestId===requestVersion.current)setBusy(false)
     }

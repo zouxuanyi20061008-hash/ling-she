@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import App from '../src/App.jsx'
 import {getContextualMeihuaReading,getOracleQuestionTopic} from '../src/oracle-question.js'
 
@@ -84,4 +84,27 @@ it.each([
   const topic=getOracleQuestionTopic('这段合作能继续吗？')
   expect(getContextualMeihuaReading(relation,topic)).toContain(topic.subject)
   expect(getContextualMeihuaReading(relation,topic)).toContain(hint)
+})
+
+it('排盘后 AI 请求失败时能在解读页看到原因和重试，已经起好的卦可继续查看',async()=>{
+  const message='尚未配置 AI：请在藏经阁填写个人 DeepSeek API Key。'
+  const fetchMock=vi.fn().mockResolvedValueOnce(chartResponse('火水未济'))
+    .mockResolvedValueOnce({ok:false,json:async()=>({detail:message})})
+  vi.stubGlobal('fetch',fetchMock)
+  vi.stubGlobal('scrollTo',vi.fn())
+  const {container}=render(<App apiConfig={config}/>)
+  const [question,value]=container.querySelectorAll('.book-inputs textarea')
+  fireEvent.change(question,{target:{value:'排盘接口回归测试'}})
+  fireEvent.change(value,{target:{value:'3,6'}})
+  fireEvent.click(screen.getByRole('button',{name:'排盘 + AI 解读',exact:true}))
+  const context=within(await screen.findByRole('dialog',{name:'卦已排好，请补充现实背景'}))
+  fireEvent.change(context.getByRole('textbox'),{target:{value:'已收到合约附录，接下来核对条款。'}})
+  fireEvent.click(context.getByRole('button',{name:'确认背景，开始解读'}))
+
+  const ai=within(await screen.findByRole('region',{name:'AI 解读'}))
+  expect(ai.getByRole('alert').textContent).toBe(message)
+  expect(ai.getByRole('button',{name:'结合现实背景 · 深入断事'}).disabled).toBe(false)
+  expect(fetchMock.mock.calls.map(([url])=>url)).toEqual(['/api/cast','/api/interpret'])
+  fireEvent.click(screen.getByRole('button',{name:/再看卦象/}))
+  expect(within(screen.getByRole('region',{name:'观卦'})).getAllByRole('heading',{name:'火水未济'})).toHaveLength(3)
 })

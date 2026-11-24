@@ -93,7 +93,7 @@ try {
     Invoke-Checked $aapt2 @('compile', '--dir', 'res', '-o', 'resources.zip')
     Invoke-Checked $aapt2 @('link', '-o', 'unsigned.apk', '-I', $androidJar, '--manifest', 'AndroidManifest.xml',
         '--min-sdk-version', '26', '--target-sdk-version', '35', '--version-code', "$VersionCode", '--version-name', $VersionName,
-        '-A', 'assets', 'resources.zip')
+        'resources.zip')
     $activity = Join-Path $PSScriptRoot 'src/org/wanxiang/academy/MainActivity.java'
     Invoke-Checked $javac @('-encoding', 'UTF-8', '-source', '8', '-target', '8', '-Xlint:-options', '-cp', $androidJar, '-d', 'classes', $activity)
     Invoke-Checked $jar @('cf', 'classes.jar', '-C', 'classes', '.')
@@ -101,12 +101,19 @@ try {
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $apkArchive = [IO.Compression.ZipFile]::Open((Join-Path $packageBuild 'unsigned.apk'), [IO.Compression.ZipArchiveMode]::Update)
-    try { $null = [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($apkArchive, (Join-Path $packageBuild 'dex/classes.dex'), 'classes.dex') }
-    finally { $apkArchive.Dispose() }
+    try {
+        $null = [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($apkArchive, (Join-Path $packageBuild 'dex/classes.dex'), 'classes.dex')
+        foreach ($asset in Get-ChildItem -LiteralPath $assetPath -Recurse -File) {
+            # Android's AssetManager looks up ZIP entries with slash separators, including on builds made on Windows.
+            $entry = 'assets/' + $asset.FullName.Substring($assetPath.Length + 1).Replace('\', '/')
+            $null = [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($apkArchive, $asset.FullName, $entry)
+        }
+        if (-not $apkArchive.GetEntry('assets/web/index.html')) { throw 'Missing APK web entry.' }
+    } finally { $apkArchive.Dispose() }
     Invoke-Checked $align @('-f', '4', 'unsigned.apk', 'aligned.apk')
     $env:LINGSHE_ANDROID_SIGN_PASS = [IO.File]::ReadAllText($passFile).Trim()
     try {
-        Invoke-Checked $java @('-jar', $apksigner, 'sign', '--ks', $signer, '--ks-key-alias', 'wanxiang',
+        Invoke-Checked $java @('-jar', $apksigner, 'sign', '--v4-signing-enabled', 'false', '--ks', $signer, '--ks-key-alias', 'wanxiang',
             '--ks-pass', 'env:LINGSHE_ANDROID_SIGN_PASS', '--out', $apkDestination, 'aligned.apk')
     } finally { $env:LINGSHE_ANDROID_SIGN_PASS = $null }
     Invoke-Checked $java @('-jar', $apksigner, 'verify', '--verbose', $apkDestination)
