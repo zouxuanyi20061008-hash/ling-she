@@ -1,7 +1,7 @@
 import { useRef, useSyncExternalStore } from 'react'
 import './academy.css'
-import celestialNight from './assets/academy-celestial-night.webp'
-import celestialNightCompact from './assets/academy-celestial-night-compact.webp'
+import moonGate from './assets/academy-moon-gate.webp'
+import moonGateCompact from './assets/academy-moon-gate-compact.webp'
 
 export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
@@ -88,8 +88,8 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
         <section className="atlas-hero atlas-cover-page" aria-label="万象书院欢迎页">
           <div className="atlas-hero-copy">
             <picture className="atlas-cover-painting" aria-hidden="true">
-              <source media={COMPACT_LIST_QUERY} srcSet={celestialNightCompact}/>
-              <img src={celestialNight} alt="" width="1440" height="960" decoding="async" fetchpriority="high"/>
+              <source media={COMPACT_LIST_QUERY} srcSet={moonGateCompact} width="600" height="912"/>
+              <img src={moonGate} alt="" width="1536" height="1024" decoding="async" fetchpriority="high"/>
             </picture>
             <p className="atlas-motto"><span className="atlas-line"/> 读天地之象 · 学古人之思</p>
             <h1>万象有数，<br/><em>问道于心。</em></h1>

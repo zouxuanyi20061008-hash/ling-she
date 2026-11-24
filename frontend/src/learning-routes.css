@@ -1,4 +1,7 @@
 .learning-routes {
+  --exercise-navy: #252e47;
+  --exercise-brass: #9f784a;
+  --exercise-wash: #f4ede1;
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   gap: 6px;
@@ -31,6 +34,7 @@
   grid-column: 1 / -1;
   margin: 0;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .learning-routes select {
@@ -39,8 +43,9 @@
   padding: 4px 8px;
   border: 1px solid var(--quiet-line);
   border-radius: 6px;
-  background: var(--quiet-surface);
-  color: var(--quiet-ink);
+  background: linear-gradient(180deg, var(--quiet-surface), #f8f2e8);
+  color: var(--exercise-navy);
+  font-weight: 650;
   font-size: 14px;
 }
 
@@ -59,6 +64,11 @@
   font-weight: 650;
 }
 
+.learning-routes :is(button, select, summary):focus-visible {
+  outline: 2px solid var(--exercise-navy);
+  outline-offset: 2px;
+}
+
 .learning-route-modes button {
   flex: 1;
   padding: 4px 3px;
@@ -70,23 +80,40 @@
 }
 
 .learning-routes button[aria-pressed='true'] {
-  border-color: var(--quiet-primary);
+  border-color: var(--exercise-navy);
   background: var(--quiet-tint);
+}
+
+.learning-route-modes button[aria-pressed='true'] {
+  background: linear-gradient(160deg, #353f5b, var(--exercise-navy));
+  color: #fff8e9;
+  box-shadow: inset 0 -2px #b89a71;
 }
 
 .learning-case {
   grid-column: 1 / -1;
   padding: 10px 12px;
   border: 1px solid var(--quiet-line);
-  border-top: 2px solid #ac8c62;
+  border-top: 2px solid var(--exercise-brass);
   border-radius: 8px;
-  background: var(--quiet-surface);
+  background:
+    radial-gradient(ellipse 74% 75% at 100% 0, rgb(178 145 98 / 13%), transparent 80%),
+    var(--quiet-surface);
+  box-shadow: 0 7px 20px rgb(37 46 71 / 7%);
 }
 
 .learning-case-header h3 {
   margin: 0;
+  color: var(--exercise-navy);
+  font-family: 'Noto Serif SC', 'Songti SC', STSong, SimSun, var(--quiet-ui);
   font-size: 17px;
   line-height: 1.35;
+}
+
+.learning-case-header > span {
+  color: #795735;
+  font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 -1px #cbb196;
 }
 
 .learning-case-premise {
@@ -125,7 +152,8 @@
   margin: 0 0 6px;
   padding: 6px 8px;
   border-radius: 5px;
-  background: var(--quiet-paper);
+  background: var(--exercise-wash);
+  box-shadow: inset 2px 0 #c2a37a;
   color: var(--quiet-ink);
   white-space: pre-line;
   font-size: 12px;
@@ -139,6 +167,7 @@
 
 .learning-case-question {
   margin: 4px 0 6px;
+  color: var(--exercise-navy);
   font-size: 15px;
   line-height: 1.42;
 }
@@ -156,23 +185,26 @@
   font-size: 13px;
   line-height: 1.35;
   white-space: pre-line;
+  background: linear-gradient(115deg, var(--quiet-surface) 58%, #f8f3ea);
 }
 
 .learning-case-options button::before {
   position: absolute;
   top: 50%;
-  left: 9px;
-  width: 11px;
-  height: 11px;
-  transform: translateY(-50%);
-  border: 1px solid var(--quiet-strong-line);
-  border-radius: 50%;
+  left: 10px;
+  width: 9px;
+  height: 9px;
+  transform: translateY(-50%) rotate(45deg);
+  border: 1px solid var(--exercise-brass);
+  border-radius: 2px;
   background: var(--quiet-surface);
   content: '';
 }
 
 .learning-case-options button[aria-pressed='true']::before {
-  border: 3px solid var(--quiet-primary);
+  border-color: var(--exercise-navy);
+  background: var(--exercise-navy);
+  box-shadow: inset 0 0 0 1px var(--quiet-surface);
 }
 
 .learning-case-feedback,
@@ -181,6 +213,7 @@
   margin: 6px 0 0;
   padding: 7px 8px;
   border-left: 2px solid var(--quiet-primary);
+  border-radius: 0 5px 5px 0;
   background: var(--quiet-tint);
   font-size: 13px;
   line-height: 1.45;
@@ -188,9 +221,13 @@
 
 .learning-case-record {
   margin: 4px 0;
-  color: var(--quiet-primary);
+  color: var(--exercise-navy);
   font-size: 14px;
   font-weight: 700;
+}
+
+.learning-case-record > span {
+  color: var(--exercise-brass);
 }
 
 .learning-case-feedback[data-result='retry'] {
@@ -222,8 +259,9 @@
 
 .learning-case-actions button:last-child {
   flex: 1;
-  border-color: var(--quiet-primary);
-  background: var(--quiet-primary);
+  border-color: var(--exercise-navy);
+  background: linear-gradient(160deg, #353f5b, var(--exercise-navy));
+  box-shadow: inset 0 -2px #a68760;
   color: #fffdf7;
 }
 
@@ -231,6 +269,7 @@
   border-color: var(--quiet-line);
   background: var(--quiet-paper);
   color: var(--quiet-muted);
+  box-shadow: none;
 }
 
 .learning-review-selector {
