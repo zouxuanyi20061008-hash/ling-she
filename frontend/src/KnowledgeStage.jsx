@@ -9,6 +9,7 @@ import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import BeginnerReading from './BeginnerReading.jsx'
 import {qimenReading,baziReading} from './knowledge-readings.js'
+import {apiUrl} from './api-url.js'
 import './academy.css'
 import './knowledge-mobile.css'
 import './knowledge-cast-mobile.css'
@@ -159,7 +160,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
     setQimenError('')
     setQimenChart(null)
     try{
-      const response=await fetch('/api/qimen/cast',{
+      const response=await fetch(apiUrl('/api/qimen/cast'),{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({solar_date:qimenDate,clock:qimenClock,day_boundary:qimenBoundary})
       })
@@ -221,7 +222,7 @@ export default function KnowledgeStage({mode,onBack,onStudy}) {
     setBaziError('')
     setBaziChart(null)
     try{
-      const response=await fetch('/api/bazi/cast',{
+      const response=await fetch(apiUrl('/api/bazi/cast'),{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           solar_date:baziDate,clock:baziClock,day_boundary:baziBoundary,

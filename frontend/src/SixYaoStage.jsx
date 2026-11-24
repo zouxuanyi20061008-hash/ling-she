@@ -11,8 +11,8 @@ import {getOracleQuestionTopic} from './oracle-question.js'
 import {readWorkbook,saveWorkbook,removeWorkbook,workbookKey} from './review-workbook.js'
 import {shareCaseFromArchive} from './case-exchange.js'
 import {readChoices,readSelectedChoice,saveChoice,choiceKey} from './focus-choice-notes.js'
+import {apiUrl,isPackagedApp} from './api-url.js'
 
-const api=import.meta.env.VITE_API_URL ?? (import.meta.env.PROD?'':window.location.protocol+'//'+window.location.hostname+':8000')
 const K={6:{name:'老阴',yin:0,move:true},7:{name:'少阳',yin:1,move:false},8:{name:'少阴',yin:0,move:false},9:{name:'老阳',yin:1,move:true}}
 const POS=['初','二','三','四','五','上']
 const INITIAL_COINS=[2,3,2]
@@ -126,7 +126,7 @@ function SolarDateAssist({day,month,onApply,busy}){
       payload.is_leap_month=isLeap
     }
     try{
-      const response=await fetch(api+'/api/liuyao/calendar-preview',{
+      const response=await fetch(apiUrl('/api/liuyao/calendar-preview'),{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify(payload)})
       const result=await response.json()
@@ -1685,7 +1685,7 @@ export function ChineseLocalCaseArchive({chart,question}){
     }catch(err){setMessage(err.message||'分享包导出失败，请检查浏览器文件权限。')}
   }
   async function shareCase(){
-    if(!selected||!shareAgree||shareBusy)return
+    if(isPackagedApp||!selected||!shareAgree||shareBusy)return
     setShareBusy(true)
     setMessage('')
     try{
@@ -2195,7 +2195,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
     const token=++requestNumber.current
     setCalendarBusy(true)
     try{
-      const response=await fetch(api+'/api/liuyao/cast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null,calendar_input:calendarSource||null})})
+      const response=await fetch(apiUrl('/api/liuyao/cast'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:seq,day_ganzhi:day||null,month_branch:month||null,focus_liuqin:focus||null,focus_position:position||null,calendar_input:calendarSource||null})})
       const data=await response.json()
       if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'排盘失败')
       if(token===requestNumber.current){
@@ -2311,7 +2311,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
       const headers={'Content-Type':'application/json'}
       if(apiConfig.personalApiKey.trim())headers['X-User-API-Key']=apiConfig.personalApiKey.trim()
       else if(apiConfig.aiAccessCode)headers['X-AI-Access-Code']=apiConfig.aiAccessCode
-      const res=await fetch(api+'/api/liuyao/interpret',{method:'POST',headers,body:JSON.stringify({
+      const res=await fetch(apiUrl('/api/liuyao/interpret'),{method:'POST',headers,body:JSON.stringify({
         numbers:lines,day_ganzhi:dayGanzhi||null,month_branch:monthBranch||null,
         focus_liuqin:focusLiugin||null,focus_position:studyPosition||null,
         question,background,background_confirmed:true,ai_model:apiConfig.aiModel,

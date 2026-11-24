@@ -3,6 +3,7 @@ import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import BeginnerReading from './BeginnerReading.jsx'
+import {apiUrl} from './api-url.js'
 import './ziwei-v68.css'
 
 const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
@@ -120,7 +121,7 @@ export default function ZiweiV68(){
        lunar_year:Number(lunarYear),lunar_month:Number(lunarMonth),
        lunar_day:Number(lunarDay),is_leap_month:leap})}
    try{
-     const res=await fetch('/api/ziwei/cast',{method:'POST',
+     const res=await fetch(apiUrl('/api/ziwei/cast'),{method:'POST',
        headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
      const result=await res.json()
      if(!res.ok)throw new Error(typeof result.detail==='string'?

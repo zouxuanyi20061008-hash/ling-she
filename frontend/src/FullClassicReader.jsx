@@ -2,6 +2,19 @@ import {useEffect,useMemo,useRef,useState} from 'react'
 
 const editions=import.meta.glob('./classics/*.json',{import:'default'})
 const license='https://creativecommons.org/licenses/by-sa/4.0/'
+const embeddedImages=typeof __PACKAGED_CLASSIC_IMAGES__==='undefined'?{}:__PACKAGED_CLASSIC_IMAGES__
+const illustrationUrls=new Map()
+
+function classicImageUrl(path){
+  const relative=path.replace(/^\.?\//,'')
+  if(!relative.startsWith('classics/'))return path
+  if(!Object.hasOwn(embeddedImages,relative))return import.meta.env.BASE_URL+relative
+  if(!illustrationUrls.has(relative)){
+    const bytes=Uint8Array.from(atob(embeddedImages[relative]),char=>char.charCodeAt(0))
+    illustrationUrls.set(relative,URL.createObjectURL(new Blob([bytes],{type:'image/webp'})))
+  }
+  return illustrationUrls.get(relative)
+}
 
 async function openBook(method){
   if(method==='zhouyi'){
@@ -32,7 +45,7 @@ function ClassicPassage({section}){
       if(block.type==='table')return <ClassicTable rows={block.rows} key={index}/>
       if(block.type==='pre')return <pre className="library-classic-diagram" key={index}>{block.text}</pre>
       if(block.type==='image'){
-        const src=block.src.startsWith('/classics/')?import.meta.env.BASE_URL+block.src.slice(1):block.src
+        const src=classicImageUrl(block.src)
         return <figure key={index}>
           <a href={src} target="_blank" rel="noopener noreferrer" aria-label={`放大查看${block.alt}`}>
             <img src={src} alt={block.alt} loading="lazy"/>

@@ -4,6 +4,7 @@ import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import BeginnerReading from './BeginnerReading.jsx'
+import {apiUrl} from './api-url.js'
 
 const CN_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const CN_CLOCK=()=>new Intl.DateTimeFormat('en-GB',{
@@ -54,7 +55,7 @@ export default function TaiyiV77Hour({id,active=true,onResultAvailability}){
     const ticket=++version.current
     setBusy(true);setChart(null);setError('')
     try{
-      const r=await fetch('/api/taiyi/hour/cast',{
+      const r=await fetch(apiUrl('/api/taiyi/hour/cast'),{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({solar_date:date,clock})
       })

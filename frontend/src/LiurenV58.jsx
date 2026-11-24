@@ -6,6 +6,7 @@ import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import BeginnerReading from './BeginnerReading.jsx'
 import {liurenReading} from './knowledge-readings.js'
+import {apiUrl} from './api-url.js'
 
 const BEIJING_DATE=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date())
 const METHOD_DESCRIPTION='月将按雨水、春分等十二中气更换，将月将加在占时地支上排天盘，再按日干寄宫与日支起四课。大六壬真实天地盘、四课三传、贵人及十二天将基础上，再按起课日所属六甲旬标注旬遁干、旬空。将天盘与地盘的空亡标记分开呈现，便于核对。'
@@ -68,7 +69,7 @@ export default function LiurenV58(){
     setError('')
     setChart(null)
     try{
-      const r=await fetch('/api/liuren/cast',{
+      const r=await fetch(apiUrl('/api/liuren/cast'),{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({solar_date:date,clock,day_boundary:dayBoundary,
           ...(nobleMode!=='hour_branch'?{noble_mode:nobleMode}:{}),

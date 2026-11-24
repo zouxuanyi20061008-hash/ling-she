@@ -13,7 +13,6 @@ from urllib.request import Request as UrlRequest, urlopen
 from urllib.error import HTTPError, URLError
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ConfigDict, StrictInt
 
@@ -30,14 +29,9 @@ from .core.liuren import cast_liuren
 from .core.taiyi import cast_taiyi
 from .core.fengshui import cast_fengshui
 from .core.ziwei import cast_ziwei
+from .client_cors import ClientCORSMiddleware
 
 app = FastAPI(title="梅花易数排盘 API", version="1.0.0")
-LAN_REGEX = (
-    r"^http://(?:localhost|127\.0\.0\.1|10(?:\.\d{1,3}){3}"
-    r"|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2[0-9]|3[01])(?:\.\d{1,3}){2}):5173$"
-)
-app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173","http://127.0.0.1:5173"],
-                   allow_origin_regex=LAN_REGEX,allow_methods=["GET","POST"],allow_headers=["*"])
 
 class CastRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -405,6 +399,7 @@ def six_yao_interpret(req: SixYaoReadRequest, request: Request):
 
 from .experience_gateway import install_gateway
 install_gateway(app)
+app.add_middleware(ClientCORSMiddleware)
 
 WEB_DIR = Path(__file__).resolve().parent / "web"
 if WEB_DIR.is_dir() and (WEB_DIR/"index.html").is_file():

@@ -5,6 +5,7 @@ import {useCastPage} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import BeginnerReading from './BeginnerReading.jsx'
 import {getContextualMeihuaReading,getOracleQuestionTopic} from './oracle-question.js'
+import {apiUrl} from './api-url.js'
 
 const pad = n => String(n).padStart(2, '0')
 const localInput = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
@@ -14,7 +15,6 @@ function localIsoWithOffset(d) {
   const abs = Math.abs(offset)
   return `${localInput(d)}:00${sign}${pad(Math.floor(abs/60))}:${pad(abs%60)}`
 }
-const ApiUrl = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? '' : `${window.location.protocol}//${window.location.hostname}:8000`)
 const STRUCTURES = ['左右', '上下', '半包围', '全包围', '左中右', '上中下', '独体', '其他']
 const initialManual = { structure: '其他', yangPart: '', yinPart: '', yang: '', yin: '' }
 const READING_PAGES = [
@@ -525,7 +525,7 @@ export default function App({onBack,onOpenStudy,onLearn,apiConfig}) {
       req.manual_yin_part = override.yinPart
     }
     try {
-      const response = await fetch(`${ApiUrl}${requestInterpretation ? '/api/interpret' : '/api/cast'}`, {
+      const response = await fetch(apiUrl(requestInterpretation ? '/api/interpret' : '/api/cast'), {
         method: 'POST', headers: {
           'Content-Type': 'application/json',
           ...(requestInterpretation && personalApiKey.trim() ? { 'X-User-API-Key': personalApiKey.trim() } : {}),

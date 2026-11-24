@@ -3,6 +3,7 @@ import BeginnerReading from './BeginnerReading.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,CastPageNav,CastPagePane} from './CastPage.jsx'
+import {apiUrl} from './api-url.js'
 import './fengshui-v70.css'
 import './fengshui-compass.css'
 
@@ -145,7 +146,7 @@ export default function FengshuiV70(){
     }
     setBusy(true)
     try{
-      const response=await fetch('/api/fengshui/cast',{method:'POST',
+      const response=await fetch(apiUrl('/api/fengshui/cast'),{method:'POST',
         headers:{'Content-Type':'application/json'},body:JSON.stringify(input)})
       const result=await response.json()
       if(!response.ok)throw new Error(typeof result.detail==='string'?

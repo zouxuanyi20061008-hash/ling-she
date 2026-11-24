@@ -7,6 +7,7 @@ import CastResultPanels,{CastResultPanel} from './CastResultPanels.jsx'
 import {useCastPage,useCompactCastLayout,CastPageNav,CastPagePane} from './CastPage.jsx'
 import CastLesson,{CastHint} from './CastLesson.jsx'
 import BeginnerReading from './BeginnerReading.jsx'
+import {apiUrl} from './api-url.js'
 
 const YEAR_NOW=()=>Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',
   year:'numeric'}).format(new Date()))
@@ -118,7 +119,7 @@ function TaiyiYear({id,active,onResultAvailability}){
     }
     setBusy(true);setError('');setChart(null)
     try{
-      const response=await fetch('/api/taiyi/cast',{
+      const response=await fetch(apiUrl('/api/taiyi/cast'),{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({gregorian_year:n,
           ...(samePalaceRule==='conservative'?{same_palace_rule:'conservative'}:{})})
