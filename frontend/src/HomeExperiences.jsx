@@ -7,17 +7,11 @@ import { HomeChallengeProvider, useHomeChallengeProgress } from './HomeChallenge
 import { QimenGame, ZiweiGame } from './HomeObservatoryGames.jsx'
 import { BaziGame, FengshuiGame } from './HomeCabinetGames.jsx'
 import { CoinGame, LiurenGame, TaiyiGame } from './HomeMotionGames.jsx'
+import { PRACTICE_METHODS } from './practiceMethods.js'
 
-const EXPERIENCES = [
-  {id:'meihua', name:'梅花心易', tab:'八卦', icon:'☯'},
-  {id:'qimen', name:'奇门遁甲', tab:'奇门', icon:'九', Game:QimenGame},
-  {id:'ziwei', name:'紫微斗数', tab:'紫微', icon:'星', Game:ZiweiGame},
-  {id:'bazi', name:'四柱八字', tab:'四柱', icon:'干', Game:BaziGame},
-  {id:'fengshui', name:'堪舆风水', tab:'风水', icon:'向', Game:FengshuiGame},
-  {id:'liuyao', name:'六爻铜钱', tab:'六爻', icon:'爻', Game:CoinGame},
-  {id:'liuren', name:'大六壬', tab:'六壬', icon:'壬', Game:LiurenGame},
-  {id:'taiyi', name:'太乙神数', tab:'太乙', icon:'乙', Game:TaiyiGame},
-]
+const games = {qimen:QimenGame, ziwei:ZiweiGame, bazi:BaziGame, fengshui:FengshuiGame,
+  liuyao:CoinGame, liuren:LiurenGame, taiyi:TaiyiGame}
+const EXPERIENCES = PRACTICE_METHODS.map(method => ({...method, Game:games[method.id]}))
 
 export default function HomeExperiences(props){
   return <HomeChallengeProvider><HomeExperienceCarousel {...props}/></HomeChallengeProvider>

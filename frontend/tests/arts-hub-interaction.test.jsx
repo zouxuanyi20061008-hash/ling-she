@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// 术数游学和首页导航回归。
+// 藏经阁动手试炼与首页导航回归。
 import React from 'react'
 import {afterEach,it,expect,vi} from 'vitest'
 import {cleanup,fireEvent,render,screen,within} from '@testing-library/react'
@@ -15,14 +15,14 @@ afterEach(()=>{
 function renderHome(overrides={}) {
   const props={
     screen:'home',onStart:vi.fn(),onBack:vi.fn(),onSelect:vi.fn(),
-    onStudy:vi.fn(),onGames:vi.fn(),onLearn:vi.fn(),activeGroup:'全部',setActiveGroup:vi.fn(),
+    onStudy:vi.fn(),onLearn:vi.fn(),activeGroup:'全部',setActiveGroup:vi.fn(),
     page:0,setPage:vi.fn(),...overrides
   }
   return {props,...render(<ArtsHub {...props}/>)}
 }
 
 function renderGames() {
-  const props={onBack:vi.fn(),onSelect:vi.fn()}
+  const props={onSelect:vi.fn()}
   function GameView() {
     const [activeIndex, setActiveIndex]=React.useState(0)
     return <AcademyGames {...props} activeIndex={activeIndex} onIndexChange={setActiveIndex}/>
@@ -30,11 +30,8 @@ function renderGames() {
   return {props,...render(<GameView/>)}
 }
 
-it('游学页呈现八个可访问卦象，默认选中乾卦并明确说明体验边界',()=>{
-  const {props}=renderGames()
-  expect(screen.getByRole('heading',{name:'术数游学',level:1})).toBeTruthy()
-  fireEvent.click(screen.getByRole('button',{name:'返回首页'}))
-  expect(props.onBack).toHaveBeenCalledOnce()
+it('动手试炼呈现八个可访问卦象，默认选中乾卦并明确说明体验边界',()=>{
+  renderGames()
   const explorer=screen.getByRole('region',{name:'八卦探象互动体验'})
   expect(explorer).toBeTruthy()
   const trigramButtons=screen.getAllByRole('button').filter(button=>
@@ -105,20 +102,19 @@ it('可把当前卦设为上卦或下卦，并用六条阴阳线显示组合卦'
   expect(screen.getByText('泽泽 · 兑')).toBeTruthy()
 })
 
-it('首页单独提供排盘、藏经阁和游学入口，不渲染游戏盘面',()=>{
+it('首页能直达排盘和藏经阁，试炼收进藏经阁',()=>{
   const {props,container}=renderHome()
   const archive=screen.getAllByRole('button',{name:/藏经阁/})
   expect(archive).toHaveLength(1)
   expect(container.querySelector('.home-experiences')).toBeNull()
+  expect(screen.queryByRole('button',{name:/术数游学/})).toBeNull()
   fireEvent.click(screen.getByRole('button',{name:'开始排盘'}))
   fireEvent.click(archive[0])
-  fireEvent.click(screen.getByRole('button',{name:'术数游学'}))
   expect(props.onStart).toHaveBeenCalledOnce()
   expect(props.onStudy).toHaveBeenCalledOnce()
-  expect(props.onGames).toHaveBeenCalledOnce()
 })
 
-it('游学页可前后切换体验，八卦环位置在换页后保留',()=>{
+it('动手试炼可前后切换体验，八卦环位置在换页后保留',()=>{
   renderGames()
   fireEvent.click(screen.getByRole('button',{name:'顺时针旋转45度'}))
   fireEvent.click(screen.getByRole('button',{name:'下一个术数体验'}))

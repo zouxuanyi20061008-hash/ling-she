@@ -19,12 +19,14 @@ import {isPackagedApp} from './api-url.js'
 
 const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))
 const CaseExchangeCenter=React.lazy(()=>import('./CaseExchangeCenter.jsx'))
-const AcademyGames=React.lazy(()=>import('./AcademyGames.jsx'))
 const CAST_ROUTES=new Set(ARTS.map(art=>art.id))
-const VALID_ROUTES=new Set(['home','choose','games','learn','library','cases',...CAST_ROUTES])
+const TRIAL_ROUTE='library/trial'
+const VALID_ROUTES=new Set(['home','choose','learn','library',TRIAL_ROUTE,'cases',...CAST_ROUTES])
 const CAST_RESULT_SUFFIX='/result'
+const canonicalRoute=route=>route==='games'?TRIAL_ROUTE:route
+const isLibraryRoute=route=>route==='library'||route===TRIAL_ROUTE
 function routeFromUrl(){
-  const route=window.location.hash.slice(1)
+  const route=canonicalRoute(window.location.hash.slice(1))
   const method=route.endsWith(CAST_RESULT_SUFFIX)?route.slice(0,-CAST_RESULT_SUFFIX.length):null
   if(CAST_ROUTES.has(method))return method
   return VALID_ROUTES.has(route)?route:'home'
@@ -38,9 +40,10 @@ function Academy(){
   const [aiAccessCode,setAiAccessCode]=useState('')
   const [activeGroup,setActiveGroup]=useState('全部')
   const [choosePage,setChoosePage]=useState(0)
-  const [gameExperience,setGameExperience]=useState(0)
+  const [trialExperience,setTrialExperience]=useState(0)
+  const [trialPanel,setTrialPanel]=useState('practice')
   const [experience,setExperience]=useState(null)
-  const scrollPositions=useRef({home:0,choose:0,games:0})
+  const scrollPositions=useRef({home:0,choose:0,[TRIAL_ROUTE]:0})
   const pendingScroll=useRef(null)
   const config={personalApiKey,setPersonalApiKey,aiModel,setAiModel,aiAccessCode,setAiAccessCode}
 
@@ -53,7 +56,8 @@ function Academy(){
   },[])
   useEffect(()=>{
     if(experience?.role!=='guest'||!experience.analytics)return
-    const module=['home','choose','library','meihua','liuyao'].includes(mode)?mode:'other'
+    const section=isLibraryRoute(mode)?'library':mode
+    const module=['home','choose','library','meihua','liuyao'].includes(section)?section:'other'
     fetch('/api/experience/event',{
       method:'POST',credentials:'same-origin',
       headers:{'Content-Type':'application/json','X-Experience-Csrf':experience.csrf},
@@ -70,10 +74,15 @@ function Academy(){
   }
   useEffect(()=>{
     function syncBrowserHistory(){
+      if(window.location.hash==='#games'){
+        window.history.replaceState({...window.history.state,academyRoute:TRIAL_ROUTE},'','#'+TRIAL_ROUTE)
+        setTrialPanel('practice')
+      }
       const next=routeFromUrl()
       pendingScroll.current=scrollPositions.current[next]??0
       setMode(next)
     }
+    if(window.location.hash==='#games')syncBrowserHistory()
     window.addEventListener('popstate',syncBrowserHistory)
     window.addEventListener('hashchange',syncBrowserHistory)
     return ()=>{
@@ -101,26 +110,36 @@ function Academy(){
   }
 
   function goBackTo(target){
-    if(!window.location.hash.endsWith(CAST_RESULT_SUFFIX)&&window.history.state?.academyRoute===mode&&window.history.state?.from===target){
+    const entry=window.history.state
+    if(!window.location.hash.endsWith(CAST_RESULT_SUFFIX)&&canonicalRoute(entry?.academyRoute)===mode&&canonicalRoute(entry?.from)===target){
       window.history.back()
     }else{
       navigate(target,true)
     }
   }
 
+  function changeTrialRoute(open){
+    const next=open?TRIAL_ROUTE:'library'
+    if(mode===next)return
+    // Library subpages share one browser entry and keep its return destination.
+    window.history.replaceState({...window.history.state,academyRoute:next},'','#'+next)
+    setMode(next)
+  }
+
   function closeLibrary(){
-    const from=window.history.state?.academyRoute==='library'?window.history.state?.from:null
-    goBackTo(from && from!=='library'?from:'home')
+    const entry=window.history.state
+    const from=canonicalRoute(entry?.academyRoute)===mode?canonicalRoute(entry?.from):null
+    goBackTo(from&&!isLibraryRoute(from)?from:'home')
   }
 
   function closeCast(){
     const entry=window.history.state
-    if(entry?.from==='games'){
+    if(canonicalRoute(entry?.from)===TRIAL_ROUTE){
       if(entry.academyRoute===mode&&entry.castInput===mode){
         // The history entry after the workshop form may have been restored as a form.
         window.history.go(-2)
       }else{
-        goBackTo('games')
+        goBackTo(TRIAL_ROUTE)
       }
       return
     }
@@ -139,23 +158,21 @@ function Academy(){
     mode==='cases'?<React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开收案中心…</main>}>
       <CaseExchangeCenter onClose={()=>goBackTo('choose')}/>
     </React.Suspense>:
-    mode==='games'?<React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开术数游学…</main>}>
-      <AcademyGames onBack={()=>goBackTo('home')} onSelect={next=>navigate(next)}
-        activeIndex={gameExperience} onIndexChange={setGameExperience}/>
-    </React.Suspense>:
     (mode==='home'||mode==='choose')?
       <ArtsHub screen={mode}
         onStart={()=>navigate('choose')}
         onBack={()=>goBackTo('home')}
         onSelect={next=>navigate(next)}
-        onGames={()=>navigate('games')}
         onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}}
         onCases={()=>navigate('cases')}
         activeGroup={activeGroup} setActiveGroup={setActiveGroup}
         page={choosePage} setPage={setChoosePage}/>:
-      mode==='library'?
+      isLibraryRoute(mode)?
       <React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开藏经阁…</main>}>
         <StudyHall onClose={closeLibrary} onPractice={()=>{setLearnFrom('liuyao');navigate('learn')}}
+          trialRoute={mode===TRIAL_ROUTE} onTrialRouteChange={changeTrialRoute}
+          trialExperienceIndex={trialExperience} onTrialExperienceChange={setTrialExperience} onTrialWorkshop={method=>navigate(method)}
+          trialPanel={trialPanel} onTrialPanelChange={setTrialPanel}
           apiKey={personalApiKey} setApiKey={setPersonalApiKey}
           aiModel={aiModel} setAiModel={setAiModel}
           accessCode={aiAccessCode} setAccessCode={setAiAccessCode}/>

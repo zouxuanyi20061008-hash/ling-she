@@ -14,58 +14,40 @@
 }
 
 .atlas-welcome .atlas-cover-page .atlas-hero-copy {
-  min-height: clamp(320px, 46vh, 440px);
-  padding: clamp(28px, 5vw, 70px);
-  border-color: var(--quiet-line);
-  background: var(--quiet-surface);
-  box-shadow: none;
+  min-height: clamp(420px, 64svh, 640px);
+  padding: clamp(30px, 5.5vw, 80px);
+  border-color: #3e3731;
+  background: #151822;
+  box-shadow: 0 14px 37px #19182029;
 }
 
-.atlas-welcome .atlas-cover-painting {
-  opacity: .64;
-  filter: grayscale(1) sepia(.14);
-}
+.atlas-welcome .atlas-cover-painting img { object-position: center 17%; }
 
 .atlas-welcome .atlas-hero-copy::before {
-  background: linear-gradient(90deg, var(--quiet-surface) 12%,
-    color-mix(in srgb, var(--quiet-surface) 90%, transparent) 37%, transparent 79%);
+  background: linear-gradient(90deg, #151822f2 1%, #151822cf 28%, #15182241 52%, transparent 77%),
+    linear-gradient(0deg, #12121a73, transparent 29%);
 }
 
+.atlas-welcome .atlas-cover-page .atlas-motto { color: #ddc397; }
+.atlas-welcome .atlas-cover-page .atlas-line { background: #c5a275; }
 .atlas-welcome .atlas-cover-page h1,
-.atlas-welcome .atlas-cover-page h1 em { color: var(--quiet-ink); }
+.atlas-welcome .atlas-cover-page h1 em { color: #fff3dc; }
 
-.atlas-welcome .atlas-cover-page .atlas-lead { color: var(--quiet-muted); }
+.atlas-welcome .atlas-cover-page .atlas-lead { color: #e6dacc; }
 
 .atlas-welcome .atlas-hero-actions { display: flex; }
 
 .atlas-welcome .atlas-hero-actions .atlas-primary {
-  color: var(--quiet-surface);
-  background: var(--quiet-primary);
-  border-color: var(--quiet-primary);
-  box-shadow: none;
+  color: #251d19;
+  background: #f3dfb9;
+  border-color: #f3dfb9;
+  box-shadow: 0 5px 15px #110d13a0;
 }
-
-.atlas-home-game-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  min-height: 70px;
-  padding: 10px 16px;
-  border-block-end: 1px solid var(--quiet-line);
-  text-align: start;
-  color: var(--quiet-ink);
-}
-
-.atlas-home-game-copy { display: grid; gap: 3px; }
-.atlas-home-game-copy strong { font-size: 20px; font-weight: 700; line-height: 1.25; }
-.atlas-home-game-copy small { color: var(--quiet-muted); font: 13px/1.45 var(--quiet-ui); }
-.atlas-home-game-link { color: var(--quiet-primary); font: 20px/1 var(--quiet-ui); }
 
 @media (hover: hover) {
-  .atlas-home-game-entry:hover { background: var(--quiet-tint); }
+  .atlas-welcome .atlas-hero-actions .atlas-primary:hover { background: #fff0cf; }
 }
+.atlas-welcome .atlas-hero-actions .atlas-primary:focus-visible { outline-color: #f3dfb9 !important; }
 
 @media (max-width: 650px) {
   .atlas.atlas-screen {
@@ -83,19 +65,19 @@
 
   .atlas-welcome .atlas-cover-page { gap: 6px; padding-block: 10px 20px; }
   .atlas-welcome .atlas-cover-page .atlas-hero-copy {
-    min-height: clamp(200px, 40vh, 250px);
-    padding: 16px;
+    min-height: clamp(332px, 62svh, 450px);
+    justify-content: flex-end;
+    padding: clamp(17px, 5vw, 24px);
   }
-  .atlas-welcome .atlas-cover-painting { opacity: .48; }
+  .atlas-welcome .atlas-cover-painting img { object-position: center 17%; }
   .atlas-welcome .atlas-hero-copy::before {
-    background: linear-gradient(90deg, var(--quiet-surface) 10%,
-      color-mix(in srgb, var(--quiet-surface) 86%, transparent) 43%, transparent 96%);
+    background: linear-gradient(0deg, #13151efc 1%, #13151ee8 17%, #13151e7a 42%, #13151e05 70%);
   }
-  .atlas-welcome .atlas-cover-page h1 { font-size: clamp(25px, 7.2vw, 42px); }
+  .atlas-welcome .atlas-cover-page h1 { font-size: clamp(24px, 7vw, 42px); letter-spacing: .025em; }
+  .atlas-welcome .atlas-cover-page .atlas-lead { max-width: 27em; }
   .atlas-welcome .atlas-cover-page h1 > br,
   .atlas-welcome .atlas-cover-page .atlas-motto { display: none; }
   .atlas-welcome .atlas-hero-actions { margin-block-start: 11px; }
-  .atlas-home-game-entry { padding-inline: 9px; }
 
   .atlas-choose .atlas-return { color: var(--quiet-primary); }
 

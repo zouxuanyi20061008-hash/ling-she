@@ -1,23 +1,52 @@
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { EIGHT_TRIGRAMS, hexagramForLines } from './casting-lessons.js'
 import HomeDiorama from './HomeDiorama.jsx'
 import { HomeChallengeFeedback, HomeChallengeHeading, useHomeChallenge } from './HomeChallenge.jsx'
+import './trigram-verse.css'
+
+const verseByName = {
+  乾: '乾三连', 坤: '坤六段', 离: '离中虚', 坎: '坎中满',
+  巽: '巽下断', 兑: '兑上缺', 震: '震仰盂', 艮: '艮覆碗',
+}
+
+function TrigramGlyph({ lines, label }) {
+  return <span className="atlas-orbit-glyph" role={label ? 'img' : undefined}
+    aria-label={label} aria-hidden={!label || undefined}>
+    {lines.slice().reverse().map((line, position) => <span key={position} data-yang={line === 1 || undefined} />)}
+  </span>
+}
+
+function TrigramVerse({ id, open, activeName }) {
+  return <div id={id} className="atlas-trigram-verse" hidden={!open}>
+    <p>实线为阳，断线为阴。卦图从上往下看，爻序从最下面的初爻数起。</p>
+    <ul aria-label="八卦口诀对照" role="list">
+      {Object.entries(verseByName).map(([name, verse]) => {
+        const trigram = EIGHT_TRIGRAMS.find(item => item.name === name)
+        const shape = trigram.lines.slice().reverse().map(line => line ? '阳' : '阴').join('、')
+        return <li key={name} aria-current={activeName === name ? 'true' : undefined}>
+          <TrigramGlyph lines={trigram.lines} label={`${name}卦从上到下是${shape}`} />
+          <span>{verse}</span>
+        </li>
+      })}
+    </ul>
+  </div>
+}
 
 const levels = [
   {
     title: '看象寻卦',
     prompt: '哪一卦代表山？点一块卦牌。',
     intro: '点选卦牌会显示象意，猜错可以继续点。',
-    hint: '山有稳固、止步的意象。找上面一条实线、下面两条断线的卦。',
+    hint: '山有稳固、止步的意象。找上面一条实线、下面两条断线的卦，口诀是「艮覆碗」。',
     answer: '艮',
-    success: '艮（gèn）为山。上爻是一条实线，下面是两条断线。看到艮，可以先想到山和「止」。',
+    success: '艮（gèn）为山，记作「艮覆碗」。上爻是一条实线，下面是两条断线。看到艮，可以先想到山和「止」。',
     retry: '这块卦牌代表另一种自然景象。看一眼象意，再找代表山的卦。',
   },
   {
     title: '把风放在雷上',
     prompt: '选代表风的卦设为上卦，选代表雷的卦设为下卦，再检查。',
     intro: '两个三爻卦上下叠起来，就成了一个六爻卦。',
-    hint: '巽（xùn）为风，震（zhèn）为雷。先把巽设为上卦，再把震设为下卦。',
+    hint: '巽（xùn）为风，记「巽下断」。震（zhèn）为雷，记「震仰盂」。把巽设为上卦、震设为下卦。',
     answer: '益',
     success: '巽上、震下合为风雷益。卦名里的「风雷」依次取自上卦、下卦，卦图的六爻仍从最下面读起。',
     retry: '按题目核对两格的象意和上下位置。改好后，再点「检查合卦」。',
@@ -26,7 +55,7 @@ const levels = [
     title: '上下互换有何不同',
     prompt: '这次把雷放在上面、风放在下面，看看换成了什么卦。',
     intro: '还是刚才的两种象，不过要将它们的上下位置互换。',
-    hint: '选震设为上卦，选巽设为下卦。',
+    hint: '用「震仰盂」「巽下断」认牌。选震设为上卦，选巽设为下卦。',
     answer: '恒',
     success: '震上、巽下合为雷风恒。和上一关用的是同两个三爻卦，位置一换，六爻排列和卦名都变了。',
     retry: '重新核对上下位置。雷要在上，风要在下。',
@@ -35,6 +64,8 @@ const levels = [
 
 export default function EightTrigramExplorer() {
   const trial = useHomeChallenge('meihua', levels)
+  const verseId = useId()
+  const [verseOpen, setVerseOpen] = useState(false)
   const [activeName, setActiveName] = useState(trial.completed ? '震' : '乾')
   const [rotationSteps, setRotationSteps] = useState(0)
   const [upperName, setUpperName] = useState(trial.completed ? '震' : '乾')
@@ -103,7 +134,7 @@ export default function EightTrigramExplorer() {
       <span className="atlas-trigram-detail-symbol" aria-hidden="true">{active.symbol}</span>
       <div>
         <h3>{active.name} · {active.image}</h3>
-        <p className="atlas-trigram-hint">{active.hint}</p>
+        <p className="atlas-trigram-hint"><strong>{verseByName[active.name]}</strong> · {active.hint}</p>
         <div className="atlas-trigram-facts">
           <span>后天方位 · {active.direction}</span>
           <span>五行 · {active.element}</span>
@@ -124,8 +155,13 @@ export default function EightTrigramExplorer() {
         <h2>八卦探象</h2>
         {!composeMode && <p>点选卦象，查看象意</p>}
       </div>
-      <button type="button" className="atlas-trigram-random" onClick={chooseRandom}>随机观象</button>
+      <div className="atlas-trigram-verse-actions">
+        <button type="button" className="atlas-trigram-verse-toggle" aria-expanded={verseOpen}
+          aria-controls={verseId} onClick={() => setVerseOpen(open => !open)}>八卦口诀</button>
+        <button type="button" className="atlas-trigram-random" onClick={chooseRandom}>随机观象</button>
+      </div>
     </header>
+    <TrigramVerse id={verseId} open={verseOpen} activeName={active.name} />
     <HomeChallengeHeading trial={trial} />
     <HomeDiorama kind="meihua" picked={active.name} solved={trial.solved}>
       <div className="atlas-orbit" role="group" aria-label="选择八卦" data-rotation={rotationDegrees}>
@@ -147,10 +183,7 @@ export default function EightTrigramExplorer() {
             onClick={() => selectTrigram(trigram.name)}
             title={trigram.name + ' · ' + trigram.image}
           >
-            <span className="atlas-orbit-glyph" aria-hidden="true">
-              {trigram.lines.slice().reverse().map((line,position)=>
-                <span key={position} data-yang={line===1||undefined}/>)}
-            </span>
+            <TrigramGlyph lines={trigram.lines} />
             <span>{trigram.name}</span>
           </button>
         })}

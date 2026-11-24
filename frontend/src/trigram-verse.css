@@ -1,0 +1,59 @@
+.atlas-trigram-verse-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.atlas-trigram-verse-toggle {
+  min-height: 44px;
+  padding: 5px 8px;
+  border: 1px solid var(--quiet-strong-line, #9a8877);
+  border-radius: 8px;
+  background: var(--quiet-surface, #fffdf7);
+  color: var(--quiet-primary, #3b4c68);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.atlas-trigram-verse-toggle[aria-expanded='true'] { background: var(--quiet-tint, #e9edf4); }
+
+.atlas-trigram-verse {
+  padding: 8px;
+  border: 1px solid var(--quiet-line, #d6cfc2);
+  border-radius: 8px;
+  background: var(--quiet-paper, #f7f4eb);
+  color: var(--quiet-ink, #322e2a);
+  font: 13px/1.45 var(--quiet-ui, sans-serif);
+}
+
+.atlas-trigram-verse > p { color: var(--quiet-muted, #625b52); }
+
+.atlas-trigram-verse > ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 6px;
+  margin: 5px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.atlas-trigram-verse li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.atlas-trigram-verse li[aria-current='true'] {
+  border-color: var(--quiet-strong-line, #9a8877);
+  background: var(--quiet-tint, #e9edf4);
+}
+
+.atlas-trigram-verse .atlas-orbit-glyph {
+  flex: none;
+  inline-size: 21px;
+  color: var(--quiet-primary, #3b4c68);
+}

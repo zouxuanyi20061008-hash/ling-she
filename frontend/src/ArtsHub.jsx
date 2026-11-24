@@ -1,7 +1,7 @@
 import { useRef, useSyncExternalStore } from 'react'
 import './academy.css'
-import academyLandscape from './assets/academy-landscape.webp'
-import academyLandscapeSmall from './assets/academy-landscape-small.webp'
+import celestialNight from './assets/academy-celestial-night.webp'
+import celestialNightCompact from './assets/academy-celestial-night-compact.webp'
 
 export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
@@ -57,7 +57,7 @@ function MethodCard({method,compact,onSelect}) {
   </button>
 }
 
-export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onGames,onLearn,onCases,
+export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onLearn,onCases,
   activeGroup='全部',setActiveGroup,page=0,setPage}) {
   const startTouch=useRef(null)
   const compactList=useSyncExternalStore(subscribeToCompactList,isCompactList)
@@ -80,7 +80,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
           <span className="atlas-ident-text"><b>万象书院</b><small>中国传统术数 · 互动研习</small></span>
         </button>
         <button type="button" className="atlas-library" onClick={onStudy}>
-          <span aria-hidden="true">◎</span> 藏经阁 <span>古籍 · 学堂 · 设置</span>
+          <span aria-hidden="true">◎</span> 藏经阁 <span>典籍 · 修习 · 试炼</span>
         </button>
       </header>
 
@@ -88,8 +88,8 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
         <section className="atlas-hero atlas-cover-page" aria-label="万象书院欢迎页">
           <div className="atlas-hero-copy">
             <picture className="atlas-cover-painting" aria-hidden="true">
-              <source media={COMPACT_LIST_QUERY} srcSet={academyLandscapeSmall}/>
-              <img src={academyLandscape} alt="" width="1280" height="853"/>
+              <source media={COMPACT_LIST_QUERY} srcSet={celestialNightCompact}/>
+              <img src={celestialNight} alt="" width="1440" height="960" decoding="async" fetchpriority="high"/>
             </picture>
             <p className="atlas-motto"><span className="atlas-line"/> 读天地之象 · 学古人之思</p>
             <h1>万象有数，<br/><em>问道于心。</em></h1>
@@ -100,14 +100,6 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               </button>
             </div>
           </div>
-          <button type="button" className="atlas-home-game-entry" onClick={onGames} aria-label="术数游学"
-            aria-describedby="atlas-home-game-description">
-            <span className="atlas-home-game-copy">
-              <strong>术数游学</strong>
-              <small id="atlas-home-game-description">八门小游戏 · 边玩边学排盘</small>
-            </span>
-            <span className="atlas-home-game-link" aria-hidden="true">→</span>
-          </button>
         </section>
       :
         <section className="atlas-selection atlas-choose-page" aria-label="择术入境">

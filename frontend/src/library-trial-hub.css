@@ -1,0 +1,69 @@
+.library-trial-hub {
+  color: var(--quiet-ink);
+}
+
+.library-trial-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0 auto 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--quiet-line);
+}
+
+.library-trial-hub[data-panel='practice'] .library-trial-hub-header {
+  width: min(100%, 460px);
+}
+
+.library-trial-hub-header h2 {
+  margin: 0;
+  font-size: clamp(19px, 4.8vw, 25px);
+  font-weight: 750;
+}
+
+.library-trial-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.library-trial-tabs button {
+  min-height: 44px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--quiet-muted);
+  white-space: nowrap;
+}
+
+.library-trial-tabs button[aria-pressed='true'] {
+  border-color: var(--quiet-strong-line);
+  color: var(--quiet-primary);
+  background: var(--quiet-tint);
+  font-weight: 700;
+}
+
+.library-trial-loading {
+  margin: 12px auto;
+  text-align: center;
+  color: var(--quiet-muted);
+}
+
+.library-trial-quiz-intro {
+  margin: 0 0 12px;
+  color: var(--quiet-muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+@media (max-width: 650px) {
+  .library-stage.library-stage--trial .library-inner { padding-top: 5px; }
+  .library-stage.library-stage--trial .library-secondary-nav { margin-bottom: 4px; }
+  .library-trial-hub-header { margin-bottom: 2px; padding-bottom: 3px; }
+}
+
+@media (max-width: 360px) {
+  .library-trial-hub-header { padding-bottom: 0; }
+  .atlas-games .home-experience-rail { margin-top: 1px; }
+}
