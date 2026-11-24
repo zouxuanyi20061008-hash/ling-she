@@ -157,7 +157,9 @@ def _call_llm(request: Request, ai_model: str, messages: list[dict]) -> str:
         with urlopen(outbound,timeout=45) as response:
             result=json.load(response)
         answer=result["choices"][0]["message"]["content"]
-    except (HTTPError,URLError,ValueError,KeyError,IndexError,TimeoutError) as exc:
+        if not isinstance(answer, str) or not answer.strip():
+            raise ValueError("The model returned no interpretation text")
+    except (HTTPError,URLError,ValueError,KeyError,IndexError,TypeError,TimeoutError) as exc:
         raise HTTPException(502,"模型接口不可用或返回格式异常") from exc
 
     return answer

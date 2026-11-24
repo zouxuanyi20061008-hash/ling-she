@@ -242,6 +242,21 @@ def test_owner_deepseek_defaults_and_custom_provider(monkeypatch, url, setting, 
     assert captured.get("thinking") == thinking
 
 
+@pytest.mark.parametrize("body", [b'{"choices":null}', b'{"choices":[{"message":{"content":null}}]}'])
+def test_unusable_deepseek_response_returns_an_explanation(monkeypatch, body):
+    import importlib
+    import io
+    server = importlib.import_module("app.main")
+    monkeypatch.setattr(server, "rate_limit", lambda _ip: None)
+    monkeypatch.setattr(server, "urlopen", lambda *_args, **_kwargs: io.BytesIO(body))
+    result = TestClient(app).post("/api/interpret", json={
+        "question": "如何处理合作？", "value": "5,2", "time_iso": "2026-10-22T02:15:00+09:00",
+        "background": "已经收到草拟条款。", "background_confirmed": True,
+    }, headers={"X-User-API-Key": "sk-personaltest123456"})
+    assert result.status_code == 502
+    assert result.json()["detail"] == "模型接口不可用或返回格式异常"
+
+
 def test_reject_malformed_personal_deepseek_key(monkeypatch):
     monkeypatch.delenv("LLM_API_KEY",raising=False)
     payload={
