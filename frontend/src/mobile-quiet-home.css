@@ -1,0 +1,190 @@
+@media (max-width: 650px) {
+  .atlas-welcome .atlas-cover-page {
+    gap: 14px;
+    padding-block-start: 9px;
+  }
+
+  .atlas-welcome.atlas-screen .atlas-cover-page .atlas-hero-copy {
+    padding: 10px 12px;
+    border-color: var(--quiet-line);
+    background: var(--quiet-surface);
+    box-shadow: none;
+  }
+
+  .atlas-welcome .atlas-cover-painting {
+    opacity: .26;
+    filter: saturate(.5);
+  }
+
+  .atlas-welcome .atlas-hero-copy::before {
+    background: linear-gradient(90deg, var(--quiet-surface) 35%, transparent);
+  }
+
+  .atlas-welcome .atlas-cover-page h1,
+  .atlas-welcome .atlas-cover-page h1 em { color: var(--quiet-ink); }
+
+  .atlas-welcome .atlas-cover-page h1 { margin-block: 3px 4px; }
+  .atlas-welcome .atlas-cover-page .atlas-lead { color: var(--quiet-muted); }
+
+  .atlas-welcome .atlas-hero-actions {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+    width: min(300px, 100%);
+    margin-block-start: 8px;
+  }
+
+  .atlas-welcome .atlas-hero-actions .atlas-primary {
+    color: var(--quiet-surface);
+    background: var(--quiet-primary);
+    border-color: var(--quiet-primary);
+    box-shadow: none;
+  }
+
+  .atlas-welcome .atlas-hero-actions .atlas-ghost {
+    color: var(--quiet-primary);
+    border-color: transparent;
+    background: transparent;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .home-experiences {
+    --home-ink: var(--quiet-ink);
+    --home-rule: var(--quiet-line);
+    --home-sheet: var(--quiet-surface);
+  }
+
+  .home-experience-header p,
+  .home-experience-arrows > span { color: var(--quiet-muted); }
+
+  .home-experience-arrows button {
+    color: var(--quiet-primary);
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .home-experience-rail {
+    gap: 2px;
+    padding: 1px 0 4px;
+    border-bottom: 1px solid var(--quiet-line);
+    scrollbar-width: none;
+  }
+
+  .home-experience-rail button {
+    padding-inline: 5px;
+    border-color: transparent;
+    background: transparent;
+    color: var(--quiet-muted);
+  }
+
+  .home-experience-rail button[aria-pressed='true'] {
+    color: var(--quiet-primary);
+    background: var(--quiet-tint);
+    border-color: transparent;
+    box-shadow: inset 0 -2px var(--quiet-primary);
+  }
+
+  .atlas-welcome .atlas-cover-page .atlas-trigram-explorer,
+  .atlas-welcome .home-experience-card {
+    color: var(--quiet-ink);
+    background: var(--quiet-surface);
+    border-color: var(--quiet-line);
+    box-shadow: none;
+  }
+
+  .home-experience-card > header > span {
+    color: var(--quiet-primary);
+    background: var(--quiet-tint);
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .home-experience-prompt,
+  .home-challenge-progress { color: var(--quiet-muted); }
+
+  .atlas-welcome .atlas-trigram-heading p,
+  .home-challenge-marks { display: none; }
+
+  .home-experiences .home-challenge-panel .home-experience-feedback {
+    color: var(--quiet-ink);
+    background: var(--quiet-paper);
+    border-inline-start-color: var(--quiet-strong-line);
+  }
+
+  .home-experiences .home-challenge-panel:is([data-state='correct'], [data-state='complete']) .home-experience-feedback {
+    background: var(--quiet-tint);
+    border-inline-start-color: var(--quiet-primary);
+  }
+
+  .home-experiences .home-challenge-actions button,
+  .atlas-welcome .atlas-trigram-explorer .atlas-trigram-random {
+    color: var(--quiet-primary);
+    background: var(--quiet-surface);
+    border-color: var(--quiet-strong-line);
+  }
+
+  .home-experiences .home-challenge-actions button[data-primary] {
+    color: var(--quiet-surface);
+    background: var(--quiet-primary);
+    border-color: var(--quiet-primary);
+  }
+
+  .home-experiences .home-challenge-actions button[aria-expanded='true'] { background: var(--quiet-tint); }
+
+  .home-experience-workshop {
+    border-color: var(--quiet-line);
+    background: var(--quiet-surface);
+    color: var(--quiet-primary);
+  }
+
+  .atlas-welcome :is(.atlas-trigram-detail, .atlas-composition) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-paper);
+  }
+
+  .atlas-welcome .atlas-trigram-detail-symbol {
+    color: var(--quiet-primary);
+    background: var(--quiet-tint);
+    border-color: transparent;
+  }
+
+  .atlas-choose .atlas-filter button {
+    color: var(--quiet-muted);
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .atlas-choose .atlas-filter button[aria-pressed='true'] {
+    color: var(--quiet-primary);
+    background: var(--quiet-tint);
+    border-color: transparent;
+    box-shadow: inset 0 -2px var(--quiet-primary);
+  }
+
+  .atlas-choose .atlas-choose-page .atlas-method {
+    --accent: var(--quiet-primary);
+    min-height: 63px;
+    background: var(--quiet-surface);
+    border-color: var(--quiet-line);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .atlas-choose .atlas-choose-page .atlas-method:focus-visible { border-color: var(--quiet-primary); }
+
+  .atlas-choose .atlas-method .atlas-method-symbol {
+    display: grid;
+    width: 27px;
+    background: var(--quiet-tint);
+    border-color: transparent;
+  }
+
+  .atlas-choose .atlas-method h3 { color: var(--quiet-ink); }
+
+  .atlas-choose .atlas-method .atlas-method-status {
+    color: var(--quiet-muted);
+    font-family: var(--quiet-ui, sans-serif);
+    font-weight: 400;
+  }
+
+  .atlas-choose .atlas-choice-help button { color: var(--quiet-primary); }
+}

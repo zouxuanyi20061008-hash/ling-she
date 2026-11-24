@@ -11,6 +11,10 @@ import './theme-refresh.css'
 import './academy-art.css'
 import './casting-art.css'
 import './academy-interface.css'
+import './mobile-quiet.css'
+import './mobile-quiet-home.css'
+import './mobile-quiet-cast.css'
+import './mobile-quiet-library.css'
 import {isPackagedApp} from './api-url.js'
 
 const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))

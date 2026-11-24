@@ -1,0 +1,29 @@
+@media (max-width: 650px) {
+  :root {
+    --quiet-paper: #f7f4eb;
+    --quiet-surface: #fffdf7;
+    --quiet-ink: #243c32;
+    --quiet-muted: #525c50;
+    --quiet-line: #d3d3c3;
+    --quiet-strong-line: #8a9485;
+    --quiet-primary: #254f42;
+    --quiet-tint: #e9eee4;
+    --quiet-warm: #8c6b42;
+    --quiet-ui: 'PingFang SC', 'Microsoft YaHei UI', 'Noto Sans CJK SC', system-ui, sans-serif;
+  }
+
+  :is(.atlas.atlas-screen, main.academy-stage, .book-app.book-app--meihua,
+    main.library-stage, main.learn-casting-page, main.academy-case-exchange) {
+    background: var(--quiet-paper);
+    color: var(--quiet-ink);
+    accent-color: var(--quiet-primary);
+  }
+
+  .atlas-screen .atlas-grain { display: none; }
+
+  :where(.atlas-screen, .academy-stage, .book-app--meihua, .library-stage, .learn-casting-page, .academy-case-exchange)
+    :is(button, a, input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--quiet-primary);
+    outline-offset: 2px;
+  }
+}

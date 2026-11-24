@@ -6,21 +6,21 @@ import academyLandscapeSmall from './assets/academy-landscape-small.webp'
 
 export const ARTS = [
   {id:'meihua',name:'梅花易数',title:'梅花心易',symbol:'☯',en:'MEIHUA YISHU',tone:'jade',
-   brief:'一字一象，万物皆可起卦。',detail:'体用生克 · 先后天八卦 · 本互变卦',status:'可实际排盘',group:'象数易'},
+   brief:'一字一象，万物皆可起卦。',detail:'体用生克 · 先后天八卦 · 本互变卦',status:'可实际排盘',quickUse:'用字或数字起卦',group:'象数易'},
   {id:'liuyao',name:'六爻纳甲',title:'六爻铜钱',symbol:'☰',en:'LIUYAO',tone:'copper',
-   brief:'三钱在掌，六掷自下而上。',detail:'三钱六掷 · 京房八宫 · 世应六亲 · 六神旬空',status:'排盘继续完善',group:'卜筮'},
+   brief:'三钱在掌，六掷自下而上。',detail:'三钱六掷 · 京房八宫 · 世应六亲 · 六神旬空',status:'排盘继续完善',quickUse:'掷铜钱起卦',group:'卜筮'},
   {id:'qimen',name:'奇门遁甲',title:'九宫遁甲',symbol:'九',en:'QIMEN DUNJIA',tone:'night',
-   brief:'九宫为盘，观察时空的结构。',detail:'星门神实盘 · 逐宫四层校核 · 古籍例盘',status:'V73 真实整盘校核',group:'三式'},
+   brief:'九宫为盘，观察时空的结构。',detail:'星门神实盘 · 逐宫四层校核 · 古籍例盘',status:'V73 真实整盘校核',quickUse:'按时辰排九宫',group:'三式'},
   {id:'bazi',name:'四柱八字',title:'干支四柱',symbol:'干',en:'FOUR PILLARS',tone:'amber',
-   brief:'年、月、日、时，观干支历法。',detail:'四柱十神 · 大运 · 十二节令流月',status:'V57 可查流年流月',group:'命理'},
+   brief:'年、月、日、时，观干支历法。',detail:'四柱十神 · 大运 · 十二节令流月',status:'V57 可查流年流月',quickUse:'查四柱和流年',group:'命理'},
   {id:'liuren',name:'大六壬',title:'六壬天盘',symbol:'壬',en:'DA LIU REN',tone:'night',
-   brief:'天盘地盘，古代三式之一。',detail:'反吟涉害 · 原典单例边界 · 旬空天将',status:'V76 取传证据校核',group:'三式'},
+   brief:'天盘地盘，古代三式之一。',detail:'反吟涉害 · 原典单例边界 · 旬空天将',status:'V76 取传证据校核',quickUse:'查天地盘和三传',group:'三式'},
   {id:'taiyi',name:'太乙神数',title:'太乙行宫',symbol:'乙',en:'TAI YI',tone:'jade',
-   brief:'步宫推数，历法中的术数传统。',detail:'阴遁315独立古籍例课 · 气应六纪三相位逐宫候选',status:'岁计与时计排盘',group:'三式'},
+   brief:'步宫推数，历法中的术数传统。',detail:'阴遁315独立古籍例课 · 气应六纪三相位逐宫候选',status:'岁计与时计排盘',quickUse:'查岁计和时计',group:'三式'},
   {id:'ziwei',name:'紫微斗数',title:'紫微星盘',symbol:'星',en:'ZIWEI DOUSHU',tone:'copper',
-   brief:'十二宫垣，星曜的古典语言。',detail:'十四正曜 · 十二辅煞 · 生年四化双口径',status:'V69 四化辅曜',group:'命理'},
+   brief:'十二宫垣，星曜的古典语言。',detail:'十四正曜 · 十二辅煞 · 生年四化双口径',status:'V69 四化辅曜',quickUse:'按生辰排星盘',group:'命理'},
   {id:'fengshui',name:'堪舆风水',title:'山川堪舆',symbol:'山',en:'KAN YU',tone:'amber',
-   brief:'察山水形势，读空间的传统观念。',detail:'二十四山 · 立春定运 · 运山向三盘',status:'V71 玄空下卦',group:'空间'},
+   brief:'察山水形势，读空间的传统观念。',detail:'二十四山 · 立春定运 · 运山向三盘',status:'V71 玄空下卦',quickUse:'按坐向排盘',group:'空间'},
 ]
 
 const GROUPS=['全部','象数易','卜筮','三式','命理','空间']
@@ -41,11 +41,12 @@ function BookSeal({word}) {
   return <span className="atlas-seal" aria-hidden="true">{word}</span>
 }
 
-function MethodCard({method,onSelect}) {
+function MethodCard({method,compact,onSelect}) {
+  const description=compact?method.quickUse:method.status
   return <button type="button" className={'atlas-method '+method.tone+' atlas-method--'+method.id}
-    onClick={()=>onSelect(method.id)} aria-label={'进入'+method.name+'，'+method.status}>
+    onClick={()=>onSelect(method.id)} aria-label={'进入'+method.name+'，'+description}>
     <span className="atlas-method-top">
-      <span className="atlas-method-status">{method.status}</span>
+      <span className="atlas-method-status">{description}</span>
     </span>
     <span className="atlas-method-symbol" aria-hidden="true">{method.symbol}</span>
     <span className="atlas-method-en">{method.en}</span>
@@ -94,7 +95,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
             </picture>
             <p className="atlas-motto"><span className="atlas-line"/> 读天地之象 · 学古人之思</p>
             <h1>万象有数，<br/><em>问道于心。</em></h1>
-            <p className="atlas-lead">一座可以亲手起卦、翻阅原典、循序研习的中国传统术数书院。</p>
+            <p className="atlas-lead">{compactList?'亲手起卦，翻阅原典，研习八门术数。':'一座可以亲手起卦、翻阅原典、循序研习的中国传统术数书院。'}</p>
             <div className="atlas-hero-actions">
               <button type="button" className="atlas-primary atlas-start" onClick={onStart}>
                 开始研习 <span aria-hidden="true">→</span>
@@ -134,7 +135,7 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
               choosePage(index+(dx<0?1:-1))
             }}>
             <div className="atlas-method-grid">
-              {methods.map(method=><MethodCard key={method.id} method={method} onSelect={onSelect}/>)}
+              {methods.map(method=><MethodCard key={method.id} method={method} compact={compactList} onSelect={onSelect}/>)}
             </div>
           </div>
           {canPage&&<nav className="atlas-page-controls" aria-label="术数列表分页">

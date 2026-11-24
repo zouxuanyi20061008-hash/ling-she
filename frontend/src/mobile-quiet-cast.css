@@ -1,0 +1,206 @@
+@media (max-width: 650px) {
+  :is(.academy-stage:is(.academy-knowledge-mode, .academy-stage--liuyao), .book-app.book-app--meihua) {
+    --ui-accent: var(--quiet-primary);
+    --ui-guide: var(--quiet-paper);
+    --ui-field: var(--quiet-surface);
+    --ui-line: var(--quiet-line);
+    --casting-rule: var(--quiet-line);
+    --casting-glaze: var(--quiet-paper);
+    --casting-field: var(--quiet-surface);
+    --casting-ink: var(--quiet-ink);
+    --casting-control-edge: var(--quiet-strong-line);
+    --casting-control-halo: color-mix(in srgb, var(--quiet-primary) 14%, transparent);
+    --casting-selected: var(--quiet-tint);
+    color: var(--quiet-ink);
+    background: var(--quiet-paper);
+  }
+
+  /* Keep the school's motif in its heading, with a small amount of local color. */
+  :is(.academy-stage.academy-knowledge-mode, .academy-stage.academy-stage--liuyao) .academy-stage-banner {
+    --room-banner-ink: var(--quiet-ink);
+    --room-banner-sub: var(--quiet-muted);
+    border: 1px solid var(--quiet-line);
+    border-inline-start: 2px solid color-mix(in srgb, var(--room-accent) 64%, var(--quiet-line));
+    border-radius: 7px;
+    background: var(--casting-motif), linear-gradient(95deg, var(--quiet-surface) 26%,
+      color-mix(in srgb, var(--room-banner) 6%, var(--quiet-surface)));
+    box-shadow: none;
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao) .academy-stage-nav {
+    border-color: var(--quiet-line);
+    color: var(--quiet-muted);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao) .academy-stage-nav button {
+    border-color: transparent;
+    background: transparent;
+    color: var(--quiet-primary);
+    font-weight: 650;
+  }
+
+  .academy-knowledge-mode :is(.qimen-v50, .bazi-v55, .liuren-v58, .taiyi-v64, .ziwei-v68, .fengshui-v70,
+    .taiyi-v77-hour, .taiyi-year-mode, .academy-learning-surface, .academy-learning-panel, .academy-prelude),
+  .academy-stage--liuyao .liuyao-studio-grid :is(.academy-casting-table, .academy-casting-result),
+  .academy-stage.academy-stage--liuyao .academy-ai-section,
+  .book-app--meihua .book-leaf {
+    color: var(--quiet-ink);
+    background: var(--quiet-surface);
+    border-color: var(--quiet-line);
+    box-shadow: none;
+  }
+
+  .academy-knowledge-mode :is(.knowledge-cast-heading, .cast-page-pane > header, .taiyi-cast-header) :is(h2, h3),
+  .academy-stage--liuyao .academy-panel-head b,
+  .book-app--meihua :is(.book-name, .book-h1) {
+    color: var(--quiet-ink);
+  }
+
+  /* Use a quiet, outlined current tab. Solid green is for actions that advance the work. */
+  .academy-stage.academy-knowledge-mode .cast-page-nav,
+  .academy-stage.academy-knowledge-mode .cast-result-navigation .cast-result-buttons,
+  .academy-stage.academy-stage--taiyi .taiyi-cast-switch,
+  .academy-stage--liuyao .liuyao-navigation .liuyao-studio-switch,
+  .book-app--meihua :is(.book-steps, .book-tabs) {
+    border: 1px solid var(--quiet-line);
+    background: var(--quiet-paper);
+    box-shadow: none;
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao) :is(.cast-page-nav, .cast-result-buttons,
+    .taiyi-cast-switch, .liuyao-studio-switch) button:not(:disabled),
+  .book-app--meihua :is(.book-steps .book-step, .book-tabs .book-tab, .book-reading-buttons button):not(:disabled) {
+    border-color: transparent;
+    background: transparent;
+    color: var(--quiet-primary);
+    box-shadow: none;
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao) :is(.cast-page-nav, .cast-result-buttons,
+    .taiyi-cast-switch, .liuyao-studio-switch) button:is([aria-current='page'], [aria-pressed='true']),
+  .book-app--meihua :is(.book-steps .book-step, .book-tabs .book-tab, .book-reading-buttons button):is(
+    [aria-current='step'], [aria-current='page'], [aria-selected='true']) {
+    border-color: var(--quiet-strong-line);
+    background: var(--quiet-tint);
+    color: var(--quiet-ink);
+    box-shadow: inset 0 -2px var(--quiet-primary);
+  }
+
+  .academy-stage--liuyao .liuyao-studio-switch button[aria-current='page'] small { color: var(--quiet-muted); }
+
+  .academy-knowledge-mode .cast-result-navigation,
+  .academy-stage--liuyao .liuyao-navigation,
+  .book-app--meihua .book-mobile-nav {
+    background: var(--quiet-paper);
+  }
+
+  .academy-stage:is(.academy-knowledge-mode, .academy-stage--liuyao)
+    :is(.cast-result-navigation, .liuyao-mobile-result-navigation) select,
+  .book-app--meihua .book-reading-links select {
+    border-color: var(--quiet-strong-line);
+    background-color: var(--quiet-surface);
+    color: var(--quiet-ink);
+    box-shadow: none;
+  }
+
+  .academy-knowledge-mode :is(.qimen-v50-form, .bazi-v55-form, .liuren-v58-form, .taiyi-v64-form,
+    .taiyi-v77-form, .ziwei-v68-form, .fengshui-v70-form) button[type='submit']:enabled,
+  .academy-stage--liuyao :is(.academy-coin-altar .academy-primary, .liuyao-ready-action, .academy-ai-actions .academy-primary):enabled,
+  .book-app--meihua .book-main-action:enabled {
+    border-color: var(--quiet-primary);
+    background: var(--quiet-primary);
+    color: var(--quiet-surface);
+    box-shadow: none;
+  }
+
+  .academy-knowledge-mode :is(.qimen-v50-form, .bazi-v55-form, .liuren-v58-form, .taiyi-v64-form,
+    .taiyi-v77-form, .ziwei-v68-form, .fengshui-v70-form) button[type='submit']:enabled:active,
+  .academy-stage--liuyao :is(.academy-coin-altar .academy-primary, .liuyao-ready-action, .academy-ai-actions .academy-primary):enabled:active,
+  .book-app--meihua .book-main-action:enabled:active {
+    background: color-mix(in srgb, var(--quiet-primary) 86%, black);
+  }
+
+  .academy-knowledge-mode :is(.qimen-v50-form, .bazi-v55-form, .liuren-v58-form, .taiyi-v64-form,
+    .taiyi-v77-form, .ziwei-v68-form, .fengshui-v70-form) :is(input:not([type='checkbox']):not([type='radio']), select, textarea):not(:focus),
+  .academy-stage--liuyao .academy-quick-question textarea:not(:focus),
+  .book-app--meihua .book-page .field:not(:focus) {
+    box-shadow: none;
+  }
+
+  .academy-knowledge-mode :is(.bazi-v55-options-toggle, .liuren-v58-options-toggle,
+    .knowledge-back-to-chart, .knowledge-cast-teaching > summary),
+  .academy-stage--liuyao .academy-manual button:enabled,
+  .book-app--meihua :is(.book-second-action, .book-guide-action, .book-settings):enabled {
+    border-color: var(--quiet-strong-line);
+    background: var(--quiet-surface);
+    color: var(--quiet-primary);
+    box-shadow: none;
+  }
+
+  .academy-knowledge-mode :is(.bazi-v55-options-toggle, .liuren-v58-options-toggle)[aria-expanded='true'] {
+    background: var(--quiet-tint);
+  }
+
+  .academy-knowledge-mode :is(.bazi-v57-flow-enable, .fengshui-v71-toggle, .ziwei-mobile-leap) {
+    color: var(--quiet-primary);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .beginner-reading {
+    border-color: var(--quiet-line);
+    border-top-color: var(--quiet-primary);
+    background: var(--quiet-surface);
+    color: var(--quiet-ink);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .beginner-reading :is(
+    .beginner-reading-title, .beginner-reading-question, .beginner-reading-original > summary,
+    .beginner-reading-reasons h4, .beginner-reading-next) {
+    color: var(--quiet-muted);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .beginner-reading .beginner-reading-takeaway {
+    color: var(--quiet-ink);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .beginner-reading .beginner-reading-action {
+    border-color: var(--quiet-strong-line);
+    background: var(--quiet-tint);
+    color: var(--quiet-primary);
+  }
+
+  .academy-stage.academy-stage--liuyao .academy-coin-altar {
+    border-color: var(--quiet-line);
+    background: color-mix(in srgb, var(--quiet-warm) 7%, var(--quiet-surface));
+  }
+
+  .academy-stage--liuyao :is(.academy-coin-altar > p, .academy-panel-head, .academy-casting-result .academy-hex small) {
+    color: var(--quiet-muted);
+  }
+
+  .academy-stage--liuyao :is(.academy-hex, .review-flow-message, .liuyao-workbench-lead),
+  .book-app--meihua :is(.book-hex, .book-details, .book-summary, .book-settings-hint) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-paper);
+    color: var(--quiet-ink);
+    box-shadow: none;
+  }
+
+  .book-app--meihua .book-summary p { color: var(--quiet-ink); }
+  .book-app--meihua .book-cover { background: transparent; }
+  .book-app--meihua .book-cover-art { opacity: .26; }
+
+  .book-app--meihua .book-brand-icon {
+    border-color: var(--quiet-line);
+    background: var(--quiet-tint);
+    color: var(--quiet-primary);
+    box-shadow: none;
+  }
+
+  .book-app--meihua .book-leaf::before {
+    width: 2px;
+    background: color-mix(in srgb, var(--quiet-warm) 31%, transparent);
+  }
+
+  .book-app--meihua .book-leaf::after,
+  .book-app--meihua .book-settings::before { content: none; }
+}
