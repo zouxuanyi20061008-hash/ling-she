@@ -158,8 +158,8 @@ export default function EightTrigramExplorer() {
           <div className="atlas-taiji">
             <svg viewBox="0 0 100 100" width="100%">
               <circle cx="50" cy="50" r="49" fill="#d1bf94" stroke="#e6d4aa"/>
-              <path d="M50 1A49 49 0 0 0 50 99 A24.5 24.5 0 0 1 50 50 A24.5 24.5 0 0 0 50 1Z" fill="#173d35"/>
-              <circle cx="50" cy="25.5" r="7" fill="#173d35"/>
+              <path className="atlas-taiji-ink" d="M50 1A49 49 0 0 0 50 99 A24.5 24.5 0 0 1 50 50 A24.5 24.5 0 0 0 50 1Z" fill="#173d35"/>
+              <circle className="atlas-taiji-ink" cx="50" cy="25.5" r="7" fill="#173d35"/>
               <circle cx="50" cy="74.5" r="7" fill="#d1bf94"/>
             </svg>
           </div>

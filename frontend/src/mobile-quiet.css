@@ -2,12 +2,13 @@
   :root {
     --quiet-paper: #f7f4eb;
     --quiet-surface: #fffdf7;
-    --quiet-ink: #243c32;
-    --quiet-muted: #525c50;
-    --quiet-line: #d3d3c3;
-    --quiet-strong-line: #8a9485;
-    --quiet-primary: #254f42;
-    --quiet-tint: #e9eee4;
+    --quiet-ink: #322e2a;
+    --quiet-muted: #625b52;
+    --quiet-line: #d6cfc2;
+    --quiet-strong-line: #928779;
+    --quiet-primary: #3b4c68;
+    --quiet-tap: #3b4c682b;
+    --quiet-tint: #e9edf4;
     --quiet-warm: #8c6b42;
     --quiet-ui: 'PingFang SC', 'Microsoft YaHei UI', 'Noto Sans CJK SC', system-ui, sans-serif;
   }
@@ -21,9 +22,15 @@
 
   .atlas-screen .atlas-grain { display: none; }
 
-  :where(.atlas-screen, .academy-stage, .book-app--meihua, .library-stage, .learn-casting-page, .academy-case-exchange)
-    :is(button, a, input, select, textarea, summary):focus-visible {
-    outline: 2px solid var(--quiet-primary);
-    outline-offset: 2px;
+  .home-experiences .home-diorama button:focus-visible { outline-color: #f6dfb7 !important; }
+
+  .experience-visitor-banner {
+    background: var(--quiet-surface);
+    border-bottom: 1px solid var(--quiet-line);
+    color: var(--quiet-ink);
   }
+  .experience-visitor-banner small { color: var(--quiet-muted); }
+  .experience-visitor-banner a,
+  .experience-visitor-banner button { color: var(--quiet-primary); }
+  .experience-visitor-banner button { border-color: var(--quiet-strong-line); }
 }

@@ -11,12 +11,12 @@
   --ux-focus:#174d3a;
 }
 :where(button,a,input,textarea,select,summary):focus-visible{
-  outline:3px solid #167456!important;
+  outline:3px solid var(--quiet-primary,#167456)!important;
   outline-offset:3px!important;
 }
 button:disabled{cursor:not-allowed}
 :where(.atlas,.academy-stage,.library-stage,.book-app) button{
-  -webkit-tap-highlight-color:rgba(33,92,62,.17);
+  -webkit-tap-highlight-color:var(--quiet-tap,rgba(33,92,62,.17));
 }
 
 /* 书院首页：深色正文、明确入口层级 */

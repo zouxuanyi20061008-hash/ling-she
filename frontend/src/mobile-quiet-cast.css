@@ -56,7 +56,7 @@
     color: var(--quiet-ink);
   }
 
-  /* Use a quiet, outlined current tab. Solid green is for actions that advance the work. */
+  /* Use a quiet, outlined current tab. A solid accent marks the main action. */
   .academy-stage.academy-knowledge-mode .cast-page-nav,
   .academy-stage.academy-knowledge-mode .cast-result-navigation .cast-result-buttons,
   .academy-stage.academy-stage--taiyi .taiyi-cast-switch,
@@ -203,4 +203,282 @@
 
   .book-app--meihua .book-leaf::after,
   .book-app--meihua .book-settings::before { content: none; }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) :is(
+    .academy-help, .academy-subtitle, .academy-bottom, .cast-coach-hint, .cast-page-nav button:disabled,
+    .academy-prelude p, .academy-prelude > span, .beginner-reading-reasons ul, .academy-caution:not([role='alert'])) {
+    color: var(--quiet-muted);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .cast-coach-hint strong,
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .beginner-reading-reasons li::marker {
+    color: var(--quiet-primary);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .beginner-reading-reasons {
+    border-color: var(--quiet-line);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) :is(.cast-lesson, .cast-lesson-fold) {
+    --lesson-ink: var(--quiet-ink);
+    --lesson-rim: var(--quiet-line);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) :is(
+    .cast-lesson, .cast-lesson-fold > summary, .cast-lesson-scene, .cast-lesson-scene li:not([data-highlight='true'])) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-paper);
+  }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) :is(
+    .cast-lesson-scene li span, .cast-lesson-step p) { color: var(--quiet-muted); }
+
+  :is(.academy-knowledge-mode, .academy-stage--liuyao, .book-app--meihua) .cast-lesson-controls button:disabled {
+    border-color: var(--quiet-line);
+    color: var(--quiet-muted);
+  }
+
+  .academy-knowledge-mode .qimen-v50-nine button:not([aria-pressed='true']),
+  .academy-knowledge-mode .qimen-v50-palace { color: var(--quiet-ink); }
+
+  .academy-knowledge-mode :is(.qimen-v50-summary strong, .qimen-v50-result .qimen-v50-source) {
+    color: var(--quiet-primary);
+  }
+
+  .academy-knowledge-mode .liuren-v58-plate button {
+    border-color: var(--quiet-line);
+    background: var(--quiet-surface);
+    color: var(--quiet-muted);
+  }
+
+  .academy-knowledge-mode .liuren-v58-plate button.active {
+    background: var(--quiet-tint);
+    outline-color: var(--quiet-primary);
+  }
+
+  .academy-knowledge-mode .liuren-v58-plate button b:not(.liuren-v62-noble),
+  .academy-knowledge-mode :is(.liuren-v62-lesson-general, .liuren-v62-trans-general) {
+    color: var(--quiet-muted);
+    border-color: var(--quiet-line);
+  }
+
+  .academy-stage--taiyi {
+    --casting-motif: repeating-radial-gradient(circle at 84% 46%, transparent 0 27px,
+      #9f8b6940 28px 29px, transparent 30px 46px);
+  }
+
+  .academy-knowledge-mode .taiyi-v64-overview { border-inline-start-color: var(--quiet-warm); }
+  .academy-knowledge-mode :is(.taiyi-v64-overview > strong, .taiyi-v64-result h3,
+    .taiyi-v64-result .cast-result-panel > a) { color: var(--quiet-primary); }
+
+  .academy-knowledge-mode .taiyi-v64-palaces button:not(.taiyi),
+  .academy-knowledge-mode .taiyi-v64-palaces button:not(.taiyi) strong {
+    border-color: var(--quiet-line);
+    color: var(--quiet-ink);
+  }
+
+  .academy-knowledge-mode .taiyi-v64-palaces button:not(.taiyi) { background: var(--quiet-surface); }
+  .academy-knowledge-mode .taiyi-v64-palaces button.center:not(.taiyi) { background: var(--quiet-paper); }
+  .academy-knowledge-mode .taiyi-v64-palaces button.selected { outline-color: var(--quiet-primary); }
+  .academy-knowledge-mode .taiyi-v64-palaces button.taiyi :is(small, span) { color: #6d491f; }
+
+  .academy-stage--fengshui {
+    --room-accent: var(--quiet-primary);
+    --room-accent-dark: var(--quiet-primary);
+    --room-banner: #38475b;
+    --casting-motif: repeating-linear-gradient(159deg, transparent 0 58px, #bfa98012 59px 71px,
+      transparent 72px 111px), repeating-linear-gradient(25deg, transparent 0 75px,
+      #a68c661a 76px 90px, transparent 91px 140px);
+  }
+
+  /* Sitting and facing retain distinct labeled marks: warm ochre and slate blue. */
+  .academy-stage--fengshui .fengshui-compass { --facing-tone: #a9bfde; }
+  .academy-stage--fengshui .fengshui-compass-dial {
+    background: radial-gradient(circle, #3b4c68 0 41%, #a88a4e 41.5% 42%, #273349 42.5% 58%,
+        #9d8050 58.5% 59%, #222a38 59.5% 64%, transparent 64.5%),
+      conic-gradient(from 15deg, #986d39, #e4c790 21%, #886138 45%, #e7ce93 70%, #986d39);
+  }
+  .academy-stage--fengshui .fengshui-compass-needle::before {
+    background: linear-gradient(90deg, #272d38, var(--end-tone) 40%, #fff 48%, var(--end-tone) 56%, #272d38);
+  }
+  .academy-stage--fengshui .fengshui-compass-ends button { color: var(--quiet-ink); }
+  .academy-stage--fengshui .fengshui-compass-ends button[aria-pressed='true'] {
+    border-color: var(--quiet-primary);
+    background: var(--quiet-primary);
+    color: var(--quiet-surface);
+  }
+  .academy-stage--fengshui :is(.fengshui-v70-cell, .fengshui-v70-mountains button, .fengshui-v70-note,
+    .fengshui-v70-axis article small) { color: var(--quiet-ink); }
+  .academy-stage--fengshui :is(.fengshui-v70-axis strong, .fengshui-v70-board-summary strong,
+    .fengshui-v70 h3) { color: var(--quiet-primary); }
+  .academy-stage--fengshui .fengshui-v70-palace-grid { background: var(--quiet-line); }
+  .academy-stage--fengshui :is(.fengshui-v70-cell, .fengshui-v70-axis article,
+    .fengshui-v71-period, .fengshui-v71-trace) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-surface);
+  }
+  .academy-stage--fengshui .fengshui-v70-board-summary { border-inline-start-color: var(--quiet-primary); }
+  .academy-stage--fengshui :is(.fengshui-v70-cell, .fengshui-v70-mountains button).facing {
+    border-color: var(--quiet-primary);
+    background: var(--quiet-tint);
+  }
+  .academy-stage--fengshui :is(.fengshui-v70-cell, .fengshui-v70-mountains button).sitting {
+    border-color: var(--quiet-warm);
+    background: color-mix(in srgb, var(--quiet-warm) 15%, var(--quiet-surface));
+  }
+  .academy-stage--fengshui .fengshui-v71-star-layer span {
+    border-color: var(--quiet-line);
+    background: var(--quiet-paper);
+    color: var(--quiet-ink);
+  }
+  .academy-stage--fengshui .fengshui-v70-cell.facing .fengshui-v71-star-layer span { background: var(--quiet-surface); }
+
+  .book-app--meihua {
+    --jade: var(--quiet-primary);
+    --jade-deep: var(--quiet-ink);
+    --jade-soft: var(--quiet-primary);
+    --paper: var(--quiet-surface);
+    --paper-deep: var(--quiet-paper);
+    --paper-edge: var(--quiet-line);
+  }
+
+  .book-app--meihua :is(.book-edition, .book-epilogue, .book-intro, .book-hex .trigrams, .book-hex .hexmeaning,
+    .book-mini p, .book-houtian p, .book-ai p, .book-footnote) { color: var(--quiet-muted); }
+  .book-app--meihua :is(.academy-meihua-back button, .book-reading-links label, .book-hex .hex-keywords,
+    .book-reading h3, .book-mini h3, .book-context b, .book-minor, .book-settings-hint button, .text-moss) {
+    color: var(--quiet-primary);
+  }
+  .book-app--meihua :is(.book-line-preview, .book-ai) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-paper);
+  }
+  .book-app--meihua :is(.book-line-preview-controls p, .book-lesson-row:not([data-moving='true']) small) { color: var(--quiet-muted); }
+  .book-app--meihua .book-lesson-row:not([data-moving='true']) .book-lesson-line-face i {
+    background: var(--quiet-primary);
+    box-shadow: 0 2px 0 #252b415e;
+  }
+  .book-app--meihua .book-cover-art stop { stop-color: var(--quiet-primary); }
+  .book-app--meihua .book-cover-art path:is([stroke='#9ea894'], [stroke='#708477']) { stroke: var(--quiet-strong-line); }
+  .book-app--meihua .book-compass > circle:last-of-type { fill: var(--quiet-tint); stroke: var(--quiet-line); }
+  .book-app--meihua .book-compass > text,
+  .book-app--meihua .book-compass g text[fill='#58695a'] { fill: var(--quiet-muted); }
+  .book-app--meihua .book-compass g circle[fill='#2b6053'] { fill: var(--quiet-primary); }
+
+  /* Leave the copper coins warm, with a slate tray and neutral reflections. */
+  .academy-stage--liuyao .liuyao-coin-tray {
+    background: radial-gradient(ellipse at 50% 82%, #8a5d3b61, transparent 62%),
+      repeating-linear-gradient(42deg, #f7d79508 0 1px, transparent 1px 4px),
+      radial-gradient(ellipse at 37% 8%, #424b5b, #252c3b 58%, #1b202c);
+    box-shadow: inset 0 2px 6px #14121ba3, inset 0 0 0 3px #24222a, 0 1px 0 #fff8e0;
+  }
+  .academy-stage--liuyao .liuyao-coin-shadow {
+    background: radial-gradient(ellipse, #120e15db 14%, #1612185e 48%, transparent 72%);
+  }
+  .academy-stage--liuyao .liuyao-coin-face--word::before {
+    background: radial-gradient(circle, transparent 56%, #5136127e 58% 60%, #ffe4a799 61% 64%, transparent 65% 67%, #4d321ad4 69%),
+      repeating-conic-gradient(from 25deg, #fff2bf16 0deg 1deg, #36291612 1deg 2deg, transparent 2deg 4deg),
+      radial-gradient(ellipse at 28% 24%, #ffe0a3a6, transparent 64%),
+      conic-gradient(from 3deg, #ae7a44, #eec783 19%, #a37443 35%, #6f4427 57%, #bd925a 73%, #e6bc7a 87%, #ae7a44);
+  }
+  .academy-stage--liuyao .liuyao-coin-face--reverse::before {
+    background: radial-gradient(circle, transparent 39%, #93683a 40% 42%, #f3d09279 43% 44%, transparent 46% 58%, #523615bd 60% 62%, #fad39988 63% 66%, #5d3c25 69%),
+      repeating-conic-gradient(from 25deg, #fff2bf1a 0deg 1deg, #36291615 1deg 2deg, transparent 2deg 4deg),
+      conic-gradient(from 10deg, #9e6e40, #d2aa74 18%, #80532d 43%, #bc8c55 69%, #e2ba83 86%, #9e6e40);
+  }
+  .academy-stage--liuyao :is(.academy-under-actions button, .six-full-chart, .six-full-head h3,
+    .six-full-summary strong, .six-full-scroll table, .six-full-scroll tbody th,
+    .six-full-scroll td strong) { color: var(--quiet-ink); }
+  .academy-stage--liuyao :is(.six-full-seal, .six-full-calendar span, .six-full-progressions) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-tint);
+    color: var(--quiet-primary);
+  }
+  .academy-stage--liuyao :is(.six-full-scroll thead, .six-full-scroll thead th:first-child) {
+    background: var(--quiet-primary);
+    color: var(--quiet-surface);
+  }
+  .academy-stage--liuyao :is(.academy-line:not(.moving) i, .academy-ledger-row:not(.moving) .academy-bars i,
+    .six-full-stroke:not(.is-moving) i) { background: var(--quiet-primary); }
+
+  /* Reference panels use the same readable card and text palette as the main results. */
+  .academy-knowledge-mode :is(.liuren-v62-generals, .liuren-v58-selected, .liuren-v74-branch,
+    .taiyi-v79-main-guest, .taiyi-v81-source-review, .taiyi-v84-independent) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-paper);
+    color: var(--quiet-ink);
+  }
+  .academy-knowledge-mode :is(.liuren-v58-lessons article, .liuren-v60-lesson-audit span,
+    .taiyi-v79-sides article, .taiyi-v84-cell:not(.is-origin), .taiyi-v84-comparisons article) { border-color: var(--quiet-line); }
+  .academy-knowledge-mode :is(.liuren-v62-generals header small, .liuren-v74-branch :is(h4, p),
+    .taiyi-v79-main-guest :is(h4, h5), .taiyi-v81-source-review :is(h4, p, strong),
+    .taiyi-v84-independent :is(h4, h5, strong), .taiyi-v84-cell small) { color: var(--quiet-ink); }
+  .academy-knowledge-mode .liuren-v74-branch a { color: var(--quiet-primary); }
+
+  .book-app--meihua :is(.book-mini, [class~='border-[#cad4c8]'], [class~='border-[#d4dbd0]']) { border-color: var(--quiet-line); }
+  .book-app--meihua :is(.bg-pale, [class~='bg-pale/60'], [class~='bg-[#e9efed]']) { background: var(--quiet-tint); }
+  .book-app--meihua [class~='bg-[#f0f1e8]'] { background: var(--quiet-paper); }
+  .book-app--meihua [class~='text-ink/90'] { color: var(--quiet-ink); }
+
+  .academy-stage--liuyao :is(.six-joint, .six-combo-focus-review, .six-combo-types article, .solar-assist,
+    .academy-review, .void-study, .local-case-archive) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-surface);
+    color: var(--quiet-ink);
+  }
+  .academy-stage--liuyao :is(.six-joint-head, .six-joint th, .void-study-head,
+    .six-joint-choices button, .review-flow-footer button, .academy-review-picks button, .void-position-list button) {
+    border-color: var(--quiet-line);
+  }
+  .academy-stage--liuyao :is(.six-joint-status, .six-joint-date span) {
+    border-color: var(--quiet-line);
+    background: var(--quiet-tint);
+    color: var(--quiet-primary);
+  }
+  .academy-stage--liuyao .six-joint thead th { background: var(--quiet-primary); color: var(--quiet-surface); }
+  .academy-stage--liuyao :is(.six-joint :is(h3, small), .six-joint-date b, .six-joint-choices button,
+    .six-combo-types :is(h3, small, span, strong), .six-combo-focus-review :is(h4, p),
+    .six-combo-pair-explainer, .academy-hex > p, .liuyao-moving-summary,
+    .solar-assist :is(label, p, strong, select), .solar-assist :is(.solar-assist-actions, .solar-assist-tabs) button,
+    .academy-review-picks button, .void-position-list button, .void-context-picks button,
+    .review-flow-message span, .review-flow-footer button:not(:last-child), .review-report-facts p,
+    .fushen-missing button, .fushen-heading strong, .void-context-current b, .yongshen-choices :is(b, small, .yongshen-choice-mark),
+    .yongshen-overview strong, .human-review-fields label, .local-case-archive label,
+    .academy-ai-section :is(h2, p, label, textarea), .academy-ai-actions button:not(.academy-primary)) {
+    color: var(--quiet-ink);
+  }
+  .academy-stage--liuyao :is(.six-combo, .yongshen-header, .academy-review-header, .void-study-head, .review-report-head,
+    .focus-decision-head, .human-review-workbook, .local-case-archive, .evidence-chain-study,
+    .focus-comparison-study, .void-context-study, .temporal-review-study) h3,
+  .academy-stage--liuyao :is(.academy-review-grid strong, .focus-decision-lead strong,
+    .focus-comparison-study > p strong, .fushen-study > p strong, .void-context-steps :is(h4, summary),
+    .void-review-grid strong, .human-review-workbook > p strong) { color: var(--quiet-ink); }
+
+  .academy-stage--liuyao :is(.six-combo header a, .focus-decision-links > a, .fushen-study > a) {
+    color: var(--quiet-primary);
+  }
+
+  .academy-stage--liuyao :is(.yongshen-header, .academy-review-header, .void-study-head,
+    .focus-decision-head, .human-review-workbook, .local-case-archive) > :is(small, p),
+  .academy-stage--liuyao :is(.evidence-chain-study, .focus-comparison-study, .void-context-study,
+    .temporal-review-study) > :is(h4, p, a),
+  .academy-stage--liuyao :is(.focus-decision-lead, .focus-decision-limit, .focus-decision-empty,
+    .focus-compare-empty, .fushen-selected-note, .fushen-study > p, .academy-review-intro,
+    .academy-review-grid p, .academy-review-focus p, .review-report > p, .void-context-steps p,
+    .void-study-intro, .void-review-grid p, .void-focus-lesson p) { color: var(--quiet-muted); }
+
+  .academy-stage--liuyao :is(.solar-assist-tabs button, .solar-assist-actions button) {
+    border-color: var(--quiet-line);
+    accent-color: var(--quiet-primary);
+  }
+  .academy-stage--liuyao :is(.solar-assist-tabs, .academy-review-picks, .void-position-list, .void-context-picks) button.active,
+  .academy-stage--liuyao :is(.local-case-seal, .local-case-outcome > button, .solar-assist-actions button:last-child):enabled {
+    border-color: var(--quiet-primary);
+    background: var(--quiet-primary);
+    color: var(--quiet-surface);
+  }
+  .academy-stage--liuyao :is(.local-case-seal, .local-case-outcome > button, .solar-assist-actions button:last-child):disabled {
+    border-color: var(--quiet-line);
+    background: var(--quiet-paper);
+    color: var(--quiet-muted);
+  }
 }
