@@ -1,6 +1,5 @@
-import { useRef, useState, useSyncExternalStore } from 'react'
+import { useRef, useSyncExternalStore } from 'react'
 import './academy.css'
-import HomeExperiences from './HomeExperiences.jsx'
 import academyLandscape from './assets/academy-landscape.webp'
 import academyLandscapeSmall from './assets/academy-landscape-small.webp'
 
@@ -58,10 +57,9 @@ function MethodCard({method,compact,onSelect}) {
   </button>
 }
 
-export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onLearn,onCases,
-  activeGroup='全部',setActiveGroup,page=0,setPage,homeExperience,setHomeExperience}) {
+export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,onGames,onLearn,onCases,
+  activeGroup='全部',setActiveGroup,page=0,setPage}) {
   const startTouch=useRef(null)
-  const [localExperience,setLocalExperience]=useState(0)
   const compactList=useSyncExternalStore(subscribeToCompactList,isCompactList)
   const visible=activeGroup==='全部'?ARTS:ARTS.filter(a=>a.group===activeGroup)
   const pageCount=Math.max(1,Math.ceil(visible.length/CARD_LIMIT))
@@ -98,15 +96,18 @@ export default function ArtsHub({screen='home',onStart,onBack,onSelect,onStudy,o
             <p className="atlas-lead">{compactList?'亲手起卦，翻阅原典，研习八门术数。':'一座可以亲手起卦、翻阅原典、循序研习的中国传统术数书院。'}</p>
             <div className="atlas-hero-actions">
               <button type="button" className="atlas-primary atlas-start" onClick={onStart}>
-                开始研习 <span aria-hidden="true">→</span>
-              </button>
-              <button type="button" className="atlas-ghost" onClick={onStudy}>
-                查阅典籍 · 藏经阁 ↗
+                开始排盘 <span aria-hidden="true">→</span>
               </button>
             </div>
           </div>
-          <HomeExperiences onSelect={onSelect} activeIndex={homeExperience??localExperience}
-            onIndexChange={setHomeExperience??setLocalExperience}/>
+          <button type="button" className="atlas-home-game-entry" onClick={onGames} aria-label="术数游学"
+            aria-describedby="atlas-home-game-description">
+            <span className="atlas-home-game-copy">
+              <strong>术数游学</strong>
+              <small id="atlas-home-game-description">八门小游戏 · 边玩边学排盘</small>
+            </span>
+            <span className="atlas-home-game-link" aria-hidden="true">→</span>
+          </button>
         </section>
       :
         <section className="atlas-selection atlas-choose-page" aria-label="择术入境">

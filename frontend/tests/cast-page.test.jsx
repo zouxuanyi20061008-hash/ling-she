@@ -74,6 +74,19 @@ it('没有本次盘面时，从结果地址加载会回到排盘参数', () => {
   expect(screen.getByRole('button', { name: '排盘结果' }).disabled).toBe(true)
 })
 
+it('在曾经是结果的历史位置重新排盘时，复用这条历史记录', () => {
+  const state = { academyRoute: 'qimen', from: 'games', castInput: 'qimen' }
+  window.history.replaceState(state, '', '#qimen/result')
+  const historyLength = window.history.length
+  render(<Workspace />)
+  expect(window.location.hash).toBe('#qimen')
+  fireEvent.change(screen.getByRole('textbox', { name: '起局日期' }), { target: { value: '2026-06-23' } })
+  fireEvent.click(screen.getByRole('button', { name: '起局' }))
+  expect(window.location.hash).toBe('#qimen/result')
+  expect(window.history.length).toBe(historyLength)
+  expect(window.history.state).toEqual(state)
+})
+
 it('点宫位和从分类进入详情会同步高亮，返回九宫可以继续选宫', () => {
   render(<ResultCategories />)
   fireEvent.click(screen.getByRole('button', { name: '打开震宫' }))

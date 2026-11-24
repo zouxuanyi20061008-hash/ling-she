@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
-// 首页互动回归：八卦探象只作象意练习，不触碰正式排盘算法。
+// 术数游学和首页导航回归。
 import React from 'react'
 import {afterEach,it,expect,vi} from 'vitest'
 import {cleanup,fireEvent,render,screen,within} from '@testing-library/react'
 import ArtsHub from '../src/ArtsHub.jsx'
+import AcademyGames from '../src/AcademyGames.jsx'
 
 afterEach(()=>{
   cleanup()
@@ -14,14 +15,26 @@ afterEach(()=>{
 function renderHome(overrides={}) {
   const props={
     screen:'home',onStart:vi.fn(),onBack:vi.fn(),onSelect:vi.fn(),
-    onStudy:vi.fn(),onLearn:vi.fn(),activeGroup:'全部',setActiveGroup:vi.fn(),
+    onStudy:vi.fn(),onGames:vi.fn(),onLearn:vi.fn(),activeGroup:'全部',setActiveGroup:vi.fn(),
     page:0,setPage:vi.fn(),...overrides
   }
   return {props,...render(<ArtsHub {...props}/>)}
 }
 
-it('首页呈现八个可访问卦象，默认选中乾卦并明确说明体验边界',()=>{
-  renderHome()
+function renderGames() {
+  const props={onBack:vi.fn(),onSelect:vi.fn()}
+  function GameView() {
+    const [activeIndex, setActiveIndex]=React.useState(0)
+    return <AcademyGames {...props} activeIndex={activeIndex} onIndexChange={setActiveIndex}/>
+  }
+  return {props,...render(<GameView/>)}
+}
+
+it('游学页呈现八个可访问卦象，默认选中乾卦并明确说明体验边界',()=>{
+  const {props}=renderGames()
+  expect(screen.getByRole('heading',{name:'术数游学',level:1})).toBeTruthy()
+  fireEvent.click(screen.getByRole('button',{name:'返回首页'}))
+  expect(props.onBack).toHaveBeenCalledOnce()
   const explorer=screen.getByRole('region',{name:'八卦探象互动体验'})
   expect(explorer).toBeTruthy()
   const trigramButtons=screen.getAllByRole('button').filter(button=>
@@ -34,7 +47,7 @@ it('首页呈现八个可访问卦象，默认选中乾卦并明确说明体验�
 })
 
 it('点选兑卦后，选中态、自然之象、后天方位和五行同步更新',()=>{
-  renderHome()
+  renderGames()
   const qian=screen.getByRole('button',{name:'1 · 乾卦：天，西北，五行属金'})
   const dui=screen.getByRole('button',{name:'2 · 兑卦：泽，西，五行属金'})
   expect(qian.getAttribute('aria-pressed')).toBe('true')
@@ -48,7 +61,7 @@ it('点选兑卦后，选中态、自然之象、后天方位和五行同步更�
 
 it('随机观象从既有八卦资料中选取，并保留非正式起卦提示',()=>{
   vi.spyOn(Math,'random').mockReturnValue(0.5)
-  renderHome()
+  renderGames()
   fireEvent.click(screen.getByRole('button',{name:'随机观象'}))
   expect(screen.getByText('巽 · 风')).toBeTruthy()
   expect(screen.getByText('后天方位 · 东南')).toBeTruthy()
@@ -57,7 +70,7 @@ it('随机观象从既有八卦资料中选取，并保留非正式起卦提示'
 
 it('每次随机观象都会切换到另一个卦象',()=>{
   vi.spyOn(Math,'random').mockReturnValue(0)
-  renderHome()
+  renderGames()
   const random=screen.getByRole('button',{name:'随机观象'})
   const qian=screen.getByRole('button',{name:/乾卦：/})
   const dui=screen.getByRole('button',{name:/兑卦：/})
@@ -68,7 +81,7 @@ it('每次随机观象都会切换到另一个卦象',()=>{
 })
 
 it('旋转卦环只改变方位，不改变当前所选卦象，并且可以复位',()=>{
-  const {container}=renderHome()
+  const {container}=renderGames()
   const orbit=container.querySelector('.atlas-orbit')
   const qian=screen.getByRole('button',{name:'1 · 乾卦：天，西北，五行属金'})
   const before=qian.style.getPropertyValue('--orbit-x')
@@ -82,7 +95,7 @@ it('旋转卦环只改变方位，不改变当前所选卦象，并且可以复�
 })
 
 it('可把当前卦设为上卦或下卦，并用六条阴阳线显示组合卦',()=>{
-  renderHome()
+  renderGames()
   expect(screen.getByText('天地 · 否')).toBeTruthy()
   fireEvent.click(screen.getByRole('button',{name:'2 · 兑卦：泽，西，五行属金'}))
   fireEvent.click(screen.getByRole('button',{name:'将兑卦设为上卦'}))
@@ -92,15 +105,21 @@ it('可把当前卦设为上卦或下卦，并用六条阴阳线显示组合卦'
   expect(screen.getByText('泽泽 · 兑')).toBeTruthy()
 })
 
-it('首页开始研习入口仍调用原有导航回调',()=>{
-  const onStart=vi.fn()
-  renderHome({onStart})
-  fireEvent.click(screen.getByRole('button',{name:/开始研习/}))
-  expect(onStart).toHaveBeenCalledOnce()
+it('首页单独提供排盘、藏经阁和游学入口，不渲染游戏盘面',()=>{
+  const {props,container}=renderHome()
+  const archive=screen.getAllByRole('button',{name:/藏经阁/})
+  expect(archive).toHaveLength(1)
+  expect(container.querySelector('.home-experiences')).toBeNull()
+  fireEvent.click(screen.getByRole('button',{name:'开始排盘'}))
+  fireEvent.click(archive[0])
+  fireEvent.click(screen.getByRole('button',{name:'术数游学'}))
+  expect(props.onStart).toHaveBeenCalledOnce()
+  expect(props.onStudy).toHaveBeenCalledOnce()
+  expect(props.onGames).toHaveBeenCalledOnce()
 })
 
-it('首页可前后切换体验，八卦环位置在换页后保留',()=>{
-  renderHome()
+it('游学页可前后切换体验，八卦环位置在换页后保留',()=>{
+  renderGames()
   fireEvent.click(screen.getByRole('button',{name:'顺时针旋转45度'}))
   fireEvent.click(screen.getByRole('button',{name:'下一个术数体验'}))
   expect(screen.queryByRole('region',{name:'八卦探象互动体验'})).toBeNull()
@@ -113,7 +132,7 @@ it('首页可前后切换体验，八卦环位置在换页后保留',()=>{
 })
 
 it('可直达各术数小玩法，改动只发生在样盘，并能进入对应工坊',()=>{
-  const {props}=renderHome()
+  const {props}=renderGames()
   const cases=[
     ['紫微斗数','卯 · 迁移','酉的对宫是卯','ziwei'],
     ['四柱八字','日柱天干 甲','甲是日主','bazi'],
@@ -135,7 +154,7 @@ it('可直达各术数小玩法，改动只发生在样盘，并能进入对应�
 it('八卦挑战能提示、重试、从存档继续、通关和重玩',()=>{
   const explorer=()=>within(screen.getByRole('region',{name:'八卦探象互动体验'}))
   const press=(name)=>fireEvent.click(explorer().getByRole('button',{name}))
-  const first=renderHome()
+  const first=renderGames()
   press('看提示')
   expect(screen.getByText(/上面一条实线/)).toBeTruthy()
   press('收起提示')
@@ -155,7 +174,7 @@ it('八卦挑战能提示、重试、从存档继续、通关和重玩',()=>{
   press('下一关')
   first.unmount()
 
-  const resumed=renderHome()
+  const resumed=renderGames()
   expect(explorer().getByText('第 3 / 3 关')).toBeTruthy()
   press(/震卦：/)
   press('将震卦设为上卦')
@@ -167,7 +186,7 @@ it('八卦挑战能提示、重试、从存档继续、通关和重玩',()=>{
   expect(screen.getByText('通关了')).toBeTruthy()
   resumed.unmount()
 
-  renderHome()
+  renderGames()
   expect(screen.getByText('通关了')).toBeTruthy()
   expect(screen.getByRole('button',{name:'体验梅花心易'}).getAttribute('aria-description')).toBe('已通关')
   press('再玩一次')

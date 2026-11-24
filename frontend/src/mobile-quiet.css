@@ -1,16 +1,21 @@
+:root {
+  --quiet-paper: #f7f4eb;
+  --quiet-surface: #fffdf7;
+  --quiet-ink: #322e2a;
+  --quiet-muted: #625b52;
+  --quiet-line: #d6cfc2;
+  --quiet-strong-line: #928779;
+  --quiet-primary: #3b4c68;
+  --quiet-tap: #3b4c682b;
+  --quiet-tint: #e9edf4;
+  --quiet-warm: #8c6b42;
+  --quiet-ui: 'PingFang SC', 'Microsoft YaHei UI', 'Noto Sans CJK SC', system-ui, sans-serif;
+}
+
 @media (max-width: 650px) {
   :root {
-    --quiet-paper: #f7f4eb;
-    --quiet-surface: #fffdf7;
-    --quiet-ink: #322e2a;
-    --quiet-muted: #625b52;
-    --quiet-line: #d6cfc2;
-    --quiet-strong-line: #928779;
-    --quiet-primary: #3b4c68;
-    --quiet-tap: #3b4c682b;
-    --quiet-tint: #e9edf4;
-    --quiet-warm: #8c6b42;
-    --quiet-ui: 'PingFang SC', 'Microsoft YaHei UI', 'Noto Sans CJK SC', system-ui, sans-serif;
+    --academy-focus: var(--quiet-primary);
+    --academy-tap: var(--quiet-tap);
   }
 
   :is(.atlas.atlas-screen, main.academy-stage, .book-app.book-app--meihua,
@@ -21,8 +26,6 @@
   }
 
   .atlas-screen .atlas-grain { display: none; }
-
-  .home-experiences .home-diorama button:focus-visible { outline-color: #f6dfb7 !important; }
 
   .experience-visitor-banner {
     background: var(--quiet-surface);

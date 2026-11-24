@@ -11,12 +11,12 @@
   --ux-focus:#174d3a;
 }
 :where(button,a,input,textarea,select,summary):focus-visible{
-  outline:3px solid var(--quiet-primary,#167456)!important;
+  outline:3px solid var(--academy-focus,#167456)!important;
   outline-offset:3px!important;
 }
 button:disabled{cursor:not-allowed}
 :where(.atlas,.academy-stage,.library-stage,.book-app) button{
-  -webkit-tap-highlight-color:var(--quiet-tap,rgba(33,92,62,.17));
+  -webkit-tap-highlight-color:var(--academy-tap,rgba(33,92,62,.17));
 }
 
 /* 书院首页：深色正文、明确入口层级 */
@@ -1341,20 +1341,6 @@ button:disabled{cursor:not-allowed}
   }
 }
 @media (max-width:650px) {
-  .atlas-cover-page .atlas-trigram-explorer {
-    position:relative;
-    z-index:4;
-    margin:16px auto 0;
-  }
-  .atlas-cover-page .atlas-trigram-explorer .atlas-orbit {
-    position:relative;
-    right:auto;
-    top:auto;
-    max-width:220px;
-    opacity:1;
-    pointer-events:auto;
-    filter:none;
-  }
   .atlas-trigram-explorer .atlas-taiji {
     filter:none;
   }

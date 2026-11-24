@@ -64,7 +64,10 @@ export function useCastPage(method, hasResult, { enabled = true } = {}) {
     if (!navigationAvailable.current) return
     setRequestedPage('result')
     if (window.location.hash === formHash) {
-      window.history.pushState({ ...window.history.state, castInput: method }, '', resultHash)
+      const previous = window.history.state
+      const result = { ...previous, castInput: method }
+      if (previous?.castInput === method) window.history.replaceState(result, '', resultHash)
+      else window.history.pushState(result, '', resultHash)
     }
   }
 

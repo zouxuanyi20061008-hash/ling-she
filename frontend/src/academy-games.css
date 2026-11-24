@@ -1,0 +1,74 @@
+.atlas.atlas-screen.atlas-games {
+  --academy-focus: var(--quiet-primary);
+  --academy-tap: var(--quiet-tap);
+  --atlas-ink: var(--quiet-ink);
+  --ui-accent: var(--quiet-primary);
+  --ui-field: var(--quiet-surface);
+  --ui-guide: var(--quiet-tint);
+  --ui-line: var(--quiet-line);
+  --ui-current: var(--quiet-surface);
+  background: var(--quiet-paper);
+  color: var(--quiet-ink);
+  accent-color: var(--quiet-primary);
+}
+
+.academy-games-layout {
+  width: min(460px, calc(100% - 20px));
+  margin-inline: auto;
+  padding-block: 4px 28px;
+}
+
+.academy-games-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px;
+  min-height: 54px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--quiet-line);
+}
+
+.academy-games-header h1 {
+  grid-column: 2;
+  font-size: clamp(22px, 6vw, 28px);
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.academy-games-back {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 3px;
+  min-height: 44px;
+  padding-inline: 2px;
+  border-radius: 5px;
+  color: var(--quiet-primary);
+  font-size: 14px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.atlas-games .home-experience-header h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.atlas-games .atlas-trigram-explorer {
+  width: 100%;
+  padding: clamp(10px, 2vw, 18px);
+  border: 1px solid var(--quiet-line);
+  border-radius: 12px;
+  background: var(--quiet-surface);
+}
+
+.atlas-games .atlas-trigram-heading h2 { color: var(--quiet-ink); }
+.atlas-games .home-diorama button:focus-visible { outline-color: #f6dfb7 !important; }
+
+@media (min-width: 651px) {
+  .academy-games-layout { padding-block: 16px 36px; }
+}

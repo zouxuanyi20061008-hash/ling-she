@@ -19,8 +19,9 @@ import {isPackagedApp} from './api-url.js'
 
 const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))
 const CaseExchangeCenter=React.lazy(()=>import('./CaseExchangeCenter.jsx'))
+const AcademyGames=React.lazy(()=>import('./AcademyGames.jsx'))
 const CAST_ROUTES=new Set(ARTS.map(art=>art.id))
-const VALID_ROUTES=new Set(['home','choose','learn','library','cases',...CAST_ROUTES])
+const VALID_ROUTES=new Set(['home','choose','games','learn','library','cases',...CAST_ROUTES])
 const CAST_RESULT_SUFFIX='/result'
 function routeFromUrl(){
   const route=window.location.hash.slice(1)
@@ -37,10 +38,9 @@ function Academy(){
   const [aiAccessCode,setAiAccessCode]=useState('')
   const [activeGroup,setActiveGroup]=useState('全部')
   const [choosePage,setChoosePage]=useState(0)
-  const [homeExperience,setHomeExperience]=useState(0)
+  const [gameExperience,setGameExperience]=useState(0)
   const [experience,setExperience]=useState(null)
-  const homeScroll=useRef(0)
-  const chooseScroll=useRef(0)
+  const scrollPositions=useRef({home:0,choose:0,games:0})
   const pendingScroll=useRef(null)
   const config={personalApiKey,setPersonalApiKey,aiModel,setAiModel,aiAccessCode,setAiAccessCode}
 
@@ -71,7 +71,7 @@ function Academy(){
   useEffect(()=>{
     function syncBrowserHistory(){
       const next=routeFromUrl()
-      pendingScroll.current=next==='home'?homeScroll.current:next==='choose'?chooseScroll.current:0
+      pendingScroll.current=scrollPositions.current[next]??0
       setMode(next)
     }
     window.addEventListener('popstate',syncBrowserHistory)
@@ -92,9 +92,8 @@ function Academy(){
   function navigate(next,replace=false){
     if(!VALID_ROUTES.has(next))return
     if(mode===next)return
-    if(mode==='home')homeScroll.current=window.scrollY
-    if(mode==='choose')chooseScroll.current=window.scrollY
-    pendingScroll.current=replace&&next==='home'?homeScroll.current:replace&&next==='choose'?chooseScroll.current:0
+    if(Object.hasOwn(scrollPositions.current,mode))scrollPositions.current[mode]=window.scrollY
+    pendingScroll.current=replace?(scrollPositions.current[next]??0):0
     const state={academyRoute:next,from:mode}
     if(replace)window.history.replaceState(state,'','#'+next)
     else window.history.pushState(state,'','#'+next)
@@ -115,7 +114,17 @@ function Academy(){
   }
 
   function closeCast(){
-    goBackTo(window.history.state?.from==='home'?'home':'choose')
+    const entry=window.history.state
+    if(entry?.from==='games'){
+      if(entry.academyRoute===mode&&entry.castInput===mode){
+        // The history entry after the workshop form may have been restored as a form.
+        window.history.go(-2)
+      }else{
+        goBackTo('games')
+      }
+      return
+    }
+    goBackTo(entry?.from==='home'?'home':'choose')
   }
 
   return <>
@@ -130,16 +139,20 @@ function Academy(){
     mode==='cases'?<React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开收案中心…</main>}>
       <CaseExchangeCenter onClose={()=>goBackTo('choose')}/>
     </React.Suspense>:
+    mode==='games'?<React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开术数游学…</main>}>
+      <AcademyGames onBack={()=>goBackTo('home')} onSelect={next=>navigate(next)}
+        activeIndex={gameExperience} onIndexChange={setGameExperience}/>
+    </React.Suspense>:
     (mode==='home'||mode==='choose')?
       <ArtsHub screen={mode}
         onStart={()=>navigate('choose')}
         onBack={()=>goBackTo('home')}
         onSelect={next=>navigate(next)}
+        onGames={()=>navigate('games')}
         onStudy={()=>navigate('library')} onLearn={()=>{setLearnFrom('liuyao');navigate('learn')}}
         onCases={()=>navigate('cases')}
         activeGroup={activeGroup} setActiveGroup={setActiveGroup}
-        page={choosePage} setPage={setChoosePage}
-        homeExperience={homeExperience} setHomeExperience={setHomeExperience}/>:
+        page={choosePage} setPage={setChoosePage}/>:
       mode==='library'?
       <React.Suspense fallback={<main className="academy-stage p-6" role="status">正在打开藏经阁…</main>}>
         <StudyHall onClose={closeLibrary} onPractice={()=>{setLearnFrom('liuyao');navigate('learn')}}
