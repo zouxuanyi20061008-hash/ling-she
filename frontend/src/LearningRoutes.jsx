@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { playAcademySound } from './academySound.js'
 import { PRACTICE_METHODS } from './practiceMethods.js'
 import { FOUNDATION_CASES } from './learningCasesFoundations.js'
 import { STAR_LAND_CASES } from './learningCasesStarLand.js'
@@ -98,12 +99,15 @@ function CaseSession({scenarios, attempts, onUpdate}) {
   function submitStep() {
     if (choice === null) return
     if (guided && feedback !== 'correct') {
-      setFeedback(choice === step.answer ? 'correct' : 'retry')
+      const correct = choice === step.answer
+      playAcademySound(correct ? 'success' : 'tap')
+      setFeedback(correct ? 'correct' : 'retry')
       setShowHint(false)
       return
     }
     const next = [...answers, choice]
     const cleared = next.length === steps.length && next.every((answer, index) => answer === steps[index].answer)
+    playAcademySound(!guided && cleared ? 'success' : 'tap')
     onUpdate(mode, {answers: next, passed: passed || cleared})
     resetStep()
   }
@@ -203,7 +207,7 @@ function CaseSession({scenarios, attempts, onUpdate}) {
         <div className="learning-case-actions">
           {guided && feedback !== 'correct' && <button type="button" aria-expanded={showHint}
             onClick={() => setShowHint(!showHint)}>{showHint ? '收起提示' : '看提示'}</button>}
-          <button type="button" disabled={choice === null} onClick={submitStep}>
+          <button type="button" data-academy-sound="silent" disabled={choice === null} onClick={submitStep}>
             {guided
               ? feedback !== 'correct' ? '核对这步' : position + 1 < steps.length ? '下一步' : '完成跟做'
               : position + 1 < steps.length ? '确认并继续' : '交卷看结果'}

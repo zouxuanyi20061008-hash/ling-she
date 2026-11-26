@@ -8,6 +8,10 @@ export const METHODS = [
   {id:'liuyao',title:'六爻纳甲',sub:'京房八宫',status:'五课',bookTitle:'《增删卜易》',bookStatus:'四卷'},
   {id:'qimen',title:'奇门遁甲',sub:'九宫时空',status:'三课',bookTitle:'《遁甲演义》',bookStatus:'四库本 · 四卷'},
   {id:'bazi',title:'四柱八字',sub:'干支命理',status:'三课',bookTitle:'《三命通会》',bookStatus:'四库本 · 十二卷'},
+  {id:'ziwei',title:'紫微斗数',sub:'十二宫星曜',bookTitle:'《紫微斗数全书》',bookStatus:'维基文库本 · 三卷'},
+  {id:'fengshui',title:'堪舆风水',sub:'屋宅坐向',bookTitle:'《宅经》',bookStatus:'四库本 · 上下卷'},
+  {id:'liuren',title:'大六壬',sub:'四课三传',bookTitle:'《六壬大全》',bookStatus:'四库本 · 十二卷'},
+  {id:'taiyi',title:'太乙神数',sub:'积数行宫',bookTitle:'《太乙金镜式经》',bookStatus:'四库本 · 十卷'},
 ]
 export const REFERENCES = {
   zhouyi:'https://zh.wikisource.org/zh-hans/周易',
@@ -15,6 +19,10 @@ export const REFERENCES = {
   liuyao:'https://zh.wikisource.org/zh-hans/增删卜易/2',
   qimen:'https://zh.wikisource.org/zh/遁甲演義',
   bazi:'https://zh.wikisource.org/wiki/三命通會/卷一',
+  ziwei:'https://zh.wikisource.org/wiki/紫微斗數全書',
+  fengshui:'https://zh.wikisource.org/wiki/宅經_(四庫全書本)',
+  liuren:'https://zh.wikisource.org/wiki/六壬大全_(四庫全書本)/全覽',
+  taiyi:'https://zh.wikisource.org/wiki/太乙金鏡式經_(四庫全書本)/全覽',
 }
 const ZHOUYI_READING_NOTES = {
   乾:{id:'yi-qian',explanation:'以天之刚健启示人不断自我修养，不等同于一卦便可决定成败。',

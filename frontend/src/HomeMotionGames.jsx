@@ -53,7 +53,7 @@ function CoinRound({trial}){
     summary="每掷三钱记一爻，六次由下往上成卦。6 老阴、9 老阳会变，7 少阳、8 少阴保持原样。"
     feedback={<><strong>{faces.join(' ＋ ')} ＝ {line.sum} · {line.label}</strong><span>{explanation}</span></>}>
     <div className="home-experience-grid home-coins" role="group" aria-label="翻动三枚练习铜钱">
-      {faces.map((face,index)=><button type="button" className="home-coin-pick" key={index}
+      {faces.map((face,index)=><button type="button" className="home-coin-pick" data-academy-sound="coinTouch" key={index}
         aria-label={`第 ${index+1} 枚铜钱。${face===2?'字面 2':'背面 3'}。翻面`}
         aria-disabled={trial.solved||trial.completed||undefined} data-back={face===3||undefined} onClick={()=>flip(index)}>
         <CoinFaces/>

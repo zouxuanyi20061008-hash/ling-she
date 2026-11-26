@@ -16,6 +16,7 @@ import './mobile-quiet-home.css'
 import './mobile-quiet-cast.css'
 import './mobile-quiet-library.css'
 import {isPackagedApp} from './api-url.js'
+import {listenForAcademySounds} from './academySound.js'
 
 const StudyHall=React.lazy(()=>import('./StudyHall.jsx'))
 const CaseExchangeCenter=React.lazy(()=>import('./CaseExchangeCenter.jsx'))
@@ -35,6 +36,7 @@ function routeFromUrl(){
 }
 
 function Academy(){
+  useEffect(listenForAcademySounds,[])
   const [mode,setMode]=useState(routeFromUrl)
   const [learnFrom,setLearnFrom]=useState('liuyao')
   const [personalApiKey,setPersonalApiKey]=useState('')

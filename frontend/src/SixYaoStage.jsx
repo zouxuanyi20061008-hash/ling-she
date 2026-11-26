@@ -2389,7 +2389,7 @@ export default function SixYaoStage({onBack,onStudy,onLearn,apiConfig}) {
                 本掷 <strong>{coins.join(' ＋ ')} ＝ {lastCoinTotal}</strong> · {K[lastCoinTotal].name}
               </>}
             </p>
-            <button type="button" className="academy-primary" onClick={cast} disabled={isSpinning||lines.length>=6}>
+            <button type="button" className="academy-primary" data-academy-sound="coins" onClick={cast} disabled={isSpinning||lines.length>=6}>
               {isSpinning?'铜钱翻转中…':lines.length===6?'六爻已成':'摇第'+['一','二','三','四','五','六'][lines.length]+'爻'} ↗
             </button>
           </div>

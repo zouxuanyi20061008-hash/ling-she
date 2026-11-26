@@ -15,6 +15,38 @@ beforeEach(()=>{
 })
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks()})
 
+it.each([
+  ['紫微斗数', '紫微斗数全书', 3],
+  ['堪舆风水', '宅经', 3],
+  ['大六壬', '六壬大全', 13],
+  ['太乙神数', '太乙金镜式经', 11],
+])('%s：典籍可打开并切换到末卷', async (method, title, count)=>{
+  render(<StudyHall {...props}/>)
+  enterCatalog('壹 · 典籍')
+  expect(screen.getAllByRole('button',{name:/入卷研读/})).toHaveLength(9)
+  enterCatalog(method+'.*入卷研读')
+  const book=await screen.findByRole('region',{name:`《${title}》原文阅读`},{timeout:10000})
+  const volumes=within(book).getByRole('combobox',{name:'选择卷次'})
+  expect(volumes.options).toHaveLength(count)
+  fireEvent.change(volumes,{target:{value:String(count-1)}})
+  expect(volumes.value).toBe(String(count-1))
+  expect((await within(book).findByLabelText('原文')).textContent.trim().length).toBeGreaterThan(20)
+  expect(within(book).getByRole('link',{name:/核对原典/}).href).toContain('wikisource.org')
+},15000)
+
+it('关闭操作声音后重新打开书房设定仍保持关闭', ()=>{
+  const first=render(<StudyHall {...props}/>)
+  enterCatalog('肆 · 设定')
+  const toggle=()=>screen.getByRole('button',{name:'操作声音',exact:true})
+  expect(toggle().getAttribute('aria-pressed')).toBe('true')
+  fireEvent.click(toggle())
+  expect(toggle().getAttribute('aria-pressed')).toBe('false')
+  first.unmount()
+  render(<StudyHall {...props}/>)
+  enterCatalog('肆 · 设定')
+  expect(toggle().getAttribute('aria-pressed')).toBe('false')
+})
+
 it('典籍换篇保存进度，返回目录和重新打开后均可以续读',async()=>{
   const first=render(<StudyHall {...props}/>)
   enterCatalog('壹 · 典籍')

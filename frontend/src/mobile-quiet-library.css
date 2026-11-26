@@ -63,6 +63,36 @@
   border-color: var(--quiet-line);
 }
 
+.library-sound-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 5px 9px 5px 12px;
+  border: 1px solid var(--quiet-line);
+  border-radius: 8px;
+  background: var(--quiet-surface);
+  color: var(--quiet-ink);
+  font-size: 14px;
+}
+
+.library-sound-setting button {
+  min-height: 44px;
+  min-width: 76px;
+  padding: 4px 8px;
+  border: 1px solid var(--quiet-line);
+  border-radius: 6px;
+  background: var(--quiet-paper);
+  color: var(--quiet-primary);
+}
+
+.library-sound-setting button[aria-pressed='true'] {
+  border-color: var(--quiet-primary);
+  background: var(--quiet-primary);
+  color: var(--quiet-surface);
+}
+
 .library-stage :is(.library-method-card strong, .library-source a, .library-crumbs button, .library-back-button,
     .library-footer button, .library-exit, .library-page-count strong) {
   color: var(--quiet-primary);
@@ -191,7 +221,37 @@
     border-radius: 8px;
     box-shadow: 0 3px 9px #412e2310;
   }
-  .library-stage .library-method-grid:not(.library-study-method-grid) .library-method-card { min-height: 116px; }
+  .library-stage .library-method-grid:not(.library-study-method-grid) .library-method-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title arrow" "book arrow";
+    align-content: center;
+    column-gap: 4px;
+    row-gap: 2px;
+    min-height: 58px;
+    padding: 5px 7px;
+  }
+
+  .library-method-grid:not(.library-study-method-grid) .library-method-index { display: none; }
+  .library-method-grid:not(.library-study-method-grid) .library-method-card strong {
+    grid-area: title;
+    font-size: 15px;
+    line-height: 1.25;
+  }
+  .library-method-grid:not(.library-study-method-grid) .library-method-card small {
+    grid-area: book;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .library-method-grid:not(.library-study-method-grid) .library-method-action {
+    grid-area: arrow;
+    align-self: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 0;
+  }
+  .library-method-grid:not(.library-study-method-grid) .library-method-action b { font-size: 12px; }
   .library-stage .library-study-method-grid .library-method-card { min-height: 70px; }
   .library-stage .library-method-card strong { color: var(--quiet-ink); }
   .library-stage :is(.library-method-index, .library-method-card small, .library-method-action) { color: var(--quiet-muted); }

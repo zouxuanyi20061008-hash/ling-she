@@ -6,6 +6,7 @@ import { LIBRARY_STUDY, LIBRARY_TRIALS } from './libraryStudy.js'
 import FullClassicReader from './FullClassicReader.jsx'
 import StudyTrial from './StudyTrial.jsx'
 import { PRACTICE_METHODS } from './practiceMethods.js'
+import { academySoundEnabled, playAcademySound, setAcademySoundEnabled } from './academySound.js'
 import './library-trial-hub.css'
 
 const TrialPractice=lazy(()=>import('./AcademyGames.jsx'))
@@ -149,6 +150,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
   trialRoute=false,onTrialRouteChange,trialPanel,onTrialPanelChange,
   trialExperienceIndex,onTrialExperienceChange,onTrialWorkshop}){
   const [view,setView]=useState(()=>trialRoute?'quizmenu':'lobby')
+  const [soundOn,setSoundOn]=useState(academySoundEnabled)
   const [method,setMethod]=useState('meihua')
   const [index,setIndex]=useState(0)
   const [playing,setPlaying]=useState(false)
@@ -321,7 +323,7 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
             <SectionHeading
               small={section.number+' · '+section.english}
               title={view==='bookshelf'?'择卷研读':'择门修习'}
-              desc={view==='bookshelf'?'按卦序读《周易》经文与十翼，或选其他古籍逐卷读原文。每篇附底本出处。':
+              desc={view==='bookshelf'?'八门术数古籍与《周易》，可按卦或篇章直达。':
                 '选一门，从第一课开始。也可以直接选课，做对应的小挑战。'}/>
             {resumeEntries.length>0&&<aside className="library-resume" aria-label="藏经阁断点续读">
               <div className="library-resume-title"><strong>续读 · 接着上次的位置</strong><small>进度仅存于当前浏览器</small></div>
@@ -466,6 +468,16 @@ export default function StudyHall({onClose,onPractice,apiKey,setApiKey,aiModel,s
 
           {view==='settings'&&<section className="library-settings-screen">
             <SectionHeading small="肆 · AI 接入" title="书房设定" desc="基础排盘、阅读与课程不需要 AI。只有调用模型进行深入解读时，才需要个人密钥或站长服务器配置。"/>
+            <div className="library-sound-setting">
+              <span>操作声音</span>
+              <button type="button" aria-label="操作声音" aria-pressed={soundOn} data-academy-sound="silent"
+                onClick={()=>{
+                  const enabled=!soundOn
+                  setAcademySoundEnabled(enabled)
+                  setSoundOn(enabled)
+                  if(enabled)playAcademySound('tap')
+                }}>{soundOn?'已开启':'已关闭'}</button>
+            </div>
             <div className="library-settings-grid">
               <div className="library-settings-paper">
                 <div className="library-paper-line"><span>私人设置</span><span>DEEPSEEK</span></div>
